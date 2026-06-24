@@ -1,6 +1,6 @@
 {
   "name": "@signalsafe/simulator-react",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "description": "Reusable React device simulator shell, session state, and utilities (no routing or API).",
   "license": "MIT",
