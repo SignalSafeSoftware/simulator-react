@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "..",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "paths": {
+      "@signalsafe/simulator-react": ["../src/index.ts"],
+      "@signalsafe/simulator-react/*": ["../src/*"],
+      "@workspace-simulator-test-support/*": ["./support/*"]
+    }
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
+}
