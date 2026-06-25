@@ -7,11 +7,7 @@
 /** Lowercase, collapse runs of whitespace to single space, trim. */
 export function normalizeNameForMatch(name: string): string {
     if (typeof name !== 'string') return '';
-    return name
-        .toLowerCase()
-        .trim()
-        .split(/\s+/)
-        .join(' ');
+    return name.toLowerCase().trim().replaceAll(/\s+/g, ' ');
 }
 
 /** Digits only (no country-code stripping). Use for substring search. */

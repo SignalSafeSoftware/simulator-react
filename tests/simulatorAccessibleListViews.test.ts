@@ -304,7 +304,7 @@ describe('simulator accessible list views', () => {
 
         const timeline = renderer!.root.findByProps({ 'aria-label': 'Message timeline' });
         expect(timeline.type).toBe('ul');
-        expect(timeline.findAllByType('li').length).toBe(1);
+        expect(timeline.findAllByType('li')).toHaveLength(1);
     });
 
     it('covers email message detail fallback fields and action buttons', async () => {
