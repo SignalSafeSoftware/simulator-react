@@ -56,7 +56,7 @@ function kindLabel(kind: string): string {
         download_clicked: 'Download clicked',
         search_performed: 'Search',
     };
-    return labels[kind] ?? kind.split('_').join(' ');
+    return labels[kind] ?? kind.replaceAll('_', ' ');
 }
 
 function metadataText(value: unknown): string | null {

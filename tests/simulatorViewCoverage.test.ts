@@ -104,7 +104,7 @@ describe('simulator view coverage', () => {
                 })
             );
         });
-        expect(onAction.mock.calls.length).toBe(callsAfterFirstOpen);
+        expect(onAction.mock.calls).toHaveLength(callsAfterFirstOpen);
 
         await act(async () => {
             renderer.update(
