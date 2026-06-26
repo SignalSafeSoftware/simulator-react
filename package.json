@@ -1,6 +1,6 @@
 {
   "name": "@signalsafe/simulator-react",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "type": "module",
   "description": "Reusable React device simulator shell, session state, and utilities (no routing or API).",
   "license": "MIT",
@@ -88,8 +88,8 @@
     "test:monorepo": "cd ../../frontend && yarn vitest run --config vitest.simulator-react.config.ts"
   },
   "dependencies": {
-    "@signalsafe/simulator-core": "^0.1.4",
-    "@signalsafe/tree-spec": "^0.3.1"
+    "@signalsafe/simulator-core": "^0.1.5",
+    "@signalsafe/tree-spec": "^0.3.2"
   },
   "peerDependencies": {
     "react": "^18.0.0",

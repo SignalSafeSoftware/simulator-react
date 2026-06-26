@@ -546,17 +546,17 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.62.2.tgz#3671ce3f9b928d5c01f879792d5c0b60ae14d4ad"
   integrity sha512-BfzEnDJOt9T8M989/lA37EcJgat01wLRnoi5dQf3QzOH7jzpqTAzdDbVfRljVr5r+jzKqpbHeyOfAaXxAd0PAA==
 
-"@signalsafe/simulator-core@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.npmjs.org/@signalsafe/simulator-core/-/simulator-core-0.1.4.tgz"
-  integrity sha512-bVSo1LbcZu3h9m57LJFySvYbB0aUiU4fvd8GismL49LDCIxKiprMXtX19LbIurNECqj0q2eq4mPNwLfOJszzQg==
+"@signalsafe/simulator-core@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@signalsafe/simulator-core/-/simulator-core-0.1.5.tgz#84d7e4909920fb8378eed25405f9caac6a9bfbfa"
+  integrity sha512-4M12omNtm+dAR0QaWfhmdu+GnROSSd+bGjeT2j/eAxz4X/s6qbhIQJTaaulaoMpO8tJqEFheD31u8TRgJ5OjOA==
   dependencies:
-    "@signalsafe/tree-spec" "^0.3.1"
+    "@signalsafe/tree-spec" "^0.3.2"
 
-"@signalsafe/tree-spec@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.npmjs.org/@signalsafe/tree-spec/-/tree-spec-0.3.1.tgz"
-  integrity sha512-23KUkmvnGDC/X+yl2M7s0o5Xpz2m98Qt/XQhbFo62epuiI1pngMZJeVnYoe0iyMnc6hr0rMf+YYHUzRBLfCqBQ==
+"@signalsafe/tree-spec@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@signalsafe/tree-spec/-/tree-spec-0.3.2.tgz#c5af9c87ae715e1cdc2914c76cb79bca8db60e27"
+  integrity sha512-Lfm9Al9/Fy7ZUmnjhRfgq+ppEQ7lt4M/qEePpzEWw2clO753gK1eG0HnFMHF07WF8ftOfOR7Dq2ZyE0c6BbcCw==
 
 "@swc/helpers@^0.5.0":
   version "0.5.23"
