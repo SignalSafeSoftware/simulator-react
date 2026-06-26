@@ -31,7 +31,7 @@ Standalone repository: [SignalSafeSoftware/simulator-react](https://github.com/S
    npm publish --dry-run
    ```
 
-4. **Future required gate (not yet in CI):** install the packed tarball in a temporary consumer and smoke-test documented exports, including subpath exports (Batch 6).
+4. Run artifact smoke test: `npm run smoke:package` (pack, temp consumer install, subpath export and type checks — enforced in CI before publish).
 
 ## Publish
 
@@ -58,4 +58,4 @@ Standalone repository: [SignalSafeSoftware/simulator-react](https://github.com/S
 npm view @signalsafe/simulator-react version
 ```
 
-Post-publish consumer smoke tests are planned but not yet required in CI (Batch 6).
+CI runs `npm run smoke:package` before publish.
