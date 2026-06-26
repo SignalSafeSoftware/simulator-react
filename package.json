@@ -1,6 +1,6 @@
 {
   "name": "@signalsafe/simulator-react",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "type": "module",
   "description": "Reusable React device simulator shell, session state, and utilities (no routing or API).",
   "license": "MIT",
@@ -65,6 +65,7 @@
   "engines": {
     "node": ">=18"
   },
+  "packageManager": "yarn@1.22.22",
   "publishConfig": {
     "access": "public"
   },
@@ -80,7 +81,8 @@
     "pack:check": "node ../../scripts/check-package-tarball.mjs --tgz \"../../dist/reusable-npm/signalsafe-simulator-react-$npm_package_version.tgz\" --expect package/dist/index.js --expect package/dist/index.d.ts --expect package/package.json --expect package/README.md",
     "smoke:external": "node ../../scripts/smoke-simulator-react-external-consumer.mjs",
     "smoke:published": "node ../../scripts/smoke-simulator-react-external-consumer.mjs --source registry",
-    "prepublishOnly": "npm run build",
+        "smoke:package": "node scripts/smoke-package.mjs",
+        "prepublishOnly": "npm run build",
     "prepare": "npm run build",
     "test": "vitest run",
     "test:monorepo": "cd ../../frontend && yarn vitest run --config vitest.simulator-react.config.ts"

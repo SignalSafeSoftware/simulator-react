@@ -10,7 +10,18 @@
     "noEmit": true,
     "isolatedModules": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "baseUrl": ".",
+    "paths": {
+      "@signalsafe/tree-spec": ["../tree-spec/src/index.ts"],
+      "@signalsafe/tree-spec/*": ["../tree-spec/src/*"],
+      "@signalsafe/simulator-core": ["../simulator-core/src/index.ts"],
+      "@signalsafe/simulator-core/*": ["../simulator-core/src/*"],
+      "react": ["./node_modules/@types/react/index.d.ts"],
+      "react/jsx-runtime": ["./node_modules/@types/react/jsx-runtime.d.ts"],
+      "react-dom": ["./node_modules/@types/react-dom/index.d.ts"],
+      "react-bootstrap": ["./node_modules/react-bootstrap/esm/index.d.ts"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "tests"]
