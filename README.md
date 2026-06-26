@@ -1,8 +1,37 @@
 # `@signalsafe/simulator-react`
 
-React **device simulator** UI: **`SimulatorWithSession`** (and **`PhoneSimulatorShell`**), **session state** (`getInitialSessionState`, `simulatorSessionReducer`), **template → payload** adapter **`templateDetailToPayload`**, **lint / deep-link / preview-fallback** helpers, **payload diff**, and **screen registry** utilities. Build output is **`dist/`**; dependencies are listed in **`package.json`**.
+React **device simulator** UI: session state, screen registry, template adapter, lint helpers, and optional developer tools. Built on `@signalsafe/simulator-core` for runtime stepping.
 
-Hosts supply a **`SimulatorTemplatePayload`** (typically by mapping API or template detail into that shape via **`templateDetailToPayload`**), then drive **`useReducer`** with **`simulatorSessionReducer`** (or **`simulatorSessionReducerWithLogging`**) and render **`SimulatorWithSession`**. **Preset and fixture helpers are not part of the published package surface.**
+| | |
+|---|---|
+| **npm** | `@signalsafe/simulator-react` |
+| **GitHub** | [SignalSafeSoftware/simulator-react](https://github.com/SignalSafeSoftware/simulator-react) |
+| **Peer deps** | `react`, `react-dom`, `react-bootstrap` |
+
+## What this package does
+
+- Render **`SimulatorWithSession`** / **`PhoneSimulatorShell`** and registered scenario screens.
+- Manage session state via **`simulatorSessionReducer`** (wraps core runtime dispatch).
+- Adapt template detail → **`SimulatorTemplatePayload`** (`templateDetailToPayload`).
+- Provide **shallow lint** (`lintSimulatorPayload`), reachability, deep-link, preview-fallback, and diff utilities.
+- Optional **`SimulatorDeveloperToolsPanel`** for QA/debug views.
+
+## What this package does not do
+
+- Routing, HTTP clients, authentication, or persistence.
+- Trusted validation of arbitrary user-uploaded JSON beyond shallow lint — hosts must validate payloads before production use.
+- Network I/O — wire **`onSimulatorEvent`** to your analytics/API.
+
+## Relationship to `@signalsafe/simulator-core`
+
+| Concern | Package |
+|---|---|
+| Headless session stepping, scores, outcomes | `@signalsafe/simulator-core` |
+| React UI, reducer wiring, screens, lint banner | **`@signalsafe/simulator-react` (this package)** |
+
+## Payload shape (high level)
+
+Hosts supply a **`SimulatorTemplatePayload`**: TreeSpec wire plus simulator **world** sections (screens, contacts, branding hints, etc.). Use **`templateDetailToPayload`** to map API/template records into that shape, then **`lintSimulatorPayload`** for authoring warnings.
 
 ## Install
 
@@ -122,13 +151,25 @@ Other deep import paths are **unsupported**. Prefer the main barrel for app/runt
 
 ## Tests
 
-Run the **`test`** script from this package directory (see **`package.json`**):
-
 ```bash
 npm test
 ```
 
 ## Boundaries
 
-- **In scope:** UI and state under **`src/`**, the main barrel, and the **`exports`** subpaths above.
-- **Out of scope:** routing, HTTP clients, and transport — the package does not perform network I/O; host apps wire **`SimulatorTemplatePayload`** and **`onSimulatorEvent`** as needed.
+- **In scope:** UI and state under `src/`, main barrel exports, and documented **`exports`** subpaths in `package.json`.
+- **Out of scope:** routing, HTTP, auth — host apps supply payload and event handlers.
+- **Side effects:** `sideEffects: false` — load Bootstrap CSS in the host app (`import 'bootstrap/dist/css/bootstrap.min.css'`).
+
+## Development
+
+```bash
+npm install
+npm run build
+npm test
+npm run typecheck
+```
+
+## Security
+
+See [SECURITY.md](./SECURITY.md). Treat scenario payloads as trusted authoring content unless the host validates them. Gate learner-facing error detail in production hosts.
