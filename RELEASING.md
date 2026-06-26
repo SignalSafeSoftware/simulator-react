@@ -24,14 +24,14 @@ Standalone repository: [SignalSafeSoftware/simulator-react](https://github.com/S
 3. Run locally:
 
    ```bash
-   npm ci
-   npm run typecheck
-   npm test
-   npm run build
-   npm publish --dry-run
+   yarn install --frozen-lockfile
+   yarn typecheck
+   yarn test
+   yarn build
+   yarn publish --dry-run
    ```
 
-4. Run artifact smoke test: `npm run smoke:package` (pack, temp consumer install, subpath export and type checks — enforced in CI before publish).
+4. Run artifact smoke test: `yarn smoke:package` (pack, temp consumer install, subpath export and type checks — enforced in CI before publish).
 
 ## Publish
 
@@ -58,4 +58,4 @@ Standalone repository: [SignalSafeSoftware/simulator-react](https://github.com/S
 npm view @signalsafe/simulator-react version
 ```
 
-CI runs `npm run smoke:package` before publish.
+CI runs `yarn smoke:package` before publish.
