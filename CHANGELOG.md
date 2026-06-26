@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-06-26
+
 ### Added
 
 - `SECURITY.md`, Dependabot, `CHANGELOG.md`, updated [RELEASING.md](./RELEASING.md).
@@ -19,10 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Checks and tests on every PR; Sonar **`scan`** is label-gated on PRs and runs on tag push and manual dispatch (Batch 1).
 - Publish only from manual **`main`** dispatch or **`v*`** tags (not PR labels); publish requires **`checks`**, **`tests`**, and **`scan`**.
-
-## [0.1.5]
-
-Prior published release on npm (`@signalsafe/simulator-react`). Detailed historical notes were not recorded in this repository.
 
 [Unreleased]: https://github.com/SignalSafeSoftware/simulator-react/compare/v0.1.5...HEAD
 [0.1.5]: https://github.com/SignalSafeSoftware/simulator-react/releases/tag/v0.1.5
