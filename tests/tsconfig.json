@@ -14,8 +14,7 @@
       "@workspace-simulator-test-support/*": ["./support/*"],
       "react": ["../node_modules/@types/react/index.d.ts"],
       "react/jsx-runtime": ["../node_modules/@types/react/jsx-runtime.d.ts"],
-      "react-dom": ["../node_modules/@types/react-dom/index.d.ts"],
-      "react-bootstrap": ["../node_modules/react-bootstrap/esm/index.d.ts"]
+      "react-dom": ["../node_modules/@types/react-dom/index.d.ts"]
     }
   },
   "include": ["**/*.ts"],

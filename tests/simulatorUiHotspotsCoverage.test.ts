@@ -349,7 +349,7 @@ describe('simulator UI hotspot coverage', () => {
         });
         await act(async () => {
             renderer!.root.findAllByType('button').find(
-                (node) => node.props.children === 'Download' && node.props.className?.includes('outline-secondary')
+                (node) => node.props.children === 'Download' && node.props.className?.includes('simulator-btn--neutral-outline')
             )!.props.onClick();
         });
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'download_click', downloadTarget: 'download-page' }));

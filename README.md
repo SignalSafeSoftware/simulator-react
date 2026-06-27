@@ -6,7 +6,7 @@ React **device simulator** UI: session state, screen registry, template adapter,
 |---|---|
 | **npm** | `@signalsafe/simulator-react` |
 | **GitHub** | [SignalSafeSoftware/simulator-react](https://github.com/SignalSafeSoftware/simulator-react) |
-| **Peer deps** | `react`, `react-dom`, `react-bootstrap` |
+| **Peer deps** | `react`, `react-dom` |
 
 ## What this package does
 
@@ -36,19 +36,15 @@ Hosts supply a **`SimulatorTemplatePayload`**: TreeSpec wire plus simulator **wo
 ## Install
 
 ```bash
-npm install @signalsafe/simulator-react react react-dom react-bootstrap
+npm install @signalsafe/simulator-react react react-dom
 ```
 
-Use a modern **ESM** TypeScript setup.
+Use a modern **ESM** TypeScript setup. Style simulator UI via host CSS targeting `simulator-*` class hooks, or pass `renderChoice` / `renderFeedback` slots for full UI-kit control.
 
 ## Repository
 
 Source code and issues are available at:
 https://github.com/SignalSafeSoftware/simulator-react
-
-```ts
-import 'bootstrap/dist/css/bootstrap.min.css';
-```
 
 ## Source layout (this package)
 
@@ -159,7 +155,7 @@ yarn test
 
 - **In scope:** UI and state under `src/`, main barrel exports, and documented **`exports`** subpaths in `package.json`.
 - **Out of scope:** routing, HTTP, auth — host apps supply payload and event handlers.
-- **Side effects:** `sideEffects: false` — load Bootstrap CSS in the host app (`import 'bootstrap/dist/css/bootstrap.min.css'`).
+- **Side effects:** `sideEffects: false` — hosts supply layout/styling (CSS or UI kit) for `simulator-*` hooks and optional render slots.
 
 ## Development
 

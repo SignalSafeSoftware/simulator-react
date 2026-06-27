@@ -2,17 +2,32 @@
  * Renders a single browser page by layout family. Wireframe: landing, login/form, content/download/result.
  * Uses SimulatorBrowserChrome (title above bar, back/forward/refresh/home, address bar).
  */
-import { Button, Form } from 'react-bootstrap';
+import type { ReactNode } from 'react';
+
 import SimulatorBrowserChrome from '../components/SimulatorBrowserChrome';
 import type { SimulatorAction, SimulatorBrowserPage } from '../types/session';
 import { SimulatorActions } from '../actions';
 import { simTypo } from '../simulatorStyles';
+import {
+    SimulatorButton,
+    SimulatorField,
+    SimulatorInput,
+    SimulatorLabel,
+} from '../ui/primitives';
+import {
+    renderSimulatorChoice,
+    renderSimulatorFeedback,
+    type SimulatorChoiceRenderProps,
+    type SimulatorFeedbackRenderProps,
+} from '../ui/renderSlots';
 
 export interface BrowserPageRendererProps {
     page: SimulatorBrowserPage;
     onAction: (action: SimulatorAction) => void;
     /** When set, chrome Back button is shown and calls this. */
     onBack?: () => void;
+    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
+    renderFeedback?: (feedback: SimulatorFeedbackRenderProps) => ReactNode;
 }
 
 function urlHighlight(url: string): { start: number; end: number }[] | undefined {
@@ -62,7 +77,45 @@ function normalizeBrowserLayout(layout: string | undefined): string {
     return layoutNorm;
 }
 
-export default function BrowserPageRenderer({ page, onAction, onBack }: Readonly<BrowserPageRendererProps>) {
+function renderWarningBanner(
+    message: string,
+    renderFeedback?: (feedback: SimulatorFeedbackRenderProps) => ReactNode,
+): ReactNode {
+    return renderSimulatorFeedback(
+        {
+            message,
+            tone: 'warning',
+            className: 'rounded-0 border-0 mb-3 small',
+        },
+        renderFeedback,
+    );
+}
+
+function renderPageButton(
+    label: string,
+    onClick: () => void,
+    tone: string,
+    className: string,
+    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode,
+): ReactNode {
+    return renderSimulatorChoice(
+        {
+            label,
+            tone,
+            className,
+            onClick,
+        },
+        renderChoice,
+    );
+}
+
+export default function BrowserPageRenderer({
+    page,
+    onAction,
+    onBack,
+    renderChoice,
+    renderFeedback,
+}: Readonly<BrowserPageRendererProps>) {
     const { url, title, layout, content, buttons, formFields, logoUrl, warningBanner, showMediaPlaceholder } = page;
     const layoutNorm = normalizeBrowserLayout(layout);
     const displayTitle = title || 'Web Page Title';
@@ -96,9 +149,7 @@ export default function BrowserPageRenderer({ page, onAction, onBack }: Readonly
                         </div>
                     )}
                     {layoutNorm === 'content' && warningBanner != null && warningBanner !== '' && (
-                        <div className="alert alert-warning rounded-0 border-0 mb-3 small" role="alert">
-                            {warningBanner}
-                        </div>
+                        renderWarningBanner(warningBanner, renderFeedback)
                     )}
                     {layoutNorm === 'content' && showMediaPlaceholder === true && (
                         <div className="mb-3 border border-secondary rounded-0 bg-dark bg-opacity-10 d-flex align-items-center justify-content-center" style={{ minHeight: 160 }}>
@@ -119,48 +170,47 @@ export default function BrowserPageRenderer({ page, onAction, onBack }: Readonly
                         </p>
                     )}
                     {layoutNorm === 'landing' && formFields != null && formFields.length > 0 && (
-                        <Form
+                        <form
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 onAction(SimulatorActions.submitForm({}));
                             }}
                         >
                             {keyedFormFields.map(({ item: field, key }) => (
-                                <Form.Group key={key} className="mb-2">
-                                    <Form.Label className="small fw-medium text-body">{field.label}</Form.Label>
-                                    <Form.Control
+                                <SimulatorField key={key} className="mb-2">
+                                    <SimulatorLabel className="small fw-medium text-body">{field.label}</SimulatorLabel>
+                                    <SimulatorInput
                                         type={getFieldInputType(field.type)}
                                         className="rounded-0"
                                         autoComplete="off"
                                         aria-label={field.label}
                                     />
-                                </Form.Group>
+                                </SimulatorField>
                             ))}
-                            <Button type="submit" variant="primary" className="rounded-0">
+                            <SimulatorButton type="submit" tone="primary" className="rounded-0">
                                 Submit
-                            </Button>
-                        </Form>
+                            </SimulatorButton>
+                        </form>
                     )}
                     {buttons != null && buttons.length > 0 && (
                         <div className="d-flex flex-wrap gap-2 mt-2">
                             {keyedButtons.map(({ item: btn, key, index }) => (
-                                <Button
-                                    key={key}
-                                    variant="primary"
-                                    size="sm"
-                                    className="rounded-0"
-                                    onClick={() =>
-                                        onAction(
-                                            SimulatorActions.clickLink({
-                                                href: btn.href ?? url,
-                                                linkIndex: index,
-                                                pageId: btn.targetPageId,
-                                            })
-                                        )
-                                    }
-                                >
-                                    {btn.label}
-                                </Button>
+                                <span key={key}>
+                                    {renderPageButton(
+                                        btn.label,
+                                        () =>
+                                            onAction(
+                                                SimulatorActions.clickLink({
+                                                    href: btn.href ?? url,
+                                                    linkIndex: index,
+                                                    pageId: btn.targetPageId,
+                                                })
+                                            ),
+                                        'primary',
+                                        'rounded-0 simulator-btn--sm',
+                                        renderChoice,
+                                    )}
+                                </span>
                             ))}
                         </div>
                     )}
@@ -176,53 +226,52 @@ export default function BrowserPageRenderer({ page, onAction, onBack }: Readonly
                                 {displayTitle} Login
                             </span>
                             {onBack != null && (
-                                <button
-                                    type="button"
-                                    className="btn btn-link btn-sm p-0 text-body"
+                                <SimulatorButton
+                                    tone="link"
+                                    className="simulator-btn--sm p-0 text-body"
                                     onClick={onBack}
                                     aria-label="Close"
                                 >
                                     ×
-                                </button>
+                                </SimulatorButton>
                             )}
                         </div>
                         {content != null && content !== '' && (
                             <p className="mb-2 small text-muted">{content}</p>
                         )}
                         {formFields != null && formFields.length > 0 && (
-                            <Form
+                            <form
                                 onSubmit={(e) => {
                                     e.preventDefault();
                                     onAction(SimulatorActions.submitForm({}));
                                 }}
                             >
                                 {keyedFormFields.map(({ item: field, key }) => (
-                                    <Form.Group key={key} className="mb-2">
-                                        <Form.Label className="small fw-medium text-body">{field.label}</Form.Label>
-                                        <Form.Control
+                                    <SimulatorField key={key} className="mb-2">
+                                        <SimulatorLabel className="small fw-medium text-body">{field.label}</SimulatorLabel>
+                                        <SimulatorInput
                                             type={getFieldInputType(field.type)}
                                             className="rounded-0"
                                             autoComplete="off"
                                             aria-label={field.label}
                                         />
-                                    </Form.Group>
+                                    </SimulatorField>
                                 ))}
                                 <div className="d-flex gap-2 mt-3">
-                                    <Button type="submit" variant="primary" className="rounded-0 flex-grow-1">
+                                    <SimulatorButton type="submit" tone="primary" className="rounded-0 flex-grow-1">
                                         Submit
-                                    </Button>
+                                    </SimulatorButton>
                                     {onBack != null && (
-                                        <Button
-                                            type="button"
-                                            variant="secondary"
-                                            className="rounded-0 flex-grow-1"
-                                            onClick={onBack}
-                                        >
-                                            Cancel
-                                        </Button>
+                                        renderPageButton(
+                                            'Cancel',
+                                            onBack,
+                                            'secondary',
+                                            'rounded-0 flex-grow-1',
+                                            renderChoice,
+                                        )
                                     )}
                                 </div>
-                            </Form>
+                            </form>
                         )}
                     </div>
                 </div>
@@ -239,9 +288,7 @@ export default function BrowserPageRenderer({ page, onAction, onBack }: Readonly
             {layoutNorm === 'download' && (
                 <>
                     {warningBanner != null && warningBanner !== '' && (
-                        <div className="alert alert-warning rounded-0 border-0 mb-3 small" role="alert">
-                            {warningBanner}
-                        </div>
+                        renderWarningBanner(warningBanner, renderFeedback)
                     )}
                     {showMediaPlaceholder === true && (
                         <div className="mb-3 border border-secondary rounded-0 bg-dark bg-opacity-10 d-flex align-items-center justify-content-center" style={{ minHeight: 140 }}>
@@ -256,26 +303,25 @@ export default function BrowserPageRenderer({ page, onAction, onBack }: Readonly
                     {downloadButtons.length > 0 ? (
                         <div className="d-flex flex-wrap gap-2">
                             {keyedDownloadButtons.map(({ item: btn, key }) => (
-                                <Button
-                                    key={key}
-                                    variant="outline-secondary"
-                                    size="sm"
-                                    className="rounded-0"
-                                    onClick={() => onAction(SimulatorActions.downloadClick(btn.href ?? btn.label))}
-                                >
-                                    {btn.label}
-                                </Button>
+                                <span key={key}>
+                                    {renderPageButton(
+                                        btn.label,
+                                        () => onAction(SimulatorActions.downloadClick(btn.href ?? btn.label)),
+                                        'outline-secondary',
+                                        'rounded-0 simulator-btn--sm',
+                                        renderChoice,
+                                    )}
+                                </span>
                             ))}
                         </div>
                     ) : (
-                        <Button
-                            variant="outline-secondary"
-                            size="sm"
-                            className="rounded-0"
-                            onClick={() => onAction(SimulatorActions.downloadClick(page.id))}
-                        >
-                            Download
-                        </Button>
+                        renderPageButton(
+                            'Download',
+                            () => onAction(SimulatorActions.downloadClick(page.id)),
+                            'outline-secondary',
+                            'rounded-0 simulator-btn--sm',
+                            renderChoice,
+                        )
                     )}
                 </>
             )}
@@ -284,9 +330,7 @@ export default function BrowserPageRenderer({ page, onAction, onBack }: Readonly
             {layoutNorm !== 'landing' && layoutNorm !== 'content' && layoutNorm !== 'login' && layoutNorm !== 'result' && layoutNorm !== 'download' && (
                 <>
                     {warningBanner != null && warningBanner !== '' && (
-                        <div className="alert alert-warning rounded-0 border-0 mb-3 small" role="alert">
-                            {warningBanner}
-                        </div>
+                        renderWarningBanner(warningBanner, renderFeedback)
                     )}
                     {content != null && content !== '' && (
                         <p className="mb-3 small text-secondary" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
@@ -296,23 +340,22 @@ export default function BrowserPageRenderer({ page, onAction, onBack }: Readonly
                     {buttons != null && buttons.length > 0 && (
                         <div className="d-flex flex-wrap gap-2">
                             {keyedButtons.map(({ item: btn, key, index }) => (
-                                <Button
-                                    key={key}
-                                    variant="primary"
-                                    size="sm"
-                                    className="rounded-0"
-                                    onClick={() =>
-                                        onAction(
-                                            SimulatorActions.clickLink({
-                                                href: btn.href ?? url,
-                                                linkIndex: index,
-                                                pageId: btn.targetPageId,
-                                            })
-                                        )
-                                    }
-                                >
-                                    {btn.label}
-                                </Button>
+                                <span key={key}>
+                                    {renderPageButton(
+                                        btn.label,
+                                        () =>
+                                            onAction(
+                                                SimulatorActions.clickLink({
+                                                    href: btn.href ?? url,
+                                                    linkIndex: index,
+                                                    pageId: btn.targetPageId,
+                                                })
+                                            ),
+                                        'primary',
+                                        'rounded-0 simulator-btn--sm',
+                                        renderChoice,
+                                    )}
+                                </span>
                             ))}
                         </div>
                     )}

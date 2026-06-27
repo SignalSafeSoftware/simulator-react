@@ -2,7 +2,7 @@
  * Phone app: secondary nav (History, Contacts, Dial, Back) + content. Defaults to History.
  * Wireframe-style segmented local nav; Back from voicemail or secondary Back returns to primary menu.
  */
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import type {
     PhoneScreenId,
     SimulatorAction,
@@ -10,6 +10,7 @@ import type {
     SimulatorPhonePayload,
     SimulatorSessionContact,
 } from '../types/session';
+import type { SimulatorChoiceRenderProps } from '../ui/renderSlots';
 import { SimulatorActions } from '../actions';
 import SimulatorLocalNav from '../components/SimulatorLocalNav';
 import PhoneHistoryList from './PhoneHistoryList';
@@ -88,6 +89,7 @@ export interface PhoneSimulatorViewProps {
     onBack?: () => void;
     /** When true, the shell is rendering the secondary menu (History/Contacts/Dial/Back); do not render local nav here. */
     navRenderedByShell?: boolean;
+    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
 }
 
 export default function PhoneSimulatorView({
@@ -101,6 +103,7 @@ export default function PhoneSimulatorView({
     onDismissIncoming,
     onBack,
     navRenderedByShell = false,
+    renderChoice,
 }: Readonly<PhoneSimulatorViewProps>) {
     const localNavItems = getPhoneLocalNavItems(phoneCapabilities);
     const handleNavSelect = (id: string) => {
@@ -127,6 +130,7 @@ export default function PhoneSimulatorView({
                     </div>
                     <PhoneIncomingScene
                         content={content}
+                        renderChoice={renderChoice}
                         onAnswer={() => {
                             onAction(SimulatorActions.answerCall(0));
                             dismiss();

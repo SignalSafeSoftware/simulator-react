@@ -3,7 +3,13 @@
  * Shows which screens and entities are reachable from the entry flow.
  */
 import { useId, useState } from 'react';
-import { Card, Collapse } from 'react-bootstrap';
+import {
+    SimulatorCard,
+    SimulatorCardBody,
+    SimulatorCardHeader,
+    SimulatorCollapse,
+} from '../ui/primitives';
+import { SIM_MUTED, joinClasses, simBtnToneClass } from '../ui/simulatorClasses';
 import type { ReachabilityReport } from '../utils/simulatorReachability';
 
 export interface SimulatorReachabilityReportProps {
@@ -16,9 +22,9 @@ export interface SimulatorReachabilityReportProps {
 function Line({ label, value }: Readonly<{ label: string; value: string | string[] }>) {
     const text = Array.isArray(value) ? value.join(', ') || '—' : value;
     return (
-        <div className="small">
-            <span className="text-muted">{label}:</span>{' '}
-            <span className="text-dark">{text}</span>
+        <div className="simulator-text--sm">
+            <span className={SIM_MUTED}>{label}:</span>{' '}
+            <span className="simulator-text--body">{text}</span>
         </div>
     );
 }
@@ -90,20 +96,25 @@ export default function SimulatorReachabilityReport({
         unreachable.browserPageIds.length > 0;
 
     return (
-        <Card className={`mb-2 ${className ?? ''}`.trim()} data-testid="simulator-reachability-report">
-            <Card.Header className="py-1 px-2 small bg-light">
+        <SimulatorCard className={joinClasses('mb-2', className)} data-testid="simulator-reachability-report">
+            <SimulatorCardHeader className={joinClasses('simulator-text--sm', 'simulator-surface--header', 'py-1 px-2')}>
                 <button
                     type="button"
-                    className="btn btn-link p-0 text-decoration-none text-dark fw-medium"
+                    className={joinClasses(
+                        simBtnToneClass('link'),
+                        'simulator-btn--plain',
+                        'simulator-text--semibold',
+                        'simulator-text--body',
+                    )}
                     onClick={() => setOpen((prev: boolean) => !prev)}
                     aria-expanded={open}
                     aria-controls={bodyId}
                 >
                     Reachability {hasUnreachable ? `(${unreachable.screens.length + unreachable.contacts.length + unreachable.inboxMessageIds.length + unreachable.browserPageIds.length} unreachable)` : ''}
                 </button>
-            </Card.Header>
-            <Collapse in={open}>
-                <Card.Body id={bodyId} className="small py-2 px-2">
+            </SimulatorCardHeader>
+            <SimulatorCollapse open={open}>
+                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', 'py-2 px-2')}>
                     <Line label="Entry app" value={entryApp ?? '—'} />
                     <Line label="Reachable apps" value={reachableApps} />
                     {reachableApps.map((app) => {
@@ -128,7 +139,7 @@ export default function SimulatorReachabilityReport({
                     )}
                     {hasUnreachable && (
                         <div className="mt-2 pt-2 border-top">
-                            <span className="text-muted fw-medium">Unreachable</span>
+                            <span className={joinClasses(SIM_MUTED, 'simulator-text--semibold')}>Unreachable</span>
                             {unreachable.screens.length > 0 && (
                                 <div className="mt-1">
                                     Screens: {unreachable.screens.map((s) => formatScreenRef(s)).join(', ')}
@@ -146,12 +157,12 @@ export default function SimulatorReachabilityReport({
                         </div>
                     )}
                     {browserHasCycle && (
-                        <div className="mt-2 text-warning">
+                        <div className="mt-2 simulator-text--warning">
                             Browser navigation has a cycle (e.g. A → B → A).
                         </div>
                     )}
-                </Card.Body>
-            </Collapse>
-        </Card>
+                </SimulatorCardBody>
+            </SimulatorCollapse>
+        </SimulatorCard>
     );
 }

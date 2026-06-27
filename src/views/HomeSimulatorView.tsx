@@ -3,9 +3,8 @@
  * Wireframe: centered headers, search bar, rectangular buttons/cards. Store and Settings are subviews; Back returns to Home.
  */
 import { useState, type ReactNode } from 'react';
-import { Form } from 'react-bootstrap';
 import { SimulatorDetailBackBar } from '../components/SimulatorDetail';
-import { SimulatorSearchInput } from '../components/SimulatorSearchInput';
+import SimulatorSearchInput from '../components/SimulatorSearchInput';
 import type {
     HomeScreenId,
     SimulatorAction,
@@ -16,6 +15,8 @@ import type {
 import { SimulatorActions } from '../actions';
 import { simTypo } from '../simulatorStyles';
 import type { SimulatorCapabilities } from '../utils/simulatorCapabilities';
+import { SimulatorButton, SimulatorField, SimulatorInput, SimulatorLabel } from '../ui/primitives';
+import { joinClasses } from '../ui/simulatorClasses';
 
 export interface HomeSimulatorViewProps {
     payload: SimulatorHomePayload | null;
@@ -70,14 +71,14 @@ function HomeStoreScreen({
                             <span className="fw-medium text-body">{app.name}</span>
                             <div className="d-flex align-items-center justify-content-between mt-2">
                                 <span className="small text-muted">App</span>
-                                <button
-                                    type="button"
-                                    className="btn btn-primary btn-sm rounded-0"
+                                <SimulatorButton
+                                    tone="primary"
+                                    className="simulator-btn--sm rounded-0"
                                     onClick={() => onAction(SimulatorActions.openStore())}
                                     aria-label={`Download ${app.name}`}
                                 >
                                     Download
-                                </button>
+                                </SimulatorButton>
                             </div>
                         </div>
                     </div>
@@ -137,13 +138,17 @@ function HomeSettingsScreen({
                             key={section.id}
                             className="border border-secondary rounded-0 p-3 bg-white"
                         >
-                            <label className="small fw-medium text-body d-block mb-2">{section.title}</label>
-                            <Form.Control
-                                type="text"
-                                placeholder=""
-                                className="rounded-0"
-                                aria-label={section.title}
-                            />
+                            <SimulatorField>
+                                <SimulatorLabel className="small fw-medium text-body d-block mb-2">
+                                    {section.title}
+                                </SimulatorLabel>
+                                <SimulatorInput
+                                    type="text"
+                                    placeholder=""
+                                    className="rounded-0"
+                                    aria-label={section.title}
+                                />
+                            </SimulatorField>
                         </div>
                     ))}
                 </div>
@@ -182,9 +187,9 @@ function HomeDashboard({
             {(hasStore || hasSettings) && (
                 <div className="d-flex gap-2 mb-3">
                     {hasStore && (
-                        <button
-                            type="button"
-                            className="btn btn-light border border-secondary rounded-0 flex-grow-1 py-3 fw-medium"
+                        <SimulatorButton
+                            tone="light"
+                            className={joinClasses('border', 'border-secondary', 'rounded-0', 'flex-grow-1', 'py-3', 'fw-medium')}
                             onClick={() => {
                                 onAction(SimulatorActions.openStore());
                                 onNavigate('store');
@@ -192,12 +197,12 @@ function HomeDashboard({
                             aria-label="Store"
                         >
                             Store
-                        </button>
+                        </SimulatorButton>
                     )}
                     {hasSettings && (
-                        <button
-                            type="button"
-                            className="btn btn-light border border-secondary rounded-0 flex-grow-1 py-3 fw-medium"
+                        <SimulatorButton
+                            tone="light"
+                            className={joinClasses('border', 'border-secondary', 'rounded-0', 'flex-grow-1', 'py-3', 'fw-medium')}
                             onClick={() => {
                                 onAction(SimulatorActions.openSettings());
                                 onNavigate('settings');
@@ -205,7 +210,7 @@ function HomeDashboard({
                             aria-label="Settings"
                         >
                             Settings
-                        </button>
+                        </SimulatorButton>
                     )}
                 </div>
             )}

@@ -2,7 +2,7 @@
 
 Standalone repository: [SignalSafeSoftware/simulator-react](https://github.com/SignalSafeSoftware/simulator-react).
 
-**Depends on:** `@signalsafe/simulator-core`, `@signalsafe/tree-spec`. **Peer deps:** `react`, `react-dom`, `react-bootstrap`.
+**Depends on:** `@signalsafe/simulator-core`, `@signalsafe/tree-spec`. **Peer deps:** `react`, `react-dom`.
 
 ## CI publish policy
 

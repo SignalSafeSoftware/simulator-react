@@ -1,5 +1,11 @@
 import { useId, useState } from 'react';
-import { Card, Collapse } from 'react-bootstrap';
+import {
+    SimulatorCard,
+    SimulatorCardBody,
+    SimulatorCardHeader,
+    SimulatorCollapse,
+} from '../ui/primitives';
+import { SIM_MUTED, joinClasses, simBtnToneClass } from '../ui/simulatorClasses';
 import type { SimulatorRuntimeIssue } from '../developerTools';
 
 export interface SimulatorRuntimeIssuesReportProps {
@@ -46,41 +52,46 @@ export default function SimulatorRuntimeIssuesReport({
     const summary = formatIssueCountSummary(issues.length, errorCount);
 
     return (
-        <Card className={`mb-2 ${className ?? ''}`.trim()} data-testid="simulator-runtime-issues-report">
-            <Card.Header className="py-1 px-2 small bg-light">
+        <SimulatorCard className={joinClasses('mb-2', className)} data-testid="simulator-runtime-issues-report">
+            <SimulatorCardHeader className={joinClasses('simulator-text--sm', 'simulator-surface--header', 'py-1 px-2')}>
                 <button
                     type="button"
-                    className="btn btn-link p-0 text-decoration-none text-dark fw-medium"
+                    className={joinClasses(
+                        simBtnToneClass('link'),
+                        'simulator-btn--plain',
+                        'simulator-text--semibold',
+                        'simulator-text--body',
+                    )}
                     onClick={() => setOpen((prev: boolean) => !prev)}
                     aria-expanded={open}
                     aria-controls={bodyId}
                 >
                     Runtime issues
                 </button>
-                <span className="text-muted ms-1">{summary}</span>
-            </Card.Header>
-            <Collapse in={open}>
-                <Card.Body id={bodyId} className="small py-2 px-2">
+                <span className={joinClasses(SIM_MUTED, 'simulator-inline-gap')}>{summary}</span>
+            </SimulatorCardHeader>
+            <SimulatorCollapse open={open}>
+                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', 'py-2 px-2')}>
                     {issues.length === 0 ? (
-                        <div className="text-muted">No runtime issues detected.</div>
+                        <div className={SIM_MUTED}>No runtime issues detected.</div>
                     ) : (
                         <ul className="mb-0 ps-3">
                             {issues.map((issue, index) => (
                                 <li key={`${issue.severity}-${issue.message}-${issue.node_id ?? ''}-${issue.choice_id ?? ''}-${index}`}>
-                                    <span className={issue.severity === 'error' ? 'text-danger' : 'text-warning'}>
+                                    <span className={issue.severity === 'error' ? 'simulator-text--danger' : 'simulator-text--warning'}>
                                         {issue.severity}
                                     </span>
                                     {': '}
                                     <span>{issue.message}</span>
                                     {formatIssueLocation(issue) != null && (
-                                        <span className="text-muted"> {formatIssueLocation(issue)}</span>
+                                        <span className={SIM_MUTED}> {formatIssueLocation(issue)}</span>
                                     )}
                                 </li>
                             ))}
                         </ul>
                     )}
-                </Card.Body>
-            </Collapse>
-        </Card>
+                </SimulatorCardBody>
+            </SimulatorCollapse>
+        </SimulatorCard>
     );
 }

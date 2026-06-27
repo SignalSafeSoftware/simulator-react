@@ -2,11 +2,16 @@
  * Messages app: thread detail. Wireframe: profile + name, message bubbles,
  * message box and Send/Cancel at bottom. Links and attachments preserved in bubbles.
  */
-import { useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { useEffect, useState, type ReactNode } from 'react';
 import type { SimulatorAction, SimulatorSmsPayload } from '../types/session';
 import { SimulatorActions } from '../actions';
 import { simBorder, simSpacing, simTypo } from '../simulatorStyles';
+import { SimulatorInput } from '../ui/primitives';
+import { joinClasses, SIM_MUTED } from '../ui/simulatorClasses';
+import {
+    renderSimulatorChoice,
+    type SimulatorChoiceRenderProps,
+} from '../ui/renderSlots';
 
 export interface SmsSimulatorViewProps {
     payload: SimulatorSmsPayload | null;
@@ -15,6 +20,7 @@ export interface SmsSimulatorViewProps {
     onRevealNext: () => void;
     onBack?: () => void;
     showReplyBox?: boolean;
+    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
 }
 
 function ConversationProfileIcon({ className }: Readonly<{ className?: string }>) {
@@ -31,23 +37,21 @@ function ConversationProfileIcon({ className }: Readonly<{ className?: string }>
 
 function renderAttachmentAction(
     attachment: NonNullable<NonNullable<SimulatorSmsPayload['thread']>['messages']>[number]['attachment'],
-    onAction: (action: SimulatorAction) => void
-): JSX.Element {
+    onAction: (action: SimulatorAction) => void,
+    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode,
+): ReactNode {
     if (attachment?.url == null) {
-        return <span className="text-muted">📎 {attachment?.label}</span>;
+        return <span className={SIM_MUTED}>📎 {attachment?.label}</span>;
     }
-    return (
-        <Button
-            variant="link"
-            size="sm"
-            className="p-0 small text-decoration-none"
-            onClick={() =>
-                onAction(SimulatorActions.clickLink({ href: attachment.url }))
-            }
-            aria-label={`Open: ${attachment.label}`}
-        >
-            📎 {attachment.label}
-        </Button>
+    return renderSimulatorChoice(
+        {
+            label: <>📎 {attachment.label}</>,
+            tone: 'link',
+            className: 'p-0 small text-decoration-none',
+            onClick: () => onAction(SimulatorActions.clickLink({ href: attachment.url })),
+            'aria-label': `Open: ${attachment.label}`,
+        },
+        renderChoice,
     );
 }
 
@@ -58,6 +62,7 @@ export default function SmsSimulatorView({
     onRevealNext,
     onBack,
     showReplyBox = true,
+    renderChoice,
 }: Readonly<SmsSimulatorViewProps>) {
     const [replyText, setReplyText] = useState('');
     const messages = payload?.thread?.messages ?? [];
@@ -128,10 +133,10 @@ export default function SmsSimulatorView({
                             {(msg.timestamp != null || msg.attachment != null) && (
                                 <div className="d-flex flex-wrap align-items-center gap-2 small">
                                     {msg.timestamp != null && (
-                                        <span className="text-muted">{msg.timestamp}</span>
+                                        <span className={SIM_MUTED}>{msg.timestamp}</span>
                                     )}
                                     {msg.attachment != null && (
-                                        renderAttachmentAction(msg.attachment, onAction)
+                                        renderAttachmentAction(msg.attachment, onAction, renderChoice)
                                     )}
                                 </div>
                             )}
@@ -145,31 +150,32 @@ export default function SmsSimulatorView({
                             link.title != null && link.title !== '' ? (
                                 <div key={`link-${idx}-${link.href ?? ''}-${link.title ?? ''}`} className={`${simBorder.block} ${simSpacing.blockPaddingCompact} small`} style={{ maxWidth: 280 }}>
                                     <span className="fw-medium d-block text-dark mb-1">{link.title}</span>
-                                    <Button
-                                        variant="link"
-                                        size="sm"
-                                        className="p-0 small align-baseline"
-                                        onClick={() =>
-                                            onAction(SimulatorActions.clickLink({ linkIndex: idx, href: link.href }))
-                                        }
-                                        aria-label={`Link: ${link.text || link.href}`}
-                                    >
-                                        {link.text || link.href}
-                                    </Button>
+                                    {renderSimulatorChoice(
+                                        {
+                                            label: link.text || link.href,
+                                            tone: 'link',
+                                            className: 'p-0 small align-baseline',
+                                            onClick: () =>
+                                                onAction(SimulatorActions.clickLink({ linkIndex: idx, href: link.href })),
+                                            'aria-label': `Link: ${link.text || link.href}`,
+                                        },
+                                        renderChoice,
+                                    )}
                                 </div>
                             ) : (
-                                <Button
-                                    key={`link-btn-${idx}-${link.href ?? ''}`}
-                                    variant="link"
-                                    size="sm"
-                                    className="p-0 align-baseline rounded-0"
-                                    onClick={() =>
-                                        onAction(SimulatorActions.clickLink({ linkIndex: idx, href: link.href }))
-                                    }
-                                    aria-label={`Link: ${link.text || link.href}`}
-                                >
-                                    {link.text || link.href}
-                                </Button>
+                                <span key={`link-btn-${idx}-${link.href ?? ''}`}>
+                                    {renderSimulatorChoice(
+                                        {
+                                            label: link.text || link.href,
+                                            tone: 'link',
+                                            className: 'p-0 align-baseline rounded-0',
+                                            onClick: () =>
+                                                onAction(SimulatorActions.clickLink({ linkIndex: idx, href: link.href })),
+                                            'aria-label': `Link: ${link.text || link.href}`,
+                                        },
+                                        renderChoice,
+                                    )}
+                                </span>
                             )
                         )}
                     </div>
@@ -178,7 +184,7 @@ export default function SmsSimulatorView({
 
             {showReplyBox && (
                 <div className="p-2 flex-shrink-0 mt-auto d-flex flex-column gap-2">
-                    <Form.Control
+                    <SimulatorInput
                         type="text"
                         placeholder="I will send you a message"
                         value={replyText}
@@ -188,22 +194,26 @@ export default function SmsSimulatorView({
                         className="rounded-0"
                     />
                     <div className="d-flex gap-2">
-                        <button
-                            type="button"
-                            className="btn btn-primary rounded-0 flex-grow-1 py-2 fw-semibold"
-                            onClick={handleSendReply}
-                            aria-label="Send"
-                        >
-                            Send
-                        </button>
-                        <button
-                            type="button"
-                            className="btn btn-secondary rounded-0 flex-grow-1 py-2 fw-semibold"
-                            onClick={onBack}
-                            aria-label="Cancel"
-                        >
-                            Cancel
-                        </button>
+                        {renderSimulatorChoice(
+                            {
+                                label: 'Send',
+                                tone: 'primary',
+                                className: joinClasses('rounded-0', 'simulator-btn--block', 'py-2', 'fw-semibold', 'flex-grow-1'),
+                                onClick: handleSendReply,
+                                'aria-label': 'Send',
+                            },
+                            renderChoice,
+                        )}
+                        {renderSimulatorChoice(
+                            {
+                                label: 'Cancel',
+                                tone: 'secondary',
+                                className: joinClasses('rounded-0', 'simulator-btn--block', 'py-2', 'fw-semibold', 'flex-grow-1'),
+                                onClick: () => onBack?.(),
+                                'aria-label': 'Cancel',
+                            },
+                            renderChoice,
+                        )}
                     </div>
                 </div>
             )}

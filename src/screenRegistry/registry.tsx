@@ -97,6 +97,7 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             onRevealNext: ctx.onSmsRevealNext,
             onBack: ctx.onBack,
             showReplyBox: true,
+            renderChoice: ctx.renderChoice,
         }),
     },
     {
@@ -108,6 +109,8 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             stack: ctx.state.view.internet.stack,
             onAction: ctx.onAction,
             onBack: ctx.onBack,
+            renderChoice: ctx.renderChoice,
+            renderFeedback: ctx.renderFeedback,
         }),
     },
     {
@@ -189,6 +192,7 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             onBack: ctx.onBack,
             navRenderedByShell:
                 !ctx.state.view.showPrimaryMenu && ctx.state.view.activeApp === 'phone',
+            renderChoice: ctx.renderChoice,
         }),
     },
     {

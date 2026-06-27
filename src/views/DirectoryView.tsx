@@ -3,7 +3,6 @@
  * When phoneLocalNavItems is provided, shows wireframe-style phone tabs above content.
  */
 import { useState } from 'react';
-import { Button, ListGroup } from 'react-bootstrap';
 import type {
     SimulatorAction,
     SimulatorDirectoryEntry,
@@ -12,7 +11,10 @@ import type {
 import { SimulatorActions } from '../actions';
 import SimulatorLocalNav from '../components/SimulatorLocalNav';
 import { SimulatorDetailBackBar } from '../components/SimulatorDetail';
+import { SimulatorList, SimulatorListItem } from '../components/SimulatorList';
 import { simTypo } from '../simulatorStyles';
+import { SimulatorButton } from '../ui/primitives';
+import { SIM_MUTED } from '../ui/simulatorClasses';
 
 export interface DirectoryViewProps {
     directory: SimulatorDirectoryEntry[] | null;
@@ -74,7 +76,7 @@ export default function DirectoryView({
                     />
                 )}
                 <SimulatorDetailBackBar onBack={onBack} title="Directory" ariaLabel="Back" titleOnly />
-                <p className="text-muted mb-0">No directory for this scenario.</p>
+                <p className={`${SIM_MUTED} mb-0`}>No directory for this scenario.</p>
             </div>
         );
     }
@@ -97,35 +99,34 @@ export default function DirectoryView({
                 <div className="border rounded p-3 bg-light">
                     <div className="d-flex justify-content-between align-items-start mb-2">
                         <strong>{selected.label}</strong>
-                        <Button
-                            variant="link"
-                            size="sm"
-                            className="p-0 text-secondary"
+                        <SimulatorButton
+                            tone="link"
+                            className="simulator-btn--sm p-0 text-secondary"
                             onClick={() => setSelectedId(null)}
                         >
                             Change
-                        </Button>
+                        </SimulatorButton>
                     </div>
                     {selected.description && (
-                        <p className="small text-muted mb-2">{selected.description}</p>
+                        <p className={`small ${SIM_MUTED} mb-2`}>{selected.description}</p>
                     )}
                     {selected.contact_id && (() => {
                         const contact = findContact(contacts, selected.contact_id);
                         if (contact) {
                             return (
                                 <div className="mb-2">
-                                    <span className="small text-muted">{contact.displayName}</span>
+                                    <span className={`small ${SIM_MUTED}`}>{contact.displayName}</span>
                                     {contact.number && (
                                         <span className="small ms-2">{contact.number}</span>
                                     )}
                                     <div className="mt-1">
-                                        <Button
-                                            size="sm"
-                                            variant="primary"
+                                        <SimulatorButton
+                                            tone="primary"
+                                            className="simulator-btn--sm"
                                             onClick={() => handleCallContact(contact.id)}
                                         >
                                             Call
-                                        </Button>
+                                        </SimulatorButton>
                                     </div>
                                 </div>
                             );
@@ -136,37 +137,35 @@ export default function DirectoryView({
                         <div className="mb-2">
                             <span className="small">{selected.number}</span>
                             <div className="mt-1">
-                                <Button
-                                    size="sm"
-                                    variant="primary"
+                                <SimulatorButton
+                                    tone="primary"
+                                    className="simulator-btn--sm"
                                     onClick={() => handleDial(selected.number!)}
                                 >
                                     Call
-                                </Button>
+                                </SimulatorButton>
                             </div>
                         </div>
                     )}
                     {selected.url && (
                         <p className="small mb-0 text-break">
-                            <span className="text-muted">URL: </span>
+                            <span className={SIM_MUTED}>URL: </span>
                             {selected.url}
                         </p>
                     )}
                 </div>
             ) : (
-                <ListGroup as="ul" className="border rounded">
+                <SimulatorList className="border rounded">
                     {entries.map((entry) => (
-                        <ListGroup.Item
+                        <SimulatorListItem
                             key={entry.id}
-                            as="li"
-                            action
                             onClick={() => handleSelect(entry)}
                             className="py-2"
                         >
                             {entry.label}
-                        </ListGroup.Item>
+                        </SimulatorListItem>
                     ))}
-                </ListGroup>
+                </SimulatorList>
             )}
         </div>
     );

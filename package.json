@@ -91,18 +91,16 @@
     "@signalsafe/simulator-core": "^0.1.5",
     "@signalsafe/tree-spec": "^0.3.2"
   },
-  "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-bootstrap": "^2.0.0"
-  },
+    "peerDependencies": {
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0"
+    },
   "devDependencies": {
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@types/react-test-renderer": "^18.3.0",
-    "react": "^18.3.1",
-    "react-bootstrap": "^2.10.2",
-    "react-dom": "^18.3.1",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
     "react-test-renderer": "^18.3.1",
     "tsx": "^4.19.2",
     "typescript": "^5.4.2",

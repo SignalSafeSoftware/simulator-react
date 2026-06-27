@@ -120,18 +120,6 @@ vi.mock('../src/utils/simulatorKeyboardCommands', () => ({
     SIMULATOR_KEYBOARD_COMMANDS: [{ keys: '?', description: 'Show shortcuts' }],
 }));
 
-vi.mock('react-bootstrap', async () => {
-    const actual = await vi.importActual<Record<string, unknown>>('react-bootstrap');
-    const Modal = ({ show, children }: { show?: boolean; children?: React.ReactNode }) =>
-        show ? React.createElement('modal', null, children) : null;
-    Modal.Body = ({ children }: { children?: React.ReactNode }) =>
-        React.createElement('modal-body', null, children);
-    return {
-        ...actual,
-        Modal,
-    };
-});
-
 import SimulatorWithSession from '../src/SimulatorWithSession';
 
 function createState(overrides: Record<string, unknown> = {}) {

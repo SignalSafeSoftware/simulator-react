@@ -2,18 +2,27 @@
  * Phone incoming call scene: wireframe order — large profile icon, "Name calling (URGENT)", number,
  * rectangular Answer / Ignore. Emits answer_call / ignore_call via callbacks.
  */
+import type { ReactNode } from 'react';
+
 import type { PhoneSimulatorContent } from '../types/portableSimulator';
+import { joinClasses } from '../ui/simulatorClasses';
+import {
+    renderSimulatorChoice,
+    type SimulatorChoiceRenderProps,
+} from '../ui/renderSlots';
 
 export interface PhoneIncomingSceneProps {
     content: PhoneSimulatorContent;
     onAnswer: () => void;
     onIgnore: () => void;
+    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
 }
 
 export default function PhoneIncomingScene({
     content,
     onAnswer,
     onIgnore,
+    renderChoice,
 }: Readonly<PhoneIncomingSceneProps>) {
     const phoneNumber = content.phone_number ?? '+1 555 000-0000';
     const callerName = content.caller_name ?? 'Unknown';
@@ -59,22 +68,26 @@ export default function PhoneIncomingScene({
             </p>
 
             <div className="d-flex flex-row gap-2 w-100 mt-auto" data-testid="phone-simulator-actions">
-                <button
-                    type="button"
-                    className="btn btn-success rounded-0 py-3 fw-semibold flex-grow-1"
-                    onClick={onAnswer}
-                    aria-label="Answer"
-                >
-                    ANSWER
-                </button>
-                <button
-                    type="button"
-                    className="btn btn-danger rounded-0 py-3 fw-semibold flex-grow-1"
-                    onClick={onIgnore}
-                    aria-label="Ignore"
-                >
-                    IGNORE
-                </button>
+                {renderSimulatorChoice(
+                    {
+                        label: 'ANSWER',
+                        tone: 'success',
+                        className: joinClasses('rounded-0', 'py-3', 'fw-semibold', 'flex-grow-1', 'simulator-btn--block'),
+                        onClick: onAnswer,
+                        'aria-label': 'Answer',
+                    },
+                    renderChoice,
+                )}
+                {renderSimulatorChoice(
+                    {
+                        label: 'IGNORE',
+                        tone: 'danger',
+                        className: joinClasses('rounded-0', 'py-3', 'fw-semibold', 'flex-grow-1', 'simulator-btn--block'),
+                        onClick: onIgnore,
+                        'aria-label': 'Ignore',
+                    },
+                    renderChoice,
+                )}
             </div>
         </div>
     );

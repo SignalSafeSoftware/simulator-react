@@ -3,7 +3,15 @@
  * Phone Number field, Message body textarea, Send (blue) and Cancel (grey) buttons.
  */
 import { useState } from 'react';
-import { Form } from 'react-bootstrap';
+
+import {
+    SimulatorButton,
+    SimulatorField,
+    SimulatorInput,
+    SimulatorLabel,
+    SimulatorTextarea,
+} from '../ui/primitives';
+import { joinClasses } from '../ui/simulatorClasses';
 
 export interface MessagesNewThreadViewProps {
     onBack: () => void;
@@ -24,9 +32,9 @@ export default function MessagesNewThreadView({ onBack }: Readonly<MessagesNewTh
                 New Thread
             </div>
             <div className="px-3 pt-3 flex-shrink-0">
-                <Form.Group>
-                    <Form.Label className="small fw-medium text-body">Phone Number</Form.Label>
-                    <Form.Control
+                <SimulatorField>
+                    <SimulatorLabel className="small fw-medium text-body">Phone Number</SimulatorLabel>
+                    <SimulatorInput
                         type="tel"
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
@@ -34,14 +42,13 @@ export default function MessagesNewThreadView({ onBack }: Readonly<MessagesNewTh
                         className="rounded-0"
                         aria-label="Phone number"
                     />
-                </Form.Group>
+                </SimulatorField>
             </div>
             <div className="flex-grow-1 min-h-0" aria-hidden />
             <div className="p-2 flex-shrink-0 mt-auto d-flex flex-column gap-2">
-                <Form.Group className="mb-0">
-                    <Form.Label className="small fw-medium text-body">Message</Form.Label>
-                    <Form.Control
-                        as="textarea"
+                <SimulatorField className="mb-0">
+                    <SimulatorLabel className="small fw-medium text-body">Message</SimulatorLabel>
+                    <SimulatorTextarea
                         rows={3}
                         value={messageBody}
                         onChange={(e) => setMessageBody(e.target.value)}
@@ -49,24 +56,24 @@ export default function MessagesNewThreadView({ onBack }: Readonly<MessagesNewTh
                         className="rounded-0"
                         aria-label="Message body"
                     />
-                </Form.Group>
+                </SimulatorField>
                 <div className="d-flex gap-2">
-                    <button
-                        type="button"
-                        className="btn btn-primary rounded-0 flex-grow-1 py-2 fw-semibold"
+                    <SimulatorButton
+                        tone="primary"
+                        className={joinClasses('rounded-0', 'simulator-btn--block', 'py-2', 'fw-semibold', 'flex-grow-1')}
                         onClick={handleSend}
                         aria-label="Send"
                     >
                         Send
-                    </button>
-                    <button
-                        type="button"
-                        className="btn btn-secondary rounded-0 flex-grow-1 py-2 fw-semibold"
+                    </SimulatorButton>
+                    <SimulatorButton
+                        tone="secondary"
+                        className={joinClasses('rounded-0', 'simulator-btn--block', 'py-2', 'fw-semibold', 'flex-grow-1')}
                         onClick={onBack}
                         aria-label="Cancel"
                     >
                         Cancel
-                    </button>
+                    </SimulatorButton>
                 </div>
             </div>
         </div>
