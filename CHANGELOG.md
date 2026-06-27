@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Complete runtime Bootstrap CSS class removal from shell, list, dial, inbox, browser, and dev chrome views (Prompt 12B).
 - `SimulatorErrorBoundary` and `UnsupportedScreenFallback` default to learner-safe copy (no exception message or component stack).
 - Add `showDiagnostics` prop for author/admin surfaces that need internal detail.
+- Raise minimum supported Node.js to **>=20.19.0** (`engines.node`); CI matrix tests **20.19**, **22**, and **24** (Node 18 dropped).
 - README and RELEASING document UI-kit agnostic integration; Bootstrap examples are host-app code only.
 
 ## [0.1.6] - 2026-06-26

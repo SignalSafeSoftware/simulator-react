@@ -10,6 +10,10 @@ Standalone repository: [SignalSafeSoftware/simulator-react](https://github.com/S
 
 When publishing the tree-spec editor line, publish `@signalsafe/tree-spec-editor-react@0.2.0` before `@signalsafe/tree-spec-editor@0.3.0` (see that package’s RELEASING.md).
 
+## Requirements
+
+- Node.js **>=20.19.0** for local development, CI, and publish smoke (see `package.json` `engines`).
+
 ## CI publish policy
 
 - **Checks and tests** run on every pull request.
