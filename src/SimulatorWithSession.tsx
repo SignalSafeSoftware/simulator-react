@@ -23,6 +23,7 @@ import { useSimulatorSecondaryMenu } from './hooks/useSimulatorSecondaryMenu';
 import { useSimulatorDeveloperControls } from './hooks/useSimulatorDeveloperControls';
 import SimulatorDeveloperToolbar from './components/SimulatorDeveloperToolbar';
 import SimulatorDeveloperControlsBar from './components/SimulatorDeveloperControlsBar';
+import { simSpacing } from './simulatorStyles';
 import { SimulatorDialog } from './ui/primitives';
 import type {
     SimulatorChoiceRenderProps,
@@ -166,7 +167,7 @@ export default function SimulatorWithSession({
                     payload={payload}
                     timelineEntries={developerToolsTimelineEntries}
                     runtimeIssues={developerToolsRuntimeIssues}
-                    className="mb-3"
+                    className={simSpacing.mb3}
                 />
                 <PhoneSimulatorShell
                     activeChannel={activeChannel}

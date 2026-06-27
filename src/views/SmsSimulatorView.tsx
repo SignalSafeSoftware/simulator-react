@@ -5,9 +5,22 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import type { SimulatorAction, SimulatorSmsPayload } from '../types/session';
 import { SimulatorActions } from '../actions';
-import { simBorder, simSpacing, simTypo } from '../simulatorStyles';
+import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles';
 import { SimulatorInput } from '../ui/primitives';
-import { joinClasses, SIM_MUTED } from '../ui/simulatorClasses';
+import {
+    joinClasses,
+    SIM_AVATAR,
+    SIM_BORDER,
+    SIM_BORDER_TOP,
+    SIM_FLEX_COL,
+    SIM_FLEX_SHRINK_0,
+    SIM_MUTED,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_AVATAR,
+    SIM_TEXT_DARK,
+    SIM_TEXT_SEMIBOLD,
+    SIM_TEXT_SM,
+} from '../ui/simulatorClasses';
 import {
     renderSimulatorChoice,
     type SimulatorChoiceRenderProps,
@@ -26,11 +39,19 @@ export interface SmsSimulatorViewProps {
 function ConversationProfileIcon({ className }: Readonly<{ className?: string }>) {
     return (
         <div
-            className={`rounded bg-primary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0 mx-auto ${className ?? ''}`}
+            className={joinClasses(
+                SIM_AVATAR,
+                SIM_SURFACE_AVATAR,
+                'simulator-flex simulator-flex--center',
+                SIM_FLEX_SHRINK_0,
+                'simulator-flex--center',
+                'simulator-spacing--mx-auto',
+                className,
+            )}
             style={{ width: 48, height: 48 }}
             aria-hidden
         >
-            <span className="text-primary" style={{ fontSize: '1.5rem' }}>👤</span>
+            <span className="simulator-text--primary" style={{ fontSize: '1.5rem' }}>👤</span>
         </div>
     );
 }
@@ -47,13 +68,24 @@ function renderAttachmentAction(
         {
             label: <>📎 {attachment.label}</>,
             tone: 'link',
-            className: 'p-0 small text-decoration-none',
+            className: joinClasses('simulator-btn--plain', SIM_TEXT_SM, 'simulator-text--link-plain'),
             onClick: () => onAction(SimulatorActions.clickLink({ href: attachment.url })),
             'aria-label': `Open: ${attachment.label}`,
         },
         renderChoice,
     );
 }
+
+const bubbleThem = joinClasses(simSpacing.px3, simSpacing.py2, SIM_ROUNDED_NONE, 'simulator-surface--secondary', 'simulator-text--on-secondary');
+const bubbleMe = joinClasses(
+    simSpacing.px3,
+    simSpacing.py2,
+    SIM_ROUNDED_NONE,
+    'simulator-surface--success-light',
+    SIM_TEXT_DARK,
+    SIM_BORDER,
+    'simulator-border--success',
+);
 
 export default function SmsSimulatorView({
     payload,
@@ -99,29 +131,30 @@ export default function SmsSimulatorView({
     };
 
     return (
-        <div className="d-flex flex-column flex-grow-1 min-h-0">
-            <div className="text-center border-bottom border-secondary py-2 mb-2 flex-shrink-0">
+        <div className={simLayout.screenColumn}>
+            <div className={joinClasses(simScreen.header, simSpacing.sectionGap, SIM_FLEX_SHRINK_0)}>
                 <ConversationProfileIcon />
-                <div className="small fw-semibold text-body mt-1">{contactLabel}</div>
+                <div className={joinClasses(SIM_TEXT_SM, SIM_TEXT_SEMIBOLD, 'simulator-text--body', simSpacing.mt1)}>
+                    {contactLabel}
+                </div>
             </div>
 
-            <div className="flex-grow-1 min-h-0 overflow-auto">
+            <div className={simLayout.scrollBody}>
                 {visible.length === 0 && (
                     <p className={simTypo.secondaryTight}>No messages in this thread.</p>
                 )}
-                <ul className="d-flex flex-column gap-2 list-unstyled m-0 p-0" aria-label="Message timeline">
+                <ul
+                    className={joinClasses(SIM_FLEX_COL, simSpacing.gap2, 'simulator-list--plain', simSpacing.mb0, 'simulator-spacing--p-0')}
+                    aria-label="Message timeline"
+                >
                     {visible.map((msg, idx) => (
                         <li
                             key={`msg-${idx}-${msg.from}-${(msg.text ?? '').slice(0, 30)}`}
-                            className="d-flex flex-column align-items-stretch gap-1"
+                            className={joinClasses(SIM_FLEX_COL, 'simulator-flex--align-stretch', simSpacing.gap2)}
                             style={{ maxWidth: '88%', alignSelf: msg.from === 'them' ? 'flex-start' : 'flex-end' }}
                         >
                             <div
-                                className={`px-3 py-2 rounded-0 ${
-                                    msg.from === 'them'
-                                        ? 'bg-secondary text-white'
-                                        : 'bg-success bg-opacity-25 text-dark border border-success'
-                                }`}
+                                className={msg.from === 'them' ? bubbleThem : bubbleMe}
                                 style={{
                                     lineHeight: 1.45,
                                     borderTopLeftRadius: msg.from === 'them' ? 0 : 8,
@@ -131,7 +164,7 @@ export default function SmsSimulatorView({
                                 <span>{msg.text}</span>
                             </div>
                             {(msg.timestamp != null || msg.attachment != null) && (
-                                <div className="d-flex flex-wrap align-items-center gap-2 small">
+                                <div className={joinClasses(simLayout.actionsRow, SIM_TEXT_SM)}>
                                     {msg.timestamp != null && (
                                         <span className={SIM_MUTED}>{msg.timestamp}</span>
                                     )}
@@ -145,16 +178,30 @@ export default function SmsSimulatorView({
                 </ul>
 
                 {(content.links?.length ?? 0) > 0 && (
-                    <div className={`mt-3 pt-3 border-top d-flex flex-wrap gap-2 align-items-center ${simSpacing.sectionGap}`}>
+                    <div
+                        className={joinClasses(
+                            simSpacing.mt3,
+                            simSpacing.pt3,
+                            SIM_BORDER_TOP,
+                            simLayout.actionsRow,
+                            simSpacing.sectionGap,
+                        )}
+                    >
                         {content.links?.map((link, idx) =>
                             link.title != null && link.title !== '' ? (
-                                <div key={`link-${idx}-${link.href ?? ''}-${link.title ?? ''}`} className={`${simBorder.block} ${simSpacing.blockPaddingCompact} small`} style={{ maxWidth: 280 }}>
-                                    <span className="fw-medium d-block text-dark mb-1">{link.title}</span>
+                                <div
+                                    key={`link-${idx}-${link.href ?? ''}-${link.title ?? ''}`}
+                                    className={joinClasses(simBorder.block, simSpacing.blockPaddingCompact, SIM_TEXT_SM)}
+                                    style={{ maxWidth: 280 }}
+                                >
+                                    <span className={joinClasses('simulator-text--medium', 'simulator-text--block', SIM_TEXT_DARK, simSpacing.mb1)}>
+                                        {link.title}
+                                    </span>
                                     {renderSimulatorChoice(
                                         {
                                             label: link.text || link.href,
                                             tone: 'link',
-                                            className: 'p-0 small align-baseline',
+                                            className: joinClasses('simulator-btn--plain', SIM_TEXT_SM, 'simulator-text--align-baseline'),
                                             onClick: () =>
                                                 onAction(SimulatorActions.clickLink({ linkIndex: idx, href: link.href })),
                                             'aria-label': `Link: ${link.text || link.href}`,
@@ -168,7 +215,7 @@ export default function SmsSimulatorView({
                                         {
                                             label: link.text || link.href,
                                             tone: 'link',
-                                            className: 'p-0 align-baseline rounded-0',
+                                            className: joinClasses('simulator-btn--plain', 'simulator-text--align-baseline', SIM_ROUNDED_NONE),
                                             onClick: () =>
                                                 onAction(SimulatorActions.clickLink({ linkIndex: idx, href: link.href })),
                                             'aria-label': `Link: ${link.text || link.href}`,
@@ -183,7 +230,7 @@ export default function SmsSimulatorView({
             </div>
 
             {showReplyBox && (
-                <div className="p-2 flex-shrink-0 mt-auto d-flex flex-column gap-2">
+                <div className={simLayout.footerActions}>
                     <SimulatorInput
                         type="text"
                         placeholder="I will send you a message"
@@ -191,14 +238,14 @@ export default function SmsSimulatorView({
                         onChange={(e) => setReplyText(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSendReply()}
                         aria-label="Reply to message"
-                        className="rounded-0"
+                        className={SIM_ROUNDED_NONE}
                     />
-                    <div className="d-flex gap-2">
+                    <div className={simLayout.actionsRow}>
                         {renderSimulatorChoice(
                             {
                                 label: 'Send',
                                 tone: 'primary',
-                                className: joinClasses('rounded-0', 'simulator-btn--block', 'py-2', 'fw-semibold', 'flex-grow-1'),
+                                className: joinClasses(simLayout.blockButton, SIM_TEXT_SEMIBOLD),
                                 onClick: handleSendReply,
                                 'aria-label': 'Send',
                             },
@@ -208,7 +255,7 @@ export default function SmsSimulatorView({
                             {
                                 label: 'Cancel',
                                 tone: 'secondary',
-                                className: joinClasses('rounded-0', 'simulator-btn--block', 'py-2', 'fw-semibold', 'flex-grow-1'),
+                                className: joinClasses(simLayout.blockButton, SIM_TEXT_SEMIBOLD),
                                 onClick: () => onBack?.(),
                                 'aria-label': 'Cancel',
                             },

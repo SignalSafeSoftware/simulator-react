@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking:** Remove `react-bootstrap` from peer dependencies; hosts supply their own UI kit or CSS.
 - Replace `react-bootstrap` components (Modal, Card, Form, Alert, …) with semantic HTML and native `<dialog>`.
 - Default styling contract uses `simulator-*` hooks instead of Bootstrap component markup.
+- Complete runtime Bootstrap CSS class removal from shell, list, dial, inbox, browser, and dev chrome views (Prompt 12B).
 - README and RELEASING document UI-kit agnostic integration; Bootstrap examples are host-app code only.
 
 ## [0.1.6] - 2026-06-26

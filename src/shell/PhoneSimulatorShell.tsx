@@ -5,6 +5,15 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { memo } from 'react';
 
+import { simShell } from '../simulatorStyles';
+import {
+    joinClasses,
+    SIM_FLEX_COL,
+    SIM_FLEX_CENTER,
+    SIM_FLEX_GROW_1,
+    SIM_TEXT_SM,
+} from '../ui/simulatorClasses';
+
 export interface SecondaryMenuItem {
     id: string;
     label: string;
@@ -41,21 +50,21 @@ const PRIMARY_CHANNELS: { id: string; label: string; icon: string }[] = [
 ];
 
 function getHeaderClass(hasTitle: boolean): string {
-    return `d-flex align-items-center px-2 py-2 bg-white border-bottom border-secondary small ${
-        hasTitle ? 'justify-content-between' : 'justify-content-end'
-    }`;
+    return hasTitle ? simShell.headerBetween : simShell.headerEnd;
 }
 
-function getSecondaryButtonClass(isLast: boolean, isBack: boolean, isActive: boolean): string {
-    const borderClass = isLast ? '' : 'border-end border-secondary';
-    const stateClass = isBack || !isActive ? 'bg-light text-body' : 'bg-secondary text-white';
-    return `flex-grow-1 py-2 border-0 d-flex flex-column align-items-center justify-content-center gap-0 small ${borderClass} ${stateClass}`;
-}
-
-function getPrimaryButtonClass(isLast: boolean, isActive: boolean): string {
-    const borderClass = isLast ? '' : 'border-end border-secondary';
-    const stateClass = isActive ? 'bg-secondary text-white' : 'bg-light text-body';
-    return `flex-grow-1 py-2 border-0 d-flex flex-column align-items-center justify-content-center gap-0 small ${borderClass} ${stateClass}`;
+function getNavTabClass(isLast: boolean, inactive: boolean): string {
+    return joinClasses(
+        simShell.navTab,
+        SIM_FLEX_GROW_1,
+        'simulator-spacing--py-2',
+        SIM_FLEX_COL,
+        SIM_FLEX_CENTER,
+        'simulator-spacing--gap',
+        SIM_TEXT_SM,
+        !isLast && simShell.navTabBorderEnd,
+        inactive ? simShell.navTabInactive : simShell.navTabActive,
+    );
 }
 
 function PhoneSimulatorShell({
@@ -96,7 +105,7 @@ function PhoneSimulatorShell({
     const exitArea =
         exitSlot ??
         (exitTo ? (
-            <a href={exitTo} className="text-decoration-underline text-body">
+            <a href={exitTo} className={simShell.exitLink}>
                 {exitLabel}
             </a>
         ) : null);
@@ -107,7 +116,7 @@ function PhoneSimulatorShell({
     let navigation: ReactNode = null;
     if (resolvedSecondaryMenu) {
         navigation = (
-            <div className="d-flex border-top border-secondary" role="tablist" aria-label="App secondary menu">
+            <div className={simShell.nav} role="tablist" aria-label="App secondary menu">
                 {resolvedSecondaryMenu.items.map((item, idx) => {
                     const isBack = item.id === 'back';
                     const isActive = !isBack && resolvedSecondaryMenu.activeId === item.id;
@@ -119,14 +128,14 @@ function PhoneSimulatorShell({
                             role="tab"
                             aria-selected={isBack ? undefined : isActive}
                             aria-label={item.label}
-                            className={getSecondaryButtonClass(isLast, isBack, isActive)}
+                            className={getNavTabClass(isLast, isBack || !isActive)}
                             style={{ minWidth: 0 }}
                             onClick={() =>
                                 isBack ? resolvedSecondaryMenu.onSecondaryBack() : resolvedSecondaryMenu.onSelect(item.id)
                             }
                         >
                             {item.icon != null && item.icon !== '' && (
-                                <span className="opacity-90" aria-hidden>
+                                <span className={simShell.navTabLabel} aria-hidden>
                                     {item.icon}
                                 </span>
                             )}
@@ -138,7 +147,7 @@ function PhoneSimulatorShell({
         );
     } else if (showPrimary) {
         navigation = (
-            <div className="d-flex border-top border-secondary" role="tablist" aria-label="Simulator channels">
+            <div className={simShell.nav} role="tablist" aria-label="Simulator channels">
                 {PRIMARY_CHANNELS.map((ch, idx) => {
                     const isActive = activeChannel === ch.id;
                     const isLast = idx === PRIMARY_CHANNELS.length - 1;
@@ -149,11 +158,11 @@ function PhoneSimulatorShell({
                             role="tab"
                             aria-selected={isActive}
                             aria-label={ch.label}
-                            className={getPrimaryButtonClass(isLast, isActive)}
+                            className={getNavTabClass(isLast, !isActive)}
                             style={{ minWidth: 0 }}
                             onClick={() => onChannelChange(ch.id)}
                         >
-                            <span className="opacity-90" aria-hidden>
+                            <span className={simShell.navTabLabel} aria-hidden>
                                 {ch.icon}
                             </span>
                             <span>{ch.label}</span>
@@ -168,18 +177,16 @@ function PhoneSimulatorShell({
         <div className={className}>
             {showHeader && (
                 <div className={getHeaderClass(hasTitle)}>
-                    {hasTitle && <span className="fw-semibold text-body">{title}</span>}
+                    {hasTitle && <span className={simShell.headerTitle}>{title}</span>}
                     {exitArea}
                 </div>
             )}
-            <div
-                className={`${compact ? 'px-0' : 'px-3'} pb-3 pt-1 bg-body-tertiary d-flex flex-column ${compact ? '' : 'min-vh-100'}`}
-            >
+            <div className={compact ? simShell.outerColumn : joinClasses(simShell.outerColumnPadded, 'simulator-min-vh-100')}>
                 <div
-                    className={`d-flex flex-column overflow-hidden bg-white border border-dark ${compact ? 'w-100 align-self-stretch' : 'mx-auto'}`}
+                    className={compact ? simShell.frameStretch : simShell.frameCentered}
                     style={deviceFrameStyle}
                 >
-                    <div className="flex-grow-1 min-h-0 d-flex flex-column overflow-auto p-3">{children}</div>
+                    <div className={simShell.body}>{children}</div>
                     {navigation}
                 </div>
             </div>

@@ -7,13 +7,23 @@ import type { ReactNode } from 'react';
 import SimulatorBrowserChrome from '../components/SimulatorBrowserChrome';
 import type { SimulatorAction, SimulatorBrowserPage } from '../types/session';
 import { SimulatorActions } from '../actions';
-import { simTypo } from '../simulatorStyles';
+import { simBorder, simLayout, simSpacing, simTypo } from '../simulatorStyles';
 import {
     SimulatorButton,
     SimulatorField,
     SimulatorInput,
     SimulatorLabel,
 } from '../ui/primitives';
+import {
+    joinClasses,
+    SIM_FLEX_GROW_1,
+    SIM_MUTED,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_WHITE,
+    SIM_TEXT_BODY,
+    SIM_TEXT_SEMIBOLD,
+    SIM_TEXT_SM,
+} from '../ui/simulatorClasses';
 import {
     renderSimulatorChoice,
     renderSimulatorFeedback,
@@ -85,7 +95,7 @@ function renderWarningBanner(
         {
             message,
             tone: 'warning',
-            className: 'rounded-0 border-0 mb-3 small',
+            className: joinClasses(SIM_ROUNDED_NONE, 'simulator-border--none', simSpacing.mb3, SIM_TEXT_SM),
         },
         renderFeedback,
     );
@@ -120,6 +130,8 @@ export default function BrowserPageRenderer({
     const layoutNorm = normalizeBrowserLayout(layout);
     const displayTitle = title || 'Web Page Title';
     const downloadButtons = buttons ?? [];
+    const pageBtnClass = joinClasses(SIM_ROUNDED_NONE, 'simulator-btn--sm');
+    const loginCardClass = joinClasses(simBorder.tile, SIM_ROUNDED_NONE, SIM_SURFACE_WHITE, simSpacing.p3, 'simulator-shadow--sm');
     const keyedFormFields = withStableKeys(
         formFields ?? [],
         (field) => getStableKey([field.name, field.label, field.type])
@@ -144,7 +156,7 @@ export default function BrowserPageRenderer({
             {(layoutNorm === 'landing' || layoutNorm === 'content') && (
                 <>
                     {logoUrl != null && logoUrl !== '' && (
-                        <div className="mb-3 text-center">
+                        <div className={joinClasses(simSpacing.mb3, 'simulator-text--center')}>
                             <img src={logoUrl} alt="" style={{ maxHeight: 48 }} />
                         </div>
                     )}
@@ -152,20 +164,30 @@ export default function BrowserPageRenderer({
                         renderWarningBanner(warningBanner, renderFeedback)
                     )}
                     {layoutNorm === 'content' && showMediaPlaceholder === true && (
-                        <div className="mb-3 border border-secondary rounded-0 bg-dark bg-opacity-10 d-flex align-items-center justify-content-center" style={{ minHeight: 160 }}>
-                            <span className="text-secondary" style={{ fontSize: '2.5rem' }} aria-hidden>▶</span>
+                        <div
+                            className={joinClasses(
+                                simSpacing.mb3,
+                                simBorder.tile,
+                                SIM_ROUNDED_NONE,
+                                'simulator-surface--dark-muted',
+                                simLayout.row,
+                                'simulator-flex--center',
+                            )}
+                            style={{ minHeight: 160 }}
+                        >
+                            <span className="simulator-text--secondary" style={{ fontSize: '2.5rem' }} aria-hidden>▶</span>
                         </div>
                     )}
                     {layoutNorm === 'content' && showMediaPlaceholder === true && (
-                        <div className="d-flex align-items-center gap-2 mb-3 small text-muted">
+                        <div className={joinClasses(simLayout.row, simSpacing.gap2, simSpacing.mb3, SIM_TEXT_SM, SIM_MUTED)}>
                             <span aria-hidden>⏮</span>
-                            <div className="flex-grow-1 bg-secondary bg-opacity-25 rounded-0" style={{ height: 6 }} />
+                            <div className={joinClasses(SIM_FLEX_GROW_1, 'simulator-surface--secondary-muted', SIM_ROUNDED_NONE)} style={{ height: 6 }} />
                             <span aria-hidden>🔊</span>
                             <span aria-hidden>⛶</span>
                         </div>
                     )}
                     {content != null && content !== '' && (
-                        <p className="mb-3 small text-secondary" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
+                        <p className={joinClasses(simSpacing.mb3, SIM_TEXT_SM, 'simulator-text--secondary')} style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
                             {content}
                         </p>
                     )}
@@ -177,23 +199,23 @@ export default function BrowserPageRenderer({
                             }}
                         >
                             {keyedFormFields.map(({ item: field, key }) => (
-                                <SimulatorField key={key} className="mb-2">
-                                    <SimulatorLabel className="small fw-medium text-body">{field.label}</SimulatorLabel>
+                                <SimulatorField key={key} className={simSpacing.mb2}>
+                                    <SimulatorLabel className={simLayout.fieldLabel}>{field.label}</SimulatorLabel>
                                     <SimulatorInput
                                         type={getFieldInputType(field.type)}
-                                        className="rounded-0"
+                                        className={SIM_ROUNDED_NONE}
                                         autoComplete="off"
                                         aria-label={field.label}
                                     />
                                 </SimulatorField>
                             ))}
-                            <SimulatorButton type="submit" tone="primary" className="rounded-0">
+                            <SimulatorButton type="submit" tone="primary" className={SIM_ROUNDED_NONE}>
                                 Submit
                             </SimulatorButton>
                         </form>
                     )}
                     {buttons != null && buttons.length > 0 && (
-                        <div className="d-flex flex-wrap gap-2 mt-2">
+                        <div className={joinClasses(simLayout.actionsRow, simSpacing.mt2)}>
                             {keyedButtons.map(({ item: btn, key, index }) => (
                                 <span key={key}>
                                     {renderPageButton(
@@ -207,7 +229,7 @@ export default function BrowserPageRenderer({
                                                 })
                                             ),
                                         'primary',
-                                        'rounded-0 simulator-btn--sm',
+                                        pageBtnClass,
                                         renderChoice,
                                     )}
                                 </span>
@@ -219,16 +241,16 @@ export default function BrowserPageRenderer({
 
             {/* Login / form page: centered modal-like form, Submit (blue), Cancel (gray) */}
             {layoutNorm === 'login' && (
-                <div className="d-flex justify-content-center align-items-start">
-                    <div className="border border-secondary rounded-0 bg-white p-3 shadow-sm" style={{ maxWidth: 320 }}>
-                        <div className="d-flex justify-content-between align-items-center mb-3">
-                            <span className="small fw-semibold text-body">
+                <div className={joinClasses(simLayout.row, 'simulator-flex--center', 'simulator-flex--align-start')}>
+                    <div className={loginCardClass} style={{ maxWidth: 320 }}>
+                        <div className={joinClasses(simLayout.rowBetween, simSpacing.mb3)}>
+                            <span className={joinClasses(SIM_TEXT_SM, SIM_TEXT_SEMIBOLD, SIM_TEXT_BODY)}>
                                 {displayTitle} Login
                             </span>
                             {onBack != null && (
                                 <SimulatorButton
                                     tone="link"
-                                    className="simulator-btn--sm p-0 text-body"
+                                    className={joinClasses('simulator-btn--sm', 'simulator-btn--plain', SIM_TEXT_BODY)}
                                     onClick={onBack}
                                     aria-label="Close"
                                 >
@@ -237,7 +259,7 @@ export default function BrowserPageRenderer({
                             )}
                         </div>
                         {content != null && content !== '' && (
-                            <p className="mb-2 small text-muted">{content}</p>
+                            <p className={joinClasses(simSpacing.mb2, SIM_TEXT_SM, SIM_MUTED)}>{content}</p>
                         )}
                         {formFields != null && formFields.length > 0 && (
                             <form
@@ -247,18 +269,18 @@ export default function BrowserPageRenderer({
                                 }}
                             >
                                 {keyedFormFields.map(({ item: field, key }) => (
-                                    <SimulatorField key={key} className="mb-2">
-                                        <SimulatorLabel className="small fw-medium text-body">{field.label}</SimulatorLabel>
+                                    <SimulatorField key={key} className={simSpacing.mb2}>
+                                        <SimulatorLabel className={simLayout.fieldLabel}>{field.label}</SimulatorLabel>
                                         <SimulatorInput
                                             type={getFieldInputType(field.type)}
-                                            className="rounded-0"
+                                            className={SIM_ROUNDED_NONE}
                                             autoComplete="off"
                                             aria-label={field.label}
                                         />
                                     </SimulatorField>
                                 ))}
-                                <div className="d-flex gap-2 mt-3">
-                                    <SimulatorButton type="submit" tone="primary" className="rounded-0 flex-grow-1">
+                                <div className={joinClasses(simLayout.actionsRow, simSpacing.mt3)}>
+                                    <SimulatorButton type="submit" tone="primary" className={joinClasses(SIM_ROUNDED_NONE, SIM_FLEX_GROW_1)}>
                                         Submit
                                     </SimulatorButton>
                                     {onBack != null && (
@@ -266,7 +288,7 @@ export default function BrowserPageRenderer({
                                             'Cancel',
                                             onBack,
                                             'secondary',
-                                            'rounded-0 flex-grow-1',
+                                            joinClasses(SIM_ROUNDED_NONE, SIM_FLEX_GROW_1),
                                             renderChoice,
                                         )
                                     )}
@@ -291,24 +313,34 @@ export default function BrowserPageRenderer({
                         renderWarningBanner(warningBanner, renderFeedback)
                     )}
                     {showMediaPlaceholder === true && (
-                        <div className="mb-3 border border-secondary rounded-0 bg-dark bg-opacity-10 d-flex align-items-center justify-content-center" style={{ minHeight: 140 }}>
-                            <span className="text-secondary" style={{ fontSize: '2rem' }} aria-hidden>▶</span>
+                        <div
+                            className={joinClasses(
+                                simSpacing.mb3,
+                                simBorder.tile,
+                                SIM_ROUNDED_NONE,
+                                'simulator-surface--dark-muted',
+                                simLayout.row,
+                                'simulator-flex--center',
+                            )}
+                            style={{ minHeight: 140 }}
+                        >
+                            <span className="simulator-text--secondary" style={{ fontSize: '2rem' }} aria-hidden>▶</span>
                         </div>
                     )}
                     {content != null && content !== '' && (
-                        <p className="mb-3 small text-secondary" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
+                        <p className={joinClasses(simSpacing.mb3, SIM_TEXT_SM, 'simulator-text--secondary')} style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
                             {content}
                         </p>
                     )}
                     {downloadButtons.length > 0 ? (
-                        <div className="d-flex flex-wrap gap-2">
+                        <div className={joinClasses(simLayout.actionsRow, 'simulator-flex--wrap')}>
                             {keyedDownloadButtons.map(({ item: btn, key }) => (
                                 <span key={key}>
                                     {renderPageButton(
                                         btn.label,
                                         () => onAction(SimulatorActions.downloadClick(btn.href ?? btn.label)),
                                         'outline-secondary',
-                                        'rounded-0 simulator-btn--sm',
+                                        pageBtnClass,
                                         renderChoice,
                                     )}
                                 </span>
@@ -319,7 +351,7 @@ export default function BrowserPageRenderer({
                             'Download',
                             () => onAction(SimulatorActions.downloadClick(page.id)),
                             'outline-secondary',
-                            'rounded-0 simulator-btn--sm',
+                            pageBtnClass,
                             renderChoice,
                         )
                     )}
@@ -333,12 +365,12 @@ export default function BrowserPageRenderer({
                         renderWarningBanner(warningBanner, renderFeedback)
                     )}
                     {content != null && content !== '' && (
-                        <p className="mb-3 small text-secondary" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
+                        <p className={joinClasses(simSpacing.mb3, SIM_TEXT_SM, 'simulator-text--secondary')} style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
                             {content}
                         </p>
                     )}
                     {buttons != null && buttons.length > 0 && (
-                        <div className="d-flex flex-wrap gap-2">
+                        <div className={joinClasses(simLayout.actionsRow, 'simulator-flex--wrap')}>
                             {keyedButtons.map(({ item: btn, key, index }) => (
                                 <span key={key}>
                                     {renderPageButton(
@@ -352,7 +384,7 @@ export default function BrowserPageRenderer({
                                                 })
                                             ),
                                         'primary',
-                                        'rounded-0 simulator-btn--sm',
+                                        pageBtnClass,
                                         renderChoice,
                                     )}
                                 </span>

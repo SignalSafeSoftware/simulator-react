@@ -9,7 +9,8 @@ import {
     SimulatorCardHeader,
     SimulatorCollapse,
 } from '../ui/primitives';
-import { SIM_MUTED, joinClasses, simBtnToneClass } from '../ui/simulatorClasses';
+import { simSpacing } from '../simulatorStyles';
+import { SIM_MUTED, joinClasses, simBtnToneClass, SIM_BORDER_TOP } from '../ui/simulatorClasses';
 import type { ReachabilityReport } from '../utils/simulatorReachability';
 
 export interface SimulatorReachabilityReportProps {
@@ -96,8 +97,10 @@ export default function SimulatorReachabilityReport({
         unreachable.browserPageIds.length > 0;
 
     return (
-        <SimulatorCard className={joinClasses('mb-2', className)} data-testid="simulator-reachability-report">
-            <SimulatorCardHeader className={joinClasses('simulator-text--sm', 'simulator-surface--header', 'py-1 px-2')}>
+        <SimulatorCard className={joinClasses(simSpacing.mb2, className)} data-testid="simulator-reachability-report">
+            <SimulatorCardHeader
+                className={joinClasses('simulator-text--sm', 'simulator-surface--header', simSpacing.py1, simSpacing.px2)}
+            >
                 <button
                     type="button"
                     className={joinClasses(
@@ -114,7 +117,7 @@ export default function SimulatorReachabilityReport({
                 </button>
             </SimulatorCardHeader>
             <SimulatorCollapse open={open}>
-                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', 'py-2 px-2')}>
+                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}>
                     <Line label="Entry app" value={entryApp ?? '—'} />
                     <Line label="Reachable apps" value={reachableApps} />
                     {reachableApps.map((app) => {
@@ -138,10 +141,10 @@ export default function SimulatorReachabilityReport({
                         </>
                     )}
                     {hasUnreachable && (
-                        <div className="mt-2 pt-2 border-top">
+                        <div className={joinClasses(simSpacing.mt2, simSpacing.pt2, SIM_BORDER_TOP)}>
                             <span className={joinClasses(SIM_MUTED, 'simulator-text--semibold')}>Unreachable</span>
                             {unreachable.screens.length > 0 && (
-                                <div className="mt-1">
+                                <div className={simSpacing.mt1}>
                                     Screens: {unreachable.screens.map((s) => formatScreenRef(s)).join(', ')}
                                 </div>
                             )}
@@ -157,7 +160,7 @@ export default function SimulatorReachabilityReport({
                         </div>
                     )}
                     {browserHasCycle && (
-                        <div className="mt-2 simulator-text--warning">
+                        <div className={joinClasses(simSpacing.mt2, 'simulator-text--warning')}>
                             Browser navigation has a cycle (e.g. A → B → A).
                         </div>
                     )}

@@ -5,7 +5,7 @@
 import type { EmailScreenId, SimulatorAction } from '../types/session';
 import { SimulatorActions } from '../actions';
 import { SimulatorDetailBackBar } from '../components/SimulatorDetail';
-import { simSpacing, simTypo, simActionsBar } from '../simulatorStyles';
+import { simLayout, simSpacing, simTypo, simActionsBar } from '../simulatorStyles';
 import type { EmailTemplateContent, EmailTemplateLink } from '../types/portableSimulator';
 import {
     SimulatorButton,
@@ -14,7 +14,18 @@ import {
     SimulatorLabel,
     SimulatorTextarea,
 } from '../ui/primitives';
-import { joinClasses } from '../ui/simulatorClasses';
+import {
+    joinClasses,
+    SIM_BORDER_BOTTOM,
+    SIM_FLEX_COL,
+    SIM_FLEX_GROW_1,
+    SIM_FLEX_SHRINK_0,
+    SIM_MIN_H_0,
+    SIM_OVERFLOW_AUTO,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_LIGHT,
+    SIM_TEXT_SM,
+} from '../ui/simulatorClasses';
 
 export interface EmailMessageDetailProps {
     message: EmailTemplateContent;
@@ -36,6 +47,8 @@ function withStableLinkKeys(
     });
 }
 
+const readOnlyFieldClass = joinClasses(SIM_ROUNDED_NONE, SIM_SURFACE_LIGHT);
+
 export default function EmailMessageDetail({
     message,
     onAction,
@@ -50,64 +63,72 @@ export default function EmailMessageDetail({
     const keyedLinks = withStableLinkKeys(message.links ?? []);
 
     return (
-        <div className="d-flex flex-column flex-grow-1 min-h-0">
+        <div className={simLayout.screenColumn}>
             {onBack && (
                 <>
                     <SimulatorDetailBackBar onBack={onBack} title="Message" ariaLabel="Back to inbox" titleOnly />
-                    <div className="border-bottom border-secondary" />
+                    <div className={SIM_BORDER_BOTTOM} />
                 </>
             )}
-            <div className="d-flex flex-column flex-grow-1 min-h-0 overflow-auto p-3">
-                <div className="d-flex flex-column gap-3 flex-grow-1 min-h-0">
-                    <SimulatorField className="mb-0 flex-shrink-0">
-                        <SimulatorLabel className="small fw-medium text-body">From</SimulatorLabel>
+            <div className={joinClasses(SIM_FLEX_COL, SIM_FLEX_GROW_1, SIM_MIN_H_0, SIM_OVERFLOW_AUTO, simSpacing.p3)}>
+                <div className={joinClasses(SIM_FLEX_COL, simSpacing.gap2, SIM_FLEX_GROW_1, SIM_MIN_H_0)}>
+                    <SimulatorField className={joinClasses(simSpacing.mb0, SIM_FLEX_SHRINK_0)}>
+                        <SimulatorLabel className={simLayout.fieldLabel}>From</SimulatorLabel>
                         <SimulatorInput
                             type="text"
                             readOnly
                             value={fromDisplay}
-                            className="rounded-0 bg-light"
+                            className={readOnlyFieldClass}
                             aria-label="From"
                         />
                     </SimulatorField>
-                    <SimulatorField className="mb-0 flex-shrink-0">
-                        <SimulatorLabel className="small fw-medium text-body">To</SimulatorLabel>
+                    <SimulatorField className={joinClasses(simSpacing.mb0, SIM_FLEX_SHRINK_0)}>
+                        <SimulatorLabel className={simLayout.fieldLabel}>To</SimulatorLabel>
                         <SimulatorInput
                             type="text"
                             readOnly
                             value={message.to ?? ''}
-                            className="rounded-0 bg-light"
+                            className={readOnlyFieldClass}
                             aria-label="To"
                         />
                     </SimulatorField>
-                    <SimulatorField className="mb-0 flex-shrink-0">
-                        <SimulatorLabel className="small fw-medium text-body">Subject</SimulatorLabel>
+                    <SimulatorField className={joinClasses(simSpacing.mb0, SIM_FLEX_SHRINK_0)}>
+                        <SimulatorLabel className={simLayout.fieldLabel}>Subject</SimulatorLabel>
                         <SimulatorInput
                             type="text"
                             readOnly
                             value={message.subject ?? ''}
-                            className="rounded-0 bg-light"
+                            className={readOnlyFieldClass}
                             aria-label="Subject"
                         />
                     </SimulatorField>
-                    <SimulatorField className="mb-0 flex-grow-1 min-h-0 d-flex flex-column flex-shrink-1">
-                        <SimulatorLabel className="small fw-medium text-body">Body</SimulatorLabel>
+                    <SimulatorField
+                        className={joinClasses(
+                            simSpacing.mb0,
+                            SIM_FLEX_GROW_1,
+                            SIM_MIN_H_0,
+                            SIM_FLEX_COL,
+                            'simulator-flex-shrink-1',
+                        )}
+                    >
+                        <SimulatorLabel className={simLayout.fieldLabel}>Body</SimulatorLabel>
                         <SimulatorTextarea
                             readOnly
                             value={message.body ?? ''}
-                            className="rounded-0 bg-light flex-grow-1 overflow-auto"
+                            className={joinClasses(readOnlyFieldClass, SIM_FLEX_GROW_1, SIM_OVERFLOW_AUTO)}
                             style={{ whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: 0, resize: 'none' }}
                             aria-label="Body"
                         />
                     </SimulatorField>
                 </div>
                 {message.links != null && message.links.length > 0 && (
-                    <div className={`${simSpacing.dividerTop} ${simActionsBar} mt-3 pt-3 flex-shrink-0`}>
-                        <span className={`${simTypo.secondary} me-1`}>Links:</span>
+                    <div className={joinClasses(simSpacing.dividerTop, simActionsBar, simSpacing.mt3, simSpacing.pt3, SIM_FLEX_SHRINK_0)}>
+                        <span className={joinClasses(simTypo.secondary, simSpacing.me1)}>Links:</span>
                         {keyedLinks.map(({ key, link, index }) => (
                             <SimulatorButton
                                 key={key}
                                 tone="outline-primary"
-                                className="text-decoration-none rounded-0 simulator-btn--sm"
+                                className={joinClasses('simulator-text--link', SIM_ROUNDED_NONE, 'simulator-btn--sm')}
                                 onClick={() =>
                                     onAction(SimulatorActions.clickLink({ linkIndex: index, href: link.href }))
                                 }
@@ -119,16 +140,16 @@ export default function EmailMessageDetail({
                     </div>
                 )}
                 {hasAttachment && (
-                    <div className={`${simSpacing.dividerTop} small mt-3 pt-3 flex-shrink-0`}>
-                        <span className={`${simTypo.secondary} me-2`}>
+                    <div className={joinClasses(simSpacing.dividerTop, SIM_TEXT_SM, simSpacing.mt3, simSpacing.pt3, SIM_FLEX_SHRINK_0)}>
+                        <span className={joinClasses(simTypo.secondary, simSpacing.me2)}>
                             Attachment: {message.attachment_name}
                             {message.attachment_type != null && message.attachment_type !== '' && (
-                                <span className="ms-1">({message.attachment_type})</span>
+                                <span className={simSpacing.ms1}>({message.attachment_type})</span>
                             )}
                         </span>
                         <SimulatorButton
                             tone="outline-secondary"
-                            className="me-1 rounded-0 simulator-btn--sm"
+                            className={joinClasses(simSpacing.me1, SIM_ROUNDED_NONE, 'simulator-btn--sm')}
                             onClick={() => onAction(SimulatorActions.openAttachment(0))}
                             aria-label="Open attachment"
                         >
@@ -136,7 +157,7 @@ export default function EmailMessageDetail({
                         </SimulatorButton>
                         <SimulatorButton
                             tone="outline-secondary"
-                            className="rounded-0 simulator-btn--sm"
+                            className={joinClasses(SIM_ROUNDED_NONE, 'simulator-btn--sm')}
                             onClick={() => onAction(SimulatorActions.downloadAttachment(0))}
                             aria-label="Download attachment"
                         >
@@ -145,34 +166,24 @@ export default function EmailMessageDetail({
                     </div>
                 )}
             </div>
-            <div className="d-flex gap-2 p-2 flex-shrink-0 mt-auto flex-wrap">
+            <div className={simLayout.blockFooterRow}>
                 <SimulatorButton
                     tone="primary"
-                    className={joinClasses('rounded-0', 'simulator-btn--block', 'py-2', 'flex-grow-1')}
+                    className={simLayout.blockButton}
                     onClick={() => onAction(SimulatorActions.sendReply())}
                     aria-label="Reply"
                 >
                     Reply
                 </SimulatorButton>
-                <SimulatorButton
-                    tone="secondary"
-                    className={joinClasses('rounded-0', 'simulator-btn--block', 'py-2', 'flex-grow-1')}
-                    onClick={onBack}
-                    aria-label="Forward"
-                >
+                <SimulatorButton tone="secondary" className={simLayout.blockButton} onClick={onBack} aria-label="Forward">
                     Forward
                 </SimulatorButton>
-                <SimulatorButton
-                    tone="secondary"
-                    className={joinClasses('rounded-0', 'simulator-btn--block', 'py-2', 'flex-grow-1')}
-                    onClick={onBack}
-                    aria-label="Dispose"
-                >
+                <SimulatorButton tone="secondary" className={simLayout.blockButton} onClick={onBack} aria-label="Dispose">
                     Dispose
                 </SimulatorButton>
                 <SimulatorButton
                     tone="secondary"
-                    className={joinClasses('rounded-0', 'simulator-btn--block', 'py-2', 'flex-grow-1')}
+                    className={simLayout.blockButton}
                     onClick={() => onBack?.()}
                     aria-label="Cancel"
                 >

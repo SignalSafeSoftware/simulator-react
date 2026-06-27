@@ -7,16 +7,38 @@ import { useState, useMemo } from 'react';
 import type { SimulatorCallHistoryEntry, CallHistoryEntryKind } from '../types/session';
 import type { PhoneSimulatorContent } from '../types/portableSimulator';
 import { SimulatorSearchInput } from '../components/SimulatorSearchInput';
+import { simBorder, simLayout, simSpacing } from '../simulatorStyles';
+import {
+    joinClasses,
+    SIM_AVATAR,
+    SIM_FLEX_COL,
+    SIM_FLEX_GROW_1,
+    SIM_FLEX_SHRINK_0,
+    SIM_MUTED,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_AVATAR,
+    SIM_SURFACE_LIGHT,
+    SIM_SURFACE_WHITE,
+    SIM_TEXT_SM,
+    SIM_TEXT_START,
+    simBadgeToneClass,
+} from '../ui/simulatorClasses';
 
 /** Light blue profile icon for call/contact rows (wireframe). */
 function ProfileIcon({ className }: Readonly<{ className?: string }>) {
     return (
         <div
-            className={`rounded bg-primary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0 ${className ?? ''}`}
+            className={joinClasses(
+                SIM_AVATAR,
+                SIM_SURFACE_AVATAR,
+                'simulator-flex simulator-flex--center',
+                SIM_FLEX_SHRINK_0,
+                className,
+            )}
             style={{ width: 40, height: 40 }}
             aria-hidden
         >
-            <span className="text-primary" style={{ fontSize: '1.25rem' }}>👤</span>
+            <span className="simulator-text--primary" style={{ fontSize: '1.25rem' }}>👤</span>
         </div>
     );
 }
@@ -52,13 +74,13 @@ function kindLabel(kind: CallHistoryEntryKind): string {
     }
 }
 
-function kindBadgeVariant(kind: CallHistoryEntryKind): string {
+function kindBadgeTone(kind: CallHistoryEntryKind): string {
     switch (kind) {
         case 'missed': return 'danger';
-        case 'voicemail': return 'secondary';
+        case 'voicemail': return 'neutral';
         case 'outgoing': return 'primary';
         case 'incoming': return 'success';
-        default: return 'secondary';
+        default: return 'neutral';
     }
 }
 
@@ -80,6 +102,32 @@ function incomingMatchesSearch(content: PhoneSimulatorContent | null | undefined
     return name.includes(lower) || number.includes(lower);
 }
 
+const rowButtonBase = joinClasses(
+    simLayout.row,
+    simSpacing.gap2,
+    SIM_TEXT_START,
+    'simulator-w-full',
+);
+
+const incomingCardClass = joinClasses(
+    rowButtonBase,
+    simSpacing.p3,
+    simSpacing.mb2,
+    simBorder.tile,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_LIGHT,
+    'simulator-text--dark',
+);
+
+const listRowClass = joinClasses(
+    rowButtonBase,
+    simSpacing.py3,
+    simSpacing.px2,
+    simBorder.tile,
+    'simulator-border--top-none',
+    SIM_ROUNDED_NONE,
+);
+
 function PhoneHistoryRowButton({
     onClick,
     className,
@@ -95,7 +143,7 @@ function PhoneHistoryRowButton({
         <button
             type="button"
             onClick={onClick}
-            className={`${className} text-start w-100`}
+            className={className}
             style={{ cursor: 'pointer' }}
             aria-label={ariaLabel}
         >
@@ -122,45 +170,47 @@ export default function PhoneHistoryList({
     const showVoicemailRow = hasVoicemail && (!searchQuery.trim() || 'voicemail'.includes(searchQuery.toLowerCase().trim()));
 
     return (
-        <div className="d-flex flex-column">
+        <div className={simLayout.stack}>
             <SimulatorSearchInput
                 value={searchQuery}
                 onChange={setSearchQuery}
                 onSubmit={() => {}}
                 placeholder="Q Search"
                 ariaLabel="Search calls"
-                className="mb-2"
+                className={simSpacing.mb2}
             />
             {showIncoming && (
                 <PhoneHistoryRowButton
                     onClick={onSelectIncoming}
-                    className="d-flex align-items-center gap-3 p-3 mb-2 border border-secondary rounded-0 bg-light text-dark"
+                    className={incomingCardClass}
                     aria-label="Incoming call"
                 >
                     <ProfileIcon />
-                    <div className="d-flex flex-column min-w-0 flex-grow-1">
-                        <span className="fw-medium text-truncate">
+                    <div className={joinClasses(SIM_FLEX_COL, 'simulator-min-w-0', SIM_FLEX_GROW_1)}>
+                        <span className={joinClasses('simulator-text--medium', 'simulator-text--truncate')}>
                             {incomingCallContent.caller_name ?? incomingCallContent.phone_number ?? 'Unknown'}
                         </span>
                         {incomingCallContent.phone_number && (
-                            <span className="small text-muted">{incomingCallContent.phone_number}</span>
+                            <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>{incomingCallContent.phone_number}</span>
                         )}
                     </div>
-                    <span className="badge bg-secondary rounded-0 flex-shrink-0">Incoming</span>
+                    <span className={joinClasses(simBadgeToneClass('neutral'), SIM_ROUNDED_NONE, SIM_FLEX_SHRINK_0)}>
+                        Incoming
+                    </span>
                 </PhoneHistoryRowButton>
             )}
             {showVoicemailRow && (
                 <PhoneHistoryRowButton
                     onClick={onSelectVoicemail}
-                    className="d-flex align-items-center gap-3 py-3 px-3 border border-secondary border-top-0 rounded-0 bg-white"
+                    className={joinClasses(listRowClass, SIM_SURFACE_WHITE)}
                     aria-label="Voicemail"
                 >
                     <ProfileIcon />
-                    <span className="fw-medium flex-grow-1">Voicemail</span>
-                    <span className="badge bg-secondary rounded-0">New</span>
+                    <span className={joinClasses('simulator-text--medium', SIM_FLEX_GROW_1)}>Voicemail</span>
+                    <span className={joinClasses(simBadgeToneClass('neutral'), SIM_ROUNDED_NONE)}>New</span>
                 </PhoneHistoryRowButton>
             )}
-            <div className="list-group list-group-flush">
+            <div className="simulator-list--flush">
                 {filteredEntries.map((entry) => {
                     const kind = entryKind(entry);
                     const isVoicemail = kind === 'voicemail';
@@ -171,48 +221,39 @@ export default function PhoneHistoryList({
                     const actionable = isVoicemail || !!onSelectEntry;
                     const primary = entry.name ?? entry.number ?? 'Unknown';
                     const secondary = entry.name != null && entry.number ? entry.number : null;
-                    return (
-                        actionable ? (
-                            <PhoneHistoryRowButton
-                                key={entry.id}
-                                onClick={handleClick}
-                                className="d-flex align-items-center gap-3 py-3 px-2 border border-secondary border-top-0 rounded-0 bg-light"
-                            >
-                                <ProfileIcon />
-                                <div className="d-flex flex-column min-w-0 flex-grow-1">
-                                    <span className="fw-medium text-truncate">{primary}</span>
-                                    {secondary && <span className="small text-muted text-truncate">{secondary}</span>}
-                                    {entry.timestamp != null && (
-                                        <span className="small text-muted mt-0">{entry.timestamp}</span>
-                                    )}
-                                </div>
-                                <span className={`badge bg-${kindBadgeVariant(kind)} rounded-0 flex-shrink-0`}>
-                                    {kindLabel(kind)}
-                                </span>
-                            </PhoneHistoryRowButton>
-                        ) : (
-                            <div
-                                key={entry.id}
-                                className="d-flex align-items-center gap-3 py-3 px-2 border border-secondary border-top-0 rounded-0 bg-white"
-                            >
-                                <ProfileIcon />
-                                <div className="d-flex flex-column min-w-0 flex-grow-1">
-                                    <span className="fw-medium text-truncate">{primary}</span>
-                                    {secondary && <span className="small text-muted text-truncate">{secondary}</span>}
-                                    {entry.timestamp != null && (
-                                        <span className="small text-muted mt-0">{entry.timestamp}</span>
-                                    )}
-                                </div>
-                                <span className={`badge bg-${kindBadgeVariant(kind)} rounded-0 flex-shrink-0`}>
-                                    {kindLabel(kind)}
-                                </span>
+                    const rowSurface = joinClasses(
+                        listRowClass,
+                        kind === 'incoming' || kind === 'missed' ? SIM_SURFACE_LIGHT : SIM_SURFACE_WHITE,
+                    );
+                    const badgeClass = joinClasses(
+                        simBadgeToneClass(kindBadgeTone(kind)),
+                        SIM_ROUNDED_NONE,
+                        SIM_FLEX_SHRINK_0,
+                    );
+                    const rowContent = (
+                        <>
+                            <ProfileIcon />
+                            <div className={joinClasses(SIM_FLEX_COL, 'simulator-min-w-0', SIM_FLEX_GROW_1)}>
+                                <span className={joinClasses('simulator-text--medium', 'simulator-text--truncate')}>{primary}</span>
+                                {secondary && <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED, 'simulator-text--truncate')}>{secondary}</span>}
+                                {entry.timestamp != null && (
+                                    <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>{entry.timestamp}</span>
+                                )}
                             </div>
-                        )
+                            <span className={badgeClass}>{kindLabel(kind)}</span>
+                        </>
+                    );
+                    return actionable ? (
+                        <PhoneHistoryRowButton key={entry.id} onClick={handleClick} className={rowSurface}>
+                            {rowContent}
+                        </PhoneHistoryRowButton>
+                    ) : (
+                        <div key={entry.id} className={rowSurface}>{rowContent}</div>
                     );
                 })}
             </div>
             {filteredEntries.length === 0 && !showIncoming && !showVoicemailRow && (
-                <p className="text-muted small mt-2 mb-0 px-2">
+                <p className={joinClasses(SIM_MUTED, SIM_TEXT_SM, simSpacing.mt2, simSpacing.mb0, simSpacing.px2)}>
                     {entries.length === 0 && !incomingCallContent && !hasVoicemail
                         ? 'No recent calls.'
                         : `No results for "${searchQuery}".`}

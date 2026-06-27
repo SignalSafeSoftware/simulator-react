@@ -38,7 +38,7 @@ Shell, lists, buttons, alerts, and modals emit predictable class names from `src
 | Alerts | `simulator-alert`, `simulator-alert--warning` | Lint banner, inline feedback |
 | Modals | `simulator-modal`, `simulator-modal__dialog`, `simulator-modal__body` | Contacts verification overlay |
 | Forms | `simulator-input`, `simulator-field`, `simulator-field__label` | Search, compose, login forms |
-| Layout | `simulator-flex`, `simulator-flex--column`, `simulator-muted` | Screen chrome |
+| Layout | `simulator-flex`, `simulator-flex--column`, `simulator-muted`, `simulator-shell__*` | Screen chrome, device shell |
 
 **Tone mapping:** `SimulatorButton` and `renderSimulatorChoice` accept legacy tone strings (`primary`, `outline-secondary`, `link`, …). They map to `simulator-btn--*` hooks via `simBtnToneClass()`.
 
@@ -211,9 +211,9 @@ Alternatively, map `simulator-*` classes to Bootstrap utilities in host SCSS wit
    - **Render slots:** pass `renderChoice`, `renderFeedback`, `renderContactsOverlay` with `react-bootstrap` components.
 3. **Update tests** that assert `btn-*`, `list-group-*`, or `react-bootstrap` Modal markup — assert `simulator-*` or slot output instead.
 4. **Short-term pin** — stay on `0.1.x` until host CSS or slots are ready; then bump to `0.2.0`.
-5. **Future** — optional `@signalsafe/simulator-react-bootstrap` may provide a reference Bootstrap skin without coupling the core package.
+5. **Future (optional)** — `@signalsafe/simulator-react-bootstrap` may provide a reference Bootstrap skin without coupling the core package.
 
-Some shell views still contain legacy Bootstrap **CSS class strings** (`btn btn-*`, `d-flex`, …) in a few list/phone files. These are cosmetic; hosts override via CSS or slots. A follow-up release may finish migrating them to `simulator-*` only.
+Runtime markup emits **`simulator-*` hooks only** — map them in host CSS alongside panel/shell styling from `@signalsafe/tree-spec-editor` if used together.
 
 ---
 

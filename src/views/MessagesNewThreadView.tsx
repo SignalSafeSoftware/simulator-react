@@ -4,6 +4,7 @@
  */
 import { useState } from 'react';
 
+import { simLayout, simScreen, simSpacing } from '../simulatorStyles';
 import {
     SimulatorButton,
     SimulatorField,
@@ -11,67 +12,69 @@ import {
     SimulatorLabel,
     SimulatorTextarea,
 } from '../ui/primitives';
-import { joinClasses } from '../ui/simulatorClasses';
+import {
+    joinClasses,
+    SIM_FLEX_GROW_1,
+    SIM_FLEX_SHRINK_0,
+    SIM_MIN_H_0,
+    SIM_ROUNDED_NONE,
+    SIM_TEXT_SEMIBOLD,
+} from '../ui/simulatorClasses';
 
 export interface MessagesNewThreadViewProps {
     onBack: () => void;
 }
+
+const footerBtnClass = joinClasses(
+    SIM_ROUNDED_NONE,
+    'simulator-btn--block',
+    simSpacing.py2,
+    SIM_TEXT_SEMIBOLD,
+    SIM_FLEX_GROW_1,
+);
 
 export default function MessagesNewThreadView({ onBack }: Readonly<MessagesNewThreadViewProps>) {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [messageBody, setMessageBody] = useState('');
 
     const handleSend = () => {
-        // Simulator: no backend; clear or leave as placeholder for event emission
         onBack();
     };
 
     return (
-        <div className="d-flex flex-column flex-grow-1 min-h-0">
-            <div className="text-center border-bottom border-secondary py-2 mb-3 small fw-semibold text-body flex-shrink-0">
-                New Thread
-            </div>
-            <div className="px-3 pt-3 flex-shrink-0">
+        <div className={simLayout.screenColumn}>
+            <div className={joinClasses(simScreen.header, simSpacing.mb3, SIM_FLEX_SHRINK_0)}>New Thread</div>
+            <div className={joinClasses(simSpacing.px3, simSpacing.pt3, SIM_FLEX_SHRINK_0)}>
                 <SimulatorField>
-                    <SimulatorLabel className="small fw-medium text-body">Phone Number</SimulatorLabel>
+                    <SimulatorLabel className={simLayout.fieldLabel}>Phone Number</SimulatorLabel>
                     <SimulatorInput
                         type="tel"
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
                         placeholder=""
-                        className="rounded-0"
+                        className={SIM_ROUNDED_NONE}
                         aria-label="Phone number"
                     />
                 </SimulatorField>
             </div>
-            <div className="flex-grow-1 min-h-0" aria-hidden />
-            <div className="p-2 flex-shrink-0 mt-auto d-flex flex-column gap-2">
-                <SimulatorField className="mb-0">
-                    <SimulatorLabel className="small fw-medium text-body">Message</SimulatorLabel>
+            <div className={joinClasses(SIM_FLEX_GROW_1, SIM_MIN_H_0)} aria-hidden />
+            <div className={simLayout.footerActions}>
+                <SimulatorField className={simSpacing.mb0}>
+                    <SimulatorLabel className={simLayout.fieldLabel}>Message</SimulatorLabel>
                     <SimulatorTextarea
                         rows={3}
                         value={messageBody}
                         onChange={(e) => setMessageBody(e.target.value)}
                         placeholder="I will send you a message"
-                        className="rounded-0"
+                        className={SIM_ROUNDED_NONE}
                         aria-label="Message body"
                     />
                 </SimulatorField>
-                <div className="d-flex gap-2">
-                    <SimulatorButton
-                        tone="primary"
-                        className={joinClasses('rounded-0', 'simulator-btn--block', 'py-2', 'fw-semibold', 'flex-grow-1')}
-                        onClick={handleSend}
-                        aria-label="Send"
-                    >
+                <div className={simLayout.actionsRow}>
+                    <SimulatorButton tone="primary" className={footerBtnClass} onClick={handleSend} aria-label="Send">
                         Send
                     </SimulatorButton>
-                    <SimulatorButton
-                        tone="secondary"
-                        className={joinClasses('rounded-0', 'simulator-btn--block', 'py-2', 'fw-semibold', 'flex-grow-1')}
-                        onClick={onBack}
-                        aria-label="Cancel"
-                    >
+                    <SimulatorButton tone="secondary" className={footerBtnClass} onClick={onBack} aria-label="Cancel">
                         Cancel
                     </SimulatorButton>
                 </div>

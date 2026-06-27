@@ -9,7 +9,8 @@ import {
     SimulatorCardHeader,
     SimulatorCollapse,
 } from '../ui/primitives';
-import { SIM_MUTED, joinClasses, simBtnToneClass } from '../ui/simulatorClasses';
+import { simSpacing } from '../simulatorStyles';
+import { SIM_MUTED, joinClasses, simBtnToneClass, SIM_BORDER_TOP } from '../ui/simulatorClasses';
 import type { SimulatorPreviewReport } from '../utils/simulatorPreviewReport';
 
 export interface SimulatorAuthorPreviewReportProps {
@@ -155,8 +156,10 @@ export default function SimulatorAuthorPreviewReport({
         .join(' · ');
 
     return (
-        <SimulatorCard className={joinClasses('mb-2', className)} data-testid="simulator-author-preview-report">
-            <SimulatorCardHeader className={joinClasses('simulator-text--sm', 'simulator-surface--header', 'py-1 px-2')}>
+        <SimulatorCard className={joinClasses(simSpacing.mb2, className)} data-testid="simulator-author-preview-report">
+            <SimulatorCardHeader
+                className={joinClasses('simulator-text--sm', 'simulator-surface--header', simSpacing.py1, simSpacing.px2)}
+            >
                 <button
                     type="button"
                     className={joinClasses(
@@ -174,7 +177,7 @@ export default function SimulatorAuthorPreviewReport({
                 <span className={joinClasses(SIM_MUTED, 'simulator-inline-gap')}>— {summary}</span>
             </SimulatorCardHeader>
             <SimulatorCollapse open={open}>
-                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', 'py-2 px-2')}>
+                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}>
                     <Line label="Entry" value={`${entryPoint.app} / ${entryPoint.screen}`} />
                     <Line label="Apps used" value={appsUsed.join(', ') || '—'} />
                     <Line label="Contacts" value={String(contactsCount)} />
@@ -183,7 +186,7 @@ export default function SimulatorAuthorPreviewReport({
                     <Line label="Browser pages" value={String(browserPagesCount)} />
                     <Line label="Directory (trusted sources)" value={String(directoryCount)} />
                     <Line label="Key actions" value={keyActions.length > 0 ? keyActions : '—'} />
-                    <div className="mt-2 pt-2 border-top">
+                    <div className={joinClasses(simSpacing.mt2, simSpacing.pt2, SIM_BORDER_TOP)}>
                         <Line
                             label="Validation"
                             value={
@@ -199,7 +202,7 @@ export default function SimulatorAuthorPreviewReport({
                             <Line label="Unreachable items" value={<span className="simulator-text--warning">{unreachableCount}</span>} />
                         )}
                         {browserHasCycle && (
-                            <div className="simulator-text--warning mt-1">Browser has navigation cycle.</div>
+                            <div className={joinClasses('simulator-text--warning', simSpacing.mt1)}>Browser has navigation cycle.</div>
                         )}
                     </div>
                 </SimulatorCardBody>

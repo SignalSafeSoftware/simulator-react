@@ -4,6 +4,20 @@
  */
 import type { ReactNode } from 'react';
 
+import { simBorder, simLayout, simScreen, simSpacing } from '../simulatorStyles';
+import {
+    joinClasses,
+    SIM_FLEX_COL,
+    SIM_FLEX_GROW_1,
+    SIM_MUTED,
+    SIM_OVERFLOW_HIDDEN,
+    SIM_SURFACE_LIGHT,
+    SIM_SURFACE_WHITE,
+    SIM_TEXT_BODY,
+    SIM_TEXT_SM,
+    simBtnToneClass,
+} from '../ui/simulatorClasses';
+
 export interface SimulatorBrowserChromeProps {
     /** Page title shown centered above the chrome bar. */
     title: string;
@@ -72,6 +86,14 @@ function renderUrlWithHighlights(
     );
 }
 
+const chromeNavBtnClass = joinClasses(
+    simBtnToneClass('link'),
+    'simulator-btn--sm',
+    'simulator-btn--plain',
+    simSpacing.p2,
+    SIM_TEXT_BODY,
+);
+
 export default function SimulatorBrowserChrome({
     title,
     url,
@@ -84,57 +106,62 @@ export default function SimulatorBrowserChrome({
     className = '',
 }: Readonly<SimulatorBrowserChromeProps>) {
     return (
-        <div className={`d-flex flex-column bg-light ${className}`.trim()} style={{ border: '1px solid #dee2e6' }}>
-            <div className="text-center py-2 border-bottom border-secondary small fw-semibold text-body bg-white">
-                {title || 'Web Page Title'}
-            </div>
+        <div
+            className={joinClasses(SIM_FLEX_COL, SIM_SURFACE_LIGHT, className)}
+            style={{ border: '1px solid #dee2e6' }}
+        >
+            <div className={joinClasses(simScreen.header, SIM_SURFACE_WHITE)}>{title || 'Web Page Title'}</div>
             <div
-                className="d-flex align-items-center gap-1 px-2 py-2 border-bottom border-secondary bg-secondary bg-opacity-10"
+                className={joinClasses(
+                    simLayout.row,
+                    simSpacing.gap2,
+                    simSpacing.px2,
+                    simSpacing.py2,
+                    'simulator-border simulator-border--bottom',
+                    'simulator-surface--secondary-muted',
+                )}
                 style={{ minHeight: 40 }}
             >
-                <button
-                    type="button"
-                    className="btn btn-link btn-sm p-1 text-body"
-                    onClick={onBack}
-                    aria-label="Back"
-                >
+                <button type="button" className={chromeNavBtnClass} onClick={onBack} aria-label="Back">
                     ←
                 </button>
-                <button
-                    type="button"
-                    className="btn btn-link btn-sm p-1 text-body"
-                    onClick={onForward}
-                    aria-label="Forward"
-                >
+                <button type="button" className={chromeNavBtnClass} onClick={onForward} aria-label="Forward">
                     →
                 </button>
-                <button
-                    type="button"
-                    className="btn btn-link btn-sm p-1 text-body"
-                    onClick={onRefresh}
-                    aria-label="Refresh"
-                >
+                <button type="button" className={chromeNavBtnClass} onClick={onRefresh} aria-label="Refresh">
                     ↻
                 </button>
-                <button
-                    type="button"
-                    className="btn btn-link btn-sm p-1 text-body"
-                    onClick={onHome}
-                    aria-label="Home"
-                >
+                <button type="button" className={chromeNavBtnClass} onClick={onHome} aria-label="Home">
                     ⌂
                 </button>
                 <div
-                    className="flex-grow-1 d-flex align-items-center px-2 bg-white border border-secondary rounded-0 small text-muted overflow-hidden"
+                    className={joinClasses(
+                        SIM_FLEX_GROW_1,
+                        simLayout.row,
+                        simSpacing.px2,
+                        SIM_SURFACE_WHITE,
+                        simBorder.tile,
+                        SIM_TEXT_SM,
+                        SIM_MUTED,
+                        SIM_OVERFLOW_HIDDEN,
+                    )}
                     style={{ minHeight: 32 }}
                 >
-                    <span className="text-truncate">
+                    <span className="simulator-text--truncate">
                         {renderUrlWithHighlights(url, urlHighlightSegments)}
                     </span>
                 </div>
-                <span className="text-secondary small ms-1" aria-hidden>Q</span>
+                <span className={joinClasses('simulator-text--secondary', SIM_TEXT_SM, simSpacing.ms1)} aria-hidden>Q</span>
             </div>
-            <div className="bg-white p-3 flex-grow-1 min-vh-0" style={{ minHeight: 120 }}>
+            <div
+                className={joinClasses(
+                    SIM_SURFACE_WHITE,
+                    simSpacing.p3,
+                    SIM_FLEX_GROW_1,
+                    'simulator-min-vh-0',
+                )}
+                style={{ minHeight: 120 }}
+            >
                 {children}
             </div>
         </div>

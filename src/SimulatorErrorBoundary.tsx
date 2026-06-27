@@ -5,6 +5,16 @@
  */
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { simSpacing, simStatus } from './simulatorStyles';
+import { SimulatorButton } from './ui/primitives';
+import {
+    joinClasses,
+    SIM_MONO,
+    SIM_MUTED,
+    SIM_OVERFLOW_AUTO,
+    SIM_TEXT_DANGER,
+    SIM_TEXT_MEDIUM,
+    SIM_TEXT_SM,
+} from './ui/simulatorClasses';
 
 export interface SimulatorErrorBoundaryProps {
     children: ReactNode;
@@ -44,17 +54,20 @@ export default class SimulatorErrorBoundary extends Component<SimulatorErrorBoun
                     role="alert"
                     data-testid="simulator-error-fallback"
                 >
-                    <p className="fw-medium text-danger mb-1">{fallbackTitle}</p>
-                    <p className="mb-1 text-break">{error.message}</p>
+                    <p className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_DANGER, simSpacing.mb1)}>{fallbackTitle}</p>
+                    <p className={joinClasses(simSpacing.mb1, 'simulator-text--break')}>{error.message}</p>
                     {errorInfo?.componentStack && (
-                        <pre className="small text-muted mb-2 font-monospace" style={{ whiteSpace: 'pre-wrap', maxHeight: 120, overflow: 'auto' }}>
+                        <pre
+                            className={joinClasses(SIM_TEXT_SM, SIM_MUTED, simSpacing.mb2, SIM_MONO, SIM_OVERFLOW_AUTO)}
+                            style={{ whiteSpace: 'pre-wrap', maxHeight: 120 }}
+                        >
                             {errorInfo.componentStack}
                         </pre>
                     )}
                     {onRetry != null && (
-                        <button type="button" className="btn btn-outline-secondary btn-sm" onClick={onRetry}>
+                        <SimulatorButton tone="outline-secondary" className="simulator-btn--sm" onClick={onRetry}>
                             Dismiss
-                        </button>
+                        </SimulatorButton>
                     )}
                 </div>
             );

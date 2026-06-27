@@ -13,10 +13,24 @@ import type {
     SimulatorHomeSettingsSection,
 } from '../types/session';
 import { SimulatorActions } from '../actions';
-import { simTypo } from '../simulatorStyles';
+import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles';
 import type { SimulatorCapabilities } from '../utils/simulatorCapabilities';
 import { SimulatorButton, SimulatorField, SimulatorInput, SimulatorLabel } from '../ui/primitives';
-import { joinClasses } from '../ui/simulatorClasses';
+import {
+    joinClasses,
+    SIM_AVATAR,
+    SIM_FLEX_COL,
+    SIM_FLEX_GROW_1,
+    SIM_FLEX_SHRINK_0,
+    SIM_MUTED,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_AVATAR,
+    SIM_SURFACE_WHITE,
+    SIM_TEXT_BODY,
+    SIM_TEXT_CENTER,
+    SIM_TEXT_MEDIUM,
+    SIM_TEXT_SM,
+} from '../ui/simulatorClasses';
 
 export interface HomeSimulatorViewProps {
     payload: SimulatorHomePayload | null;
@@ -30,14 +44,47 @@ export interface HomeSimulatorViewProps {
 function StoreAppIcon({ className }: Readonly<{ className?: string }>) {
     return (
         <div
-            className={`rounded bg-primary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0 ${className ?? ''}`}
+            className={joinClasses(
+                SIM_AVATAR,
+                SIM_SURFACE_AVATAR,
+                'simulator-flex simulator-flex--center',
+                SIM_FLEX_SHRINK_0,
+                className,
+            )}
             style={{ width: 48, height: 48 }}
             aria-hidden
         >
-            <span className="text-primary" style={{ fontSize: '1.5rem' }}>👤</span>
+            <span className="simulator-text--primary" style={{ fontSize: '1.5rem' }}>👤</span>
         </div>
     );
 }
+
+const storeCardClass = joinClasses(
+    simBorder.tile,
+    SIM_ROUNDED_NONE,
+    simSpacing.p3,
+    SIM_SURFACE_WHITE,
+    simLayout.row,
+    'simulator-flex--align-start',
+    simSpacing.gap2,
+);
+
+const dashboardTileClass = joinClasses(
+    simBorder.tile,
+    SIM_ROUNDED_NONE,
+    simSpacing.p2,
+    SIM_TEXT_SM,
+    SIM_TEXT_CENTER,
+    SIM_SURFACE_WHITE,
+);
+
+const dashboardNavBtnClass = joinClasses(
+    simBorder.tile,
+    SIM_ROUNDED_NONE,
+    SIM_FLEX_GROW_1,
+    simSpacing.py3,
+    SIM_TEXT_MEDIUM,
+);
 
 /** Store subview: header, search, app cards (icon, name, Download). Back returns to Home. */
 function HomeStoreScreen({
@@ -60,20 +107,17 @@ function HomeStoreScreen({
         storeContent = <p className={simTypo.emptyState}>No results.</p>;
     } else {
         storeContent = (
-            <div className="d-flex flex-column gap-2">
+            <div className={simLayout.stack}>
                 {filtered.map((app) => (
-                    <div
-                        key={app.id}
-                        className="border border-secondary rounded-0 p-3 bg-white d-flex align-items-start gap-3"
-                    >
+                    <div key={app.id} className={storeCardClass}>
                         <StoreAppIcon />
-                        <div className="d-flex flex-column min-w-0 flex-grow-1">
-                            <span className="fw-medium text-body">{app.name}</span>
-                            <div className="d-flex align-items-center justify-content-between mt-2">
-                                <span className="small text-muted">App</span>
+                        <div className={joinClasses(SIM_FLEX_COL, 'simulator-min-w-0', SIM_FLEX_GROW_1)}>
+                            <span className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_BODY)}>{app.name}</span>
+                            <div className={joinClasses(simLayout.rowBetween, simSpacing.mt2)}>
+                                <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>App</span>
                                 <SimulatorButton
                                     tone="primary"
-                                    className="simulator-btn--sm rounded-0"
+                                    className={joinClasses('simulator-btn--sm', SIM_ROUNDED_NONE)}
                                     onClick={() => onAction(SimulatorActions.openStore())}
                                     aria-label={`Download ${app.name}`}
                                 >
@@ -88,17 +132,15 @@ function HomeStoreScreen({
     }
 
     return (
-        <div className="d-flex flex-column">
-            <div className="text-center border-bottom border-secondary py-2 mb-2 small fw-semibold text-body">
-                Store
-            </div>
+        <div className={simLayout.stack}>
+            <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>Store</div>
             <SimulatorSearchInput
                 value={search}
                 onChange={setSearch}
                 onSubmit={() => {}}
                 placeholder="Q Test"
                 ariaLabel="Search store"
-                className="mb-3"
+                className={simSpacing.mb3}
             />
             {storeContent}
         </div>
@@ -116,36 +158,31 @@ function HomeSettingsScreen({
     const [search, setSearch] = useState('');
 
     return (
-        <div className="d-flex flex-column">
+        <div className={simLayout.stack}>
             <SimulatorDetailBackBar onBack={onBack} title="Settings" ariaLabel="Back to Home" />
-            <div className="text-center border-bottom border-secondary py-2 mb-2 small fw-semibold text-body">
-                Settings
-            </div>
+            <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>Settings</div>
             <SimulatorSearchInput
                 value={search}
                 onChange={setSearch}
                 onSubmit={() => {}}
                 placeholder="Q Test"
                 ariaLabel="Search settings"
-                className="mb-3"
+                className={simSpacing.mb3}
             />
             {settingsSections.length === 0 ? (
                 <p className={simTypo.emptyState}>No settings.</p>
             ) : (
-                <div className="d-flex flex-column gap-3">
+                <div className={joinClasses(SIM_FLEX_COL, 'simulator-spacing--gap-3')}>
                     {settingsSections.map((section) => (
-                        <div
-                            key={section.id}
-                            className="border border-secondary rounded-0 p-3 bg-white"
-                        >
+                        <div key={section.id} className={joinClasses(simBorder.tile, SIM_ROUNDED_NONE, simSpacing.p3, SIM_SURFACE_WHITE)}>
                             <SimulatorField>
-                                <SimulatorLabel className="small fw-medium text-body d-block mb-2">
+                                <SimulatorLabel className={joinClasses(simLayout.fieldLabel, 'simulator-text--block', simSpacing.mb2)}>
                                     {section.title}
                                 </SimulatorLabel>
                                 <SimulatorInput
                                     type="text"
                                     placeholder=""
-                                    className="rounded-0"
+                                    className={SIM_ROUNDED_NONE}
                                     aria-label={section.title}
                                 />
                             </SimulatorField>
@@ -174,22 +211,21 @@ function HomeDashboard({
     const [search, setSearch] = useState('');
 
     return (
-        <div className="d-flex flex-column">
-            {/* App identity is the shell bottom nav; do not render doc-only "Home" diagram label inside content. */}
+        <div className={simLayout.stack}>
             <SimulatorSearchInput
                 value={search}
                 onChange={setSearch}
                 onSubmit={() => {}}
                 placeholder="Q Search"
                 ariaLabel="Search"
-                className="mb-3"
+                className={simSpacing.mb3}
             />
             {(hasStore || hasSettings) && (
-                <div className="d-flex gap-2 mb-3">
+                <div className={joinClasses(simLayout.actionsRow, simSpacing.mb3)}>
                     {hasStore && (
                         <SimulatorButton
                             tone="light"
-                            className={joinClasses('border', 'border-secondary', 'rounded-0', 'flex-grow-1', 'py-3', 'fw-medium')}
+                            className={dashboardNavBtnClass}
                             onClick={() => {
                                 onAction(SimulatorActions.openStore());
                                 onNavigate('store');
@@ -202,7 +238,7 @@ function HomeDashboard({
                     {hasSettings && (
                         <SimulatorButton
                             tone="light"
-                            className={joinClasses('border', 'border-secondary', 'rounded-0', 'flex-grow-1', 'py-3', 'fw-medium')}
+                            className={dashboardNavBtnClass}
                             onClick={() => {
                                 onAction(SimulatorActions.openSettings());
                                 onNavigate('settings');
@@ -215,11 +251,11 @@ function HomeDashboard({
                 </div>
             )}
             {widgets.length > 0 && (
-                <div className="d-flex flex-wrap gap-2">
+                <div className={joinClasses(simLayout.actionsRow, 'simulator-flex--wrap')}>
                     {widgets.map((w) => (
                         <div
                             key={w.id}
-                            className="border border-secondary rounded-0 p-2 small text-center bg-white"
+                            className={dashboardTileClass}
                             style={{ minWidth: 80, minHeight: 64 }}
                         >
                             {w.label}

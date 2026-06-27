@@ -9,7 +9,13 @@ import {
     SimulatorCardHeader,
     SimulatorCollapse,
 } from '../ui/primitives';
-import { SIM_FLEX, SIM_MUTED, joinClasses, simBtnToneClass } from '../ui/simulatorClasses';
+import { simSpacing } from '../simulatorStyles';
+import {
+    joinClasses,
+    SIM_FLEX,
+    SIM_MUTED,
+    simBtnToneClass,
+} from '../ui/simulatorClasses';
 import type { SimulatorInteractionEvent } from '../types/simulatorEvents';
 
 /** Synthetic entry for "session started" (not part of API event contract). */
@@ -120,8 +126,10 @@ export default function SimulatorSessionTimeline({
     const bodyId = useId();
     const [open, setOpen] = useState(defaultExpanded);
     return (
-        <SimulatorCard className={joinClasses('mb-2', className)} data-testid="simulator-session-timeline">
-            <SimulatorCardHeader className={joinClasses('simulator-text--sm', 'simulator-surface--header', 'py-1 px-2')}>
+        <SimulatorCard className={joinClasses(simSpacing.mb2, className)} data-testid="simulator-session-timeline">
+            <SimulatorCardHeader
+                className={joinClasses('simulator-text--sm', 'simulator-surface--header', simSpacing.py1, simSpacing.px2)}
+            >
                 <button
                     type="button"
                     className={joinClasses(
@@ -139,11 +147,11 @@ export default function SimulatorSessionTimeline({
                 <span className={joinClasses(SIM_MUTED, 'simulator-inline-gap')}>— {entries.length} event{entries.length === 1 ? '' : 's'}</span>
             </SimulatorCardHeader>
             <SimulatorCollapse open={open}>
-                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', 'py-2 px-2')}>
+                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}>
                     {entries.length === 0 ? (
                         <div className={SIM_MUTED}>No events yet. Interact with the simulator to see the timeline.</div>
                     ) : (
-                        <ul className="simulator-list--plain mb-0">
+                        <ul className={joinClasses('simulator-list--plain', simSpacing.mb0)}>
                             {entries.map((entry, i) => {
                                 const target = targetSummary(entry);
                                 return (
@@ -154,7 +162,9 @@ export default function SimulatorSessionTimeline({
                                             'simulator-flex--wrap',
                                             'simulator-spacing--gap',
                                             'simulator-flex--align-baseline',
-                                            'py-1 border-bottom border-light',
+                                            simSpacing.py1,
+                                            'simulator-border simulator-border--bottom',
+                                            'simulator-border--light',
                                         )}
                                     >
                                         <span className={SIM_MUTED} style={{ minWidth: '4.5rem' }}>

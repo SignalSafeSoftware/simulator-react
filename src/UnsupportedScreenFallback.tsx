@@ -9,6 +9,7 @@ import {
     UNSUPPORTED_SCREEN_HINT,
 } from './constants';
 import type { SimulatorApp } from './types/portableSimulator';
+import { joinClasses, SIM_TEXT_MEDIUM } from './ui/simulatorClasses';
 
 export interface UnsupportedScreenFallbackProps {
     app: SimulatorApp;
@@ -22,11 +23,11 @@ export default function UnsupportedScreenFallback({ app, screen }: Readonly<Unsu
             role="alert"
             data-testid="simulator-unsupported-screen"
         >
-            <p className="fw-medium text-warning mb-1">{UNSUPPORTED_SCREEN_TITLE}</p>
-            <p className={`mb-0 ${simTypo.secondary}`}>
+            <p className={joinClasses(SIM_TEXT_MEDIUM, 'simulator-text--warning', simSpacing.mb1)}>{UNSUPPORTED_SCREEN_TITLE}</p>
+            <p className={joinClasses(simSpacing.mb0, simTypo.secondary)}>
                 App: <code>{app}</code> — Screen: <code>{screen || UNSUPPORTED_SCREEN_EMPTY_PLACEHOLDER}</code>
             </p>
-            <p className={`mt-1 mb-0 ${simTypo.secondary}`}>{UNSUPPORTED_SCREEN_HINT}</p>
+            <p className={joinClasses(simSpacing.mt1, simSpacing.mb0, simTypo.secondary)}>{UNSUPPORTED_SCREEN_HINT}</p>
         </div>
     );
 }
