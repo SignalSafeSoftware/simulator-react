@@ -7,16 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- `SimulatorErrorBoundary` and `UnsupportedScreenFallback` default to learner-safe copy (no exception message or component stack).
-- Add `showDiagnostics` prop for author/admin surfaces that need internal detail.
-
-### Added
-
-- [docs/ERROR_BOUNDARIES.md](./docs/ERROR_BOUNDARIES.md) — learner vs author vs developer error policy.
-- Tests: `tests/learnerSafeErrors.test.ts`.
-
 ## [0.2.0] - 2026-06-24
 
 ### Added
@@ -24,7 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - UI-kit agnostic primitives (`src/ui/simulatorClasses.ts`, `src/ui/primitives.tsx`) with `simulator-*` class hooks.
 - Render slots on `SimulatorWithSession`: `renderChoice`, `renderFeedback`, `renderContactsOverlay`.
 - [docs/UI_KIT_AGNOSTIC_USAGE.md](./docs/UI_KIT_AGNOSTIC_USAGE.md) — class hooks, slots, host examples, DeliveryPlus migration.
-- Tests: `package-metadata`, `import-without-react-bootstrap`, `renderSlots`.
+- [docs/ERROR_BOUNDARIES.md](./docs/ERROR_BOUNDARIES.md) — learner vs author vs developer error policy.
+- Tests: `package-metadata`, `import-without-react-bootstrap`, `renderSlots`, `learnerSafeErrors`, expanded session/render-slot coverage.
 
 ### Changed
 
@@ -32,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace `react-bootstrap` components (Modal, Card, Form, Alert, …) with semantic HTML and native `<dialog>`.
 - Default styling contract uses `simulator-*` hooks instead of Bootstrap component markup.
 - Complete runtime Bootstrap CSS class removal from shell, list, dial, inbox, browser, and dev chrome views (Prompt 12B).
+- `SimulatorErrorBoundary` and `UnsupportedScreenFallback` default to learner-safe copy (no exception message or component stack).
+- Add `showDiagnostics` prop for author/admin surfaces that need internal detail.
 - README and RELEASING document UI-kit agnostic integration; Bootstrap examples are host-app code only.
 
 ## [0.1.6] - 2026-06-26
