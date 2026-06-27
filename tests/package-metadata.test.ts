@@ -6,9 +6,13 @@ describe('package metadata', () => {
         const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as {
             peerDependencies?: Record<string, string>;
             devDependencies?: Record<string, string>;
+            keywords?: string[];
+            sideEffects?: boolean;
         };
 
         expect(pkg.peerDependencies?.['react-bootstrap']).toBeUndefined();
         expect(pkg.devDependencies?.['react-bootstrap']).toBeUndefined();
+        expect(pkg.keywords?.some((k) => /bootstrap/i.test(k))).toBe(false);
+        expect(pkg.sideEffects).toBe(false);
     });
 });
