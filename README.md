@@ -6,7 +6,15 @@ React **device simulator** UI: session state, screen registry, template adapter,
 |---|---|
 | **npm** | `@signalsafe/simulator-react` |
 | **GitHub** | [SignalSafeSoftware/simulator-react](https://github.com/SignalSafeSoftware/simulator-react) |
-| **Peer deps** | `react`, `react-dom` |
+| **Peer deps** | `react`, `react-dom` (no UI library required) |
+
+## UI-kit agnostic
+
+This package is **UI-kit agnostic**. It renders semantic HTML with stable **`simulator-*` class hooks** and optional **render slots** — it does **not** require Bootstrap, Material UI, or any other component library.
+
+**Host applications own styling.** Provide CSS for `simulator-*` classes, or pass `renderChoice` / `renderFeedback` / `renderContactsOverlay` to inject your UI kit's components.
+
+See [docs/UI_KIT_AGNOSTIC_USAGE.md](./docs/UI_KIT_AGNOSTIC_USAGE.md) for class hooks, slots, and DeliveryPlus migration guidance.
 
 ## What this package does
 
@@ -39,7 +47,56 @@ Hosts supply a **`SimulatorTemplatePayload`**: TreeSpec wire plus simulator **wo
 npm install @signalsafe/simulator-react react react-dom
 ```
 
-Use a modern **ESM** TypeScript setup. Style simulator UI via host CSS targeting `simulator-*` class hooks, or pass `renderChoice` / `renderFeedback` slots for full UI-kit control.
+Use a modern **ESM** TypeScript setup. Style simulator UI via host CSS targeting `simulator-*` class hooks, or pass render slots for full UI-kit control (see [UI_KIT_AGNOSTIC_USAGE.md](./docs/UI_KIT_AGNOSTIC_USAGE.md)).
+
+## Minimal example (plain HTML + host CSS)
+
+No Bootstrap or other UI library is required:
+
+```tsx
+import { useReducer } from 'react';
+import {
+    SimulatorWithSession,
+    PhoneSimulatorShell,
+    getInitialSessionState,
+    simulatorSessionReducer,
+    templateDetailToPayload,
+    type SimulatorTemplateDetail,
+} from '@signalsafe/simulator-react';
+
+import './simulator-host.css'; // map .simulator-btn, .simulator-muted, etc.
+
+function PlainSimulator({ detail }: { detail: SimulatorTemplateDetail }) {
+    const payload = templateDetailToPayload(detail, {});
+    const [state, dispatch] = useReducer(
+        simulatorSessionReducer,
+        getInitialSessionState(payload),
+    );
+
+    return (
+        <PhoneSimulatorShell>
+            <SimulatorWithSession state={state} dispatch={dispatch} />
+        </PhoneSimulatorShell>
+    );
+}
+```
+
+## Optional: Bootstrap in the host (not a package requirement)
+
+If your app already uses Bootstrap, wire it via render slots — **this is host-app code**, not a package dependency:
+
+```tsx
+import Button from 'react-bootstrap/Button';
+import 'bootstrap/dist/css/bootstrap.min.css'; // host-owned CSS
+
+<SimulatorWithSession
+    state={state}
+    dispatch={dispatch}
+    renderChoice={({ label, onClick, tone }) => (
+        <Button variant={tone ?? 'primary'} onClick={onClick}>{label}</Button>
+    )}
+/>;
+```
 
 ## Repository
 
