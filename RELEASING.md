@@ -4,6 +4,12 @@ Standalone repository: [SignalSafeSoftware/simulator-react](https://github.com/S
 
 **Depends on:** `@signalsafe/simulator-core`, `@signalsafe/tree-spec`. **Peer deps:** `react`, `react-dom`.
 
+## UI-kit release publish order
+
+`@signalsafe/simulator-react@0.2.0` can be published **independently** of the tree-spec editor packages. It does not depend on `@signalsafe/tree-spec-editor` or `@signalsafe/tree-spec-editor-react`.
+
+When publishing the tree-spec editor line, publish `@signalsafe/tree-spec-editor-react@0.2.0` before `@signalsafe/tree-spec-editor@0.3.0` (see that package’s RELEASING.md).
+
 ## CI publish policy
 
 - **Checks and tests** run on every pull request.
