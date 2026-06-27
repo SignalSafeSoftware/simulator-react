@@ -133,7 +133,7 @@ export default function SimulatorWithSession({
         );
 
     return (
-        <SimulatorErrorBoundary fallbackTitle="Simulator error">
+        <SimulatorErrorBoundary>
             <div
                 data-simulator-app={screenMeta.app}
                 data-simulator-screen={screenMeta.screen}

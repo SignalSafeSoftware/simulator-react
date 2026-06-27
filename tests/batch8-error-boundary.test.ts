@@ -3,6 +3,14 @@ import { describe, expect, it, vi } from 'vitest';
 import SimulatorErrorBoundary from '../src/SimulatorErrorBoundary';
 import { TestRenderer, act } from './reactTestRenderer';
 
+function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+    if (node == null) return '';
+    if (Array.isArray(node)) return node.map((child) => flattenText(child)).join('');
+    return (node.children ?? [])
+        .map((child) => (typeof child === 'string' ? child : flattenText(child)))
+        .join('');
+}
+
 function Boom(): never {
     throw new Error('render failed');
 }
@@ -24,6 +32,7 @@ describe('SimulatorErrorBoundary', () => {
 
         const fallback = renderer!.root.findByProps({ 'data-testid': 'simulator-error-fallback' });
         expect(fallback).toBeTruthy();
+        expect(flattenText(renderer!.toJSON())).not.toContain('render failed');
 
         const dismiss = renderer!.root.find(
             (node) => node.type === 'button' && node.children?.includes('Dismiss'),

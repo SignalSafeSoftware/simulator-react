@@ -16,6 +16,8 @@ This package is **UI-kit agnostic**. It renders semantic HTML with stable **`sim
 
 See [docs/UI_KIT_AGNOSTIC_USAGE.md](./docs/UI_KIT_AGNOSTIC_USAGE.md) for class hooks, slots, and DeliveryPlus migration guidance.
 
+See [docs/ERROR_BOUNDARIES.md](./docs/ERROR_BOUNDARIES.md) for learner-safe error UI vs author/admin diagnostics.
+
 ## What this package does
 
 - Render **`SimulatorWithSession`** / **`PhoneSimulatorShell`** and registered scenario screens.

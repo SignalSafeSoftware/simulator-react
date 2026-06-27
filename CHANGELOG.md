@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `SimulatorErrorBoundary` and `UnsupportedScreenFallback` default to learner-safe copy (no exception message or component stack).
+- Add `showDiagnostics` prop for author/admin surfaces that need internal detail.
+
+### Added
+
+- [docs/ERROR_BOUNDARIES.md](./docs/ERROR_BOUNDARIES.md) — learner vs author vs developer error policy.
+- Tests: `tests/learnerSafeErrors.test.ts`.
+
 ## [0.2.0] - 2026-06-24
 
 ### Added
