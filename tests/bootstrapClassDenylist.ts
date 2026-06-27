@@ -30,6 +30,7 @@ export const BOOTSTRAP_CLASS_DENYLIST = [
     'text-muted',
     'text-body',
     'text-dark',
+    'text-break',
     'fw-bold',
     'fw-semibold',
     'flex-grow-1',

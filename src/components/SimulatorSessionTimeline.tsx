@@ -175,7 +175,7 @@ export default function SimulatorSessionTimeline({
                                         </span>
                                         <span className="simulator-text--semibold">{kindLabel(entry.kind)}</span>
                                         {target != null && (
-                                            <span className={joinClasses(SIM_MUTED, 'text-break')}>{target}</span>
+                                            <span className={joinClasses(SIM_MUTED, 'simulator-text--break')}>{target}</span>
                                         )}
                                     </li>
                                 );
