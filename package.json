@@ -71,6 +71,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && tsx ./scripts/fix-node-esm-relative-imports.ts dist",
+    "lint": "yarn typecheck",
     "typecheck": "tsc --noEmit",
     "pack:local": "npm pack --pack-destination ../../dist/reusable-npm",
     "release:check": "node ../../scripts/run-private-package-release-checks.mjs --mode prepublish",
@@ -85,6 +86,7 @@
         "prepublishOnly": "npm run build",
     "prepare": "npm run build",
     "test": "vitest run",
+    "test:coverage": "yarn test --coverage",
     "test:monorepo": "cd ../../frontend && yarn vitest run --config vitest.simulator-react.config.ts"
   },
   "dependencies": {
