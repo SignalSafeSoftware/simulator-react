@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Raise minimum supported Node.js to **>=22.12.0** (`engines.node`); CI matrix tests **22** and **24** only (Node 20 dropped due to GitHub Actions Node 20 deprecation).
+- Remove unused runtime dependency on `@signalsafe/simulator-core` (this package imports `@signalsafe/tree-spec` directly; hosts that need headless stepping should depend on `@signalsafe/simulator-core` separately).
 
 ## [0.2.0] - 2026-06-24
 
