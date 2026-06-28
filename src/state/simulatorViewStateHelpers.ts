@@ -9,14 +9,14 @@ import type {
     EmailScreenId,
     MessagesScreenId,
     HomeScreenId,
-} from '../types/session';
+} from '../types/session.js';
 import {
     DEFAULT_PHONE_SCREEN,
     DEFAULT_EMAIL_SCREEN,
     DEFAULT_MESSAGES_SCREEN,
     DEFAULT_INTERNET_SCREEN,
     DEFAULT_HOME_SCREEN,
-} from '../types/session';
+} from '../types/session.js';
 
 function initialPhoneState(): SimulatorViewState['phone'] {
     return {

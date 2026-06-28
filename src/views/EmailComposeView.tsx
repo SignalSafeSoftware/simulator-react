@@ -3,12 +3,23 @@
  * Wireframe: labeled fields, rectangular buttons. Cancel returns to list.
  */
 import { useState } from 'react';
-import { Form } from 'react-bootstrap';
+
+import { simLayout, simScreen, simSpacing } from '../simulatorStyles.js';
+import {
+    SimulatorButton,
+    SimulatorField,
+    SimulatorInput,
+    SimulatorLabel,
+    SimulatorTextarea,
+} from '../ui/primitives.js';
+import { joinClasses, SIM_FLEX_GROW_1, SIM_ROUNDED_NONE, SIM_TEXT_SEMIBOLD } from '../ui/simulatorClasses.js';
 
 export interface EmailComposeViewProps {
     onSend?: (opts: { to: string; subject: string; body: string }) => void;
     onCancel: () => void;
 }
+
+const footerBtnClass = joinClasses(SIM_ROUNDED_NONE, 'simulator-btn--block', simSpacing.py2, SIM_TEXT_SEMIBOLD, SIM_FLEX_GROW_1);
 
 export default function EmailComposeView({ onSend, onCancel }: Readonly<EmailComposeViewProps>) {
     const [to, setTo] = useState('');
@@ -21,63 +32,50 @@ export default function EmailComposeView({ onSend, onCancel }: Readonly<EmailCom
     };
 
     return (
-        <div className="d-flex flex-column">
-            <div className="text-center border-bottom border-secondary py-2 mb-3 small fw-semibold text-body">
-                Compose Email
-            </div>
-            <Form className="d-flex flex-column gap-3">
-                <Form.Group>
-                    <Form.Label className="small fw-medium text-body">Recipient</Form.Label>
-                    <Form.Control
+        <div className={simLayout.stack}>
+            <div className={joinClasses(simScreen.header, simSpacing.mb3)}>Compose Email</div>
+            <div className={joinClasses(simLayout.stack, 'simulator-spacing--gap-3')}>
+                <SimulatorField>
+                    <SimulatorLabel className={simLayout.fieldLabel}>Recipient</SimulatorLabel>
+                    <SimulatorInput
                         type="text"
                         value={to}
                         onChange={(e) => setTo(e.target.value)}
                         placeholder=""
-                        className="rounded-0"
+                        className={SIM_ROUNDED_NONE}
                         aria-label="Recipient"
                     />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label className="small fw-medium text-body">Subject</Form.Label>
-                    <Form.Control
+                </SimulatorField>
+                <SimulatorField>
+                    <SimulatorLabel className={simLayout.fieldLabel}>Subject</SimulatorLabel>
+                    <SimulatorInput
                         type="text"
                         value={subject}
                         onChange={(e) => setSubject(e.target.value)}
                         placeholder=""
-                        className="rounded-0"
+                        className={SIM_ROUNDED_NONE}
                         aria-label="Subject"
                     />
-                </Form.Group>
-                <Form.Group className="flex-grow-1">
-                    <Form.Label className="small fw-medium text-body">Body</Form.Label>
-                    <Form.Control
-                        as="textarea"
+                </SimulatorField>
+                <SimulatorField className={SIM_FLEX_GROW_1}>
+                    <SimulatorLabel className={simLayout.fieldLabel}>Body</SimulatorLabel>
+                    <SimulatorTextarea
                         rows={6}
                         value={body}
                         onChange={(e) => setBody(e.target.value)}
                         placeholder=""
-                        className="rounded-0"
+                        className={SIM_ROUNDED_NONE}
                         aria-label="Body"
                     />
-                </Form.Group>
-            </Form>
-            <div className="d-flex gap-2 mt-3">
-                <button
-                    type="button"
-                    className="btn btn-primary rounded-0 flex-grow-1 py-2 fw-semibold"
-                    onClick={handleSend}
-                    aria-label="Send"
-                >
+                </SimulatorField>
+            </div>
+            <div className={joinClasses(simLayout.actionsRow, simSpacing.mt3)}>
+                <SimulatorButton tone="primary" className={footerBtnClass} onClick={handleSend} aria-label="Send">
                     Send
-                </button>
-                <button
-                    type="button"
-                    className="btn btn-secondary rounded-0 flex-grow-1 py-2 fw-semibold"
-                    onClick={onCancel}
-                    aria-label="Cancel"
-                >
+                </SimulatorButton>
+                <SimulatorButton tone="secondary" className={footerBtnClass} onClick={onCancel} aria-label="Cancel">
                     Cancel
-                </button>
+                </SimulatorButton>
             </div>
         </div>
     );

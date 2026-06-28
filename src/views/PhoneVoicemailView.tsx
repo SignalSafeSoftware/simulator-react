@@ -1,8 +1,9 @@
 /**
  * Phone Voicemail screen: optional caller/timestamp header + transcript + Back.
  */
-import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../components/SimulatorDetail';
-import { simTypo } from '../simulatorStyles';
+import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../components/SimulatorDetail.js';
+import { simSpacing, simTypo } from '../simulatorStyles.js';
+import { joinClasses, SIM_TEXT_BODY, SIM_TEXT_MEDIUM } from '../ui/simulatorClasses.js';
 
 export interface PhoneVoicemailViewProps {
     transcript: string;
@@ -20,18 +21,18 @@ export default function PhoneVoicemailView({
     timestamp,
 }: Readonly<PhoneVoicemailViewProps>) {
     return (
-        <div className="d-flex flex-column">
+        <div className="simulator-flex simulator-flex--column">
             <SimulatorDetailBackBar onBack={onBack} title="Voicemail" ariaLabel="Back" titleOnly />
             {(callerName != null || timestamp != null) && (
                 <div className={simTypo.secondaryTight}>
-                    {callerName != null && <span className="fw-medium text-body">{callerName}</span>}
+                    {callerName != null && <span className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_BODY)}>{callerName}</span>}
                     {callerName != null && timestamp != null && ' · '}
                     {timestamp != null && <span>{timestamp}</span>}
                 </div>
             )}
             <SimulatorDetailBlock>
                 <pre
-                    className={`mb-0 ${simTypo.bodySmall}`}
+                    className={joinClasses(simSpacing.mb0, simTypo.bodySmall)}
                     style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit' }}
                 >
                     {transcript}

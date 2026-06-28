@@ -92,10 +92,10 @@ describe('PhoneSimulatorShell', () => {
         expect(exitLink.props.href).toBe('/exit');
         expect(exitLink.props.children).toBe('Close');
 
-        const header = root.findAllByType('div').find((node) => node.props.className?.includes('justify-content-end'));
+        const header = root.findAllByType('div').find((node) => node.props.className?.includes('simulator-flex--end'));
         expect(header).toBeDefined();
 
-        const shellBody = root.findAllByType('div').find((node) => node.props.className?.includes('bg-body-tertiary'))!;
+        const shellBody = root.findAllByType('div').find((node) => node.props.className?.includes('simulator-surface--body-tertiary'))!;
         expect(shellBody.props.className).not.toContain('min-vh-100');
         expect(root.findAll((node) => node.props['aria-label'] === 'Simulator channels')).toHaveLength(0);
     });

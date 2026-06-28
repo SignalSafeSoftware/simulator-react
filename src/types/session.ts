@@ -13,7 +13,7 @@ import type {
     SimulatorEntryPoint,
     SimulatorMainMenuItem,
     SmsThreadContent,
-} from './portableSimulator';
+} from './portableSimulator.js';
 
 /** Channel id for shell nav and API (maps to app: sms→messages, browser→internet). */
 export type SimulatorChannel = 'contacts' | 'email' | 'sms' | 'browser' | 'phone' | 'home';
@@ -372,4 +372,4 @@ export interface SimulatorSessionState {
     view: SimulatorViewState;
 }
 
-export type { EmailTemplateLink, SmsThreadMessage, SimulatorApp } from './portableSimulator';
+export type { EmailTemplateLink, SmsThreadMessage, SimulatorApp } from './portableSimulator.js';

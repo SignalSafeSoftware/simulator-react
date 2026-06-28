@@ -6,11 +6,22 @@ import type {
     EmailScreenId,
     SimulatorAction,
     SimulatorEmailPayload,
-} from '../types/session';
-import SimulatorLocalNav from '../components/SimulatorLocalNav';
-import EmailInboxList from './EmailInboxList';
-import EmailMessageDetail from './EmailMessageDetail';
-import EmailComposeView from './EmailComposeView';
+} from '../types/session.js';
+import SimulatorLocalNav from '../components/SimulatorLocalNav.js';
+import EmailInboxList from './EmailInboxList.js';
+import EmailMessageDetail from './EmailMessageDetail.js';
+import EmailComposeView from './EmailComposeView.js';
+import { simLayout } from '../simulatorStyles.js';
+import {
+    joinClasses,
+    SIM_BORDER_SECONDARY,
+    SIM_BORDER_TOP,
+    SIM_FLEX_COL,
+    SIM_FLEX_GROW_1,
+    SIM_FLEX_SHRINK_0,
+    SIM_MIN_H_0,
+    SIM_OVERFLOW_AUTO,
+} from '../ui/simulatorClasses.js';
 
 const EMAIL_NAV_ITEMS = [
     { id: 'list', label: 'Inbox' },
@@ -31,6 +42,14 @@ export interface EmailSimulatorViewProps {
     /** When true, the shell is rendering the secondary menu (Inbox/Outbox/Trash/Back); do not render local nav here. */
     navRenderedByShell?: boolean;
 }
+
+const localNavClass = joinClasses(
+    'simulator-spacing--mb-0',
+    'simulator-border--bottom-none',
+    SIM_FLEX_SHRINK_0,
+    SIM_BORDER_TOP,
+    SIM_BORDER_SECONDARY,
+);
 
 export default function EmailSimulatorView({
     payload,
@@ -53,10 +72,14 @@ export default function EmailSimulatorView({
         }
     };
 
+    const scrollClass =
+        screen === 'detail'
+            ? joinClasses(SIM_FLEX_GROW_1, SIM_MIN_H_0, SIM_FLEX_COL)
+            : joinClasses(SIM_FLEX_GROW_1, SIM_MIN_H_0, SIM_OVERFLOW_AUTO);
+
     return (
-        <div className="d-flex flex-column flex-grow-1 min-h-0">
-            {/* App identity is the shell bottom nav; do not render doc-only diagram labels (e.g. "Email") inside content. */}
-            <div className={`flex-grow-1 min-h-0 ${screen === 'detail' ? 'd-flex flex-column' : 'overflow-auto'}`}>
+        <div className={simLayout.screenColumn}>
+            <div className={scrollClass}>
                 {screen === 'list' && (
                     <EmailInboxList
                         inbox={inbox}
@@ -128,7 +151,7 @@ export default function EmailSimulatorView({
                     items={[...EMAIL_NAV_ITEMS]}
                     activeId={screen === 'list' ? 'list' : screen}
                     onSelect={handleNavSelect}
-                    className="mb-0 border-bottom-0 flex-shrink-0 border-top border-secondary"
+                    className={localNavClass}
                     aria-label="Email folder"
                 />
             )}

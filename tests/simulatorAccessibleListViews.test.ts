@@ -120,7 +120,7 @@ describe('simulator accessible list views', () => {
         });
 
         const selectedRow = renderer!.root.findAllByType('button').find((node) => node.props.type === 'button' && node.props['aria-label'] == null);
-        expect(selectedRow?.props.className).toContain('bg-light');
+        expect(selectedRow?.props.className).toContain('simulator-surface--selected');
 
         await act(async () => {
             renderer!.root.findByProps({ 'aria-label': 'Search' }).props.onChange({ target: { value: 'reset' } });
@@ -238,7 +238,7 @@ describe('simulator accessible list views', () => {
             );
         });
 
-        const rowButton = renderer!.root.findAllByType('button').find((node) => node.props.className?.includes('border-top-0'));
+        const rowButton = renderer!.root.findAllByType('button').find((node) => node.props.className?.includes('simulator-border--top-none'));
         expect(rowButton).toBeDefined();
 
         await act(async () => {
@@ -277,7 +277,10 @@ describe('simulator accessible list views', () => {
         expect(buttons.length).toBeGreaterThanOrEqual(2);
         expect(
             renderer!.root.findAll(
-                (node) => node.type === 'div' && node.props.className?.includes('bg-white')
+                (node) =>
+                    node.type === 'div' &&
+                    (node.props.className?.includes('simulator-surface--white') ||
+                        node.props.className?.includes('simulator-surface--light'))
             ).length
         ).toBeGreaterThan(0);
     });
@@ -487,7 +490,7 @@ describe('simulator accessible list views', () => {
         expect(flattenText(renderer!.toJSON())).toContain('+15550000001');
         expect(flattenText(renderer!.toJSON())).toContain('Unknown');
         const rowButtons = renderer!.root.findAllByType('button').filter((node) => node.props['aria-label'] == null);
-        expect(rowButtons[1].props.className).toContain('border-top-0');
+        expect(rowButtons[1].props.className).toContain('simulator-border--top-none');
 
         await act(async () => {
             renderer!.root.findByProps({ 'aria-label': 'Search threads' }).props.onChange({ target: { value: '0001' } });

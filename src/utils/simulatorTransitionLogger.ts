@@ -9,8 +9,8 @@
  * To disable: set to false or remove the key.
  */
 
-import type { SimulatorSessionState, SimulatorViewState } from '../types/session';
-import { getScreenMetadata, getScreenContextLabel } from './screenMetadata';
+import type { SimulatorSessionState, SimulatorViewState } from '../types/session.js';
+import { getScreenMetadata, getScreenContextLabel } from './screenMetadata.js';
 
 /** Action shape used for logging (avoids circular import from reducer). */
 interface DispatchActionForLog {

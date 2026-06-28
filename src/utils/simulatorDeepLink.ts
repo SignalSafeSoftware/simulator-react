@@ -4,9 +4,9 @@
  * Optional: when no params present, entry_point and normal init are unchanged.
  */
 
-import type { SimulatorApp } from '../types/portableSimulator';
-import type { SimulatorSessionState, SimulatorViewState } from '../types/session';
-import { DEFAULT_INTERNET_SCREEN } from '../types/session';
+import type { SimulatorApp } from '../types/portableSimulator.js';
+import type { SimulatorSessionState, SimulatorViewState } from '../types/session.js';
+import { DEFAULT_INTERNET_SCREEN } from '../types/session.js';
 
 const VALID_APPS = new Set<SimulatorApp>(['email', 'messages', 'internet', 'phone', 'home']);
 const PHONE_SCREENS = ['history', 'contacts', 'dial', 'incoming_call', 'voicemail', 'directory'] as const;

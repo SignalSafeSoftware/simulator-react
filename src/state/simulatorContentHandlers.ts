@@ -2,9 +2,9 @@
  * Content and simulator-action handlers: email, browser, SIMULATOR_ACTION.
  */
 
-import type { SimulatorViewState, SimulatorAction } from '../types/session';
-import { BROWSER_HISTORY_MAX } from '../types/session';
-import { applyNavLocal, applySwitchApp } from './simulatorNavigationHandlers';
+import type { SimulatorViewState, SimulatorAction } from '../types/session.js';
+import { BROWSER_HISTORY_MAX } from '../types/session.js';
+import { applyNavLocal, applySwitchApp } from './simulatorNavigationHandlers.js';
 
 export function updateInternetHistory(
     activeApp: SimulatorViewState['activeApp'],

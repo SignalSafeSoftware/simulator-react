@@ -1,53 +1,59 @@
 /**
  * Shared simulator core: given session state, renders shell + active app + contacts modal.
- * Used by SimulatorPage (workspace) and SimulatorPreviewByTemplate (@shared embed for workspace/admin)
- * so that rendering, navigation, and event behavior are identical.
  */
 import type { ReactNode } from 'react';
 import { useCallback, useMemo, useRef } from 'react';
-import PhoneSimulatorShell from './shell/PhoneSimulatorShell';
-import SimulatorDeveloperToolsPanel from './SimulatorDeveloperToolsPanel';
-import type { SimulatorDispatchAction } from './state/simulatorSessionReducer';
-import type { SimulatorSessionState } from './types/session';
-import { viewStateToActiveChannel, getCurrentScreenForApp } from './types/session';
-import { SHELL_EXIT_LABEL } from './constants';
-import type { HostSimulatorEventHandler } from './contract/hostContractTypes';
-import ContactsView from './views/ContactsView';
-import { renderActiveScreen } from './screenRegistry';
-import SimulatorErrorBoundary from './SimulatorErrorBoundary';
-import UnsupportedScreenFallback from './UnsupportedScreenFallback';
-import { getScreenMetadata } from './utils/screenMetadata';
-import { getVerificationContextForApp } from './utils/simulatorVerificationContext';
-import { Modal } from 'react-bootstrap';
-import type { TimelineEntry } from './components/SimulatorSessionTimeline';
-import type { SimulatorDeveloperTools, SimulatorRuntimeIssue } from './developerTools';
-import { useSimulatorSessionHandlers } from './hooks/useSimulatorSessionHandlers';
-import { useSimulatorSecondaryMenu } from './hooks/useSimulatorSecondaryMenu';
-import { useSimulatorDeveloperControls } from './hooks/useSimulatorDeveloperControls';
-import SimulatorDeveloperToolbar from './components/SimulatorDeveloperToolbar';
-import SimulatorDeveloperControlsBar from './components/SimulatorDeveloperControlsBar';
+import PhoneSimulatorShell from './shell/PhoneSimulatorShell.js';
+import SimulatorDeveloperToolsPanel from './SimulatorDeveloperToolsPanel.js';
+import type { SimulatorDispatchAction } from './state/simulatorSessionReducer.js';
+import type { SimulatorSessionState } from './types/session.js';
+import { viewStateToActiveChannel, getCurrentScreenForApp } from './types/session.js';
+import { SHELL_EXIT_LABEL } from './constants.js';
+import type { HostSimulatorEventHandler } from './contract/hostContractTypes.js';
+import ContactsView from './views/ContactsView.js';
+import { renderActiveScreen } from './screenRegistry/index.js';
+import SimulatorErrorBoundary from './SimulatorErrorBoundary.js';
+import UnsupportedScreenFallback from './UnsupportedScreenFallback.js';
+import { getScreenMetadata } from './utils/screenMetadata.js';
+import { getVerificationContextForApp } from './utils/simulatorVerificationContext.js';
+import type { TimelineEntry } from './components/SimulatorSessionTimeline.js';
+import type { SimulatorDeveloperTools, SimulatorRuntimeIssue } from './developerTools.js';
+import { useSimulatorSessionHandlers } from './hooks/useSimulatorSessionHandlers.js';
+import { useSimulatorSecondaryMenu } from './hooks/useSimulatorSecondaryMenu.js';
+import { useSimulatorDeveloperControls } from './hooks/useSimulatorDeveloperControls.js';
+import SimulatorDeveloperToolbar from './components/SimulatorDeveloperToolbar.js';
+import SimulatorDeveloperControlsBar from './components/SimulatorDeveloperControlsBar.js';
+import { simSpacing } from './simulatorStyles.js';
+import { SimulatorDialog } from './ui/primitives.js';
+import type {
+    SimulatorChoiceRenderProps,
+    SimulatorFeedbackRenderProps,
+} from './ui/renderSlots.js';
+
+export interface SimulatorContactsOverlayRenderProps {
+    contacts: SimulatorSessionState['payload']['contacts'];
+    verificationContext: ReturnType<typeof getVerificationContextForApp>;
+    onClose: () => void;
+}
 
 export interface SimulatorWithSessionProps {
     state: SimulatorSessionState;
     dispatch: (action: SimulatorDispatchAction) => void;
-    /**
-     * Host hook for **normalized** {@link SimulatorInteractionEvent}s (analytics, orchestration, or forwarding to your API).
-     * The package does not perform HTTP — map to your backend in the app or shared layer (e.g. `interactionEventToApiPayload` in `@signalsafe/shared`).
-     */
     onSimulatorEvent?: HostSimulatorEventHandler;
-    /** Optional custom exit control (e.g. react-router Link). When set, overrides exitTo/exitLabel. */
     exitLink?: ReactNode;
     exitTo?: string;
     exitLabel?: string;
     compact?: boolean;
-    /** Optional initial contacts search (e.g. from deep-link ?app=phone&screen=contacts&search=...). */
     initialContactsSearch?: string;
-    /** Structured developer-tool config that standardizes preview/debug affordances. */
     developerTools?: SimulatorDeveloperTools;
-    /** Optional timeline entries owned by the host surface. */
     developerToolsTimelineEntries?: TimelineEntry[];
-    /** Optional runtime issues owned by the host surface (for TreeSpec-backed flows). */
     developerToolsRuntimeIssues?: SimulatorRuntimeIssue[];
+    /** Host-owned overlay for the contacts verification panel. */
+    renderContactsOverlay?: (props: SimulatorContactsOverlayRenderProps) => ReactNode;
+    /** Host-owned choice button rendering (Answer, Send, page actions, etc.). */
+    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
+    /** Host-owned inline feedback/warning rendering. */
+    renderFeedback?: (feedback: SimulatorFeedbackRenderProps) => ReactNode;
 }
 
 export default function SimulatorWithSession({
@@ -62,6 +68,9 @@ export default function SimulatorWithSession({
     developerTools,
     developerToolsTimelineEntries,
     developerToolsRuntimeIssues,
+    renderContactsOverlay,
+    renderChoice,
+    renderFeedback,
 }: Readonly<SimulatorWithSessionProps>) {
     const stateRef = useRef(state);
     stateRef.current = state;
@@ -82,6 +91,8 @@ export default function SimulatorWithSession({
         onSimulatorEvent,
         initialContactsSearch,
         stateRef,
+        renderChoice,
+        renderFeedback,
     });
 
     const secondaryMenu = useSimulatorSecondaryMenu(view, dispatch, capabilities.phone);
@@ -107,8 +118,22 @@ export default function SimulatorWithSession({
 
     const screenMeta = useMemo(() => getScreenMetadata(view, payload), [view, payload]);
 
+    const contactsOverlayContent =
+        renderContactsOverlay?.({
+            contacts: payload.contacts,
+            verificationContext: getVerificationContext(),
+            onClose: onToggleContactsPanel,
+        }) ?? (
+            <ContactsView
+                contacts={payload.contacts}
+                title="Verify contact"
+                verificationContext={getVerificationContext()}
+                onBack={onToggleContactsPanel}
+            />
+        );
+
     return (
-        <SimulatorErrorBoundary fallbackTitle="Simulator error">
+        <SimulatorErrorBoundary>
             <div
                 data-simulator-app={screenMeta.app}
                 data-simulator-screen={screenMeta.screen}
@@ -142,7 +167,7 @@ export default function SimulatorWithSession({
                     payload={payload}
                     timelineEntries={developerToolsTimelineEntries}
                     runtimeIssues={developerToolsRuntimeIssues}
-                    className="mb-3"
+                    className={simSpacing.mb3}
                 />
                 <PhoneSimulatorShell
                     activeChannel={activeChannel}
@@ -170,18 +195,13 @@ export default function SimulatorWithSession({
                     {activeContent}
                 </PhoneSimulatorShell>
             </div>
-            {view.contactsPanelOpen && (
-                <Modal show onHide={onToggleContactsPanel} centered size="sm" contentClassName="rounded-3">
-                    <Modal.Body className="p-3">
-                        <ContactsView
-                            contacts={payload.contacts}
-                            title="Verify contact"
-                            verificationContext={getVerificationContext()}
-                            onBack={onToggleContactsPanel}
-                        />
-                    </Modal.Body>
-                </Modal>
-            )}
+            <SimulatorDialog
+                open={view.contactsPanelOpen}
+                onClose={onToggleContactsPanel}
+                aria-label="Verify contact"
+            >
+                {contactsOverlayContent}
+            </SimulatorDialog>
         </SimulatorErrorBoundary>
     );
 }

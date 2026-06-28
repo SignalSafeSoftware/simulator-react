@@ -3,15 +3,15 @@
  */
 
 import { useMemo } from 'react';
-import type { SimulatorDispatchAction } from '../state/simulatorSessionReducer';
-import type { SimulatorSessionState } from '../types/session';
-import type { SimulatorCapabilities } from '../utils/simulatorCapabilities';
-import { getPhoneLocalNavItems } from '../utils/phoneLocalNavItems';
+import type { SimulatorDispatchAction } from '../state/simulatorSessionReducer.js';
+import type { SimulatorSessionState } from '../types/session.js';
+import type { SimulatorCapabilities } from '../utils/simulatorCapabilities.js';
+import { getPhoneLocalNavItems } from '../utils/phoneLocalNavItems.js';
 import {
     EMAIL_SECONDARY_ITEMS,
     getEmailSecondaryActiveId,
     getPhoneSecondaryActiveId,
-} from '../utils/simulatorSecondaryMenuHelpers';
+} from '../utils/simulatorSecondaryMenuHelpers.js';
 
 export interface SimulatorSecondaryMenuConfig {
     items: Array<{ id: string; label: string; icon: string }>;

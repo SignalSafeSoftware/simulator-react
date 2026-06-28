@@ -2,18 +2,50 @@
  * Phone incoming call scene: wireframe order — large profile icon, "Name calling (URGENT)", number,
  * rectangular Answer / Ignore. Emits answer_call / ignore_call via callbacks.
  */
-import type { PhoneSimulatorContent } from '../types/portableSimulator';
+import type { ReactNode } from 'react';
+
+import type { PhoneSimulatorContent } from '../types/portableSimulator.js';
+import { simBorder, simLayout, simSpacing } from '../simulatorStyles.js';
+import {
+    joinClasses,
+    SIM_FLEX_COL,
+    SIM_FLEX_GROW_1,
+    SIM_MUTED,
+    SIM_OVERFLOW_HIDDEN,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_AVATAR,
+    SIM_SURFACE_LIGHT,
+    SIM_TEXT_BOLD,
+    SIM_TEXT_CENTER,
+    SIM_TEXT_DARK,
+    SIM_TEXT_SEMIBOLD,
+    SIM_TEXT_SM,
+} from '../ui/simulatorClasses.js';
+import {
+    renderSimulatorChoice,
+    type SimulatorChoiceRenderProps,
+} from '../ui/renderSlots.js';
 
 export interface PhoneIncomingSceneProps {
     content: PhoneSimulatorContent;
     onAnswer: () => void;
     onIgnore: () => void;
+    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
 }
+
+const actionBtnClass = joinClasses(
+    SIM_ROUNDED_NONE,
+    simSpacing.py3,
+    SIM_TEXT_SEMIBOLD,
+    SIM_FLEX_GROW_1,
+    'simulator-btn--block',
+);
 
 export default function PhoneIncomingScene({
     content,
     onAnswer,
     onIgnore,
+    renderChoice,
 }: Readonly<PhoneIncomingSceneProps>) {
     const phoneNumber = content.phone_number ?? '+1 555 000-0000';
     const callerName = content.caller_name ?? 'Unknown';
@@ -23,12 +55,26 @@ export default function PhoneIncomingScene({
 
     return (
         <div
-            className="d-flex flex-column align-items-center py-4 px-3 border border-secondary rounded-0 bg-light"
+            className={joinClasses(
+                SIM_FLEX_COL,
+                'simulator-flex--align-center',
+                simSpacing.py3,
+                simSpacing.px3,
+                simBorder.tile,
+                SIM_ROUNDED_NONE,
+                SIM_SURFACE_LIGHT,
+            )}
             style={{ minHeight: 320 }}
             data-testid="phone-incoming-scene"
         >
             <div
-                className="rounded-0 overflow-hidden bg-primary bg-opacity-25 d-flex align-items-center justify-content-center mb-3"
+                className={joinClasses(
+                    SIM_ROUNDED_NONE,
+                    SIM_OVERFLOW_HIDDEN,
+                    SIM_SURFACE_AVATAR,
+                    'simulator-flex simulator-flex--center',
+                    simSpacing.mb3,
+                )}
                 style={{ width: 120, height: 120 }}
                 data-testid="phone-simulator-avatar"
             >
@@ -36,45 +82,49 @@ export default function PhoneIncomingScene({
                     <img
                         src={avatarUrl}
                         alt=""
-                        className="w-100 h-100 object-fit-cover"
+                        className="simulator-w-full simulator-h-full simulator-object-fit-cover"
                     />
                 ) : (
-                    <span className="text-primary" style={{ fontSize: '3.5rem' }} aria-hidden>
+                    <span className="simulator-text--primary" style={{ fontSize: '3.5rem' }} aria-hidden>
                         👤
                     </span>
                 )}
             </div>
 
             <h2
-                className="h6 mb-1 fw-bold text-dark text-center"
+                className={joinClasses('simulator-heading simulator-heading--sub', simSpacing.mb1, SIM_TEXT_BOLD, SIM_TEXT_DARK, SIM_TEXT_CENTER)}
                 data-testid="phone-simulator-caller-name"
             >
                 {callingLabel}
             </h2>
             <p
-                className="mb-4 small text-muted text-center"
+                className={joinClasses(simSpacing.mb3, SIM_TEXT_SM, SIM_MUTED, SIM_TEXT_CENTER)}
                 data-testid="phone-simulator-number"
             >
                 {phoneNumber}
             </p>
 
-            <div className="d-flex flex-row gap-2 w-100 mt-auto" data-testid="phone-simulator-actions">
-                <button
-                    type="button"
-                    className="btn btn-success rounded-0 py-3 fw-semibold flex-grow-1"
-                    onClick={onAnswer}
-                    aria-label="Answer"
-                >
-                    ANSWER
-                </button>
-                <button
-                    type="button"
-                    className="btn btn-danger rounded-0 py-3 fw-semibold flex-grow-1"
-                    onClick={onIgnore}
-                    aria-label="Ignore"
-                >
-                    IGNORE
-                </button>
+            <div className={joinClasses(simLayout.row, simSpacing.gap2, 'simulator-w-full', 'simulator-spacing--mt-auto')} data-testid="phone-simulator-actions">
+                {renderSimulatorChoice(
+                    {
+                        label: 'ANSWER',
+                        tone: 'success',
+                        className: actionBtnClass,
+                        onClick: onAnswer,
+                        'aria-label': 'Answer',
+                    },
+                    renderChoice,
+                )}
+                {renderSimulatorChoice(
+                    {
+                        label: 'IGNORE',
+                        tone: 'danger',
+                        className: actionBtnClass,
+                        onClick: onIgnore,
+                        'aria-label': 'Ignore',
+                    },
+                    renderChoice,
+                )}
             </div>
         </div>
     );

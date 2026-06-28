@@ -2,11 +2,18 @@
  * Developer tools section toggle toolbar for SimulatorWithSession.
  */
 
-import type { SimulatorDeveloperSectionKey } from '../developerTools';
+import type { SimulatorDeveloperSectionKey } from '../developerTools.js';
+import { simBorder, simLayout, simSpacing } from '../simulatorStyles.js';
+import {
+    joinClasses,
+    SIM_OVERFLOW_HIDDEN,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_WHITE,
+} from '../ui/simulatorClasses.js';
 import {
     DEVELOPER_TOOLBAR_ICONS,
     DEVELOPER_TOOLBAR_LABELS,
-} from '../utils/simulatorDeveloperToolbarConfig';
+} from '../utils/simulatorDeveloperToolbarConfig.js';
 
 export interface SimulatorDeveloperToolbarProps {
     sections: SimulatorDeveloperSectionKey[];
@@ -20,9 +27,9 @@ export default function SimulatorDeveloperToolbar({
     onToggleSection,
 }: Readonly<SimulatorDeveloperToolbarProps>) {
     return (
-        <div className="mb-2 border border-secondary rounded-0 overflow-hidden bg-white">
+        <div className={joinClasses(simSpacing.mb2, simBorder.tile, SIM_ROUNDED_NONE, SIM_OVERFLOW_HIDDEN, SIM_SURFACE_WHITE)}>
             <div
-                className="d-flex align-items-center gap-1 px-1 py-1"
+                className={joinClasses(simLayout.row, simSpacing.gap2, simSpacing.px1, simSpacing.py1)}
                 style={{
                     backgroundColor: '#2f7df6',
                     borderBottom: '1px solid #b9cdef',
@@ -34,7 +41,12 @@ export default function SimulatorDeveloperToolbar({
                         <button
                             key={section}
                             type="button"
-                            className="border-0 d-inline-flex align-items-center justify-content-center rounded-0"
+                            className={joinClasses(
+                                'simulator-border--none',
+                                'simulator-inline-flex',
+                                'simulator-flex--center',
+                                SIM_ROUNDED_NONE,
+                            )}
                             onClick={() => onToggleSection(section)}
                             aria-pressed={visible}
                             aria-label={DEVELOPER_TOOLBAR_LABELS[section]}

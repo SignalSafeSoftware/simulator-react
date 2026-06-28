@@ -100,7 +100,7 @@ describe('simulator UI hotspot coverage', () => {
 
         await act(async () => {
             renderer!.root.findAllByType('button').find((node) => node.props['aria-label'] === 'History')!.props.onClick();
-            renderer!.root.findAllByType('button').find((node) => node.props.className?.includes('border-top-0'))!.props.onClick();
+            renderer!.root.findAllByType('button').find((node) => node.props.className?.includes('simulator-border--top-none'))!.props.onClick();
         });
         expect(onPhoneNavSelect).toHaveBeenCalledWith('history');
         expect(onOpenContact).toHaveBeenCalledWith('c1');
@@ -349,7 +349,7 @@ describe('simulator UI hotspot coverage', () => {
         });
         await act(async () => {
             renderer!.root.findAllByType('button').find(
-                (node) => node.props.children === 'Download' && node.props.className?.includes('outline-secondary')
+                (node) => node.props.children === 'Download' && node.props.className?.includes('simulator-btn--neutral-outline')
             )!.props.onClick();
         });
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'download_click', downloadTarget: 'download-page' }));

@@ -2,16 +2,20 @@
  * Session action handlers for SimulatorWithSession (navigation, events, render context).
  */
 
-import { useCallback, useMemo, type MutableRefObject } from 'react';
-import { SimulatorActions } from '../actions';
-import type { HostSimulatorEventHandler } from '../contract/hostContractTypes';
-import { switchChannelAction, type SimulatorDispatchAction } from '../state/simulatorSessionReducer';
-import type { SimulatorSessionState, SimulatorChannel, SimulatorAction } from '../types/session';
-import { channelToApp } from '../types/session';
-import { actionToInteractionEvent, appOpenedEvent, screenViewedEvent } from '../utils/simulatorEventMapper';
-import { getSimulatorCapabilities } from '../utils/simulatorCapabilities';
-import { getBrowserSubmitTargetId } from '../utils/simulatorSecondaryMenuHelpers';
-import type { SimulatorRenderContext } from '../screenRegistry';
+import { useCallback, useMemo, type MutableRefObject, type ReactNode } from 'react';
+import { SimulatorActions } from '../actions/index.js';
+import type { HostSimulatorEventHandler } from '../contract/hostContractTypes.js';
+import { switchChannelAction, type SimulatorDispatchAction } from '../state/simulatorSessionReducer.js';
+import type { SimulatorSessionState, SimulatorChannel, SimulatorAction } from '../types/session.js';
+import { channelToApp } from '../types/session.js';
+import { actionToInteractionEvent, appOpenedEvent, screenViewedEvent } from '../utils/simulatorEventMapper.js';
+import { getSimulatorCapabilities } from '../utils/simulatorCapabilities.js';
+import { getBrowserSubmitTargetId } from '../utils/simulatorSecondaryMenuHelpers.js';
+import type { SimulatorRenderContext } from '../screenRegistry/index.js';
+import type {
+    SimulatorChoiceRenderProps,
+    SimulatorFeedbackRenderProps,
+} from '../ui/renderSlots.js';
 
 export interface UseSimulatorSessionHandlersOptions {
     state: SimulatorSessionState;
@@ -19,6 +23,8 @@ export interface UseSimulatorSessionHandlersOptions {
     onSimulatorEvent?: HostSimulatorEventHandler;
     initialContactsSearch?: string;
     stateRef: MutableRefObject<SimulatorSessionState>;
+    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
+    renderFeedback?: (feedback: SimulatorFeedbackRenderProps) => ReactNode;
 }
 
 export interface UseSimulatorSessionHandlersResult {
@@ -40,6 +46,8 @@ export function useSimulatorSessionHandlers({
     onSimulatorEvent,
     initialContactsSearch,
     stateRef,
+    renderChoice,
+    renderFeedback,
 }: UseSimulatorSessionHandlersOptions): UseSimulatorSessionHandlersResult {
     const payload = state.payload;
     const onBack = useCallback(() => dispatch({ type: 'BACK' }), [dispatch]);
@@ -145,6 +153,8 @@ export function useSimulatorSessionHandlers({
             onSelectThread: handleSelectThread,
             onOpenContactFromPhone: handleOpenContactFromPhone,
             initialContactsSearch,
+            renderChoice,
+            renderFeedback,
         }),
         [
             state,
@@ -157,6 +167,8 @@ export function useSimulatorSessionHandlers({
             handleSelectThread,
             handleOpenContactFromPhone,
             initialContactsSearch,
+            renderChoice,
+            renderFeedback,
         ]
     );
 

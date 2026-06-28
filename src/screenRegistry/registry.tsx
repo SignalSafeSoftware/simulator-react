@@ -3,21 +3,21 @@
  * Resolution: exact (app, screen) first, then (app) default. No reducer logic here.
  */
 import type { ComponentType, ReactNode } from 'react';
-import type { PhoneScreenId, EmailScreenId } from '../types/session';
-import { SimulatorActions } from '../actions';
-import { getPhoneLocalNavItems } from '../utils/phoneLocalNavItems';
-import type { SimulatorApp } from '../types/portableSimulator';
-import type { SimulatorRenderContext, ScreenEntry } from './types';
-import EmailSimulatorView from '../views/EmailSimulatorView';
-import MessagesThreadListView from '../views/MessagesThreadListView';
-import MessagesNewThreadView from '../views/MessagesNewThreadView';
-import SmsSimulatorView from '../views/SmsSimulatorView';
-import BrowserSimulatorView from '../views/BrowserSimulatorView';
-import ContactsView from '../views/ContactsView';
-import DirectoryView from '../views/DirectoryView';
-import PhoneSimulatorView from '../views/PhoneSimulatorView';
-import HomeSimulatorView from '../views/HomeSimulatorView';
-import type { ThreadListRow } from '../views/MessagesThreadListView';
+import type { PhoneScreenId, EmailScreenId } from '../types/session.js';
+import { SimulatorActions } from '../actions/index.js';
+import { getPhoneLocalNavItems } from '../utils/phoneLocalNavItems.js';
+import type { SimulatorApp } from '../types/portableSimulator.js';
+import type { SimulatorRenderContext, ScreenEntry } from './types.js';
+import EmailSimulatorView from '../views/EmailSimulatorView.js';
+import MessagesThreadListView from '../views/MessagesThreadListView.js';
+import MessagesNewThreadView from '../views/MessagesNewThreadView.js';
+import SmsSimulatorView from '../views/SmsSimulatorView.js';
+import BrowserSimulatorView from '../views/BrowserSimulatorView.js';
+import ContactsView from '../views/ContactsView.js';
+import DirectoryView from '../views/DirectoryView.js';
+import PhoneSimulatorView from '../views/PhoneSimulatorView.js';
+import HomeSimulatorView from '../views/HomeSimulatorView.js';
+import type { ThreadListRow } from '../views/MessagesThreadListView.js';
 
 function buildMessagesThreadList(payload: SimulatorRenderContext['state']['payload']): ThreadListRow[] {
     const sms = payload.sms;
@@ -97,6 +97,7 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             onRevealNext: ctx.onSmsRevealNext,
             onBack: ctx.onBack,
             showReplyBox: true,
+            renderChoice: ctx.renderChoice,
         }),
     },
     {
@@ -108,6 +109,8 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             stack: ctx.state.view.internet.stack,
             onAction: ctx.onAction,
             onBack: ctx.onBack,
+            renderChoice: ctx.renderChoice,
+            renderFeedback: ctx.renderFeedback,
         }),
     },
     {
@@ -189,6 +192,7 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             onBack: ctx.onBack,
             navRenderedByShell:
                 !ctx.state.view.showPrimaryMenu && ctx.state.view.activeApp === 'phone',
+            renderChoice: ctx.renderChoice,
         }),
     },
     {

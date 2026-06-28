@@ -3,20 +3,20 @@
  * Apps: email, messages, internet, phone, home. entry_point sets initial app/screen. Supports Back, Cancel, NAV_LOCAL.
  */
 
-import type { SimulatorSessionState, SimulatorViewState } from '../types/session';
-import { isSimulatorTransitionLoggingEnabled, logSimulatorTransition } from '../utils/simulatorTransitionLogger';
-import type { SimulatorDispatchAction } from './simulatorDispatchActions';
-import { applyBack, applyCancel, applyNavLocal, applySwitchApp } from './simulatorNavigationHandlers';
+import type { SimulatorSessionState, SimulatorViewState } from '../types/session.js';
+import { isSimulatorTransitionLoggingEnabled, logSimulatorTransition } from '../utils/simulatorTransitionLogger.js';
+import type { SimulatorDispatchAction } from './simulatorDispatchActions.js';
+import { applyBack, applyCancel, applyNavLocal, applySwitchApp } from './simulatorNavigationHandlers.js';
 import {
     applyBrowserScreen,
     applySelectEmail,
     applySimulatorAction,
-} from './simulatorContentHandlers';
+} from './simulatorContentHandlers.js';
 
-export type { SimulatorDispatchAction } from './simulatorDispatchActions';
-export { switchChannelAction } from './simulatorDispatchActions';
-export { getInitialSessionState } from './simulatorSessionInitialState';
-export { initialViewState } from './simulatorViewStateHelpers';
+export type { SimulatorDispatchAction } from './simulatorDispatchActions.js';
+export { switchChannelAction } from './simulatorDispatchActions.js';
+export { getInitialSessionState } from './simulatorSessionInitialState.js';
+export { initialViewState } from './simulatorViewStateHelpers.js';
 
 function viewReducer(state: SimulatorViewState, action: SimulatorDispatchAction): SimulatorViewState {
     switch (action.type) {

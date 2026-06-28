@@ -4,6 +4,23 @@
  */
 import { useState } from 'react';
 
+import { simBorder, simLayout, simSpacing } from '../simulatorStyles.js';
+import { SimulatorButton } from '../ui/primitives.js';
+import {
+    joinClasses,
+    SIM_FLEX_COL,
+    SIM_FLEX_GROW_1,
+    SIM_MIN_H_0,
+    SIM_MUTED,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_LIGHT,
+    SIM_TEXT_BODY,
+    SIM_TEXT_SEMIBOLD,
+    SIM_TEXT_SM,
+    SIM_W_FULL,
+    simBtnToneClass,
+} from '../ui/simulatorClasses.js';
+
 export interface PhoneDialViewProps {
     onDial: (number: string) => void;
 }
@@ -23,6 +40,13 @@ const KEYPAD: { digit: string; letters?: string }[] = [
     { digit: '#' },
 ];
 
+const keypadKeyClass = joinClasses(
+    simBtnToneClass('outline-dark'),
+    'simulator-rounded--sm',
+    SIM_FLEX_COL,
+    'simulator-flex--center',
+);
+
 export default function PhoneDialView({ onDial }: Readonly<PhoneDialViewProps>) {
     const [value, setValue] = useState('');
 
@@ -40,69 +64,75 @@ export default function PhoneDialView({ onDial }: Readonly<PhoneDialViewProps>) 
     };
 
     return (
-        <div className="d-flex flex-column min-h-0">
-            {/* Number readout — wireframe: visible display at top */}
-            <div className="d-flex align-items-center gap-2 mb-3 border border-secondary rounded-0 bg-light">
+        <div className={joinClasses(simLayout.stack, SIM_MIN_H_0)}>
+            <div className={joinClasses(simLayout.row, simSpacing.gap2, simSpacing.mb3, simBorder.tile, SIM_ROUNDED_NONE, SIM_SURFACE_LIGHT)}>
                 <span
-                    className="flex-grow-1 text-end py-2 px-2 fs-5 text-body text-break"
+                    className={joinClasses(SIM_FLEX_GROW_1, 'simulator-text--end', simSpacing.py2, simSpacing.px2, 'simulator-text--lg', SIM_TEXT_BODY, 'simulator-text--break')}
                     style={{ minHeight: 48 }}
                     aria-label="Phone number"
                 >
-                    {value || <span className="text-muted">Enter number</span>}
+                    {value || <span className={SIM_MUTED}>Enter number</span>}
                 </span>
                 <button
                     type="button"
-                    className="btn btn-link btn-sm p-2 text-body"
+                    className={joinClasses(simBtnToneClass('link'), 'simulator-btn--plain', simSpacing.p2, SIM_TEXT_BODY)}
                     onClick={backspace}
                     aria-label="Backspace"
                 >
                     ⌫
                 </button>
             </div>
-            {/* 3×4 keypad — wireframe: digit + letters per key */}
-            <div className="d-flex flex-column gap-2 mb-3">
+            <div className={joinClasses(simLayout.stack, simSpacing.mb3)}>
                 {[0, 1, 2].map((row) => (
-                    <div key={row} className="d-flex justify-content-center gap-2">
+                    <div key={row} className={joinClasses(simLayout.row, 'simulator-flex--center', simSpacing.gap2)}>
                         {KEYPAD.slice(row * 3, row * 3 + 3).map(({ digit, letters }) => (
                             <button
                                 key={digit}
                                 type="button"
-                                className="btn btn-outline-dark rounded-1 d-flex flex-column align-items-center justify-content-center"
+                                className={keypadKeyClass}
                                 style={{ width: 72, height: 52 }}
                                 onClick={() => append(digit)}
                                 aria-label={letters ? `Digit ${digit} ${letters}` : `Digit ${digit}`}
                             >
-                                <span className="fw-semibold" style={{ fontSize: '1.1rem' }}>{digit}</span>
-                                {letters && <span className="small text-muted" style={{ lineHeight: 1, fontSize: '0.65rem' }}>{letters}</span>}
+                                <span className={SIM_TEXT_SEMIBOLD} style={{ fontSize: '1.1rem' }}>{digit}</span>
+                                {letters && (
+                                    <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)} style={{ lineHeight: 1, fontSize: '0.65rem' }}>
+                                        {letters}
+                                    </span>
+                                )}
                             </button>
                         ))}
                     </div>
                 ))}
-                <div className="d-flex justify-content-center gap-2">
+                <div className={joinClasses(simLayout.row, 'simulator-flex--center', simSpacing.gap2)}>
                     {KEYPAD.slice(9, 12).map(({ digit, letters }) => (
                         <button
                             key={digit}
                             type="button"
-                            className="btn btn-outline-dark rounded-1 d-flex flex-column align-items-center justify-content-center"
+                            className={keypadKeyClass}
                             style={{ width: 72, height: 52 }}
                             onClick={() => append(digit)}
                             aria-label={letters ? `Digit ${digit} ${letters}` : `Digit ${digit}`}
                         >
-                            <span className="fw-semibold" style={{ fontSize: '1.1rem' }}>{digit}</span>
-                            {letters && <span className="small text-muted" style={{ lineHeight: 1, fontSize: '0.65rem' }}>{letters}</span>}
+                            <span className={SIM_TEXT_SEMIBOLD} style={{ fontSize: '1.1rem' }}>{digit}</span>
+                            {letters && (
+                                <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)} style={{ lineHeight: 1, fontSize: '0.65rem' }}>
+                                    {letters}
+                                </span>
+                            )}
                         </button>
                     ))}
                 </div>
             </div>
-            <button
-                type="button"
-                className="btn btn-success rounded-0 w-100 py-3 fw-semibold"
+            <SimulatorButton
+                tone="success"
+                className={joinClasses(SIM_ROUNDED_NONE, SIM_W_FULL, simSpacing.py3, SIM_TEXT_SEMIBOLD)}
                 onClick={handleDial}
                 disabled={!value.trim()}
                 aria-label="Call"
             >
                 CALL
-            </button>
+            </SimulatorButton>
         </div>
     );
 }

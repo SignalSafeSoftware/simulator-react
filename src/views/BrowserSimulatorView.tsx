@@ -2,10 +2,15 @@
  * Internet app: page-based browser. Wireframe: "Internet" banner, then browser chrome + page content.
  * Resolves current page by screen (page id), emits open_page, delegates to BrowserPageRenderer.
  */
-import { useEffect, useRef } from 'react';
-import type { SimulatorAction, SimulatorBrowserPayload } from '../types/session';
-import { SimulatorActions } from '../actions';
-import BrowserPageRenderer from './BrowserPageRenderer';
+import { useEffect, useRef, type ReactNode } from 'react';
+import type { SimulatorAction, SimulatorBrowserPayload } from '../types/session.js';
+import { SimulatorActions } from '../actions/index.js';
+import BrowserPageRenderer from './BrowserPageRenderer.js';
+import type {
+    SimulatorChoiceRenderProps,
+    SimulatorFeedbackRenderProps,
+} from '../ui/renderSlots.js';
+import { SIM_FLEX_COL, SIM_MUTED, joinClasses } from '../ui/simulatorClasses.js';
 
 export interface BrowserSimulatorViewProps {
     payload: SimulatorBrowserPayload | null;
@@ -13,6 +18,8 @@ export interface BrowserSimulatorViewProps {
     stack?: string[];
     onAction: (action: SimulatorAction) => void;
     onBack?: () => void;
+    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
+    renderFeedback?: (feedback: SimulatorFeedbackRenderProps) => ReactNode;
 }
 
 export default function BrowserSimulatorView({
@@ -21,6 +28,8 @@ export default function BrowserSimulatorView({
     stack = [],
     onAction,
     onBack,
+    renderChoice,
+    renderFeedback,
 }: Readonly<BrowserSimulatorViewProps>) {
     const pages = payload?.pages ?? [];
     const currentPage =
@@ -39,19 +48,20 @@ export default function BrowserSimulatorView({
     }, [currentPage?.id]);
 
     if (payload == null) {
-        return <p className="text-muted small mb-0">No browser for this scenario.</p>;
+        return <p className={joinClasses(SIM_MUTED, 'simulator-text--sm', 'simulator-text--empty')}>No browser for this scenario.</p>;
     }
     if (pages.length === 0 || currentPage == null) {
-        return <p className="text-muted small mb-0">No pages for this site.</p>;
+        return <p className={joinClasses(SIM_MUTED, 'simulator-text--sm', 'simulator-text--empty')}>No pages for this site.</p>;
     }
 
     return (
-        <div className="d-flex flex-column flex-grow-1 min-h-0">
-            {/* App identity is the shell bottom nav; do not render doc-only diagram labels (e.g. "Internet") inside content. */}
+        <div className={joinClasses(SIM_FLEX_COL, 'simulator-flex--grow', 'simulator-min-h-0')}>
             <BrowserPageRenderer
                 page={currentPage}
                 onAction={onAction}
                 onBack={stack.length > 0 ? onBack : undefined}
+                renderChoice={renderChoice}
+                renderFeedback={renderFeedback}
             />
         </div>
     );

@@ -4,8 +4,8 @@
  * serializable; no full payload bodies. Dev/admin use only.
  */
 
-import type { SimulatorSessionState, SimulatorAction } from '../types/session';
-import { getScreenMetadata } from './screenMetadata';
+import type { SimulatorSessionState, SimulatorAction } from '../types/session.js';
+import { getScreenMetadata } from './screenMetadata.js';
 
 /** Serializable snapshot of current simulator session for export/debug. */
 export interface SimulatorSnapshot {

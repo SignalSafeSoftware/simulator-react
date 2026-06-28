@@ -3,10 +3,10 @@
  * Used for export and debug only; no TreeSpec branching. Semantics are simulator navigation only.
  */
 
-import type { SimulatorTemplatePayload } from '../types/session';
-import type { SimulatorApp } from '../types/portableSimulator';
-import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../constants';
-import { analyzeReachability } from './simulatorReachability';
+import type { SimulatorTemplatePayload } from '../types/session.js';
+import type { SimulatorApp } from '../types/portableSimulator.js';
+import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../constants.js';
+import { analyzeReachability } from './simulatorReachability.js';
 
 const APPS: SimulatorApp[] = ['email', 'messages', 'internet', 'phone', 'home'];
 const PHONE_SCREENS = ['history', 'contacts', 'dial', 'incoming_call', 'voicemail', 'directory'];

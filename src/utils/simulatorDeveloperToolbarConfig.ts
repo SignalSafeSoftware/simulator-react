@@ -2,7 +2,7 @@
  * Developer toolbar labels and icons for SimulatorWithSession.
  */
 
-import type { SimulatorDeveloperSectionKey } from '../developerTools';
+import type { SimulatorDeveloperSectionKey } from '../developerTools.js';
 
 export const DEVELOPER_TOOLBAR_LABELS: Record<SimulatorDeveloperSectionKey, string> = {
     summary: 'Summary',

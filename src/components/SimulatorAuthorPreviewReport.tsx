@@ -3,8 +3,15 @@
  * Shown in admin/workspace preview only; compact and readable.
  */
 import { Fragment, isValidElement, useId, useState } from 'react';
-import { Card, Collapse } from 'react-bootstrap';
-import type { SimulatorPreviewReport } from '../utils/simulatorPreviewReport';
+import {
+    SimulatorCard,
+    SimulatorCardBody,
+    SimulatorCardHeader,
+    SimulatorCollapse,
+} from '../ui/primitives.js';
+import { simSpacing } from '../simulatorStyles.js';
+import { SIM_MUTED, joinClasses, simBtnToneClass, SIM_BORDER_TOP } from '../ui/simulatorClasses.js';
+import type { SimulatorPreviewReport } from '../utils/simulatorPreviewReport.js';
 
 export interface SimulatorAuthorPreviewReportProps {
     report: SimulatorPreviewReport;
@@ -105,9 +112,9 @@ function positiveCountSummary(count: number, singular: string, plural: string): 
 
 function Line({ label, value }: Readonly<{ label: string; value: React.ReactNode }>) {
     return (
-        <div className="small">
-            <span className="text-muted">{label}:</span>{' '}
-            <span className="text-dark">{formatPreviewValue(value)}</span>
+        <div className="simulator-text--sm">
+            <span className={SIM_MUTED}>{label}:</span>{' '}
+            <span className="simulator-text--body">{formatPreviewValue(value)}</span>
         </div>
     );
 }
@@ -149,21 +156,28 @@ export default function SimulatorAuthorPreviewReport({
         .join(' · ');
 
     return (
-        <Card className={`mb-2 ${className ?? ''}`.trim()} data-testid="simulator-author-preview-report">
-            <Card.Header className="py-1 px-2 small bg-light">
+        <SimulatorCard className={joinClasses(simSpacing.mb2, className)} data-testid="simulator-author-preview-report">
+            <SimulatorCardHeader
+                className={joinClasses('simulator-text--sm', 'simulator-surface--header', simSpacing.py1, simSpacing.px2)}
+            >
                 <button
                     type="button"
-                    className="btn btn-link p-0 text-decoration-none text-dark fw-medium"
+                    className={joinClasses(
+                        simBtnToneClass('link'),
+                        'simulator-btn--plain',
+                        'simulator-text--semibold',
+                        'simulator-text--body',
+                    )}
                     onClick={() => setOpen((prev: boolean) => !prev)}
                     aria-expanded={open}
                     aria-controls={bodyId}
                 >
                     Template summary
                 </button>
-                <span className="text-muted ms-1">— {summary}</span>
-            </Card.Header>
-            <Collapse in={open}>
-                <Card.Body id={bodyId} className="small py-2 px-2">
+                <span className={joinClasses(SIM_MUTED, 'simulator-inline-gap')}>— {summary}</span>
+            </SimulatorCardHeader>
+            <SimulatorCollapse open={open}>
+                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}>
                     <Line label="Entry" value={`${entryPoint.app} / ${entryPoint.screen}`} />
                     <Line label="Apps used" value={appsUsed.join(', ') || '—'} />
                     <Line label="Contacts" value={String(contactsCount)} />
@@ -172,27 +186,27 @@ export default function SimulatorAuthorPreviewReport({
                     <Line label="Browser pages" value={String(browserPagesCount)} />
                     <Line label="Directory (trusted sources)" value={String(directoryCount)} />
                     <Line label="Key actions" value={keyActions.length > 0 ? keyActions : '—'} />
-                    <div className="mt-2 pt-2 border-top">
+                    <div className={joinClasses(simSpacing.mt2, simSpacing.pt2, SIM_BORDER_TOP)}>
                         <Line
                             label="Validation"
                             value={
                                 validationOk ? (
-                                    <span className="text-success">OK</span>
+                                    <span className="simulator-text--success">OK</span>
                                 ) : (
-                                    <span className="text-danger">Failed</span>
+                                    <span className="simulator-text--danger">Failed</span>
                                 )
                             }
                         />
                         <Line label="Lint warnings" value={String(lintWarningCount)} />
                         {unreachableCount > 0 && (
-                            <Line label="Unreachable items" value={<span className="text-warning">{unreachableCount}</span>} />
+                            <Line label="Unreachable items" value={<span className="simulator-text--warning">{unreachableCount}</span>} />
                         )}
                         {browserHasCycle && (
-                            <div className="text-warning mt-1">Browser has navigation cycle.</div>
+                            <div className={joinClasses('simulator-text--warning', simSpacing.mt1)}>Browser has navigation cycle.</div>
                         )}
                     </div>
-                </Card.Body>
-            </Collapse>
-        </Card>
+                </SimulatorCardBody>
+            </SimulatorCollapse>
+        </SimulatorCard>
     );
 }

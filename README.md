@@ -1,25 +1,109 @@
 # `@signalsafe/simulator-react`
 
-React **device simulator** UI: **`SimulatorWithSession`** (and **`PhoneSimulatorShell`**), **session state** (`getInitialSessionState`, `simulatorSessionReducer`), **template → payload** adapter **`templateDetailToPayload`**, **lint / deep-link / preview-fallback** helpers, **payload diff**, and **screen registry** utilities. Build output is **`dist/`**; dependencies are listed in **`package.json`**.
+React **device simulator** UI: session state, screen registry, template adapter, lint helpers, and optional developer tools. Built on `@signalsafe/simulator-core` for runtime stepping.
 
-Hosts supply a **`SimulatorTemplatePayload`** (typically by mapping API or template detail into that shape via **`templateDetailToPayload`**), then drive **`useReducer`** with **`simulatorSessionReducer`** (or **`simulatorSessionReducerWithLogging`**) and render **`SimulatorWithSession`**. **Preset and fixture helpers are not part of the published package surface.**
+| | |
+|---|---|
+| **npm** | `@signalsafe/simulator-react` |
+| **GitHub** | [SignalSafeSoftware/simulator-react](https://github.com/SignalSafeSoftware/simulator-react) |
+| **Peer deps** | `react`, `react-dom` (no UI library required) |
+
+## UI-kit agnostic
+
+This package is **UI-kit agnostic**. It renders semantic HTML with stable **`simulator-*` class hooks** and optional **render slots** — it does **not** require Bootstrap, Material UI, or any other component library.
+
+**Host applications own styling.** Provide CSS for `simulator-*` classes, or pass `renderChoice` / `renderFeedback` / `renderContactsOverlay` to inject your UI kit's components.
+
+See [docs/UI_KIT_AGNOSTIC_USAGE.md](./docs/UI_KIT_AGNOSTIC_USAGE.md) for class hooks, slots, and DeliveryPlus migration guidance.
+
+See [docs/ERROR_BOUNDARIES.md](./docs/ERROR_BOUNDARIES.md) for learner-safe error UI vs author/admin diagnostics.
+
+## What this package does
+
+- Render **`SimulatorWithSession`** / **`PhoneSimulatorShell`** and registered scenario screens.
+- Manage session state via **`simulatorSessionReducer`** (wraps core runtime dispatch).
+- Adapt template detail → **`SimulatorTemplatePayload`** (`templateDetailToPayload`).
+- Provide **shallow lint** (`lintSimulatorPayload`), reachability, deep-link, preview-fallback, and diff utilities.
+- Optional **`SimulatorDeveloperToolsPanel`** for QA/debug views.
+
+## What this package does not do
+
+- Routing, HTTP clients, authentication, or persistence.
+- Trusted validation of arbitrary user-uploaded JSON beyond shallow lint — hosts must validate payloads before production use.
+- Network I/O — wire **`onSimulatorEvent`** to your analytics/API.
+
+## Relationship to `@signalsafe/simulator-core`
+
+| Concern | Package |
+|---|---|
+| Headless session stepping, scores, outcomes | `@signalsafe/simulator-core` |
+| React UI, reducer wiring, screens, lint banner | **`@signalsafe/simulator-react` (this package)** |
+
+## Payload shape (high level)
+
+Hosts supply a **`SimulatorTemplatePayload`**: TreeSpec wire plus simulator **world** sections (screens, contacts, branding hints, etc.). Use **`templateDetailToPayload`** to map API/template records into that shape, then **`lintSimulatorPayload`** for authoring warnings.
 
 ## Install
 
 ```bash
-npm install @signalsafe/simulator-react react react-dom react-bootstrap
+npm install @signalsafe/simulator-react react react-dom
 ```
 
-Use a modern **ESM** TypeScript setup.
+Use a modern **ESM** TypeScript setup. Style simulator UI via host CSS targeting `simulator-*` class hooks, or pass render slots for full UI-kit control (see [UI_KIT_AGNOSTIC_USAGE.md](./docs/UI_KIT_AGNOSTIC_USAGE.md)).
+
+## Minimal example (plain HTML + host CSS)
+
+No Bootstrap or other UI library is required:
+
+```tsx
+import { useReducer } from 'react';
+import {
+    SimulatorWithSession,
+    PhoneSimulatorShell,
+    getInitialSessionState,
+    simulatorSessionReducer,
+    templateDetailToPayload,
+    type SimulatorTemplateDetail,
+} from '@signalsafe/simulator-react';
+
+import './simulator-host.css'; // map .simulator-btn, .simulator-muted, etc.
+
+function PlainSimulator({ detail }: { detail: SimulatorTemplateDetail }) {
+    const payload = templateDetailToPayload(detail, {});
+    const [state, dispatch] = useReducer(
+        simulatorSessionReducer,
+        getInitialSessionState(payload),
+    );
+
+    return (
+        <PhoneSimulatorShell>
+            <SimulatorWithSession state={state} dispatch={dispatch} />
+        </PhoneSimulatorShell>
+    );
+}
+```
+
+## Optional: Bootstrap in the host (not a package requirement)
+
+If your app already uses Bootstrap, wire it via render slots — **this is host-app code**, not a package dependency:
+
+```tsx
+import Button from 'react-bootstrap/Button';
+import 'bootstrap/dist/css/bootstrap.min.css'; // host-owned CSS
+
+<SimulatorWithSession
+    state={state}
+    dispatch={dispatch}
+    renderChoice={({ label, onClick, tone }) => (
+        <Button variant={tone ?? 'primary'} onClick={onClick}>{label}</Button>
+    )}
+/>;
+```
 
 ## Repository
 
 Source code and issues are available at:
 https://github.com/SignalSafeSoftware/simulator-react
-
-```ts
-import 'bootstrap/dist/css/bootstrap.min.css';
-```
 
 ## Source layout (this package)
 
@@ -122,13 +206,34 @@ Other deep import paths are **unsupported**. Prefer the main barrel for app/runt
 
 ## Tests
 
-Run the **`test`** script from this package directory (see **`package.json`**):
-
 ```bash
-npm test
+yarn test
 ```
 
 ## Boundaries
 
-- **In scope:** UI and state under **`src/`**, the main barrel, and the **`exports`** subpaths above.
-- **Out of scope:** routing, HTTP clients, and transport — the package does not perform network I/O; host apps wire **`SimulatorTemplatePayload`** and **`onSimulatorEvent`** as needed.
+- **In scope:** UI and state under `src/`, main barrel exports, and documented **`exports`** subpaths in `package.json`.
+- **Out of scope:** routing, HTTP, auth — host apps supply payload and event handlers.
+- **Side effects:** `sideEffects: false` — hosts supply layout/styling (CSS or UI kit) for `simulator-*` hooks and optional render slots.
+
+## Development
+
+Requires Node.js **>=22.12.0** (`engines.node`). CI runs checks, tests, and smoke on Node **22** and **24**; publish uses Node **24**. Node 20 is no longer supported (GitHub Actions Node 20 deprecation).
+
+`yarn build` uses `tsconfig.build.json` and resolves `@signalsafe/*` from `node_modules`. Ecosystem sibling `paths` in `tsconfig.json` apply to local typecheck/tests only.
+
+```bash
+yarn install
+yarn build
+yarn test
+yarn typecheck
+```
+
+## Security
+
+See [SECURITY.md](./SECURITY.md). Treat scenario payloads as trusted authoring content unless the host validates them. Gate learner-facing error detail in production hosts.
+
+## Changelog and releases
+
+- [CHANGELOG.md](./CHANGELOG.md)
+- [RELEASING.md](./RELEASING.md)

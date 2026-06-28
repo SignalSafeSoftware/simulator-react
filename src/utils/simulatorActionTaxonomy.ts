@@ -6,7 +6,7 @@
  * @see docs/simulator/simulator-runtime-integration.md (§ Action taxonomy)
  */
 
-import type { SimulatorAction } from '../types/session';
+import type { SimulatorAction } from '../types/session.js';
 
 // -----------------------------------------------------------------------------
 // Canonical action type list (must match SimulatorAction union in session.ts)

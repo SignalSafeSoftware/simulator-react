@@ -2,7 +2,7 @@
  * Secondary menu helpers for phone and email shell navigation.
  */
 
-import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../constants';
+import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../constants.js';
 
 export const EMAIL_SECONDARY_ITEMS = [
     { id: 'list', label: 'Inbox', icon: '📥' },

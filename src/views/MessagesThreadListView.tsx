@@ -3,7 +3,23 @@
  * profile icon, contact, snippet, date.
  */
 import { useState, useMemo, type ReactNode } from 'react';
-import { SimulatorSearchInput } from '../components/SimulatorSearchInput';
+import { SimulatorSearchInput } from '../components/SimulatorSearchInput.js';
+import { simLayout, simRowSurface, simSpacing, simTypo } from '../simulatorStyles.js';
+import { SimulatorButton } from '../ui/primitives.js';
+import {
+    joinClasses,
+    SIM_AVATAR,
+    SIM_FLEX_COL,
+    SIM_FLEX_GROW_1,
+    SIM_FLEX_SHRINK_0,
+    SIM_MUTED,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_AVATAR,
+    SIM_SURFACE_WHITE,
+    SIM_TEXT_BOLD,
+    SIM_TEXT_MEDIUM,
+    SIM_TEXT_SM,
+} from '../ui/simulatorClasses.js';
 
 export interface ThreadListRow {
     id: string;
@@ -24,11 +40,17 @@ export interface MessagesThreadListViewProps {
 function ThreadProfileIcon({ className }: Readonly<{ className?: string }>) {
     return (
         <div
-            className={`rounded bg-primary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0 ${className ?? ''}`}
+            className={joinClasses(
+                SIM_AVATAR,
+                SIM_SURFACE_AVATAR,
+                'simulator-flex simulator-flex--center',
+                SIM_FLEX_SHRINK_0,
+                className,
+            )}
             style={{ width: 40, height: 40 }}
             aria-hidden
         >
-            <span className="text-primary" style={{ fontSize: '1.25rem' }}>👤</span>
+            <span className="simulator-text--primary" style={{ fontSize: '1.25rem' }}>👤</span>
         </div>
     );
 }
@@ -54,31 +76,41 @@ export default function MessagesThreadListView({
     );
     let content: ReactNode;
     if (threads.length === 0) {
-        content = <p className="text-muted small mb-0 px-2">No conversations.</p>;
+        content = <p className={joinClasses(simTypo.emptyState, simSpacing.px2)}>No conversations.</p>;
     } else if (filtered.length === 0) {
-        content = <p className="text-muted small mb-0 px-2">No results for &quot;{searchQuery}&quot;.</p>;
+        content = (
+            <p className={joinClasses(simTypo.emptyState, simSpacing.px2)}>
+                No results for &quot;{searchQuery}&quot;.
+            </p>
+        );
     } else {
         content = (
-            <div className="list-group list-group-flush mt-1">
+            <div className={joinClasses('simulator-list--flush', simSpacing.mt1)}>
                 {filtered.map((row, index) => (
                     <button
                         type="button"
                         key={row.id}
                         onClick={() => onSelectThread(row.id)}
-                        className={`d-flex w-100 align-items-start gap-3 py-3 px-3 border border-secondary rounded-0 bg-white text-start ${index === 0 ? 'border-top' : 'border-top-0'}`}
+                        className={joinClasses(
+                            simRowSurface.selectable,
+                            SIM_SURFACE_WHITE,
+                            index === 0 ? 'simulator-border--top' : 'simulator-border--top-none',
+                        )}
                         style={{ cursor: 'pointer' }}
                     >
                         <ThreadProfileIcon />
-                        <div className="d-flex flex-column min-w-0 flex-grow-1">
-                            <span className={`fw-medium text-truncate ${row.unread ? 'fw-bold' : ''}`}>
+                        <div className={joinClasses(SIM_FLEX_COL, 'simulator-min-w-0', SIM_FLEX_GROW_1)}>
+                            <span className={joinClasses(SIM_TEXT_MEDIUM, 'simulator-text--truncate', row.unread && SIM_TEXT_BOLD)}>
                                 {row.senderName ?? row.senderNumber ?? 'Unknown'}
                             </span>
-                            <span className="small text-muted text-break mt-0" style={{ lineHeight: 1.35 }}>
+                            <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED, 'simulator-text--break')} style={{ lineHeight: 1.35 }}>
                                 {row.preview}
                             </span>
                         </div>
                         {row.timestamp != null && (
-                            <span className="small text-muted flex-shrink-0 align-self-end">{row.timestamp}</span>
+                            <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED, SIM_FLEX_SHRINK_0, 'simulator-flex--align-end')}>
+                                {row.timestamp}
+                            </span>
                         )}
                     </button>
                 ))}
@@ -87,18 +119,20 @@ export default function MessagesThreadListView({
     }
 
     return (
-        <div className="d-flex flex-column">
-            <div className="d-flex align-items-center justify-content-between border-bottom border-secondary py-2 mb-2">
-                <span className="flex-grow-1 text-center small fw-semibold text-body">Threads</span>
+        <div className={simLayout.stack}>
+            <div className={simLayout.headerRowBetween}>
+                <span className={joinClasses(SIM_FLEX_GROW_1, 'simulator-text--center', SIM_TEXT_SM, 'simulator-text--semibold', 'simulator-text--body')}>
+                    Threads
+                </span>
                 {onCompose != null && (
-                    <button
-                        type="button"
-                        className="btn btn-outline-primary btn-sm rounded-0 py-1 px-2 me-2"
+                    <SimulatorButton
+                        tone="outline-primary"
+                        className={joinClasses(SIM_ROUNDED_NONE, simSpacing.py1, simSpacing.px2, simSpacing.me2, 'simulator-btn--sm')}
                         onClick={onCompose}
                         aria-label="New thread"
                     >
                         New thread
-                    </button>
+                    </SimulatorButton>
                 )}
             </div>
             <SimulatorSearchInput
@@ -107,7 +141,7 @@ export default function MessagesThreadListView({
                 onSubmit={() => {}}
                 placeholder="Q Search"
                 ariaLabel="Search threads"
-                className="mb-3"
+                className={simSpacing.mb3}
             />
             {content}
         </div>

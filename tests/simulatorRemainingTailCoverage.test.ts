@@ -282,7 +282,7 @@ describe('remaining tail coverage', () => {
             renderer = TestRenderer.create(
                 React.createElement(
                     SimulatorErrorBoundary,
-                    { fallbackTitle: 'Custom error', onRetry },
+                    { fallbackTitle: 'Custom error', onRetry, showDiagnostics: true },
                     React.createElement(Boom)
                 )
             );

@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
-import type { SimulatorTemplatePayload } from './types/session';
-import { analyzeReachability } from './utils/simulatorReachability';
-import { buildSimulatorPreviewReport } from './utils/simulatorPreviewReport';
+import type { SimulatorTemplatePayload } from './types/session.js';
+import { analyzeReachability } from './utils/simulatorReachability.js';
+import { buildSimulatorPreviewReport } from './utils/simulatorPreviewReport.js';
 import {
     resolveSimulatorDeveloperTools,
     type SimulatorDeveloperTools,
     type SimulatorRuntimeIssue,
-} from './developerTools';
-import SimulatorAuthorPreviewReport from './components/SimulatorAuthorPreviewReport';
-import SimulatorReachabilityReport from './components/SimulatorReachabilityReport';
-import SimulatorSessionTimeline, { type TimelineEntry } from './components/SimulatorSessionTimeline';
-import SimulatorRuntimeIssuesReport from './components/SimulatorRuntimeIssuesReport';
+} from './developerTools.js';
+import SimulatorAuthorPreviewReport from './components/SimulatorAuthorPreviewReport.js';
+import SimulatorReachabilityReport from './components/SimulatorReachabilityReport.js';
+import SimulatorSessionTimeline, { type TimelineEntry } from './components/SimulatorSessionTimeline.js';
+import SimulatorRuntimeIssuesReport from './components/SimulatorRuntimeIssuesReport.js';
 
 export interface SimulatorDeveloperToolsPanelProps {
     developerTools?: SimulatorDeveloperTools;

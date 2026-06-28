@@ -3,16 +3,24 @@
  * When phoneLocalNavItems is provided, shows wireframe-style phone tabs above content.
  */
 import { useState } from 'react';
-import { Button, ListGroup } from 'react-bootstrap';
 import type {
     SimulatorAction,
     SimulatorDirectoryEntry,
     SimulatorSessionContact,
-} from '../types/session';
-import { SimulatorActions } from '../actions';
-import SimulatorLocalNav from '../components/SimulatorLocalNav';
-import { SimulatorDetailBackBar } from '../components/SimulatorDetail';
-import { simTypo } from '../simulatorStyles';
+} from '../types/session.js';
+import { SimulatorActions } from '../actions/index.js';
+import SimulatorLocalNav from '../components/SimulatorLocalNav.js';
+import { SimulatorDetailBackBar } from '../components/SimulatorDetail.js';
+import { SimulatorList, SimulatorListItem } from '../components/SimulatorList.js';
+import { simBorder, simLayout, simSpacing, simTypo } from '../simulatorStyles.js';
+import { SimulatorButton } from '../ui/primitives.js';
+import {
+    joinClasses,
+    SIM_MUTED,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_LIGHT,
+    SIM_TEXT_SM,
+} from '../ui/simulatorClasses.js';
 
 export interface DirectoryViewProps {
     directory: SimulatorDirectoryEntry[] | null;
@@ -64,7 +72,7 @@ export default function DirectoryView({
 
     if (entries.length === 0) {
         return (
-            <div className="d-flex flex-column small">
+            <div className={joinClasses(simLayout.stack, SIM_TEXT_SM)}>
                 {phoneLocalNavItems != null && phoneLocalNavItems.length > 0 && onPhoneNavSelect && (
                     <SimulatorLocalNav
                         items={phoneLocalNavItems}
@@ -74,13 +82,13 @@ export default function DirectoryView({
                     />
                 )}
                 <SimulatorDetailBackBar onBack={onBack} title="Directory" ariaLabel="Back" titleOnly />
-                <p className="text-muted mb-0">No directory for this scenario.</p>
+                <p className={joinClasses(SIM_MUTED, simSpacing.mb0)}>No directory for this scenario.</p>
             </div>
         );
     }
 
     return (
-        <div className="d-flex flex-column">
+        <div className={simLayout.stack}>
             {phoneLocalNavItems != null && phoneLocalNavItems.length > 0 && onPhoneNavSelect && (
                 <SimulatorLocalNav
                     items={phoneLocalNavItems}
@@ -90,42 +98,41 @@ export default function DirectoryView({
                 />
             )}
             <SimulatorDetailBackBar onBack={onBack} title="Directory" ariaLabel="Back" titleOnly />
-            <p className={`${simTypo.secondary} mb-2`} style={{ fontSize: '0.8rem' }}>
+            <p className={joinClasses(simTypo.secondary, simSpacing.mb2)} style={{ fontSize: '0.8rem' }}>
                 Use these numbers or links to verify information.
             </p>
             {selected ? (
-                <div className="border rounded p-3 bg-light">
-                    <div className="d-flex justify-content-between align-items-start mb-2">
+                <div className={joinClasses(simBorder.tile, SIM_ROUNDED_NONE, simSpacing.p3, SIM_SURFACE_LIGHT)}>
+                    <div className={joinClasses(simLayout.rowBetween, simSpacing.mb2)}>
                         <strong>{selected.label}</strong>
-                        <Button
-                            variant="link"
-                            size="sm"
-                            className="p-0 text-secondary"
+                        <SimulatorButton
+                            tone="link"
+                            className={joinClasses('simulator-btn--sm', 'simulator-btn--plain', 'simulator-text--secondary')}
                             onClick={() => setSelectedId(null)}
                         >
                             Change
-                        </Button>
+                        </SimulatorButton>
                     </div>
                     {selected.description && (
-                        <p className="small text-muted mb-2">{selected.description}</p>
+                        <p className={joinClasses(SIM_TEXT_SM, SIM_MUTED, simSpacing.mb2)}>{selected.description}</p>
                     )}
                     {selected.contact_id && (() => {
                         const contact = findContact(contacts, selected.contact_id);
                         if (contact) {
                             return (
-                                <div className="mb-2">
-                                    <span className="small text-muted">{contact.displayName}</span>
+                                <div className={simSpacing.mb2}>
+                                    <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>{contact.displayName}</span>
                                     {contact.number && (
-                                        <span className="small ms-2">{contact.number}</span>
+                                        <span className={joinClasses(SIM_TEXT_SM, simSpacing.ms2)}>{contact.number}</span>
                                     )}
-                                    <div className="mt-1">
-                                        <Button
-                                            size="sm"
-                                            variant="primary"
+                                    <div className={simSpacing.mt1}>
+                                        <SimulatorButton
+                                            tone="primary"
+                                            className="simulator-btn--sm"
                                             onClick={() => handleCallContact(contact.id)}
                                         >
                                             Call
-                                        </Button>
+                                        </SimulatorButton>
                                     </div>
                                 </div>
                             );
@@ -133,40 +140,38 @@ export default function DirectoryView({
                         return null;
                     })()}
                     {!selected.contact_id && selected.number && (
-                        <div className="mb-2">
-                            <span className="small">{selected.number}</span>
-                            <div className="mt-1">
-                                <Button
-                                    size="sm"
-                                    variant="primary"
+                        <div className={simSpacing.mb2}>
+                            <span className={SIM_TEXT_SM}>{selected.number}</span>
+                            <div className={simSpacing.mt1}>
+                                <SimulatorButton
+                                    tone="primary"
+                                    className="simulator-btn--sm"
                                     onClick={() => handleDial(selected.number!)}
                                 >
                                     Call
-                                </Button>
+                                </SimulatorButton>
                             </div>
                         </div>
                     )}
                     {selected.url && (
-                        <p className="small mb-0 text-break">
-                            <span className="text-muted">URL: </span>
+                        <p className={joinClasses(SIM_TEXT_SM, simSpacing.mb0, 'simulator-text--break')}>
+                            <span className={SIM_MUTED}>URL: </span>
                             {selected.url}
                         </p>
                     )}
                 </div>
             ) : (
-                <ListGroup as="ul" className="border rounded">
+                <SimulatorList className={joinClasses(simBorder.tile, 'simulator-rounded')}>
                     {entries.map((entry) => (
-                        <ListGroup.Item
+                        <SimulatorListItem
                             key={entry.id}
-                            as="li"
-                            action
                             onClick={() => handleSelect(entry)}
-                            className="py-2"
+                            className={simSpacing.py2}
                         >
                             {entry.label}
-                        </ListGroup.Item>
+                        </SimulatorListItem>
                     ))}
-                </ListGroup>
+                </SimulatorList>
             )}
         </div>
     );

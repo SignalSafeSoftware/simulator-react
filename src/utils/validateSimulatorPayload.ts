@@ -6,7 +6,7 @@
  * **App usage:** not imported by current `frontend/workspace/src` or `frontend/administration/src` (subpath export is for tests/tooling and internal callers).
  */
 
-import type { SimulatorChannel } from '../types/session';
+import type { SimulatorChannel } from '../types/session.js';
 
 const VALID_CHANNELS: SimulatorChannel[] = ['contacts', 'email', 'sms', 'browser', 'phone', 'home'];
 

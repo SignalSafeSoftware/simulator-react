@@ -4,20 +4,36 @@
  * When phoneLocalNavItems is provided, shows wireframe-style phone tabs above content (Back still available).
  */
 import { useMemo, useState } from 'react';
-import { SimulatorList, SimulatorListItem } from '../components/SimulatorList';
-import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../components/SimulatorDetail';
-import { SimulatorSearchInput } from '../components/SimulatorSearchInput';
-import SimulatorLocalNav from '../components/SimulatorLocalNav';
-import { simTypo } from '../simulatorStyles';
-import type { SimulatorSessionContact } from '../types/session';
+import { SimulatorList, SimulatorListItem } from '../components/SimulatorList.js';
+import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../components/SimulatorDetail.js';
+import { SimulatorSearchInput } from '../components/SimulatorSearchInput.js';
+import SimulatorLocalNav from '../components/SimulatorLocalNav.js';
+import { simLayout, simRowSurface, simScreen, simSpacing, simTypo } from '../simulatorStyles.js';
+import { SimulatorButton } from '../ui/primitives.js';
+import {
+    joinClasses,
+    SIM_AVATAR,
+    SIM_BORDER,
+    SIM_FLEX_COL,
+    SIM_FLEX_GROW_1,
+    SIM_FLEX_SHRINK_0,
+    SIM_MUTED,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_AVATAR,
+    SIM_SURFACE_LIGHT,
+    SIM_SURFACE_WHITE,
+    SIM_TEXT_MEDIUM,
+    SIM_TEXT_SM,
+} from '../ui/simulatorClasses.js';
+import type { SimulatorSessionContact } from '../types/session.js';
 import {
     normalizeNameForMatch,
     phoneDigitsOnly,
     normalizeEmailForMatch,
     phonesMatch,
     namesMatch,
-} from '../utils/contactNormalization';
-export { normalizeNameForMatch as normalizeForSearch } from '../utils/contactNormalization';
+} from '../utils/contactNormalization.js';
+export { normalizeNameForMatch as normalizeForSearch } from '../utils/contactNormalization.js';
 
 export interface ContactsViewProps {
     contacts: SimulatorSessionContact[] | null;
@@ -80,11 +96,17 @@ const CONTACTS_SEARCH_PLACEHOLDER = 'Search by name, number, or email';
 function ContactProfileIcon({ className }: Readonly<{ className?: string }>) {
     return (
         <div
-            className={`rounded bg-primary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0 ${className ?? ''}`}
+            className={joinClasses(
+                SIM_AVATAR,
+                SIM_SURFACE_AVATAR,
+                'simulator-flex simulator-flex--center',
+                SIM_FLEX_SHRINK_0,
+                className,
+            )}
             style={{ width: 40, height: 40 }}
             aria-hidden
         >
-            <span className="text-primary" style={{ fontSize: '1.25rem' }}>👤</span>
+            <span className="simulator-text--primary" style={{ fontSize: '1.25rem' }}>👤</span>
         </div>
     );
 }
@@ -130,7 +152,7 @@ export default function ContactsView({
                 items={phoneLocalNavItems}
                 activeId={phoneActiveId}
                 onSelect={onPhoneNavSelect}
-                className="mb-0 border-bottom-0 flex-shrink-0"
+                className={joinClasses(simSpacing.mb0, 'simulator-border--bottom-none', SIM_FLEX_SHRINK_0)}
                 aria-label="Phone tabs"
             />
         ) : null;
@@ -146,8 +168,8 @@ export default function ContactsView({
 
     if (selected) {
         return (
-            <div className="d-flex flex-column flex-grow-1 min-h-0">
-                <div className="flex-grow-1 min-h-0 overflow-auto">
+            <div className={simLayout.screenColumn}>
+                <div className={simLayout.scrollBody}>
                     <SimulatorDetailBackBar
                         onBack={() => setSelectedId(null)}
                         title="Contact"
@@ -157,12 +179,12 @@ export default function ContactsView({
                     <SimulatorDetailBlock>
                         <h3 className={simTypo.subheading}>{selected.displayName}</h3>
                         {selected.number != null && selected.number !== '' && (
-                            <p className="mb-1 small">
+                            <p className={joinClasses(simSpacing.mb1, SIM_TEXT_SM)}>
                                 <span className={simTypo.secondary}>Number:</span> {selected.number}
                             </p>
                         )}
                         {selected.email != null && selected.email !== '' && (
-                            <p className="mb-0 small">
+                            <p className={joinClasses(simSpacing.mb0, SIM_TEXT_SM)}>
                                 <span className={simTypo.secondary}>Email:</span> {selected.email}
                             </p>
                         )}
@@ -174,31 +196,29 @@ export default function ContactsView({
     }
 
     return (
-        <div className="d-flex flex-column flex-grow-1 min-h-0">
-            <div className="flex-grow-1 min-h-0 overflow-auto">
+        <div className={simLayout.screenColumn}>
+            <div className={simLayout.scrollBody}>
                 {phoneLocalNavItems != null && phoneLocalNavItems.length > 0 && (
-                    <div className="text-center border-bottom border-secondary py-2 mb-2 small fw-semibold text-body">
-                        Contacts
-                    </div>
+                    <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>Contacts</div>
                 )}
                 {onAddContact == null ? (
                     <SimulatorDetailBackBar onBack={onBack} title={title} ariaLabel="Back" titleOnly />
                 ) : (
-                    <div className="d-flex align-items-center justify-content-between border-bottom border-secondary py-2 mb-2 small fw-semibold text-body">
-                        <span className="flex-grow-1 text-center">{title}</span>
-                        <button
-                            type="button"
-                            className="btn btn-outline-primary btn-sm rounded-0 py-1 px-2 me-2"
+                    <div className={simLayout.headerRowBetween}>
+                        <span className={joinClasses(SIM_FLEX_GROW_1, 'simulator-text--center')}>{title}</span>
+                        <SimulatorButton
+                            tone="outline-primary"
+                            className={joinClasses(SIM_ROUNDED_NONE, simSpacing.py1, simSpacing.px2, simSpacing.me2, 'simulator-btn--sm')}
                             onClick={onAddContact}
                             aria-label="Add contact"
                         >
                             Add
-                        </button>
+                        </SimulatorButton>
                     </div>
                 )}
 
                 {verificationContext && (verificationContext.number || verificationContext.name) && (
-                    <div className={`${simTypo.secondaryTight} p-2 rounded bg-light border`}>
+                    <div className={joinClasses(simTypo.secondaryTight, simSpacing.p2, SIM_ROUNDED_NONE, SIM_SURFACE_LIGHT, SIM_BORDER)}>
                         {matchingContact ? (
                             <span>
                                 <span className={simTypo.secondary}>Matches saved contact: </span>
@@ -217,7 +237,7 @@ export default function ContactsView({
                     onSubmit={onSearchSubmit}
                     placeholder={CONTACTS_SEARCH_PLACEHOLDER}
                     ariaLabel="Search contacts"
-                    className="mb-2"
+                    className={simSpacing.mb2}
                     dataSimulatorSearch
                 />
 
@@ -243,20 +263,24 @@ function renderPhoneContactList(
     onOpenContact?: (contactId: string) => void
 ): JSX.Element {
     return (
-        <div className="list-group list-group-flush">
+        <div className="simulator-list--flush">
             {filtered.map((c) => (
                 <button
                     type="button"
                     key={c.id}
                     onClick={() => openContact(c.id, setSelectedId, onOpenContact)}
-                    className="d-flex w-100 align-items-center gap-3 py-3 px-2 border border-secondary border-top-0 rounded-0 bg-white text-start"
+                    className={joinClasses(
+                        simRowSurface.selectable,
+                        'simulator-border--top-none',
+                        SIM_SURFACE_WHITE,
+                    )}
                     style={{ cursor: 'pointer' }}
                 >
                     <ContactProfileIcon />
-                    <div className="d-flex flex-column min-w-0 flex-grow-1">
-                        <span className="fw-medium text-truncate">{c.displayName}</span>
-                        {c.number && <span className="small text-muted text-truncate">{c.number}</span>}
-                        {c.email && !c.number && <span className="small text-muted text-truncate">{c.email}</span>}
+                    <div className={joinClasses(SIM_FLEX_COL, 'simulator-min-w-0', SIM_FLEX_GROW_1)}>
+                        <span className={joinClasses(SIM_TEXT_MEDIUM, 'simulator-text--truncate')}>{c.displayName}</span>
+                        {c.number && <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED, 'simulator-text--truncate')}>{c.number}</span>}
+                        {c.email && !c.number && <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED, 'simulator-text--truncate')}>{c.email}</span>}
                     </div>
                 </button>
             ))}
@@ -276,9 +300,9 @@ function renderCompactContactList(
                     key={c.id}
                     variant="compact"
                     onClick={() => openContact(c.id, setSelectedId, onOpenContact)}
-                    className="justify-content-between"
+                    className="simulator-flex--between"
                 >
-                    <span className="fw-medium">{c.displayName}</span>
+                    <span className={SIM_TEXT_MEDIUM}>{c.displayName}</span>
                     {c.number && <span className={simTypo.secondary}>{c.number}</span>}
                 </SimulatorListItem>
             ))}

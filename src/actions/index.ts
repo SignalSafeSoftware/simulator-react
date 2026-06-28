@@ -1,5 +1,5 @@
-export { SimulatorActions } from './simulatorActions';
-export type { SimulatorAction } from '../types/session';
+export { SimulatorActions } from './simulatorActions.js';
+export type { SimulatorAction } from '../types/session.js';
 export {
     SIMULATOR_ACTION_TYPES,
     SIMULATOR_ACTION_CATEGORY,
@@ -7,5 +7,5 @@ export {
     getSimulatorActionCategory,
     isSimulatorActionType,
     validateSimulatorAction,
-} from '../utils/simulatorActionTaxonomy';
-export type { SimulatorActionType, SimulatorActionCategory } from '../utils/simulatorActionTaxonomy';
+} from '../utils/simulatorActionTaxonomy.js';
+export type { SimulatorActionType, SimulatorActionCategory } from '../utils/simulatorActionTaxonomy.js';

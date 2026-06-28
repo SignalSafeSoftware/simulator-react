@@ -2,7 +2,13 @@
  * Wireframe-style local app navigation: single rectangular bar, rectangular segments.
  * Use for Phone, Email, Messages. Active = dark, inactive = light.
  */
-import { simLocalNav } from '../simulatorStyles';
+import { simLocalNav, simSpacing } from '../simulatorStyles.js';
+import {
+    joinClasses,
+    SIM_BORDER_SECONDARY,
+    SIM_FLEX_GROW_1,
+    SIM_TEXT_SM,
+} from '../ui/simulatorClasses.js';
 
 export interface SimulatorLocalNavItem {
     id: string;
@@ -27,7 +33,7 @@ export default function SimulatorLocalNav({
     if (items.length === 0) return null;
     return (
         <div
-            className={`${simLocalNav.container} mb-3 ${className}`.trim()}
+            className={joinClasses(simLocalNav.container, simSpacing.mb3, className)}
             role="tablist"
             aria-label={ariaLabel}
         >
@@ -41,9 +47,14 @@ export default function SimulatorLocalNav({
                         role="tab"
                         aria-selected={isActive}
                         aria-label={item.label}
-                        className={`flex-grow-1 py-2 border-0 small ${
-                            isLast ? '' : 'border-end border-secondary'
-                        } ${isActive ? simLocalNav.active : simLocalNav.inactive}`}
+                        className={joinClasses(
+                            SIM_FLEX_GROW_1,
+                            simSpacing.py2,
+                            'simulator-border--none',
+                            SIM_TEXT_SM,
+                            !isLast && joinClasses('simulator-border--end', SIM_BORDER_SECONDARY),
+                            isActive ? simLocalNav.active : simLocalNav.inactive,
+                        )}
                         style={{ minWidth: 0 }}
                         onClick={() => onSelect(item.id)}
                     >

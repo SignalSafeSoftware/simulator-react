@@ -13,7 +13,27 @@ export const SHELL_EXIT_LABEL = 'Exit';
 export const SNAPSHOT_COPY_FEEDBACK_MS = 2000;
 
 // ---------------------------------------------------------------------------
-// Unsupported screen fallback (dev/admin)
+// Learner-safe fallback copy (default runtime UI)
+// ---------------------------------------------------------------------------
+
+/** Shown when simulator content fails to render (learner-facing default). */
+export const LEARNER_SIMULATOR_ERROR_TITLE =
+    'This part of the simulation could not be displayed.';
+
+/** Shown when simulator content fails to render (learner-facing default). */
+export const LEARNER_SIMULATOR_ERROR_MESSAGE =
+    'The simulation encountered a problem. Please continue or ask your trainer.';
+
+/** Shown when the screen registry cannot resolve a screen (learner-facing default). */
+export const LEARNER_UNSUPPORTED_SCREEN_TITLE =
+    'This part of the simulation could not be displayed.';
+
+/** Shown when the screen registry cannot resolve a screen (learner-facing default). */
+export const LEARNER_UNSUPPORTED_SCREEN_MESSAGE =
+    'Try another section of the simulation or ask your trainer for help.';
+
+// ---------------------------------------------------------------------------
+// Unsupported screen fallback (author/dev diagnostics via showDiagnostics)
 // ---------------------------------------------------------------------------
 
 export const UNSUPPORTED_SCREEN_TITLE = 'Unsupported screen';

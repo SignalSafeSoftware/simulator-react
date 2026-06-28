@@ -3,8 +3,20 @@
  * Uses normalized SimulatorInteractionEvent; no TreeSpec scoring. Shown only in preview/compact mode.
  */
 import { useId, useState } from 'react';
-import { Card, Collapse } from 'react-bootstrap';
-import type { SimulatorInteractionEvent } from '../types/simulatorEvents';
+import {
+    SimulatorCard,
+    SimulatorCardBody,
+    SimulatorCardHeader,
+    SimulatorCollapse,
+} from '../ui/primitives.js';
+import { simSpacing } from '../simulatorStyles.js';
+import {
+    joinClasses,
+    SIM_FLEX,
+    SIM_MUTED,
+    simBtnToneClass,
+} from '../ui/simulatorClasses.js';
+import type { SimulatorInteractionEvent } from '../types/simulatorEvents.js';
 
 /** Synthetic entry for "session started" (not part of API event contract). */
 export interface SessionStartedEntry {
@@ -114,46 +126,64 @@ export default function SimulatorSessionTimeline({
     const bodyId = useId();
     const [open, setOpen] = useState(defaultExpanded);
     return (
-        <Card className={`mb-2 ${className ?? ''}`.trim()} data-testid="simulator-session-timeline">
-            <Card.Header className="py-1 px-2 small bg-light">
+        <SimulatorCard className={joinClasses(simSpacing.mb2, className)} data-testid="simulator-session-timeline">
+            <SimulatorCardHeader
+                className={joinClasses('simulator-text--sm', 'simulator-surface--header', simSpacing.py1, simSpacing.px2)}
+            >
                 <button
                     type="button"
-                    className="btn btn-link p-0 text-decoration-none text-dark fw-medium"
+                    className={joinClasses(
+                        simBtnToneClass('link'),
+                        'simulator-btn--plain',
+                        'simulator-text--semibold',
+                        'simulator-text--body',
+                    )}
                     onClick={() => setOpen((prev: boolean) => !prev)}
                     aria-expanded={open}
                     aria-controls={bodyId}
                 >
                     Session timeline
                 </button>
-                <span className="text-muted ms-1">— {entries.length} event{entries.length === 1 ? '' : 's'}</span>
-            </Card.Header>
-            <Collapse in={open}>
-                <Card.Body id={bodyId} className="small py-2 px-2">
+                <span className={joinClasses(SIM_MUTED, 'simulator-inline-gap')}>— {entries.length} event{entries.length === 1 ? '' : 's'}</span>
+            </SimulatorCardHeader>
+            <SimulatorCollapse open={open}>
+                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}>
                     {entries.length === 0 ? (
-                        <div className="text-muted">No events yet. Interact with the simulator to see the timeline.</div>
+                        <div className={SIM_MUTED}>No events yet. Interact with the simulator to see the timeline.</div>
                     ) : (
-                        <ul className="list-unstyled mb-0">
+                        <ul className={joinClasses('simulator-list--plain', simSpacing.mb0)}>
                             {entries.map((entry, i) => {
                                 const target = targetSummary(entry);
                                 return (
-                                    <li key={`${entry.timestamp}-${entry.kind}-${i}`} className="d-flex flex-wrap gap-1 align-items-baseline py-1 border-bottom border-light">
-                                        <span className="text-muted" style={{ minWidth: '4.5rem' }}>
+                                    <li
+                                        key={`${entry.timestamp}-${entry.kind}-${i}`}
+                                        className={joinClasses(
+                                            SIM_FLEX,
+                                            'simulator-flex--wrap',
+                                            'simulator-spacing--gap',
+                                            'simulator-flex--align-baseline',
+                                            simSpacing.py1,
+                                            'simulator-border simulator-border--bottom',
+                                            'simulator-border--light',
+                                        )}
+                                    >
+                                        <span className={SIM_MUTED} style={{ minWidth: '4.5rem' }}>
                                             {formatTime(entry.timestamp)}
                                         </span>
-                                        <span className="text-dark">
+                                        <span className="simulator-text--body">
                                             {entry.app}/{entry.screen}
                                         </span>
-                                        <span className="fw-medium">{kindLabel(entry.kind)}</span>
+                                        <span className="simulator-text--semibold">{kindLabel(entry.kind)}</span>
                                         {target != null && (
-                                            <span className="text-muted text-break">{target}</span>
+                                            <span className={joinClasses(SIM_MUTED, 'simulator-text--break')}>{target}</span>
                                         )}
                                     </li>
                                 );
                             })}
                         </ul>
                     )}
-                </Card.Body>
-            </Collapse>
-        </Card>
+                </SimulatorCardBody>
+            </SimulatorCollapse>
+        </SimulatorCard>
     );
 }

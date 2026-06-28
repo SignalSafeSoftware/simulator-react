@@ -1,17 +1,41 @@
 /**
  * Error boundary scoped to simulator content. Catches render/lifecycle errors
  * in the simulator shell content so the rest of the page (chrome, nav) does not crash.
- * Renders a clear dev/admin-facing message; does not hide the error.
+ *
+ * Default UI is learner-safe (no exception message or component stack).
+ * Pass `showDiagnostics` for author/admin or local debugging surfaces.
  */
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { simSpacing, simStatus } from './simulatorStyles';
+import {
+    LEARNER_SIMULATOR_ERROR_MESSAGE,
+    LEARNER_SIMULATOR_ERROR_TITLE,
+} from './constants.js';
+import { simSpacing, simStatus } from './simulatorStyles.js';
+import { SimulatorButton } from './ui/primitives.js';
+import {
+    joinClasses,
+    SIM_MONO,
+    SIM_MUTED,
+    SIM_OVERFLOW_AUTO,
+    SIM_TEXT_DANGER,
+    SIM_TEXT_MEDIUM,
+    SIM_TEXT_SM,
+} from './ui/simulatorClasses.js';
 
 export interface SimulatorErrorBoundaryProps {
     children: ReactNode;
-    /** Optional fallback title (default: "Simulator error"). */
+    /**
+     * Fallback title. Defaults to {@link LEARNER_SIMULATOR_ERROR_TITLE}.
+     * When `showDiagnostics` is true, a generic dev title is used if omitted.
+     */
     fallbackTitle?: string;
     /** When set, appended to the fallback (e.g. "Return to list"). */
     onRetry?: () => void;
+    /**
+     * When true, render `error.message` and React component stack (author/admin only).
+     * Default false — learner-safe generic copy only.
+     */
+    showDiagnostics?: boolean;
 }
 
 interface State {
@@ -35,26 +59,43 @@ export default class SimulatorErrorBoundary extends Component<SimulatorErrorBoun
 
     render(): ReactNode {
         const { error, errorInfo } = this.state;
-        const { children, fallbackTitle = 'Simulator error', onRetry } = this.props;
+        const {
+            children,
+            fallbackTitle,
+            onRetry,
+            showDiagnostics = false,
+        } = this.props;
 
         if (error != null) {
+            const title =
+                fallbackTitle ??
+                (showDiagnostics ? 'Simulator error' : LEARNER_SIMULATOR_ERROR_TITLE);
+            const body = showDiagnostics
+                ? error.message
+                : LEARNER_SIMULATOR_ERROR_MESSAGE;
+
             return (
                 <div
                     className={`${simSpacing.blockPadding} ${simStatus.errorBox}`}
                     role="alert"
                     data-testid="simulator-error-fallback"
+                    data-show-diagnostics={showDiagnostics ? 'true' : 'false'}
                 >
-                    <p className="fw-medium text-danger mb-1">{fallbackTitle}</p>
-                    <p className="mb-1 text-break">{error.message}</p>
-                    {errorInfo?.componentStack && (
-                        <pre className="small text-muted mb-2 font-monospace" style={{ whiteSpace: 'pre-wrap', maxHeight: 120, overflow: 'auto' }}>
+                    <p className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_DANGER, simSpacing.mb1)}>{title}</p>
+                    <p className={joinClasses(simSpacing.mb1, 'simulator-text--break')}>{body}</p>
+                    {showDiagnostics && errorInfo?.componentStack ? (
+                        <pre
+                            className={joinClasses(SIM_TEXT_SM, SIM_MUTED, simSpacing.mb2, SIM_MONO, SIM_OVERFLOW_AUTO)}
+                            style={{ whiteSpace: 'pre-wrap', maxHeight: 120 }}
+                            data-testid="simulator-error-diagnostics-stack"
+                        >
                             {errorInfo.componentStack}
                         </pre>
-                    )}
+                    ) : null}
                     {onRetry != null && (
-                        <button type="button" className="btn btn-outline-secondary btn-sm" onClick={onRetry}>
+                        <SimulatorButton tone="outline-secondary" className="simulator-btn--sm" onClick={onRetry}>
                             Dismiss
-                        </button>
+                        </SimulatorButton>
                     )}
                 </div>
             );

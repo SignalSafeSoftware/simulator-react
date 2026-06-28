@@ -2,17 +2,42 @@
  * Renders a single browser page by layout family. Wireframe: landing, login/form, content/download/result.
  * Uses SimulatorBrowserChrome (title above bar, back/forward/refresh/home, address bar).
  */
-import { Button, Form } from 'react-bootstrap';
-import SimulatorBrowserChrome from '../components/SimulatorBrowserChrome';
-import type { SimulatorAction, SimulatorBrowserPage } from '../types/session';
-import { SimulatorActions } from '../actions';
-import { simTypo } from '../simulatorStyles';
+import type { ReactNode } from 'react';
+
+import SimulatorBrowserChrome from '../components/SimulatorBrowserChrome.js';
+import type { SimulatorAction, SimulatorBrowserPage } from '../types/session.js';
+import { SimulatorActions } from '../actions/index.js';
+import { simBorder, simLayout, simSpacing, simTypo } from '../simulatorStyles.js';
+import {
+    SimulatorButton,
+    SimulatorField,
+    SimulatorInput,
+    SimulatorLabel,
+} from '../ui/primitives.js';
+import {
+    joinClasses,
+    SIM_FLEX_GROW_1,
+    SIM_MUTED,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_WHITE,
+    SIM_TEXT_BODY,
+    SIM_TEXT_SEMIBOLD,
+    SIM_TEXT_SM,
+} from '../ui/simulatorClasses.js';
+import {
+    renderSimulatorChoice,
+    renderSimulatorFeedback,
+    type SimulatorChoiceRenderProps,
+    type SimulatorFeedbackRenderProps,
+} from '../ui/renderSlots.js';
 
 export interface BrowserPageRendererProps {
     page: SimulatorBrowserPage;
     onAction: (action: SimulatorAction) => void;
     /** When set, chrome Back button is shown and calls this. */
     onBack?: () => void;
+    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
+    renderFeedback?: (feedback: SimulatorFeedbackRenderProps) => ReactNode;
 }
 
 function urlHighlight(url: string): { start: number; end: number }[] | undefined {
@@ -62,11 +87,51 @@ function normalizeBrowserLayout(layout: string | undefined): string {
     return layoutNorm;
 }
 
-export default function BrowserPageRenderer({ page, onAction, onBack }: Readonly<BrowserPageRendererProps>) {
+function renderWarningBanner(
+    message: string,
+    renderFeedback?: (feedback: SimulatorFeedbackRenderProps) => ReactNode,
+): ReactNode {
+    return renderSimulatorFeedback(
+        {
+            message,
+            tone: 'warning',
+            className: joinClasses(SIM_ROUNDED_NONE, 'simulator-border--none', simSpacing.mb3, SIM_TEXT_SM),
+        },
+        renderFeedback,
+    );
+}
+
+function renderPageButton(
+    label: string,
+    onClick: () => void,
+    tone: string,
+    className: string,
+    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode,
+): ReactNode {
+    return renderSimulatorChoice(
+        {
+            label,
+            tone,
+            className,
+            onClick,
+        },
+        renderChoice,
+    );
+}
+
+export default function BrowserPageRenderer({
+    page,
+    onAction,
+    onBack,
+    renderChoice,
+    renderFeedback,
+}: Readonly<BrowserPageRendererProps>) {
     const { url, title, layout, content, buttons, formFields, logoUrl, warningBanner, showMediaPlaceholder } = page;
     const layoutNorm = normalizeBrowserLayout(layout);
     const displayTitle = title || 'Web Page Title';
     const downloadButtons = buttons ?? [];
+    const pageBtnClass = joinClasses(SIM_ROUNDED_NONE, 'simulator-btn--sm');
+    const loginCardClass = joinClasses(simBorder.tile, SIM_ROUNDED_NONE, SIM_SURFACE_WHITE, simSpacing.p3, 'simulator-shadow--sm');
     const keyedFormFields = withStableKeys(
         formFields ?? [],
         (field) => getStableKey([field.name, field.label, field.type])
@@ -91,76 +156,83 @@ export default function BrowserPageRenderer({ page, onAction, onBack }: Readonly
             {(layoutNorm === 'landing' || layoutNorm === 'content') && (
                 <>
                     {logoUrl != null && logoUrl !== '' && (
-                        <div className="mb-3 text-center">
+                        <div className={joinClasses(simSpacing.mb3, 'simulator-text--center')}>
                             <img src={logoUrl} alt="" style={{ maxHeight: 48 }} />
                         </div>
                     )}
                     {layoutNorm === 'content' && warningBanner != null && warningBanner !== '' && (
-                        <div className="alert alert-warning rounded-0 border-0 mb-3 small" role="alert">
-                            {warningBanner}
+                        renderWarningBanner(warningBanner, renderFeedback)
+                    )}
+                    {layoutNorm === 'content' && showMediaPlaceholder === true && (
+                        <div
+                            className={joinClasses(
+                                simSpacing.mb3,
+                                simBorder.tile,
+                                SIM_ROUNDED_NONE,
+                                'simulator-surface--dark-muted',
+                                simLayout.row,
+                                'simulator-flex--center',
+                            )}
+                            style={{ minHeight: 160 }}
+                        >
+                            <span className="simulator-text--secondary" style={{ fontSize: '2.5rem' }} aria-hidden>▶</span>
                         </div>
                     )}
                     {layoutNorm === 'content' && showMediaPlaceholder === true && (
-                        <div className="mb-3 border border-secondary rounded-0 bg-dark bg-opacity-10 d-flex align-items-center justify-content-center" style={{ minHeight: 160 }}>
-                            <span className="text-secondary" style={{ fontSize: '2.5rem' }} aria-hidden>▶</span>
-                        </div>
-                    )}
-                    {layoutNorm === 'content' && showMediaPlaceholder === true && (
-                        <div className="d-flex align-items-center gap-2 mb-3 small text-muted">
+                        <div className={joinClasses(simLayout.row, simSpacing.gap2, simSpacing.mb3, SIM_TEXT_SM, SIM_MUTED)}>
                             <span aria-hidden>⏮</span>
-                            <div className="flex-grow-1 bg-secondary bg-opacity-25 rounded-0" style={{ height: 6 }} />
+                            <div className={joinClasses(SIM_FLEX_GROW_1, 'simulator-surface--secondary-muted', SIM_ROUNDED_NONE)} style={{ height: 6 }} />
                             <span aria-hidden>🔊</span>
                             <span aria-hidden>⛶</span>
                         </div>
                     )}
                     {content != null && content !== '' && (
-                        <p className="mb-3 small text-secondary" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
+                        <p className={joinClasses(simSpacing.mb3, SIM_TEXT_SM, 'simulator-text--secondary')} style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
                             {content}
                         </p>
                     )}
                     {layoutNorm === 'landing' && formFields != null && formFields.length > 0 && (
-                        <Form
+                        <form
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 onAction(SimulatorActions.submitForm({}));
                             }}
                         >
                             {keyedFormFields.map(({ item: field, key }) => (
-                                <Form.Group key={key} className="mb-2">
-                                    <Form.Label className="small fw-medium text-body">{field.label}</Form.Label>
-                                    <Form.Control
+                                <SimulatorField key={key} className={simSpacing.mb2}>
+                                    <SimulatorLabel className={simLayout.fieldLabel}>{field.label}</SimulatorLabel>
+                                    <SimulatorInput
                                         type={getFieldInputType(field.type)}
-                                        className="rounded-0"
+                                        className={SIM_ROUNDED_NONE}
                                         autoComplete="off"
                                         aria-label={field.label}
                                     />
-                                </Form.Group>
+                                </SimulatorField>
                             ))}
-                            <Button type="submit" variant="primary" className="rounded-0">
+                            <SimulatorButton type="submit" tone="primary" className={SIM_ROUNDED_NONE}>
                                 Submit
-                            </Button>
-                        </Form>
+                            </SimulatorButton>
+                        </form>
                     )}
                     {buttons != null && buttons.length > 0 && (
-                        <div className="d-flex flex-wrap gap-2 mt-2">
+                        <div className={joinClasses(simLayout.actionsRow, simSpacing.mt2)}>
                             {keyedButtons.map(({ item: btn, key, index }) => (
-                                <Button
-                                    key={key}
-                                    variant="primary"
-                                    size="sm"
-                                    className="rounded-0"
-                                    onClick={() =>
-                                        onAction(
-                                            SimulatorActions.clickLink({
-                                                href: btn.href ?? url,
-                                                linkIndex: index,
-                                                pageId: btn.targetPageId,
-                                            })
-                                        )
-                                    }
-                                >
-                                    {btn.label}
-                                </Button>
+                                <span key={key}>
+                                    {renderPageButton(
+                                        btn.label,
+                                        () =>
+                                            onAction(
+                                                SimulatorActions.clickLink({
+                                                    href: btn.href ?? url,
+                                                    linkIndex: index,
+                                                    pageId: btn.targetPageId,
+                                                })
+                                            ),
+                                        'primary',
+                                        pageBtnClass,
+                                        renderChoice,
+                                    )}
+                                </span>
                             ))}
                         </div>
                     )}
@@ -169,60 +241,59 @@ export default function BrowserPageRenderer({ page, onAction, onBack }: Readonly
 
             {/* Login / form page: centered modal-like form, Submit (blue), Cancel (gray) */}
             {layoutNorm === 'login' && (
-                <div className="d-flex justify-content-center align-items-start">
-                    <div className="border border-secondary rounded-0 bg-white p-3 shadow-sm" style={{ maxWidth: 320 }}>
-                        <div className="d-flex justify-content-between align-items-center mb-3">
-                            <span className="small fw-semibold text-body">
+                <div className={joinClasses(simLayout.row, 'simulator-flex--center', 'simulator-flex--align-start')}>
+                    <div className={loginCardClass} style={{ maxWidth: 320 }}>
+                        <div className={joinClasses(simLayout.rowBetween, simSpacing.mb3)}>
+                            <span className={joinClasses(SIM_TEXT_SM, SIM_TEXT_SEMIBOLD, SIM_TEXT_BODY)}>
                                 {displayTitle} Login
                             </span>
                             {onBack != null && (
-                                <button
-                                    type="button"
-                                    className="btn btn-link btn-sm p-0 text-body"
+                                <SimulatorButton
+                                    tone="link"
+                                    className={joinClasses('simulator-btn--sm', 'simulator-btn--plain', SIM_TEXT_BODY)}
                                     onClick={onBack}
                                     aria-label="Close"
                                 >
                                     ×
-                                </button>
+                                </SimulatorButton>
                             )}
                         </div>
                         {content != null && content !== '' && (
-                            <p className="mb-2 small text-muted">{content}</p>
+                            <p className={joinClasses(simSpacing.mb2, SIM_TEXT_SM, SIM_MUTED)}>{content}</p>
                         )}
                         {formFields != null && formFields.length > 0 && (
-                            <Form
+                            <form
                                 onSubmit={(e) => {
                                     e.preventDefault();
                                     onAction(SimulatorActions.submitForm({}));
                                 }}
                             >
                                 {keyedFormFields.map(({ item: field, key }) => (
-                                    <Form.Group key={key} className="mb-2">
-                                        <Form.Label className="small fw-medium text-body">{field.label}</Form.Label>
-                                        <Form.Control
+                                    <SimulatorField key={key} className={simSpacing.mb2}>
+                                        <SimulatorLabel className={simLayout.fieldLabel}>{field.label}</SimulatorLabel>
+                                        <SimulatorInput
                                             type={getFieldInputType(field.type)}
-                                            className="rounded-0"
+                                            className={SIM_ROUNDED_NONE}
                                             autoComplete="off"
                                             aria-label={field.label}
                                         />
-                                    </Form.Group>
+                                    </SimulatorField>
                                 ))}
-                                <div className="d-flex gap-2 mt-3">
-                                    <Button type="submit" variant="primary" className="rounded-0 flex-grow-1">
+                                <div className={joinClasses(simLayout.actionsRow, simSpacing.mt3)}>
+                                    <SimulatorButton type="submit" tone="primary" className={joinClasses(SIM_ROUNDED_NONE, SIM_FLEX_GROW_1)}>
                                         Submit
-                                    </Button>
+                                    </SimulatorButton>
                                     {onBack != null && (
-                                        <Button
-                                            type="button"
-                                            variant="secondary"
-                                            className="rounded-0 flex-grow-1"
-                                            onClick={onBack}
-                                        >
-                                            Cancel
-                                        </Button>
+                                        renderPageButton(
+                                            'Cancel',
+                                            onBack,
+                                            'secondary',
+                                            joinClasses(SIM_ROUNDED_NONE, SIM_FLEX_GROW_1),
+                                            renderChoice,
+                                        )
                                     )}
                                 </div>
-                            </Form>
+                            </form>
                         )}
                     </div>
                 </div>
@@ -239,43 +310,50 @@ export default function BrowserPageRenderer({ page, onAction, onBack }: Readonly
             {layoutNorm === 'download' && (
                 <>
                     {warningBanner != null && warningBanner !== '' && (
-                        <div className="alert alert-warning rounded-0 border-0 mb-3 small" role="alert">
-                            {warningBanner}
-                        </div>
+                        renderWarningBanner(warningBanner, renderFeedback)
                     )}
                     {showMediaPlaceholder === true && (
-                        <div className="mb-3 border border-secondary rounded-0 bg-dark bg-opacity-10 d-flex align-items-center justify-content-center" style={{ minHeight: 140 }}>
-                            <span className="text-secondary" style={{ fontSize: '2rem' }} aria-hidden>▶</span>
+                        <div
+                            className={joinClasses(
+                                simSpacing.mb3,
+                                simBorder.tile,
+                                SIM_ROUNDED_NONE,
+                                'simulator-surface--dark-muted',
+                                simLayout.row,
+                                'simulator-flex--center',
+                            )}
+                            style={{ minHeight: 140 }}
+                        >
+                            <span className="simulator-text--secondary" style={{ fontSize: '2rem' }} aria-hidden>▶</span>
                         </div>
                     )}
                     {content != null && content !== '' && (
-                        <p className="mb-3 small text-secondary" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
+                        <p className={joinClasses(simSpacing.mb3, SIM_TEXT_SM, 'simulator-text--secondary')} style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
                             {content}
                         </p>
                     )}
                     {downloadButtons.length > 0 ? (
-                        <div className="d-flex flex-wrap gap-2">
+                        <div className={joinClasses(simLayout.actionsRow, 'simulator-flex--wrap')}>
                             {keyedDownloadButtons.map(({ item: btn, key }) => (
-                                <Button
-                                    key={key}
-                                    variant="outline-secondary"
-                                    size="sm"
-                                    className="rounded-0"
-                                    onClick={() => onAction(SimulatorActions.downloadClick(btn.href ?? btn.label))}
-                                >
-                                    {btn.label}
-                                </Button>
+                                <span key={key}>
+                                    {renderPageButton(
+                                        btn.label,
+                                        () => onAction(SimulatorActions.downloadClick(btn.href ?? btn.label)),
+                                        'outline-secondary',
+                                        pageBtnClass,
+                                        renderChoice,
+                                    )}
+                                </span>
                             ))}
                         </div>
                     ) : (
-                        <Button
-                            variant="outline-secondary"
-                            size="sm"
-                            className="rounded-0"
-                            onClick={() => onAction(SimulatorActions.downloadClick(page.id))}
-                        >
-                            Download
-                        </Button>
+                        renderPageButton(
+                            'Download',
+                            () => onAction(SimulatorActions.downloadClick(page.id)),
+                            'outline-secondary',
+                            pageBtnClass,
+                            renderChoice,
+                        )
                     )}
                 </>
             )}
@@ -284,35 +362,32 @@ export default function BrowserPageRenderer({ page, onAction, onBack }: Readonly
             {layoutNorm !== 'landing' && layoutNorm !== 'content' && layoutNorm !== 'login' && layoutNorm !== 'result' && layoutNorm !== 'download' && (
                 <>
                     {warningBanner != null && warningBanner !== '' && (
-                        <div className="alert alert-warning rounded-0 border-0 mb-3 small" role="alert">
-                            {warningBanner}
-                        </div>
+                        renderWarningBanner(warningBanner, renderFeedback)
                     )}
                     {content != null && content !== '' && (
-                        <p className="mb-3 small text-secondary" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
+                        <p className={joinClasses(simSpacing.mb3, SIM_TEXT_SM, 'simulator-text--secondary')} style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
                             {content}
                         </p>
                     )}
                     {buttons != null && buttons.length > 0 && (
-                        <div className="d-flex flex-wrap gap-2">
+                        <div className={joinClasses(simLayout.actionsRow, 'simulator-flex--wrap')}>
                             {keyedButtons.map(({ item: btn, key, index }) => (
-                                <Button
-                                    key={key}
-                                    variant="primary"
-                                    size="sm"
-                                    className="rounded-0"
-                                    onClick={() =>
-                                        onAction(
-                                            SimulatorActions.clickLink({
-                                                href: btn.href ?? url,
-                                                linkIndex: index,
-                                                pageId: btn.targetPageId,
-                                            })
-                                        )
-                                    }
-                                >
-                                    {btn.label}
-                                </Button>
+                                <span key={key}>
+                                    {renderPageButton(
+                                        btn.label,
+                                        () =>
+                                            onAction(
+                                                SimulatorActions.clickLink({
+                                                    href: btn.href ?? url,
+                                                    linkIndex: index,
+                                                    pageId: btn.targetPageId,
+                                                })
+                                            ),
+                                        'primary',
+                                        pageBtnClass,
+                                        renderChoice,
+                                    )}
+                                </span>
                             ))}
                         </div>
                     )}
