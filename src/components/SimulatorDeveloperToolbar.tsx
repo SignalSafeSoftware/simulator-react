@@ -2,18 +2,18 @@
  * Developer tools section toggle toolbar for SimulatorWithSession.
  */
 
-import type { SimulatorDeveloperSectionKey } from '../developerTools';
-import { simBorder, simLayout, simSpacing } from '../simulatorStyles';
+import type { SimulatorDeveloperSectionKey } from '../developerTools.js';
+import { simBorder, simLayout, simSpacing } from '../simulatorStyles.js';
 import {
     joinClasses,
     SIM_OVERFLOW_HIDDEN,
     SIM_ROUNDED_NONE,
     SIM_SURFACE_WHITE,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 import {
     DEVELOPER_TOOLBAR_ICONS,
     DEVELOPER_TOOLBAR_LABELS,
-} from '../utils/simulatorDeveloperToolbarConfig';
+} from '../utils/simulatorDeveloperToolbarConfig.js';
 
 export interface SimulatorDeveloperToolbarProps {
     sections: SimulatorDeveloperSectionKey[];

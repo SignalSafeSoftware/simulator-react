@@ -4,10 +4,10 @@ import {
     SimulatorCardBody,
     SimulatorCardHeader,
     SimulatorCollapse,
-} from '../ui/primitives';
-import { simSpacing } from '../simulatorStyles';
-import { SIM_MUTED, joinClasses, simBtnToneClass } from '../ui/simulatorClasses';
-import type { SimulatorRuntimeIssue } from '../developerTools';
+} from '../ui/primitives.js';
+import { simSpacing } from '../simulatorStyles.js';
+import { SIM_MUTED, joinClasses, simBtnToneClass } from '../ui/simulatorClasses.js';
+import type { SimulatorRuntimeIssue } from '../developerTools.js';
 
 export interface SimulatorRuntimeIssuesReportProps {
     issues: SimulatorRuntimeIssue[];

@@ -6,12 +6,12 @@ import type {
     EmailScreenId,
     SimulatorAction,
     SimulatorEmailPayload,
-} from '../types/session';
-import SimulatorLocalNav from '../components/SimulatorLocalNav';
-import EmailInboxList from './EmailInboxList';
-import EmailMessageDetail from './EmailMessageDetail';
-import EmailComposeView from './EmailComposeView';
-import { simLayout } from '../simulatorStyles';
+} from '../types/session.js';
+import SimulatorLocalNav from '../components/SimulatorLocalNav.js';
+import EmailInboxList from './EmailInboxList.js';
+import EmailMessageDetail from './EmailMessageDetail.js';
+import EmailComposeView from './EmailComposeView.js';
+import { simLayout } from '../simulatorStyles.js';
 import {
     joinClasses,
     SIM_BORDER_SECONDARY,
@@ -21,7 +21,7 @@ import {
     SIM_FLEX_SHRINK_0,
     SIM_MIN_H_0,
     SIM_OVERFLOW_AUTO,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 const EMAIL_NAV_ITEMS = [
     { id: 'list', label: 'Inbox' },

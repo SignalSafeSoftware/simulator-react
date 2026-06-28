@@ -4,14 +4,14 @@
  */
 import { useState } from 'react';
 
-import { simLayout, simScreen, simSpacing } from '../simulatorStyles';
+import { simLayout, simScreen, simSpacing } from '../simulatorStyles.js';
 import {
     SimulatorButton,
     SimulatorField,
     SimulatorInput,
     SimulatorLabel,
     SimulatorTextarea,
-} from '../ui/primitives';
+} from '../ui/primitives.js';
 import {
     joinClasses,
     SIM_FLEX_GROW_1,
@@ -19,7 +19,7 @@ import {
     SIM_MIN_H_0,
     SIM_ROUNDED_NONE,
     SIM_TEXT_SEMIBOLD,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 export interface MessagesNewThreadViewProps {
     onBack: () => void;

@@ -3,19 +3,19 @@
  */
 
 import { useCallback, useMemo, type MutableRefObject, type ReactNode } from 'react';
-import { SimulatorActions } from '../actions';
-import type { HostSimulatorEventHandler } from '../contract/hostContractTypes';
-import { switchChannelAction, type SimulatorDispatchAction } from '../state/simulatorSessionReducer';
-import type { SimulatorSessionState, SimulatorChannel, SimulatorAction } from '../types/session';
-import { channelToApp } from '../types/session';
-import { actionToInteractionEvent, appOpenedEvent, screenViewedEvent } from '../utils/simulatorEventMapper';
-import { getSimulatorCapabilities } from '../utils/simulatorCapabilities';
-import { getBrowserSubmitTargetId } from '../utils/simulatorSecondaryMenuHelpers';
-import type { SimulatorRenderContext } from '../screenRegistry';
+import { SimulatorActions } from '../actions/index.js';
+import type { HostSimulatorEventHandler } from '../contract/hostContractTypes.js';
+import { switchChannelAction, type SimulatorDispatchAction } from '../state/simulatorSessionReducer.js';
+import type { SimulatorSessionState, SimulatorChannel, SimulatorAction } from '../types/session.js';
+import { channelToApp } from '../types/session.js';
+import { actionToInteractionEvent, appOpenedEvent, screenViewedEvent } from '../utils/simulatorEventMapper.js';
+import { getSimulatorCapabilities } from '../utils/simulatorCapabilities.js';
+import { getBrowserSubmitTargetId } from '../utils/simulatorSecondaryMenuHelpers.js';
+import type { SimulatorRenderContext } from '../screenRegistry/index.js';
 import type {
     SimulatorChoiceRenderProps,
     SimulatorFeedbackRenderProps,
-} from '../ui/renderSlots';
+} from '../ui/renderSlots.js';
 
 export interface UseSimulatorSessionHandlersOptions {
     state: SimulatorSessionState;

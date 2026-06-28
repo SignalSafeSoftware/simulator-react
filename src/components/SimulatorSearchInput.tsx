@@ -1,9 +1,9 @@
 /**
  * Search input for simulator list screens.
  */
-import { SimulatorInput } from '../ui/primitives';
-import { simInput } from '../simulatorStyles';
-import { joinClasses } from '../ui/simulatorClasses';
+import { SimulatorInput } from '../ui/primitives.js';
+import { simInput } from '../simulatorStyles.js';
+import { joinClasses } from '../ui/simulatorClasses.js';
 
 export interface SimulatorSearchInputProps {
     value: string;

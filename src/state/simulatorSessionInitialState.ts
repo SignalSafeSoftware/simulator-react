@@ -2,10 +2,10 @@
  * Build initial session state from payload (entry_point when present).
  */
 
-import type { SimulatorApp } from '../types/portableSimulator';
-import type { SimulatorSessionState } from '../types/session';
-import { DEFAULT_INTERNET_SCREEN, DEFAULT_HOME_SCREEN } from '../types/session';
-import { validateSimulatorPayload } from '../utils/validateSimulatorPayload';
+import type { SimulatorApp } from '../types/portableSimulator.js';
+import type { SimulatorSessionState } from '../types/session.js';
+import { DEFAULT_INTERNET_SCREEN, DEFAULT_HOME_SCREEN } from '../types/session.js';
+import { validateSimulatorPayload } from '../utils/validateSimulatorPayload.js';
 import {
     createInitialEmailState,
     createInitialHomeState,
@@ -16,7 +16,7 @@ import {
     isHomeScreen,
     isPhoneScreen,
     parseEntryScreen,
-} from './simulatorViewStateHelpers';
+} from './simulatorViewStateHelpers.js';
 
 function getEntryAppFromPayload(payload: SimulatorSessionState['payload']): SimulatorApp {
     if (payload.entryPoint?.app != null) return payload.entryPoint.app;

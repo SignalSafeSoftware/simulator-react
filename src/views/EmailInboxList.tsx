@@ -3,10 +3,10 @@
  * Optional search bar and compose (pencil) button.
  */
 import { useState, useMemo, type ReactNode } from 'react';
-import type { SimulatorInboxRow } from '../types/session';
-import { SimulatorSearchInput } from '../components/SimulatorSearchInput';
-import { simLayout, simRowSurface, simSpacing, simTypo } from '../simulatorStyles';
-import { SimulatorButton } from '../ui/primitives';
+import type { SimulatorInboxRow } from '../types/session.js';
+import { SimulatorSearchInput } from '../components/SimulatorSearchInput.js';
+import { simLayout, simRowSurface, simSpacing, simTypo } from '../simulatorStyles.js';
+import { SimulatorButton } from '../ui/primitives.js';
 import {
     joinClasses,
     SIM_AVATAR,
@@ -20,7 +20,7 @@ import {
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
     simBadgeToneClass,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 export interface EmailInboxListProps {
     inbox: SimulatorInboxRow[];

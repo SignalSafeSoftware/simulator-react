@@ -9,17 +9,17 @@ import type {
     SimulatorDirectoryEntry,
     SimulatorPhonePayload,
     SimulatorSessionContact,
-} from '../types/session';
-import type { SimulatorChoiceRenderProps } from '../ui/renderSlots';
-import { SimulatorActions } from '../actions';
-import SimulatorLocalNav from '../components/SimulatorLocalNav';
-import PhoneHistoryList from './PhoneHistoryList';
-import PhoneDialView from './PhoneDialView';
-import PhoneVoicemailView from './PhoneVoicemailView';
-import PhoneIncomingScene from './PhoneIncomingScene';
-import type { SimulatorCapabilities } from '../utils/simulatorCapabilities';
-import { getPhoneLocalNavItems } from '../utils/phoneLocalNavItems';
-import { simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles';
+} from '../types/session.js';
+import type { SimulatorChoiceRenderProps } from '../ui/renderSlots.js';
+import { SimulatorActions } from '../actions/index.js';
+import SimulatorLocalNav from '../components/SimulatorLocalNav.js';
+import PhoneHistoryList from './PhoneHistoryList.js';
+import PhoneDialView from './PhoneDialView.js';
+import PhoneVoicemailView from './PhoneVoicemailView.js';
+import PhoneIncomingScene from './PhoneIncomingScene.js';
+import type { SimulatorCapabilities } from '../utils/simulatorCapabilities.js';
+import { getPhoneLocalNavItems } from '../utils/phoneLocalNavItems.js';
+import { simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles.js';
 import {
     SimulatorButton,
     SimulatorField,
@@ -27,14 +27,14 @@ import {
     SimulatorLabel,
     SimulatorList,
     SimulatorListItem,
-} from '../ui/primitives';
+} from '../ui/primitives.js';
 import {
     joinClasses,
     SIM_FLEX_GROW_1,
     SIM_FLEX_SHRINK_0,
     SIM_ROUNDED_NONE,
     SIM_TEXT_CENTER,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 function PhoneAddContactForm({
     onSave,

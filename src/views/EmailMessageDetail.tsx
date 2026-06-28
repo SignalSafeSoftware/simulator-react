@@ -2,18 +2,18 @@
  * Email message read/detail: wireframe layout (From, To, Subject, Body), links, attachments,
  * and Reply/Forward/Dispose/Cancel buttons. No Report link. Bottom secondary menu hidden on this screen.
  */
-import type { EmailScreenId, SimulatorAction } from '../types/session';
-import { SimulatorActions } from '../actions';
-import { SimulatorDetailBackBar } from '../components/SimulatorDetail';
-import { simLayout, simSpacing, simTypo, simActionsBar } from '../simulatorStyles';
-import type { EmailTemplateContent, EmailTemplateLink } from '../types/portableSimulator';
+import type { EmailScreenId, SimulatorAction } from '../types/session.js';
+import { SimulatorActions } from '../actions/index.js';
+import { SimulatorDetailBackBar } from '../components/SimulatorDetail.js';
+import { simLayout, simSpacing, simTypo, simActionsBar } from '../simulatorStyles.js';
+import type { EmailTemplateContent, EmailTemplateLink } from '../types/portableSimulator.js';
 import {
     SimulatorButton,
     SimulatorField,
     SimulatorInput,
     SimulatorLabel,
     SimulatorTextarea,
-} from '../ui/primitives';
+} from '../ui/primitives.js';
 import {
     joinClasses,
     SIM_BORDER_BOTTOM,
@@ -25,7 +25,7 @@ import {
     SIM_ROUNDED_NONE,
     SIM_SURFACE_LIGHT,
     SIM_TEXT_SM,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 export interface EmailMessageDetailProps {
     message: EmailTemplateContent;

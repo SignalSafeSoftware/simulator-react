@@ -4,8 +4,8 @@
  */
 import { useState } from 'react';
 
-import { simBorder, simLayout, simSpacing } from '../simulatorStyles';
-import { SimulatorButton } from '../ui/primitives';
+import { simBorder, simLayout, simSpacing } from '../simulatorStyles.js';
+import { SimulatorButton } from '../ui/primitives.js';
 import {
     joinClasses,
     SIM_FLEX_COL,
@@ -19,7 +19,7 @@ import {
     SIM_TEXT_SM,
     SIM_W_FULL,
     simBtnToneClass,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 export interface PhoneDialViewProps {
     onDial: (number: string) => void;

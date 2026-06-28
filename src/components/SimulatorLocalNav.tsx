@@ -2,13 +2,13 @@
  * Wireframe-style local app navigation: single rectangular bar, rectangular segments.
  * Use for Phone, Email, Messages. Active = dark, inactive = light.
  */
-import { simLocalNav, simSpacing } from '../simulatorStyles';
+import { simLocalNav, simSpacing } from '../simulatorStyles.js';
 import {
     joinClasses,
     SIM_BORDER_SECONDARY,
     SIM_FLEX_GROW_1,
     SIM_TEXT_SM,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 export interface SimulatorLocalNavItem {
     id: string;

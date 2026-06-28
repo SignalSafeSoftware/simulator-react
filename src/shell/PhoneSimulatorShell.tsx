@@ -5,14 +5,14 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { memo } from 'react';
 
-import { simShell } from '../simulatorStyles';
+import { simShell } from '../simulatorStyles.js';
 import {
     joinClasses,
     SIM_FLEX_COL,
     SIM_FLEX_CENTER,
     SIM_FLEX_GROW_1,
     SIM_TEXT_SM,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 export interface SecondaryMenuItem {
     id: string;

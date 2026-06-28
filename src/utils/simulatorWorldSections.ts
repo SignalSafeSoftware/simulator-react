@@ -6,7 +6,7 @@
 
 import { isRecord } from '@signalsafe/tree-spec';
 
-import type { SimulatorTemplatePayload } from '../types/session';
+import type { SimulatorTemplatePayload } from '../types/session.js';
 
 /** Canonical world section keys (session shape). Same set as backend minus naming (backend uses entry_point, messages). */
 export const SIMULATOR_WORLD_SECTION_KEYS = [

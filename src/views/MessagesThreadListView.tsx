@@ -3,9 +3,9 @@
  * profile icon, contact, snippet, date.
  */
 import { useState, useMemo, type ReactNode } from 'react';
-import { SimulatorSearchInput } from '../components/SimulatorSearchInput';
-import { simLayout, simRowSurface, simSpacing, simTypo } from '../simulatorStyles';
-import { SimulatorButton } from '../ui/primitives';
+import { SimulatorSearchInput } from '../components/SimulatorSearchInput.js';
+import { simLayout, simRowSurface, simSpacing, simTypo } from '../simulatorStyles.js';
+import { SimulatorButton } from '../ui/primitives.js';
 import {
     joinClasses,
     SIM_AVATAR,
@@ -19,7 +19,7 @@ import {
     SIM_TEXT_BOLD,
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 export interface ThreadListRow {
     id: string;

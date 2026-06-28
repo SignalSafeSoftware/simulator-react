@@ -3,19 +3,19 @@
  * Wireframe: centered headers, search bar, rectangular buttons/cards. Store and Settings are subviews; Back returns to Home.
  */
 import { useState, type ReactNode } from 'react';
-import { SimulatorDetailBackBar } from '../components/SimulatorDetail';
-import SimulatorSearchInput from '../components/SimulatorSearchInput';
+import { SimulatorDetailBackBar } from '../components/SimulatorDetail.js';
+import SimulatorSearchInput from '../components/SimulatorSearchInput.js';
 import type {
     HomeScreenId,
     SimulatorAction,
     SimulatorHomePayload,
     SimulatorHomeStoreApp,
     SimulatorHomeSettingsSection,
-} from '../types/session';
-import { SimulatorActions } from '../actions';
-import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles';
-import type { SimulatorCapabilities } from '../utils/simulatorCapabilities';
-import { SimulatorButton, SimulatorField, SimulatorInput, SimulatorLabel } from '../ui/primitives';
+} from '../types/session.js';
+import { SimulatorActions } from '../actions/index.js';
+import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles.js';
+import type { SimulatorCapabilities } from '../utils/simulatorCapabilities.js';
+import { SimulatorButton, SimulatorField, SimulatorInput, SimulatorLabel } from '../ui/primitives.js';
 import {
     joinClasses,
     SIM_AVATAR,
@@ -30,7 +30,7 @@ import {
     SIM_TEXT_CENTER,
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 export interface HomeSimulatorViewProps {
     payload: SimulatorHomePayload | null;

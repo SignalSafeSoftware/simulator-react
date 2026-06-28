@@ -3,8 +3,8 @@
  * Single event shape: kind, app, screen, session context, action_key when relevant, metadata.
  */
 
-import type { SimulatorAction, SimulatorViewState, SimulatorTemplatePayload } from '../types/session';
-import type { SimulatorInteractionEvent, SimulatorEventKind } from '../types/simulatorEvents';
+import type { SimulatorAction, SimulatorViewState, SimulatorTemplatePayload } from '../types/session.js';
+import type { SimulatorInteractionEvent, SimulatorEventKind } from '../types/simulatorEvents.js';
 
 function getCurrentScreen(view: SimulatorViewState, app: string): string {
     switch (app) {

@@ -6,7 +6,7 @@
  * @see docs/simulator/simulator-authoring.md, docs/simulator/simulator-testing-governance.md
  */
 
-import type { SimulatorTemplatePayload } from '../types/session';
+import type { SimulatorTemplatePayload } from '../types/session.js';
 
 export interface SimulatorRealismIssue {
     code: string;

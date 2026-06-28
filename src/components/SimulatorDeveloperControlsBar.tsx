@@ -2,10 +2,10 @@
  * Developer controls bar: snapshot/graph copy and keyboard shortcuts help.
  */
 
-import type { SimulatorNavGraph } from '../utils/simulatorNavGraph';
-import { simulatorNavGraphToJson } from '../utils/simulatorNavGraph';
-import { SIMULATOR_KEYBOARD_COMMANDS } from '../utils/simulatorKeyboardCommands';
-import { simBorder, simSpacing } from '../simulatorStyles';
+import type { SimulatorNavGraph } from '../utils/simulatorNavGraph.js';
+import { simulatorNavGraphToJson } from '../utils/simulatorNavGraph.js';
+import { SIMULATOR_KEYBOARD_COMMANDS } from '../utils/simulatorKeyboardCommands.js';
+import { simBorder, simSpacing } from '../simulatorStyles.js';
 import {
     joinClasses,
     SIM_FLEX,
@@ -16,7 +16,7 @@ import {
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
     simBtnToneClass,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 export interface SimulatorDeveloperControlsBarProps {
     showSnapshotExport: boolean;

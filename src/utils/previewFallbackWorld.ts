@@ -13,8 +13,8 @@ import type {
     SimulatorBrowserPayload,
     SimulatorBrowserPage,
     SimulatorPhonePayload,
-} from '../types/session';
-import type { SimulatorEntryPoint } from '../types/portableSimulator';
+} from '../types/session.js';
+import type { SimulatorEntryPoint } from '../types/portableSimulator.js';
 
 /** Placeholder id prefix so content can be recognized as fallback (e.g. for a badge or banner). */
 export const PREVIEW_PLACEHOLDER_ID_PREFIX = '__preview_placeholder';

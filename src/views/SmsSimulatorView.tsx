@@ -3,10 +3,10 @@
  * message box and Send/Cancel at bottom. Links and attachments preserved in bubbles.
  */
 import { useEffect, useState, type ReactNode } from 'react';
-import type { SimulatorAction, SimulatorSmsPayload } from '../types/session';
-import { SimulatorActions } from '../actions';
-import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles';
-import { SimulatorInput } from '../ui/primitives';
+import type { SimulatorAction, SimulatorSmsPayload } from '../types/session.js';
+import { SimulatorActions } from '../actions/index.js';
+import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles.js';
+import { SimulatorInput } from '../ui/primitives.js';
 import {
     joinClasses,
     SIM_AVATAR,
@@ -20,11 +20,11 @@ import {
     SIM_TEXT_DARK,
     SIM_TEXT_SEMIBOLD,
     SIM_TEXT_SM,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 import {
     renderSimulatorChoice,
     type SimulatorChoiceRenderProps,
-} from '../ui/renderSlots';
+} from '../ui/renderSlots.js';
 
 export interface SmsSimulatorViewProps {
     payload: SimulatorSmsPayload | null;

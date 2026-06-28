@@ -11,16 +11,16 @@
  * import the matching `@signalsafe/simulator-react/utils/*` subpath when needed.
  */
 
-export type { SimulatorDispatchAction } from './state/simulatorSessionReducer';
+export type { SimulatorDispatchAction } from './state/simulatorSessionReducer.js';
 export {
     switchChannelAction,
     getInitialSessionState,
     simulatorSessionReducer,
     simulatorSessionReducerWithLogging,
-} from './state/simulatorSessionReducer';
+} from './state/simulatorSessionReducer.js';
 
-export * from './types/session';
-export * from './types/simulatorEvents';
+export * from './types/session.js';
+export * from './types/simulatorEvents.js';
 
 export {
     SIMULATOR_ACTION_TYPES,
@@ -29,36 +29,36 @@ export {
     getSimulatorActionCategory,
     isSimulatorActionType,
     validateSimulatorAction,
-} from './utils/simulatorActionTaxonomy';
+} from './utils/simulatorActionTaxonomy.js';
 
-export * from './adapters/templateToSession';
+export * from './adapters/templateToSession.js';
 
 /** API template detail shape consumed by {@link templateDetailToPayload} (see `src/types/portableSimulator.ts`). */
-export type { SimulatorTemplateDetail } from './types/portableSimulator';
+export type { SimulatorTemplateDetail } from './types/portableSimulator.js';
 
 /** Merge helpers for partial simulator payload slices (authoring overlays). */
-export { type SimulatorWorldPartial, deepMergeSections, applyPartials } from './utils/simulatorWorldSections';
+export { type SimulatorWorldPartial, deepMergeSections, applyPartials } from './utils/simulatorWorldSections.js';
 
 export {
     type SimulatorNavGraph,
     buildSimulatorNavGraph,
     simulatorNavGraphToJson,
-} from './utils/simulatorNavGraph';
+} from './utils/simulatorNavGraph.js';
 
-export { lintSimulatorPayload } from './utils/lintSimulatorPayload';
-export { analyzeReachability } from './utils/simulatorReachability';
+export { lintSimulatorPayload } from './utils/lintSimulatorPayload.js';
+export { analyzeReachability } from './utils/simulatorReachability.js';
 export {
     parseSimulatorSearchParams,
     applyDeepLinkToState,
     getDeepLinkContactsSearch,
-} from './utils/simulatorDeepLink';
-export type { SimulatorDeepLink } from './utils/simulatorDeepLink';
-export { applyPreviewFallback } from './utils/previewFallbackWorld';
+} from './utils/simulatorDeepLink.js';
+export type { SimulatorDeepLink } from './utils/simulatorDeepLink.js';
+export { applyPreviewFallback } from './utils/previewFallbackWorld.js';
 
-export { diffSimulatorPayloads, type SimulatorDiffItem } from './utils/simulatorPayloadDiff';
+export { diffSimulatorPayloads, type SimulatorDiffItem } from './utils/simulatorPayloadDiff.js';
 
-export { actionToInteractionEvent, appOpenedEvent, screenViewedEvent } from './utils/simulatorEventMapper';
-export { getSimulatorCapabilities, type SimulatorCapabilities } from './utils/simulatorCapabilities';
+export { actionToInteractionEvent, appOpenedEvent, screenViewedEvent } from './utils/simulatorEventMapper.js';
+export { getSimulatorCapabilities, type SimulatorCapabilities } from './utils/simulatorCapabilities.js';
 
 export {
     normalizeNameForMatch,
@@ -67,28 +67,28 @@ export {
     normalizeEmailForMatch,
     phonesMatch,
     namesMatch,
-} from './utils/contactNormalization';
+} from './utils/contactNormalization.js';
 
-export { resolveScreen, renderActiveScreen } from './screenRegistry';
-export type { SimulatorRenderContext } from './screenRegistry';
+export { resolveScreen, renderActiveScreen } from './screenRegistry/index.js';
+export type { SimulatorRenderContext } from './screenRegistry/index.js';
 
-export { default as PhoneIncomingScene } from './views/PhoneIncomingScene';
+export { default as PhoneIncomingScene } from './views/PhoneIncomingScene.js';
 export {
     normalizeForSearch,
     contactMatchesSearch,
     contextMatchesContact,
-} from './views/ContactsView';
+} from './views/ContactsView.js';
 
-export { default as SimulatorWithSession } from './SimulatorWithSession';
-export type { SimulatorWithSessionProps } from './SimulatorWithSession';
-export type { SimulatorDeveloperTools } from './developerTools';
-export { default as SimulatorDeveloperToolsPanel } from './SimulatorDeveloperToolsPanel';
+export { default as SimulatorWithSession } from './SimulatorWithSession.js';
+export type { SimulatorWithSessionProps } from './SimulatorWithSession.js';
+export type { SimulatorDeveloperTools } from './developerTools.js';
+export { default as SimulatorDeveloperToolsPanel } from './SimulatorDeveloperToolsPanel.js';
 
-export { default as PhoneSimulatorShell } from './shell/PhoneSimulatorShell';
+export { default as PhoneSimulatorShell } from './shell/PhoneSimulatorShell.js';
 
-export { default as SimulatorErrorBoundary } from './SimulatorErrorBoundary';
+export { default as SimulatorErrorBoundary } from './SimulatorErrorBoundary.js';
 
-export { default as SimulatorLintBanner } from './components/SimulatorLintBanner';
-export type { SessionStartedEntry, TimelineEntry } from './components/SimulatorSessionTimeline';
+export { default as SimulatorLintBanner } from './components/SimulatorLintBanner.js';
+export type { SessionStartedEntry, TimelineEntry } from './components/SimulatorSessionTimeline.js';
 
-export type { HostSimulatorEventHandler } from './contract/hostContractTypes';
+export type { HostSimulatorEventHandler } from './contract/hostContractTypes.js';

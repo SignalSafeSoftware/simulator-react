@@ -4,12 +4,12 @@
  * When phoneLocalNavItems is provided, shows wireframe-style phone tabs above content (Back still available).
  */
 import { useMemo, useState } from 'react';
-import { SimulatorList, SimulatorListItem } from '../components/SimulatorList';
-import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../components/SimulatorDetail';
-import { SimulatorSearchInput } from '../components/SimulatorSearchInput';
-import SimulatorLocalNav from '../components/SimulatorLocalNav';
-import { simLayout, simRowSurface, simScreen, simSpacing, simTypo } from '../simulatorStyles';
-import { SimulatorButton } from '../ui/primitives';
+import { SimulatorList, SimulatorListItem } from '../components/SimulatorList.js';
+import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../components/SimulatorDetail.js';
+import { SimulatorSearchInput } from '../components/SimulatorSearchInput.js';
+import SimulatorLocalNav from '../components/SimulatorLocalNav.js';
+import { simLayout, simRowSurface, simScreen, simSpacing, simTypo } from '../simulatorStyles.js';
+import { SimulatorButton } from '../ui/primitives.js';
 import {
     joinClasses,
     SIM_AVATAR,
@@ -24,16 +24,16 @@ import {
     SIM_SURFACE_WHITE,
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
-} from '../ui/simulatorClasses';
-import type { SimulatorSessionContact } from '../types/session';
+} from '../ui/simulatorClasses.js';
+import type { SimulatorSessionContact } from '../types/session.js';
 import {
     normalizeNameForMatch,
     phoneDigitsOnly,
     normalizeEmailForMatch,
     phonesMatch,
     namesMatch,
-} from '../utils/contactNormalization';
-export { normalizeNameForMatch as normalizeForSearch } from '../utils/contactNormalization';
+} from '../utils/contactNormalization.js';
+export { normalizeNameForMatch as normalizeForSearch } from '../utils/contactNormalization.js';
 
 export interface ContactsViewProps {
     contacts: SimulatorSessionContact[] | null;

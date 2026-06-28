@@ -4,16 +4,16 @@
  */
 import type { ReactNode } from 'react';
 
-import SimulatorBrowserChrome from '../components/SimulatorBrowserChrome';
-import type { SimulatorAction, SimulatorBrowserPage } from '../types/session';
-import { SimulatorActions } from '../actions';
-import { simBorder, simLayout, simSpacing, simTypo } from '../simulatorStyles';
+import SimulatorBrowserChrome from '../components/SimulatorBrowserChrome.js';
+import type { SimulatorAction, SimulatorBrowserPage } from '../types/session.js';
+import { SimulatorActions } from '../actions/index.js';
+import { simBorder, simLayout, simSpacing, simTypo } from '../simulatorStyles.js';
 import {
     SimulatorButton,
     SimulatorField,
     SimulatorInput,
     SimulatorLabel,
-} from '../ui/primitives';
+} from '../ui/primitives.js';
 import {
     joinClasses,
     SIM_FLEX_GROW_1,
@@ -23,13 +23,13 @@ import {
     SIM_TEXT_BODY,
     SIM_TEXT_SEMIBOLD,
     SIM_TEXT_SM,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 import {
     renderSimulatorChoice,
     renderSimulatorFeedback,
     type SimulatorChoiceRenderProps,
     type SimulatorFeedbackRenderProps,
-} from '../ui/renderSlots';
+} from '../ui/renderSlots.js';
 
 export interface BrowserPageRendererProps {
     page: SimulatorBrowserPage;

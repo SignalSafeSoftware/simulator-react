@@ -4,9 +4,9 @@
  * Preserves normal typing: ignores events when target is input, textarea, or contenteditable.
  */
 
-import type { SimulatorApp } from '../types/portableSimulator';
-import type { SimulatorChannel } from '../types/session';
-import { channelToApp } from '../types/session';
+import type { SimulatorApp } from '../types/portableSimulator.js';
+import type { SimulatorChannel } from '../types/session.js';
+import { channelToApp } from '../types/session.js';
 
 /** Channel order in shell nav (index 0 = first tab). Alt+1..5 switches to these. */
 const CHANNEL_ORDER: SimulatorChannel[] = ['contacts', 'email', 'browser', 'sms', 'home'];

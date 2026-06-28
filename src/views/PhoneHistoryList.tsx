@@ -4,10 +4,10 @@
  * Wireframe: search bar ("Q Search"), profile icon (left), name/number, date, rectangular status tag.
  */
 import { useState, useMemo } from 'react';
-import type { SimulatorCallHistoryEntry, CallHistoryEntryKind } from '../types/session';
-import type { PhoneSimulatorContent } from '../types/portableSimulator';
-import { SimulatorSearchInput } from '../components/SimulatorSearchInput';
-import { simBorder, simLayout, simSpacing } from '../simulatorStyles';
+import type { SimulatorCallHistoryEntry, CallHistoryEntryKind } from '../types/session.js';
+import type { PhoneSimulatorContent } from '../types/portableSimulator.js';
+import { SimulatorSearchInput } from '../components/SimulatorSearchInput.js';
+import { simBorder, simLayout, simSpacing } from '../simulatorStyles.js';
 import {
     joinClasses,
     SIM_AVATAR,
@@ -22,7 +22,7 @@ import {
     SIM_TEXT_SM,
     SIM_TEXT_START,
     simBadgeToneClass,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 /** Light blue profile icon for call/contact rows (wireframe). */
 function ProfileIcon({ className }: Readonly<{ className?: string }>) {

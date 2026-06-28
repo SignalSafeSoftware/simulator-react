@@ -8,10 +8,10 @@ import {
     SimulatorCardBody,
     SimulatorCardHeader,
     SimulatorCollapse,
-} from '../ui/primitives';
-import { simSpacing } from '../simulatorStyles';
-import { SIM_MUTED, joinClasses, simBtnToneClass, SIM_BORDER_TOP } from '../ui/simulatorClasses';
-import type { SimulatorPreviewReport } from '../utils/simulatorPreviewReport';
+} from '../ui/primitives.js';
+import { simSpacing } from '../simulatorStyles.js';
+import { SIM_MUTED, joinClasses, simBtnToneClass, SIM_BORDER_TOP } from '../ui/simulatorClasses.js';
+import type { SimulatorPreviewReport } from '../utils/simulatorPreviewReport.js';
 
 export interface SimulatorAuthorPreviewReportProps {
     report: SimulatorPreviewReport;

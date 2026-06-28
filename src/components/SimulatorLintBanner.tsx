@@ -3,9 +3,9 @@
  */
 import { useId, useState } from 'react';
 
-import type { SimulatorLintWarning } from '../utils/lintSimulatorPayload';
-import { SimulatorAlert, SimulatorCollapse } from '../ui/primitives';
-import { joinClasses, simBtnToneClass, SIM_MUTED } from '../ui/simulatorClasses';
+import type { SimulatorLintWarning } from '../utils/lintSimulatorPayload.js';
+import { SimulatorAlert, SimulatorCollapse } from '../ui/primitives.js';
+import { joinClasses, simBtnToneClass, SIM_MUTED } from '../ui/simulatorClasses.js';
 
 export interface SimulatorLintBannerProps {
     warnings: SimulatorLintWarning[];

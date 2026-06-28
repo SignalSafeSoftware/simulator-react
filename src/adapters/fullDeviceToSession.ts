@@ -21,8 +21,8 @@ import type {
     SimulatorHomeWidget,
     SimulatorHomeStoreApp,
     SimulatorHomeSettingsSection,
-} from '../types/session';
-import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../constants';
+} from '../types/session.js';
+import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../constants.js';
 import type {
     AttachmentBehavior,
     EmailTemplateContent,
@@ -31,7 +31,7 @@ import type {
     SimulatorDevicePayload,
     SimulatorEmailMessageRow,
     SimulatorEmailMessageDetail,
-} from '../types/portableSimulator';
+} from '../types/portableSimulator.js';
 
 function stringOr(value: unknown, fallback = ''): string {
     return typeof value === 'string' ? value : fallback;

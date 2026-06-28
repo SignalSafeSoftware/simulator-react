@@ -2,9 +2,9 @@
  * Dispatch action types for simulator session view state.
  */
 
-import type { SimulatorApp } from '../types/portableSimulator';
-import type { SimulatorAction, SimulatorChannel } from '../types/session';
-import { channelToApp } from '../types/session';
+import type { SimulatorApp } from '../types/portableSimulator.js';
+import type { SimulatorAction, SimulatorChannel } from '../types/session.js';
+import { channelToApp } from '../types/session.js';
 
 export type SimulatorDispatchAction =
     | { type: 'SWITCH_APP'; app: SimulatorApp }

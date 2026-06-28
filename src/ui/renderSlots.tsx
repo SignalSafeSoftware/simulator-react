@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
-import { SimulatorAlert, SimulatorButton } from './primitives';
-import { joinClasses } from './simulatorClasses';
+import { SimulatorAlert, SimulatorButton } from './primitives.js';
+import { joinClasses } from './simulatorClasses.js';
 
 export interface SimulatorChoiceRenderProps {
     label: ReactNode;

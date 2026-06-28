@@ -3,32 +3,32 @@
  */
 import type { ReactNode } from 'react';
 import { useCallback, useMemo, useRef } from 'react';
-import PhoneSimulatorShell from './shell/PhoneSimulatorShell';
-import SimulatorDeveloperToolsPanel from './SimulatorDeveloperToolsPanel';
-import type { SimulatorDispatchAction } from './state/simulatorSessionReducer';
-import type { SimulatorSessionState } from './types/session';
-import { viewStateToActiveChannel, getCurrentScreenForApp } from './types/session';
-import { SHELL_EXIT_LABEL } from './constants';
-import type { HostSimulatorEventHandler } from './contract/hostContractTypes';
-import ContactsView from './views/ContactsView';
-import { renderActiveScreen } from './screenRegistry';
-import SimulatorErrorBoundary from './SimulatorErrorBoundary';
-import UnsupportedScreenFallback from './UnsupportedScreenFallback';
-import { getScreenMetadata } from './utils/screenMetadata';
-import { getVerificationContextForApp } from './utils/simulatorVerificationContext';
-import type { TimelineEntry } from './components/SimulatorSessionTimeline';
-import type { SimulatorDeveloperTools, SimulatorRuntimeIssue } from './developerTools';
-import { useSimulatorSessionHandlers } from './hooks/useSimulatorSessionHandlers';
-import { useSimulatorSecondaryMenu } from './hooks/useSimulatorSecondaryMenu';
-import { useSimulatorDeveloperControls } from './hooks/useSimulatorDeveloperControls';
-import SimulatorDeveloperToolbar from './components/SimulatorDeveloperToolbar';
-import SimulatorDeveloperControlsBar from './components/SimulatorDeveloperControlsBar';
-import { simSpacing } from './simulatorStyles';
-import { SimulatorDialog } from './ui/primitives';
+import PhoneSimulatorShell from './shell/PhoneSimulatorShell.js';
+import SimulatorDeveloperToolsPanel from './SimulatorDeveloperToolsPanel.js';
+import type { SimulatorDispatchAction } from './state/simulatorSessionReducer.js';
+import type { SimulatorSessionState } from './types/session.js';
+import { viewStateToActiveChannel, getCurrentScreenForApp } from './types/session.js';
+import { SHELL_EXIT_LABEL } from './constants.js';
+import type { HostSimulatorEventHandler } from './contract/hostContractTypes.js';
+import ContactsView from './views/ContactsView.js';
+import { renderActiveScreen } from './screenRegistry/index.js';
+import SimulatorErrorBoundary from './SimulatorErrorBoundary.js';
+import UnsupportedScreenFallback from './UnsupportedScreenFallback.js';
+import { getScreenMetadata } from './utils/screenMetadata.js';
+import { getVerificationContextForApp } from './utils/simulatorVerificationContext.js';
+import type { TimelineEntry } from './components/SimulatorSessionTimeline.js';
+import type { SimulatorDeveloperTools, SimulatorRuntimeIssue } from './developerTools.js';
+import { useSimulatorSessionHandlers } from './hooks/useSimulatorSessionHandlers.js';
+import { useSimulatorSecondaryMenu } from './hooks/useSimulatorSecondaryMenu.js';
+import { useSimulatorDeveloperControls } from './hooks/useSimulatorDeveloperControls.js';
+import SimulatorDeveloperToolbar from './components/SimulatorDeveloperToolbar.js';
+import SimulatorDeveloperControlsBar from './components/SimulatorDeveloperControlsBar.js';
+import { simSpacing } from './simulatorStyles.js';
+import { SimulatorDialog } from './ui/primitives.js';
 import type {
     SimulatorChoiceRenderProps,
     SimulatorFeedbackRenderProps,
-} from './ui/renderSlots';
+} from './ui/renderSlots.js';
 
 export interface SimulatorContactsOverlayRenderProps {
     contacts: SimulatorSessionState['payload']['contacts'];

@@ -2,8 +2,8 @@
  * Phone app secondary nav items per wireframe: History, Contacts, Dial, Back.
  * Back returns to primary menu; Directory is not in the strip (can be reached from Contacts if needed).
  */
-import type { PhoneScreenId } from '../types/session';
-import type { SimulatorCapabilities } from './simulatorCapabilities';
+import type { PhoneScreenId } from '../types/session.js';
+import type { SimulatorCapabilities } from './simulatorCapabilities.js';
 
 export interface PhoneLocalNavItem {
     id: PhoneScreenId | 'back';

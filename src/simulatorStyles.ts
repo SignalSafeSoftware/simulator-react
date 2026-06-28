@@ -35,7 +35,7 @@ import {
     SIM_W_FULL,
     SIM_AVATAR,
     joinClasses,
-} from './ui/simulatorClasses';
+} from './ui/simulatorClasses.js';
 
 /** Spacing: section gaps, block padding, action bar. */
 export const simSpacing = {

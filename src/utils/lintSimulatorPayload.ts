@@ -8,8 +8,8 @@
 
 import type {
     SimulatorTemplatePayload,
-} from '../types/session';
-import { keyNamingSuggestion, type KeyFamily } from './simulatorKeyPatterns';
+} from '../types/session.js';
+import { keyNamingSuggestion, type KeyFamily } from './simulatorKeyPatterns.js';
 
 export interface SimulatorLintWarning {
     code: string;

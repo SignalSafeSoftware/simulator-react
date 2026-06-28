@@ -7,11 +7,11 @@
  * used internally by {@link SimulatorDeveloperToolsPanel} and the `utils/simulatorPreviewReport` package export for tests/tooling.
  */
 
-import type { SimulatorTemplatePayload } from '../types/session';
-import type { SimulatorApp } from '../types/portableSimulator';
-import { analyzeReachability } from './simulatorReachability';
-import { lintSimulatorPayload } from './lintSimulatorPayload';
-import { validateSimulatorPayload } from './validateSimulatorPayload';
+import type { SimulatorTemplatePayload } from '../types/session.js';
+import type { SimulatorApp } from '../types/portableSimulator.js';
+import { analyzeReachability } from './simulatorReachability.js';
+import { lintSimulatorPayload } from './lintSimulatorPayload.js';
+import { validateSimulatorPayload } from './validateSimulatorPayload.js';
 
 export interface SimulatorPreviewReport {
     /** Entry app and screen (from entry_point or channel default). */

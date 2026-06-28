@@ -3,8 +3,8 @@
  */
 import type { ReactNode } from 'react';
 
-import { SimulatorList as SimList, SimulatorListItem as SimListItem } from '../ui/primitives';
-import { simBorder, simListRow } from '../simulatorStyles';
+import { SimulatorList as SimList, SimulatorListItem as SimListItem } from '../ui/primitives.js';
+import { simBorder, simListRow } from '../simulatorStyles.js';
 
 const LIST_CLASS = simBorder.list;
 const LIST_ITEM_BASE = simListRow.base;

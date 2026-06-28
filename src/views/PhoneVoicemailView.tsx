@@ -1,9 +1,9 @@
 /**
  * Phone Voicemail screen: optional caller/timestamp header + transcript + Back.
  */
-import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../components/SimulatorDetail';
-import { simSpacing, simTypo } from '../simulatorStyles';
-import { joinClasses, SIM_TEXT_BODY, SIM_TEXT_MEDIUM } from '../ui/simulatorClasses';
+import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../components/SimulatorDetail.js';
+import { simSpacing, simTypo } from '../simulatorStyles.js';
+import { joinClasses, SIM_TEXT_BODY, SIM_TEXT_MEDIUM } from '../ui/simulatorClasses.js';
 
 export interface PhoneVoicemailViewProps {
     transcript: string;

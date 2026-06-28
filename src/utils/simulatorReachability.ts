@@ -5,8 +5,8 @@
  * Does not modify runtime behavior; analysis only.
  */
 
-import type { SimulatorTemplatePayload } from '../types/session';
-import type { SimulatorApp } from '../types/portableSimulator';
+import type { SimulatorTemplatePayload } from '../types/session.js';
+import type { SimulatorApp } from '../types/portableSimulator.js';
 
 const PHONE_SCREENS: string[] = ['history', 'contacts', 'dial', 'incoming_call', 'voicemail', 'directory'];
 const HOME_SCREENS: string[] = ['home', 'store', 'settings'];

@@ -2,7 +2,7 @@
  * Verification context for contacts panel (name/number hints per active app).
  */
 
-import type { SimulatorSessionState } from '../types/session';
+import type { SimulatorSessionState } from '../types/session.js';
 
 export type SimulatorVerificationContext = { name?: string; number?: string } | null;
 

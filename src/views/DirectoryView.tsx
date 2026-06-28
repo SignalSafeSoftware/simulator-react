@@ -7,20 +7,20 @@ import type {
     SimulatorAction,
     SimulatorDirectoryEntry,
     SimulatorSessionContact,
-} from '../types/session';
-import { SimulatorActions } from '../actions';
-import SimulatorLocalNav from '../components/SimulatorLocalNav';
-import { SimulatorDetailBackBar } from '../components/SimulatorDetail';
-import { SimulatorList, SimulatorListItem } from '../components/SimulatorList';
-import { simBorder, simLayout, simSpacing, simTypo } from '../simulatorStyles';
-import { SimulatorButton } from '../ui/primitives';
+} from '../types/session.js';
+import { SimulatorActions } from '../actions/index.js';
+import SimulatorLocalNav from '../components/SimulatorLocalNav.js';
+import { SimulatorDetailBackBar } from '../components/SimulatorDetail.js';
+import { SimulatorList, SimulatorListItem } from '../components/SimulatorList.js';
+import { simBorder, simLayout, simSpacing, simTypo } from '../simulatorStyles.js';
+import { SimulatorButton } from '../ui/primitives.js';
 import {
     joinClasses,
     SIM_MUTED,
     SIM_ROUNDED_NONE,
     SIM_SURFACE_LIGHT,
     SIM_TEXT_SM,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 export interface DirectoryViewProps {
     directory: SimulatorDirectoryEntry[] | null;

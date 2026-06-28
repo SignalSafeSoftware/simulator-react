@@ -2,8 +2,8 @@
  * Declarative action factories: build typed SimulatorAction from targets.
  * Use these in views so action shape is consistent and type-safe.
  */
-import type { SimulatorAction, SimulatorChannel } from '../types/session';
-import type { SimulatorApp } from '../types/portableSimulator';
+import type { SimulatorAction, SimulatorChannel } from '../types/session.js';
+import type { SimulatorApp } from '../types/portableSimulator.js';
 
 export const SimulatorActions = {
     navigateScreen: (app: SimulatorApp, screen: string): SimulatorAction => ({

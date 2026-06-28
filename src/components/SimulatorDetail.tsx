@@ -3,8 +3,8 @@
  */
 import type { ReactNode } from 'react';
 
-import { SimulatorButton } from '../ui/primitives';
-import { simBackBar, simBorder, simSpacing } from '../simulatorStyles';
+import { SimulatorButton } from '../ui/primitives.js';
+import { simBackBar, simBorder, simSpacing } from '../simulatorStyles.js';
 
 export interface SimulatorDetailBackBarProps {
     onBack: () => void;

@@ -8,23 +8,23 @@ import {
     resolveSimulatorDeveloperTools,
     type SimulatorDeveloperSectionKey,
     type SimulatorDeveloperTools,
-} from '../developerTools';
-import { SNAPSHOT_COPY_FEEDBACK_MS } from '../constants';
-import type { SimulatorDispatchAction } from '../state/simulatorSessionReducer';
-import { switchChannelAction } from '../state/simulatorSessionReducer';
-import type { SimulatorSessionState } from '../types/session';
-import { getCurrentScreenForApp, viewStateToActiveChannel } from '../types/session';
+} from '../developerTools.js';
+import { SNAPSHOT_COPY_FEEDBACK_MS } from '../constants.js';
+import type { SimulatorDispatchAction } from '../state/simulatorSessionReducer.js';
+import { switchChannelAction } from '../state/simulatorSessionReducer.js';
+import type { SimulatorSessionState } from '../types/session.js';
+import { getCurrentScreenForApp, viewStateToActiveChannel } from '../types/session.js';
 import {
     buildSimulatorNavGraph,
     simulatorNavGraphToJson,
     type SimulatorNavGraph,
-} from '../utils/simulatorNavGraph';
-import { captureSimulatorSnapshot, snapshotToJson } from '../utils/simulatorSnapshot';
+} from '../utils/simulatorNavGraph.js';
+import { captureSimulatorSnapshot, snapshotToJson } from '../utils/simulatorSnapshot.js';
 import {
     focusSimulatorSearch,
     handleSimulatorKeyboard,
-} from '../utils/simulatorKeyboardCommands';
-import { DEVELOPER_TOOLBAR_LABELS } from '../utils/simulatorDeveloperToolbarConfig';
+} from '../utils/simulatorKeyboardCommands.js';
+import { DEVELOPER_TOOLBAR_LABELS } from '../utils/simulatorDeveloperToolbarConfig.js';
 
 export interface UseSimulatorDeveloperControlsOptions {
     state: SimulatorSessionState;

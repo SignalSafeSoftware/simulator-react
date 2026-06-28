@@ -25,7 +25,7 @@ import {
     joinClasses,
     simAlertToneClass,
     simBtnToneClass,
-} from './simulatorClasses';
+} from './simulatorClasses.js';
 
 export function SimulatorButton({
     tone,

@@ -8,15 +8,15 @@ import {
     SimulatorCardBody,
     SimulatorCardHeader,
     SimulatorCollapse,
-} from '../ui/primitives';
-import { simSpacing } from '../simulatorStyles';
+} from '../ui/primitives.js';
+import { simSpacing } from '../simulatorStyles.js';
 import {
     joinClasses,
     SIM_FLEX,
     SIM_MUTED,
     simBtnToneClass,
-} from '../ui/simulatorClasses';
-import type { SimulatorInteractionEvent } from '../types/simulatorEvents';
+} from '../ui/simulatorClasses.js';
+import type { SimulatorInteractionEvent } from '../types/simulatorEvents.js';
 
 /** Synthetic entry for "session started" (not part of API event contract). */
 export interface SessionStartedEntry {

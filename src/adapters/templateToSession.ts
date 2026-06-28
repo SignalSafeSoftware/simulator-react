@@ -9,8 +9,8 @@
 import type {
     SimulatorTemplatePayload,
     SimulatorChannel,
-} from '../types/session';
-import type { SimulatorApp, SimulatorEntryPoint, SimulatorTemplateDetail } from '../types/portableSimulator';
+} from '../types/session.js';
+import type { SimulatorApp, SimulatorEntryPoint, SimulatorTemplateDetail } from '../types/portableSimulator.js';
 import {
     appToChannel,
     mapDevice,
@@ -21,7 +21,7 @@ import {
     mapPhone,
     mapInternet,
     mapHome,
-} from './fullDeviceToSession';
+} from './fullDeviceToSession.js';
 
 function stringOr(value: unknown, fallback = ''): string {
     return typeof value === 'string' ? value : fallback;

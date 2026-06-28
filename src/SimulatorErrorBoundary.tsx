@@ -9,9 +9,9 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
 import {
     LEARNER_SIMULATOR_ERROR_MESSAGE,
     LEARNER_SIMULATOR_ERROR_TITLE,
-} from './constants';
-import { simSpacing, simStatus } from './simulatorStyles';
-import { SimulatorButton } from './ui/primitives';
+} from './constants.js';
+import { simSpacing, simStatus } from './simulatorStyles.js';
+import { SimulatorButton } from './ui/primitives.js';
 import {
     joinClasses,
     SIM_MONO,
@@ -20,7 +20,7 @@ import {
     SIM_TEXT_DANGER,
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
-} from './ui/simulatorClasses';
+} from './ui/simulatorClasses.js';
 
 export interface SimulatorErrorBoundaryProps {
     children: ReactNode;

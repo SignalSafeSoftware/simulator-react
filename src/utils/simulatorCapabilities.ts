@@ -5,7 +5,7 @@
  * for "is this feature available in this template?"
  */
 
-import type { SimulatorTemplatePayload } from '../types/session';
+import type { SimulatorTemplatePayload } from '../types/session.js';
 
 /** Per-app feature flags derived from payload. Used for nav/tab visibility and empty states. */
 export interface SimulatorCapabilities {

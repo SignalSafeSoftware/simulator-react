@@ -2,16 +2,16 @@
  * Shown when the screen registry cannot resolve (app, screen).
  * Default copy is learner-safe; pass `showDiagnostics` for author/admin detail.
  */
-import { simSpacing, simStatus, simTypo } from './simulatorStyles';
+import { simSpacing, simStatus, simTypo } from './simulatorStyles.js';
 import {
     LEARNER_UNSUPPORTED_SCREEN_MESSAGE,
     LEARNER_UNSUPPORTED_SCREEN_TITLE,
     UNSUPPORTED_SCREEN_EMPTY_PLACEHOLDER,
     UNSUPPORTED_SCREEN_HINT,
     UNSUPPORTED_SCREEN_TITLE,
-} from './constants';
-import type { SimulatorApp } from './types/portableSimulator';
-import { joinClasses, SIM_TEXT_MEDIUM } from './ui/simulatorClasses';
+} from './constants.js';
+import type { SimulatorApp } from './types/portableSimulator.js';
+import { joinClasses, SIM_TEXT_MEDIUM } from './ui/simulatorClasses.js';
 
 export interface UnsupportedScreenFallbackProps {
     app: SimulatorApp;

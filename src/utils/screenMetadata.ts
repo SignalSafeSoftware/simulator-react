@@ -4,8 +4,8 @@
  * optional breadcrumbs. Kept declarative and derived from view + payload.
  */
 
-import type { SimulatorViewState, SimulatorTemplatePayload } from '../types/session';
-import type { SimulatorApp } from '../types/portableSimulator';
+import type { SimulatorViewState, SimulatorTemplatePayload } from '../types/session.js';
+import type { SimulatorApp } from '../types/portableSimulator.js';
 
 export interface SimulatorScreenMetadata {
     /** Current app. */

@@ -4,7 +4,7 @@
  */
 import type { ReactNode } from 'react';
 
-import { simBorder, simLayout, simScreen, simSpacing } from '../simulatorStyles';
+import { simBorder, simLayout, simScreen, simSpacing } from '../simulatorStyles.js';
 import {
     joinClasses,
     SIM_FLEX_COL,
@@ -16,7 +16,7 @@ import {
     SIM_TEXT_BODY,
     SIM_TEXT_SM,
     simBtnToneClass,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 
 export interface SimulatorBrowserChromeProps {
     /** Page title shown centered above the chrome bar. */

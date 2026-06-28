@@ -4,8 +4,8 @@
  */
 import type { ReactNode } from 'react';
 
-import type { PhoneSimulatorContent } from '../types/portableSimulator';
-import { simBorder, simLayout, simSpacing } from '../simulatorStyles';
+import type { PhoneSimulatorContent } from '../types/portableSimulator.js';
+import { simBorder, simLayout, simSpacing } from '../simulatorStyles.js';
 import {
     joinClasses,
     SIM_FLEX_COL,
@@ -20,11 +20,11 @@ import {
     SIM_TEXT_DARK,
     SIM_TEXT_SEMIBOLD,
     SIM_TEXT_SM,
-} from '../ui/simulatorClasses';
+} from '../ui/simulatorClasses.js';
 import {
     renderSimulatorChoice,
     type SimulatorChoiceRenderProps,
-} from '../ui/renderSlots';
+} from '../ui/renderSlots.js';
 
 export interface PhoneIncomingSceneProps {
     content: PhoneSimulatorContent;

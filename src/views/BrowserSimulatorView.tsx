@@ -3,14 +3,14 @@
  * Resolves current page by screen (page id), emits open_page, delegates to BrowserPageRenderer.
  */
 import { useEffect, useRef, type ReactNode } from 'react';
-import type { SimulatorAction, SimulatorBrowserPayload } from '../types/session';
-import { SimulatorActions } from '../actions';
-import BrowserPageRenderer from './BrowserPageRenderer';
+import type { SimulatorAction, SimulatorBrowserPayload } from '../types/session.js';
+import { SimulatorActions } from '../actions/index.js';
+import BrowserPageRenderer from './BrowserPageRenderer.js';
 import type {
     SimulatorChoiceRenderProps,
     SimulatorFeedbackRenderProps,
-} from '../ui/renderSlots';
-import { SIM_FLEX_COL, SIM_MUTED, joinClasses } from '../ui/simulatorClasses';
+} from '../ui/renderSlots.js';
+import { SIM_FLEX_COL, SIM_MUTED, joinClasses } from '../ui/simulatorClasses.js';
 
 export interface BrowserSimulatorViewProps {
     payload: SimulatorBrowserPayload | null;
