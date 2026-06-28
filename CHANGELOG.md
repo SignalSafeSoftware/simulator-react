@@ -25,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added tests covering sanitized error output and unsupported-state rendering.
 - Added package smoke checks for the built and packed artifact.
 
+### Fixed
+
+- Addressed SonarCloud findings in `src/ui/primitives.tsx`: mark component props as read-only, move clickable list-row handlers onto an inner `<button>` for keyboard accessibility, and use `export…from` for class-token re-exports.
+- Added `simulator-list__item-button` class hook for host styling of clickable list rows.
+
 ### Notes
 
 - This release does not include `react-bootstrap` or `bootstrap`.
