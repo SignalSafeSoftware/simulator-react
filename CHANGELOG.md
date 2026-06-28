@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-06-28
+
+### Fixed
+
+- Restored `@signalsafe/simulator-core` as a runtime dependency of `@signalsafe/simulator-react`.
+
+### Notes
+
+- No public React component API changes.
+- No Bootstrap or UI framework dependencies were added.
+- React and React DOM remain peer dependencies.
+
 ## [0.2.0] - 2026-06-28
 
 ### Changed
@@ -65,7 +77,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Checks and tests on every PR; Sonar **`scan`** is label-gated on PRs and runs on tag push and manual dispatch (Batch 1).
 - Publish only from manual **`main`** dispatch or **`v*`** tags (not PR labels); publish requires **`checks`**, **`tests`**, and **`scan`**.
 
-[Unreleased]: https://github.com/SignalSafeSoftware/simulator-react/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/SignalSafeSoftware/simulator-react/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/SignalSafeSoftware/simulator-react/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/SignalSafeSoftware/simulator-react/compare/v0.1.6...v0.2.0
 [0.1.6]: https://github.com/SignalSafeSoftware/simulator-react/releases/tag/v0.1.6
 [0.1.5]: https://github.com/SignalSafeSoftware/simulator-react/releases/tag/v0.1.5
