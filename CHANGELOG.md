@@ -7,31 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-28
+
 ### Changed
 
-- Raise minimum supported Node.js to **>=22.12.0** (`engines.node`); CI matrix tests **22** and **24** only (Node 20 dropped due to GitHub Actions Node 20 deprecation).
-- Remove unused runtime dependency on `@signalsafe/simulator-core` (this package imports `@signalsafe/tree-spec` directly; hosts that need headless stepping should depend on `@signalsafe/simulator-core` separately).
-
-## [0.2.0] - 2026-06-24
+- Removed Bootstrap-specific runtime styling assumptions from the React simulator components.
+- Replaced Bootstrap class coupling with UI-kit-agnostic `simulator-*` class hooks.
+- Updated internal SignalSafe dependency ranges for the current package release line:
+  - `@signalsafe/tree-spec@^0.3.3`
+  - `@signalsafe/simulator-core@^0.1.7`
+- Raised the supported Node.js baseline to Node 22.12+.
 
 ### Added
 
-- UI-kit agnostic primitives (`src/ui/simulatorClasses.ts`, `src/ui/primitives.tsx`) with `simulator-*` class hooks.
-- Render slots on `SimulatorWithSession`: `renderChoice`, `renderFeedback`, `renderContactsOverlay`.
-- [docs/UI_KIT_AGNOSTIC_USAGE.md](./docs/UI_KIT_AGNOSTIC_USAGE.md) — class hooks, slots, host examples, DeliveryPlus migration.
-- [docs/ERROR_BOUNDARIES.md](./docs/ERROR_BOUNDARIES.md) — learner vs author vs developer error policy.
-- Tests: `package-metadata`, `import-without-react-bootstrap`, `renderSlots`, `learnerSafeErrors`, expanded session/render-slot coverage.
+- Added learner-safe error rendering defaults.
+- Added `showDiagnostics` support for author, admin, and QA surfaces.
+- Added tests covering sanitized error output and unsupported-state rendering.
+- Added package smoke checks for the built and packed artifact.
 
-### Changed
+### Notes
 
-- **Breaking:** Remove `react-bootstrap` from peer dependencies; hosts supply their own UI kit or CSS.
-- Replace `react-bootstrap` components (Modal, Card, Form, Alert, …) with semantic HTML and native `<dialog>`.
-- Default styling contract uses `simulator-*` hooks instead of Bootstrap component markup.
-- Complete runtime Bootstrap CSS class removal from shell, list, dial, inbox, browser, and dev chrome views (Prompt 12B).
-- `SimulatorErrorBoundary` and `UnsupportedScreenFallback` default to learner-safe copy (no exception message or component stack).
-- Add `showDiagnostics` prop for author/admin surfaces that need internal detail.
-- Raise minimum supported Node.js to **>=20.19.0** (`engines.node`); CI matrix tests **20.19**, **22**, and **24** (Node 18 dropped).
-- README and RELEASING document UI-kit agnostic integration; Bootstrap examples are host-app code only.
+- This release does not include `react-bootstrap` or `bootstrap`.
+- Host applications are responsible for styling the emitted `simulator-*` hooks.
+- Learner-facing screens should keep diagnostics disabled by default.
+- Diagnostics should only be enabled in trusted authoring, admin, development, or QA contexts.
 
 ## [0.1.6] - 2026-06-26
 
