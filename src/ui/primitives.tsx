@@ -2,13 +2,12 @@ import type {
     ButtonHTMLAttributes,
     InputHTMLAttributes,
     LabelHTMLAttributes,
+    MouseEventHandler,
     ReactNode,
     TextareaHTMLAttributes,
 } from 'react';
 
 import {
-    SIM_ALERT,
-    SIM_BTN,
     SIM_CARD,
     SIM_CARD_BODY,
     SIM_CARD_HEADER,
@@ -19,6 +18,7 @@ import {
     SIM_LIST_ITEM,
     SIM_LIST_ITEM_ACTION,
     SIM_LIST_ITEM_ACTIVE,
+    SIM_LIST_ITEM_BUTTON,
     SIM_MODAL,
     SIM_MODAL_BODY,
     SIM_MODAL_DIALOG,
@@ -32,7 +32,7 @@ export function SimulatorButton({
     className,
     children,
     ...rest
-}: ButtonHTMLAttributes<HTMLButtonElement> & { tone?: string }) {
+}: Readonly<ButtonHTMLAttributes<HTMLButtonElement> & { tone?: string }>) {
     return (
         <button type="button" className={joinClasses(simBtnToneClass(tone), className)} {...rest}>
             {children}
@@ -43,24 +43,24 @@ export function SimulatorButton({
 export function SimulatorInput({
     className,
     ...rest
-}: InputHTMLAttributes<HTMLInputElement>) {
+}: Readonly<InputHTMLAttributes<HTMLInputElement>>) {
     return <input className={joinClasses(SIM_INPUT, className)} {...rest} />;
 }
 
 export function SimulatorTextarea({
     className,
     ...rest
-}: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+}: Readonly<TextareaHTMLAttributes<HTMLTextAreaElement>>) {
     return <textarea className={joinClasses(SIM_INPUT, className)} {...rest} />;
 }
 
 export function SimulatorField({
     className,
     children,
-}: {
+}: Readonly<{
     className?: string;
     children: ReactNode;
-}) {
+}>) {
     return <div className={joinClasses(SIM_FIELD, className)}>{children}</div>;
 }
 
@@ -68,7 +68,7 @@ export function SimulatorLabel({
     className,
     children,
     ...rest
-}: LabelHTMLAttributes<HTMLLabelElement>) {
+}: Readonly<LabelHTMLAttributes<HTMLLabelElement>>) {
     return (
         <label className={joinClasses(SIM_FIELD_LABEL, className)} {...rest}>
             {children}
@@ -80,7 +80,7 @@ export function SimulatorCard({
     className,
     children,
     ...rest
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: Readonly<React.HTMLAttributes<HTMLDivElement>>) {
     return (
         <div className={joinClasses(SIM_CARD, className)} {...rest}>
             {children}
@@ -92,7 +92,7 @@ export function SimulatorCardHeader({
     className,
     children,
     ...rest
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: Readonly<React.HTMLAttributes<HTMLDivElement>>) {
     return (
         <div className={joinClasses(SIM_CARD_HEADER, className)} {...rest}>
             {children}
@@ -105,7 +105,7 @@ export function SimulatorCardBody({
     children,
     id,
     ...rest
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: Readonly<React.HTMLAttributes<HTMLDivElement>>) {
     return (
         <div id={id} className={joinClasses(SIM_CARD_BODY, className)} {...rest}>
             {children}
@@ -118,7 +118,7 @@ export function SimulatorAlert({
     className,
     children,
     ...rest
-}: React.HTMLAttributes<HTMLDivElement> & { tone?: 'warning' | 'danger' | 'info' }) {
+}: Readonly<React.HTMLAttributes<HTMLDivElement> & { tone?: 'warning' | 'danger' | 'info' }>) {
     return (
         <div className={joinClasses(simAlertToneClass(tone), className)} role="alert" {...rest}>
             {children}
@@ -146,7 +146,7 @@ export function SimulatorList({
     className,
     children,
     ...rest
-}: React.HTMLAttributes<HTMLUListElement>) {
+}: Readonly<React.HTMLAttributes<HTMLUListElement>>) {
     return (
         <ul className={joinClasses(SIM_LIST, className)} {...rest}>
             {children}
@@ -154,9 +154,10 @@ export function SimulatorList({
     );
 }
 
-export interface SimulatorListItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
+export interface SimulatorListItemProps extends Omit<React.LiHTMLAttributes<HTMLLIElement>, 'onClick'> {
     action?: boolean;
     active?: boolean;
+    onClick?: MouseEventHandler<HTMLButtonElement>;
 }
 
 export function SimulatorListItem({
@@ -166,21 +167,37 @@ export function SimulatorListItem({
     children,
     onClick,
     ...rest
-}: SimulatorListItemProps) {
+}: Readonly<SimulatorListItemProps>) {
+    const itemClassName = joinClasses(
+        SIM_LIST_ITEM,
+        action && SIM_LIST_ITEM_ACTION,
+        active && SIM_LIST_ITEM_ACTIVE,
+        className,
+    );
+
+    if (onClick != null) {
+        return (
+            <li className={itemClassName} {...rest}>
+                <button type="button" className={SIM_LIST_ITEM_BUTTON} onClick={onClick}>
+                    {children}
+                </button>
+            </li>
+        );
+    }
+
     return (
-        <li
-            className={joinClasses(
-                SIM_LIST_ITEM,
-                action && SIM_LIST_ITEM_ACTION,
-                active && SIM_LIST_ITEM_ACTIVE,
-                className,
-            )}
-            onClick={onClick}
-            {...rest}
-        >
+        <li className={itemClassName} {...rest}>
             {children}
         </li>
     );
+}
+
+export interface SimulatorDialogProps {
+    open: boolean;
+    onClose?: () => void;
+    className?: string;
+    children: ReactNode;
+    'aria-label'?: string;
 }
 
 export function SimulatorDialog({
@@ -189,13 +206,7 @@ export function SimulatorDialog({
     className,
     children,
     'aria-label': ariaLabel,
-}: {
-    open: boolean;
-    onClose?: () => void;
-    className?: string;
-    children: ReactNode;
-    'aria-label'?: string;
-}) {
+}: Readonly<SimulatorDialogProps>) {
     if (!open) return null;
     return (
         <dialog
@@ -214,4 +225,4 @@ export function SimulatorDialog({
     );
 }
 
-export { SIM_ALERT, SIM_BTN, SIM_CARD, SIM_INPUT };
+export { SIM_ALERT, SIM_BTN, SIM_CARD, SIM_INPUT } from './simulatorClasses.js';

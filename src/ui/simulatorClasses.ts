@@ -8,6 +8,7 @@ export const SIM_LIST = 'simulator-list';
 export const SIM_LIST_FLUSH = 'simulator-list simulator-list--flush';
 export const SIM_LIST_ITEM = 'simulator-list__item';
 export const SIM_LIST_ITEM_ACTION = 'simulator-list__item--action';
+export const SIM_LIST_ITEM_BUTTON = 'simulator-list__item-button';
 export const SIM_LIST_ITEM_ACTIVE = 'simulator-list__item--active';
 
 export const SIM_BTN = 'simulator-btn';
