@@ -81,6 +81,12 @@ export {
 
 export { default as SimulatorWithSession } from './SimulatorWithSession.js';
 export type { SimulatorWithSessionProps } from './SimulatorWithSession.js';
+export type {
+    SimulatorChoiceRenderProps,
+    SimulatorFeedbackRenderProps,
+    SimulatorPhoneContactOpenProps,
+    SimulatorPhoneIncomingCallExtraRenderProps,
+} from './ui/renderSlots.js';
 export type { SimulatorDeveloperTools } from './developerTools.js';
 export { default as SimulatorDeveloperToolsPanel } from './SimulatorDeveloperToolsPanel.js';
 

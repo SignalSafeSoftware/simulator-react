@@ -138,4 +138,57 @@ describe('SimulatorWithSession render slots', () => {
         expect(renderer!.root.findByProps({ 'data-testid': 'host-contacts-overlay' })).toBeTruthy();
         expect(renderer!.root.findAllByProps({ 'data-testid': 'default-contacts-view' })).toHaveLength(0);
     });
+
+    it('passes renderIncomingCallExtra to the phone incoming_call screen', async () => {
+        const renderIncomingCallExtra = vi.fn(() =>
+            React.createElement('div', { 'data-testid': 'host-incoming-call-extra' }, 'Previous calls'),
+        );
+        const dispatch = vi.fn();
+        const state = getInitialSessionState({
+            ...minimalPhoneWorld(),
+            phone: {
+                content: {
+                    transcript: 'Incoming call.',
+                    choices: [],
+                    caller_name: 'Alice Chen',
+                    phone_number: '+1 (555) 100-2000',
+                },
+                chosenIndex: null,
+                callHistory: [
+                    {
+                        id: 'ph1',
+                        number: '+1-555-100-2000',
+                        name: 'Alice Chen',
+                        kind: 'incoming',
+                        timestamp: 'Today 9:15 AM',
+                    },
+                ],
+            },
+        });
+        state.view.activeApp = 'phone';
+        state.view.phone.screen = 'incoming_call';
+
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(SimulatorWithSession, {
+                    state,
+                    dispatch,
+                    renderIncomingCallExtra,
+                }),
+            );
+        });
+
+        expect(renderIncomingCallExtra).toHaveBeenCalledWith(
+            expect.objectContaining({
+                state,
+                dispatch,
+                content: expect.objectContaining({ caller_name: 'Alice Chen' }),
+                callHistory: expect.arrayContaining([
+                    expect.objectContaining({ id: 'ph1' }),
+                ]),
+            }),
+        );
+        expect(renderer!.root.findByProps({ 'data-testid': 'host-incoming-call-extra' })).toBeTruthy();
+        expect(renderer!.root.findByProps({ 'data-testid': 'phone-incoming-call-extra' })).toBeTruthy();
+    });
 });

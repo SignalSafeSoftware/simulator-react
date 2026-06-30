@@ -69,6 +69,10 @@ export interface ContactsViewProps {
     initialSelectedContactId?: string | null;
     /** When true, contact detail shows title only (no ← Back) for tight wireframe captures. */
     contactDetailTitleOnly?: boolean;
+    /** When true, row clicks invoke {@link onPhoneContactOpen} instead of internal detail view. */
+    hostOwnsPhoneContactDetail?: boolean;
+    /** Called when host owns contact detail; shell injects state/dispatch before invoking host callback. */
+    onPhoneContactOpen?: (contactId: string, contact: SimulatorSessionContact) => void;
 }
 
 /** True if contact matches query (name, number, or email). Exported for tests. */
@@ -132,6 +136,8 @@ export default function ContactsView({
     onAddContact,
     initialSelectedContactId = null,
     contactDetailTitleOnly = false,
+    hostOwnsPhoneContactDetail = false,
+    onPhoneContactOpen,
 }: Readonly<ContactsViewProps>) {
     const [internalQuery, setInternalQuery] = useState(initialSearch);
     const isControlled = controlledSearchQuery !== undefined && onSearchChange !== undefined;
@@ -169,6 +175,8 @@ export default function ContactsView({
         phoneLocalNavItems,
         setSelectedId,
         onOpenContact,
+        hostOwnsPhoneContactDetail,
+        onPhoneContactOpen,
     });
 
     if (selected) {
@@ -254,18 +262,26 @@ export default function ContactsView({
 }
 
 function openContact(
-    contactId: string,
+    contact: SimulatorSessionContact,
     setSelectedId: (value: string | null) => void,
-    onOpenContact?: (contactId: string) => void
+    onOpenContact: ((contactId: string) => void) | undefined,
+    hostOwnsPhoneContactDetail: boolean,
+    onPhoneContactOpen: ((contactId: string, contact: SimulatorSessionContact) => void) | undefined,
 ): void {
-    setSelectedId(contactId);
-    onOpenContact?.(contactId);
+    onOpenContact?.(contact.id);
+    if (hostOwnsPhoneContactDetail && onPhoneContactOpen) {
+        onPhoneContactOpen(contact.id, contact);
+        return;
+    }
+    setSelectedId(contact.id);
 }
 
 function renderPhoneContactList(
     filtered: SimulatorSessionContact[],
     setSelectedId: (value: string | null) => void,
-    onOpenContact?: (contactId: string) => void
+    onOpenContact: ((contactId: string) => void) | undefined,
+    hostOwnsPhoneContactDetail: boolean,
+    onPhoneContactOpen: ((contactId: string, contact: SimulatorSessionContact) => void) | undefined,
 ): JSX.Element {
     return (
         <div className={joinClasses('simulator-list--flush', SIM_PHONE_CONTACT_LIST)}>
@@ -273,7 +289,9 @@ function renderPhoneContactList(
                 <button
                     type="button"
                     key={c.id}
-                    onClick={() => openContact(c.id, setSelectedId, onOpenContact)}
+                    onClick={() =>
+                        openContact(c, setSelectedId, onOpenContact, hostOwnsPhoneContactDetail, onPhoneContactOpen)
+                    }
                     className={joinClasses(
                         simRowSurface.selectable,
                         'simulator-border--top-none',
@@ -297,7 +315,9 @@ function renderPhoneContactList(
 function renderCompactContactList(
     filtered: SimulatorSessionContact[],
     setSelectedId: (value: string | null) => void,
-    onOpenContact?: (contactId: string) => void
+    onOpenContact: ((contactId: string) => void) | undefined,
+    hostOwnsPhoneContactDetail: boolean,
+    onPhoneContactOpen: ((contactId: string, contact: SimulatorSessionContact) => void) | undefined,
 ): JSX.Element {
     return (
         <SimulatorList>
@@ -305,7 +325,9 @@ function renderCompactContactList(
                 <SimulatorListItem
                     key={c.id}
                     variant="compact"
-                    onClick={() => openContact(c.id, setSelectedId, onOpenContact)}
+                    onClick={() =>
+                        openContact(c, setSelectedId, onOpenContact, hostOwnsPhoneContactDetail, onPhoneContactOpen)
+                    }
                     className="simulator-flex--between"
                 >
                     <span className={SIM_TEXT_MEDIUM}>{c.displayName}</span>
@@ -323,6 +345,8 @@ function renderListContent({
     phoneLocalNavItems,
     setSelectedId,
     onOpenContact,
+    hostOwnsPhoneContactDetail,
+    onPhoneContactOpen,
 }: Readonly<{
     list: SimulatorSessionContact[];
     filtered: SimulatorSessionContact[];
@@ -330,6 +354,8 @@ function renderListContent({
     phoneLocalNavItems?: { id: string; label: string }[];
     setSelectedId: (value: string | null) => void;
     onOpenContact?: (contactId: string) => void;
+    hostOwnsPhoneContactDetail: boolean;
+    onPhoneContactOpen?: (contactId: string, contact: SimulatorSessionContact) => void;
 }>): JSX.Element {
     if (list.length === 0) {
         return <p className={simTypo.emptyState}>No contacts.</p>;
@@ -338,7 +364,19 @@ function renderListContent({
         return <p className={simTypo.emptyState}>{simTypo.emptyStateNoResultsMessage(searchQuery)}</p>;
     }
     if (phoneLocalNavItems != null && phoneLocalNavItems.length > 0) {
-        return renderPhoneContactList(filtered, setSelectedId, onOpenContact);
+        return renderPhoneContactList(
+            filtered,
+            setSelectedId,
+            onOpenContact,
+            hostOwnsPhoneContactDetail,
+            onPhoneContactOpen,
+        );
     }
-    return renderCompactContactList(filtered, setSelectedId, onOpenContact);
+    return renderCompactContactList(
+        filtered,
+        setSelectedId,
+        onOpenContact,
+        hostOwnsPhoneContactDetail,
+        onPhoneContactOpen,
+    );
 }

@@ -14,6 +14,8 @@ export const SIM_PHONE_CONTACT_LIST = 'simulator-phone__contact-list';
 export const SIM_PHONE_CONTACT_ROW = 'simulator-phone__contact-row';
 export const SIM_PHONE_CONTACT_DETAIL = 'simulator-phone__contact-detail';
 export const SIM_PHONE_INCOMING_CALL_HISTORY = 'simulator-phone__incoming-call-history';
+export const SIM_PHONE_INCOMING_CALL_EXTRA = 'simulator-phone__incoming-call-extra';
+export const SIM_PHONE_INCOMING_CALL_AFTER_ACTIONS = 'simulator-phone__incoming-call-after-actions';
 
 export const SIM_EMAIL = 'simulator-email';
 export const SIM_EMAIL_INBOX = 'simulator-email__inbox';

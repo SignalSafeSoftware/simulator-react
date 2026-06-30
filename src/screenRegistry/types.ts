@@ -9,6 +9,8 @@ import type { SimulatorCapabilities } from '../utils/simulatorCapabilities.js';
 import type {
     SimulatorChoiceRenderProps,
     SimulatorFeedbackRenderProps,
+    SimulatorPhoneContactOpenProps,
+    SimulatorPhoneIncomingCallExtraRenderProps,
 } from '../ui/renderSlots.js';
 import type { EmailSimulatorViewProps } from '../views/EmailSimulatorView.js';
 import type { MessagesThreadListViewProps } from '../views/MessagesThreadListView.js';
@@ -39,6 +41,12 @@ export interface SimulatorRenderContext {
     renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
     /** Host-owned feedback/warning rendering passed from {@link SimulatorWithSession}. */
     renderFeedback?: (feedback: SimulatorFeedbackRenderProps) => ReactNode;
+    /** Host-owned content below incoming-call Answer/Ignore actions. */
+    renderIncomingCallExtra?: (props: SimulatorPhoneIncomingCallExtraRenderProps) => ReactNode;
+    /** When true, contact row clicks invoke {@link onPhoneContactOpen} instead of internal detail view. */
+    hostOwnsPhoneContactDetail?: boolean;
+    /** Host callback when a phone contact row is opened (requires {@link hostOwnsPhoneContactDetail}). */
+    onPhoneContactOpen?: (props: SimulatorPhoneContactOpenProps) => void;
 }
 
 /** One registry entry: optional screen pin (exact match) or default for app. */

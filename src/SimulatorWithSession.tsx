@@ -35,6 +35,8 @@ import {
 import type {
     SimulatorChoiceRenderProps,
     SimulatorFeedbackRenderProps,
+    SimulatorPhoneContactOpenProps,
+    SimulatorPhoneIncomingCallExtraRenderProps,
 } from './ui/renderSlots.js';
 
 export interface SimulatorContactsOverlayRenderProps {
@@ -61,6 +63,12 @@ export interface SimulatorWithSessionProps {
     renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
     /** Host-owned inline feedback/warning rendering. */
     renderFeedback?: (feedback: SimulatorFeedbackRenderProps) => ReactNode;
+    /** Host-owned content below incoming-call Answer/Ignore actions. */
+    renderIncomingCallExtra?: (props: SimulatorPhoneIncomingCallExtraRenderProps) => ReactNode;
+    /** When true, phone contact row clicks invoke {@link onPhoneContactOpen} instead of package detail view. */
+    hostOwnsPhoneContactDetail?: boolean;
+    /** Host callback when a phone contact row is opened (requires {@link hostOwnsPhoneContactDetail}). */
+    onPhoneContactOpen?: (props: SimulatorPhoneContactOpenProps) => void;
 }
 
 export default function SimulatorWithSession({
@@ -78,6 +86,9 @@ export default function SimulatorWithSession({
     renderContactsOverlay,
     renderChoice,
     renderFeedback,
+    renderIncomingCallExtra,
+    hostOwnsPhoneContactDetail,
+    onPhoneContactOpen,
 }: Readonly<SimulatorWithSessionProps>) {
     const stateRef = useRef(state);
     stateRef.current = state;
@@ -100,6 +111,9 @@ export default function SimulatorWithSession({
         stateRef,
         renderChoice,
         renderFeedback,
+        renderIncomingCallExtra,
+        hostOwnsPhoneContactDetail,
+        onPhoneContactOpen,
     });
 
     const secondaryMenu = useSimulatorSecondaryMenu(view, dispatch, capabilities.phone);

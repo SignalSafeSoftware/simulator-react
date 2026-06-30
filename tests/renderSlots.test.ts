@@ -1,6 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { renderSimulatorChoice, renderSimulatorFeedback } from '../src/ui/renderSlots';
+import { renderSimulatorChoice, renderSimulatorFeedback, renderPhoneIncomingCallExtra } from '../src/ui/renderSlots';
+import { getInitialSessionState } from '../src/state/simulatorSessionReducer';
+import { minimalPhoneWorld } from './support/fixtureWorlds';
+import {
+    SIM_PHONE_INCOMING_CALL_AFTER_ACTIONS,
+    SIM_PHONE_INCOMING_CALL_EXTRA,
+} from '../src/ui/semanticSimulatorClasses';
 import { TestRenderer } from './reactTestRenderer';
 import { collectBootstrapViolations } from './bootstrapClassDenylist';
 
@@ -45,5 +51,42 @@ describe('renderSlots', () => {
         const node = renderSimulatorFeedback({ message: 'Heads up', tone: 'warning' }, slot);
         expect(slot).toHaveBeenCalledWith({ message: 'Heads up', tone: 'warning' });
         expect(node).toBe('Heads up');
+    });
+
+    it('renderPhoneIncomingCallExtra omits wrappers when slot is absent or returns null', () => {
+        const dispatch = vi.fn();
+        const state = getInitialSessionState(minimalPhoneWorld());
+        const slotProps = {
+            state,
+            dispatch,
+            content: { transcript: 'Incoming', choices: [], caller_name: 'Alice' },
+            callHistory: [],
+            contacts: null,
+        };
+
+        expect(renderPhoneIncomingCallExtra(slotProps)).toBeNull();
+        expect(renderPhoneIncomingCallExtra(slotProps, () => null)).toBeNull();
+    });
+
+    it('renderPhoneIncomingCallExtra wraps host content with semantic incoming-call classes', () => {
+        const dispatch = vi.fn();
+        const state = getInitialSessionState(minimalPhoneWorld());
+        const renderer = TestRenderer.create(
+            renderPhoneIncomingCallExtra(
+                {
+                    state,
+                    dispatch,
+                    content: { transcript: 'Incoming', choices: [], caller_name: 'Alice' },
+                    callHistory: [],
+                    contacts: null,
+                },
+                () => 'Previous calls',
+            ),
+        );
+        const extra = renderer.root.findByProps({ 'data-testid': 'phone-incoming-call-extra' });
+        const afterActions = renderer.root.findByProps({ 'data-testid': 'phone-incoming-call-after-actions' });
+        expect(extra.props.className).toContain(SIM_PHONE_INCOMING_CALL_EXTRA);
+        expect(afterActions.props.className).toContain(SIM_PHONE_INCOMING_CALL_AFTER_ACTIONS);
+        expect(afterActions.props.children).toBe('Previous calls');
     });
 });

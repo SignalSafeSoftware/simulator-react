@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-06-28
+
+### Added
+
+- Optional `hostOwnsPhoneContactDetail` and `onPhoneContactOpen` on `SimulatorWithSession` so hosts can render their own phone contact detail screen without DOM scraping.
+- Exported `SimulatorPhoneContactOpenProps` type from the package barrel.
+- Tests and docs for host-owned contact detail behavior.
+
+### Notes
+
+- Additive release only — default contact row behavior is unchanged when `hostOwnsPhoneContactDetail` is omitted or false.
+- `@signalsafe/simulator-core` dependency unchanged.
+
+## [0.2.3] - 2026-06-30
+
+### Added
+
+- Optional `renderIncomingCallExtra` slot on `SimulatorWithSession` for host content below incoming-call Answer/Ignore actions.
+- Semantic wrapper classes `simulator-phone__incoming-call-extra` and `simulator-phone__incoming-call-after-actions`.
+- Exported `SimulatorPhoneIncomingCallExtraRenderProps` type from the package barrel.
+- Tests and docs for the incoming-call extension point.
+
+### Notes
+
+- Additive release only — existing screens render unchanged when the slot is omitted.
+- `@signalsafe/simulator-core` dependency unchanged.
+
 ## [0.2.2] - 2026-06-29
 
 ### Added
@@ -91,7 +118,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Checks and tests on every PR; Sonar **`scan`** is label-gated on PRs and runs on tag push and manual dispatch (Batch 1).
 - Publish only from manual **`main`** dispatch or **`v*`** tags (not PR labels); publish requires **`checks`**, **`tests`**, and **`scan`**.
 
-[Unreleased]: https://github.com/SignalSafeSoftware/simulator-react/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/SignalSafeSoftware/simulator-react/compare/v0.2.3...HEAD
+[0.2.3]: https://github.com/SignalSafeSoftware/simulator-react/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/SignalSafeSoftware/simulator-react/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/SignalSafeSoftware/simulator-react/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/SignalSafeSoftware/simulator-react/compare/v0.1.6...v0.2.0

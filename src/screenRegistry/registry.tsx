@@ -145,6 +145,17 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
                     ctx.dispatch({ type: 'SIMULATOR_ACTION', action: SimulatorActions.navigateScreen('phone', 'add_contact') }),
                 initialSelectedContactId: isItHelpdeskWireframe ? 'it-helpdesk' : null,
                 contactDetailTitleOnly: isItHelpdeskWireframe,
+                hostOwnsPhoneContactDetail: ctx.hostOwnsPhoneContactDetail,
+                onPhoneContactOpen:
+                    ctx.hostOwnsPhoneContactDetail && ctx.onPhoneContactOpen
+                        ? (contactId, contact) =>
+                              ctx.onPhoneContactOpen!({
+                                  state: ctx.state,
+                                  dispatch: ctx.dispatch,
+                                  contactId,
+                                  contact,
+                              })
+                        : undefined,
             };
         },
     },
@@ -193,6 +204,9 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             navRenderedByShell:
                 !ctx.state.view.showPrimaryMenu && ctx.state.view.activeApp === 'phone',
             renderChoice: ctx.renderChoice,
+            sessionState: ctx.state,
+            sessionDispatch: ctx.dispatch,
+            renderIncomingCallExtra: ctx.renderIncomingCallExtra,
         }),
     },
     {

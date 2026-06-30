@@ -60,6 +60,8 @@ In addition to layout primitives (`simulator-btn`, `simulator-list`, …), major
 | `simulator-phone__dialer` | Dial pad screen |
 | `simulator-phone__dialer-call-button` | Green CALL button |
 | `simulator-phone__incoming-call-history` | Call history list (includes incoming-call card) |
+| `simulator-phone__incoming-call-extra` | Host slot region below incoming-call scene |
+| `simulator-phone__incoming-call-after-actions` | Host slot inner wrapper below Answer/Ignore |
 | `simulator-phone__contact-list` | Contact list container |
 | `simulator-phone__contact-row` | Contact list row |
 | `simulator-phone__contact-detail` | Contact detail panel |
@@ -105,6 +107,8 @@ Pass slots on **`SimulatorWithSession`** to replace default button/alert/modal m
 | `renderChoice(choice)` | Host-owned buttons for Answer, Send, page actions, attachments, etc. |
 | `renderFeedback(feedback)` | Host-owned inline warnings and feedback panels |
 | `renderContactsOverlay(props)` | Replace the default contacts verification `<dialog>` |
+| `renderIncomingCallExtra(props)` | Host-owned content below incoming-call Answer/Ignore (e.g. caller history) |
+| `hostOwnsPhoneContactDetail` + `onPhoneContactOpen(props)` | Host-owned phone contact detail screen (list stays in package; detail UI is yours) |
 
 ### Slot prop types
 
@@ -129,6 +133,39 @@ interface SimulatorContactsOverlayRenderProps {
     verificationContext: { name?: string; number?: string } | null;
     onClose: () => void;
 }
+
+interface SimulatorPhoneIncomingCallExtraRenderProps {
+    state: SimulatorSessionState;
+    dispatch: (action: SimulatorDispatchAction) => void;
+    content: PhoneSimulatorContent;
+    callHistory: SimulatorCallHistoryEntry[];
+    contacts: SimulatorSessionContact[] | null;
+}
+
+interface SimulatorPhoneContactOpenProps {
+    state: SimulatorSessionState;
+    dispatch: (action: SimulatorDispatchAction) => void;
+    contactId: string;
+    contact: SimulatorSessionContact;
+}
+```
+
+`renderIncomingCallExtra` renders inside stable wrappers with classes `simulator-phone__incoming-call-extra` and `simulator-phone__incoming-call-after-actions`. Return `null` to omit the region (no empty wrappers). The slot is only invoked on the phone **incoming_call** screen.
+
+When `hostOwnsPhoneContactDetail` is true, clicking a contact row on the phone **contacts** screen calls `onPhoneContactOpen` with the full contact record, session state, and dispatch. The package does **not** set internal selected-contact state or render `.simulator-phone__contact-detail`. Existing `open_contact` analytics still fire via the normal `onOpenContact` path. Omit the flag (or pass `false`) to keep the built-in contact detail view.
+
+Example:
+
+```tsx
+<SimulatorWithSession
+    state={state}
+    dispatch={dispatch}
+    hostOwnsPhoneContactDetail
+    onPhoneContactOpen={({ contact, contactId, state, dispatch }) => {
+        // Host renders its own edit/detail form using structured contact data
+        setEditingContactId(contactId);
+    }}
+/>
 ```
 
 Slots propagate through the screen registry into **SMS**, **browser**, and **phone** views. Internal helpers `renderSimulatorChoice` and `renderSimulatorFeedback` in `src/ui/renderSlots.tsx` delegate to the slot when provided.

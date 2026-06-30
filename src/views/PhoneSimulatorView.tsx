@@ -3,14 +3,20 @@
  * Wireframe-style segmented local nav; Back from voicemail or secondary Back returns to primary menu.
  */
 import { useState, type ReactNode } from 'react';
+import type { SimulatorDispatchAction } from '../state/simulatorSessionReducer.js';
 import type {
     PhoneScreenId,
     SimulatorAction,
     SimulatorDirectoryEntry,
     SimulatorPhonePayload,
     SimulatorSessionContact,
+    SimulatorSessionState,
 } from '../types/session.js';
-import type { SimulatorChoiceRenderProps } from '../ui/renderSlots.js';
+import {
+    renderPhoneIncomingCallExtra,
+    type SimulatorChoiceRenderProps,
+    type SimulatorPhoneIncomingCallExtraRenderProps,
+} from '../ui/renderSlots.js';
 import { SimulatorActions } from '../actions/index.js';
 import SimulatorLocalNav from '../components/SimulatorLocalNav.js';
 import PhoneHistoryList from './PhoneHistoryList.js';
@@ -105,6 +111,12 @@ export interface PhoneSimulatorViewProps {
     /** When true, the shell is rendering the secondary menu (History/Contacts/Dial/Back); do not render local nav here. */
     navRenderedByShell?: boolean;
     renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
+    /** Session state for host incoming-call extra slot (provided by {@link SimulatorWithSession}). */
+    sessionState?: SimulatorSessionState;
+    /** Session dispatch for host incoming-call extra slot (provided by {@link SimulatorWithSession}). */
+    sessionDispatch?: (action: SimulatorDispatchAction) => void;
+    /** Host-owned content below incoming-call Answer/Ignore (e.g. caller history table). */
+    renderIncomingCallExtra?: (props: SimulatorPhoneIncomingCallExtraRenderProps) => ReactNode;
 }
 
 const localNavClass = joinClasses(simSpacing.mb0, 'simulator-border--bottom-none', SIM_FLEX_SHRINK_0);
@@ -121,6 +133,9 @@ export default function PhoneSimulatorView({
     onBack,
     navRenderedByShell = false,
     renderChoice,
+    sessionState,
+    sessionDispatch,
+    renderIncomingCallExtra,
 }: Readonly<PhoneSimulatorViewProps>) {
     const localNavItems = getPhoneLocalNavItems(phoneCapabilities);
     const handleNavSelect = (id: string) => {
@@ -139,6 +154,19 @@ export default function PhoneSimulatorView({
             return <p className={simTypo.emptyState}>No incoming call for this scenario.</p>;
         }
         const dismiss = () => onDismissIncoming?.();
+        const incomingCallExtra =
+            sessionState != null && sessionDispatch != null
+                ? renderPhoneIncomingCallExtra(
+                      {
+                          state: sessionState,
+                          dispatch: sessionDispatch,
+                          content,
+                          callHistory: payload?.callHistory ?? [],
+                          contacts: contacts ?? null,
+                      },
+                      renderIncomingCallExtra,
+                  )
+                : null;
         return (
             <div className={joinClasses(simLayout.screenColumn, SIM_PHONE)}>
                 <div className={simLayout.scrollBody}>
@@ -155,6 +183,7 @@ export default function PhoneSimulatorView({
                             dismiss();
                         }}
                     />
+                    {incomingCallExtra}
                 </div>
                 {!navRenderedByShell && (
                     <SimulatorLocalNav

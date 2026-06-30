@@ -15,6 +15,8 @@ import type { SimulatorRenderContext } from '../screenRegistry/index.js';
 import type {
     SimulatorChoiceRenderProps,
     SimulatorFeedbackRenderProps,
+    SimulatorPhoneContactOpenProps,
+    SimulatorPhoneIncomingCallExtraRenderProps,
 } from '../ui/renderSlots.js';
 
 export interface UseSimulatorSessionHandlersOptions {
@@ -25,6 +27,9 @@ export interface UseSimulatorSessionHandlersOptions {
     stateRef: MutableRefObject<SimulatorSessionState>;
     renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
     renderFeedback?: (feedback: SimulatorFeedbackRenderProps) => ReactNode;
+    renderIncomingCallExtra?: (props: SimulatorPhoneIncomingCallExtraRenderProps) => ReactNode;
+    hostOwnsPhoneContactDetail?: boolean;
+    onPhoneContactOpen?: (props: SimulatorPhoneContactOpenProps) => void;
 }
 
 export interface UseSimulatorSessionHandlersResult {
@@ -48,6 +53,9 @@ export function useSimulatorSessionHandlers({
     stateRef,
     renderChoice,
     renderFeedback,
+    renderIncomingCallExtra,
+    hostOwnsPhoneContactDetail,
+    onPhoneContactOpen,
 }: UseSimulatorSessionHandlersOptions): UseSimulatorSessionHandlersResult {
     const payload = state.payload;
     const onBack = useCallback(() => dispatch({ type: 'BACK' }), [dispatch]);
@@ -155,6 +163,9 @@ export function useSimulatorSessionHandlers({
             initialContactsSearch,
             renderChoice,
             renderFeedback,
+            renderIncomingCallExtra,
+            hostOwnsPhoneContactDetail,
+            onPhoneContactOpen,
         }),
         [
             state,
@@ -169,6 +180,9 @@ export function useSimulatorSessionHandlers({
             initialContactsSearch,
             renderChoice,
             renderFeedback,
+            renderIncomingCallExtra,
+            hostOwnsPhoneContactDetail,
+            onPhoneContactOpen,
         ]
     );
 
