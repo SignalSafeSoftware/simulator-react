@@ -25,6 +25,11 @@ import {
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
 } from '../ui/simulatorClasses.js';
+import {
+    SIM_PHONE_CONTACT_DETAIL,
+    SIM_PHONE_CONTACT_LIST,
+    SIM_PHONE_CONTACT_ROW,
+} from '../ui/semanticSimulatorClasses.js';
 import type { SimulatorSessionContact } from '../types/session.js';
 import {
     normalizeNameForMatch,
@@ -176,7 +181,7 @@ export default function ContactsView({
                         ariaLabel="Back to list"
                         titleOnly={contactDetailTitleOnly}
                     />
-                    <SimulatorDetailBlock>
+                    <SimulatorDetailBlock className={SIM_PHONE_CONTACT_DETAIL}>
                         <h3 className={simTypo.subheading}>{selected.displayName}</h3>
                         {selected.number != null && selected.number !== '' && (
                             <p className={joinClasses(simSpacing.mb1, SIM_TEXT_SM)}>
@@ -263,7 +268,7 @@ function renderPhoneContactList(
     onOpenContact?: (contactId: string) => void
 ): JSX.Element {
     return (
-        <div className="simulator-list--flush">
+        <div className={joinClasses('simulator-list--flush', SIM_PHONE_CONTACT_LIST)}>
             {filtered.map((c) => (
                 <button
                     type="button"
@@ -273,6 +278,7 @@ function renderPhoneContactList(
                         simRowSurface.selectable,
                         'simulator-border--top-none',
                         SIM_SURFACE_WHITE,
+                        SIM_PHONE_CONTACT_ROW,
                     )}
                     style={{ cursor: 'pointer' }}
                 >

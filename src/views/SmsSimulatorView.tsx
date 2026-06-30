@@ -21,6 +21,7 @@ import {
     SIM_TEXT_SEMIBOLD,
     SIM_TEXT_SM,
 } from '../ui/simulatorClasses.js';
+import { SIM_MESSAGES_THREAD_DETAIL } from '../ui/semanticSimulatorClasses.js';
 import {
     renderSimulatorChoice,
     type SimulatorChoiceRenderProps,
@@ -131,7 +132,7 @@ export default function SmsSimulatorView({
     };
 
     return (
-        <div className={simLayout.screenColumn}>
+        <div className={joinClasses(simLayout.screenColumn, SIM_MESSAGES_THREAD_DETAIL)}>
             <div className={joinClasses(simScreen.header, simSpacing.sectionGap, SIM_FLEX_SHRINK_0)}>
                 <ConversationProfileIcon />
                 <div className={joinClasses(SIM_TEXT_SM, SIM_TEXT_SEMIBOLD, 'simulator-text--body', simSpacing.mt1)}>

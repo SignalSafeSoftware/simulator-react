@@ -20,6 +20,11 @@ import {
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
 } from '../ui/simulatorClasses.js';
+import {
+    SIM_MESSAGES,
+    SIM_MESSAGES_THREAD_LIST,
+    SIM_MESSAGES_THREAD_ROW,
+} from '../ui/semanticSimulatorClasses.js';
 
 export interface ThreadListRow {
     id: string;
@@ -85,7 +90,7 @@ export default function MessagesThreadListView({
         );
     } else {
         content = (
-            <div className={joinClasses('simulator-list--flush', simSpacing.mt1)}>
+            <div className={joinClasses('simulator-list--flush', simSpacing.mt1, SIM_MESSAGES_THREAD_LIST)}>
                 {filtered.map((row, index) => (
                     <button
                         type="button"
@@ -95,6 +100,7 @@ export default function MessagesThreadListView({
                             simRowSurface.selectable,
                             SIM_SURFACE_WHITE,
                             index === 0 ? 'simulator-border--top' : 'simulator-border--top-none',
+                            SIM_MESSAGES_THREAD_ROW,
                         )}
                         style={{ cursor: 'pointer' }}
                     >
@@ -119,7 +125,7 @@ export default function MessagesThreadListView({
     }
 
     return (
-        <div className={simLayout.stack}>
+        <div className={joinClasses(simLayout.stack, SIM_MESSAGES)}>
             <div className={simLayout.headerRowBetween}>
                 <span className={joinClasses(SIM_FLEX_GROW_1, 'simulator-text--center', SIM_TEXT_SM, 'simulator-text--semibold', 'simulator-text--body')}>
                     Threads

@@ -25,6 +25,13 @@ import SimulatorDeveloperToolbar from './components/SimulatorDeveloperToolbar.js
 import SimulatorDeveloperControlsBar from './components/SimulatorDeveloperControlsBar.js';
 import { simSpacing } from './simulatorStyles.js';
 import { SimulatorDialog } from './ui/primitives.js';
+import { joinClasses } from './ui/simulatorClasses.js';
+import {
+    SIM_CHANNEL,
+    SIM_RUNTIME,
+    SIM_RUNTIME_SCREEN,
+    simChannelModifierForShellChannel,
+} from './ui/semanticSimulatorClasses.js';
 import type {
     SimulatorChoiceRenderProps,
     SimulatorFeedbackRenderProps,
@@ -135,6 +142,7 @@ export default function SimulatorWithSession({
     return (
         <SimulatorErrorBoundary>
             <div
+                className={SIM_RUNTIME}
                 data-simulator-app={screenMeta.app}
                 data-simulator-screen={screenMeta.screen}
                 data-simulator-label={screenMeta.label}
@@ -192,7 +200,15 @@ export default function SimulatorWithSession({
                             : undefined
                     }
                 >
-                    {activeContent}
+                    <div
+                        className={joinClasses(
+                            SIM_RUNTIME_SCREEN,
+                            SIM_CHANNEL,
+                            simChannelModifierForShellChannel(activeChannel),
+                        )}
+                    >
+                        {activeContent}
+                    </div>
                 </PhoneSimulatorShell>
             </div>
             <SimulatorDialog

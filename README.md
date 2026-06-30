@@ -12,9 +12,9 @@ React **device simulator** UI: session state, screen registry, template adapter,
 
 This package is **UI-kit agnostic**. It renders semantic HTML with stable **`simulator-*` class hooks** and optional **render slots** — it does **not** require Bootstrap, Material UI, or any other component library.
 
-**Host applications own styling.** Provide CSS for `simulator-*` classes, or pass `renderChoice` / `renderFeedback` / `renderContactsOverlay` to inject your UI kit's components.
+**Host applications own styling.** Provide CSS for `simulator-*` classes, or pass `renderChoice` / `renderFeedback` / `renderContactsOverlay` to inject your UI kit's components. Semantic view hooks (`simulator-runtime`, `simulator-phone`, `simulator-email`, `simulator-messages`, …) are stable targets for host CSS and tests — you do not need DOM enhancers or `MutationObserver` to find simulator regions.
 
-See [docs/UI_KIT_AGNOSTIC_USAGE.md](./docs/UI_KIT_AGNOSTIC_USAGE.md) for class hooks, slots, and DeliveryPlus migration guidance.
+See [docs/UI_KIT_AGNOSTIC_USAGE.md](./docs/UI_KIT_AGNOSTIC_USAGE.md) for layout hooks, semantic view hooks, slots, and DeliveryPlus migration guidance.
 
 See [docs/ERROR_BOUNDARIES.md](./docs/ERROR_BOUNDARIES.md) for learner-safe error UI vs author/admin diagnostics.
 

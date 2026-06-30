@@ -44,6 +44,39 @@ Shell, lists, buttons, alerts, and modals emit predictable class names from `src
 
 ---
 
+## Semantic view hooks (stable DOM contract)
+
+In addition to layout primitives (`simulator-btn`, `simulator-list`, …), major simulator views emit **stable semantic class names** from `src/ui/semanticSimulatorClasses.ts`. Host apps can target these in CSS or tests without `MutationObserver` DOM enhancers.
+
+| Class | Region |
+|-------|--------|
+| `simulator-runtime` | Root wrapper around `SimulatorWithSession` |
+| `simulator-runtime__screen` | Active screen content inside the device shell |
+| `simulator-channel` | Channel wrapper (always present on screen) |
+| `simulator-channel--phone` | Phone channel active |
+| `simulator-channel--email` | Email channel active |
+| `simulator-channel--messages` | Messages channel active |
+| `simulator-phone` | Phone app view root |
+| `simulator-phone__dialer` | Dial pad screen |
+| `simulator-phone__dialer-call-button` | Green CALL button |
+| `simulator-phone__incoming-call-history` | Call history list (includes incoming-call card) |
+| `simulator-phone__contact-list` | Contact list container |
+| `simulator-phone__contact-row` | Contact list row |
+| `simulator-phone__contact-detail` | Contact detail panel |
+| `simulator-email` | Email app view root |
+| `simulator-email__inbox` | Inbox / folder list view |
+| `simulator-email__message-row` | Inbox message row button |
+| `simulator-email__message-detail` | Message read/detail view |
+| `simulator-email__status-badge` | Read / Unread badge on inbox rows |
+| `simulator-messages` | Messages thread list view root |
+| `simulator-messages__thread-list` | Thread list container |
+| `simulator-messages__thread-row` | Thread list row button |
+| `simulator-messages__thread-detail` | Single-thread conversation view |
+
+Semantic classes are **appended** alongside existing `simulator-*` layout hooks; host `className` props on primitives are preserved.
+
+---
+
 ## Primitives (internal building blocks)
 
 Small presentational components live in `src/ui/primitives.tsx`. They are **not** re-exported from the public barrel today; hosts typically style via `simulator-*` CSS or render slots. Maintainers may import from source when composing custom screens:

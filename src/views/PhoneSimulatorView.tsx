@@ -35,6 +35,7 @@ import {
     SIM_ROUNDED_NONE,
     SIM_TEXT_CENTER,
 } from '../ui/simulatorClasses.js';
+import { SIM_PHONE, SIM_PHONE_CONTACT_LIST, SIM_PHONE_CONTACT_ROW } from '../ui/semanticSimulatorClasses.js';
 
 function PhoneAddContactForm({
     onSave,
@@ -139,7 +140,7 @@ export default function PhoneSimulatorView({
         }
         const dismiss = () => onDismissIncoming?.();
         return (
-            <div className={simLayout.screenColumn}>
+            <div className={joinClasses(simLayout.screenColumn, SIM_PHONE)}>
                 <div className={simLayout.scrollBody}>
                     <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>Incoming Call</div>
                     <PhoneIncomingScene
@@ -169,7 +170,7 @@ export default function PhoneSimulatorView({
     }
 
     return (
-        <div className={simLayout.screenColumn}>
+        <div className={joinClasses(simLayout.screenColumn, SIM_PHONE)}>
             <div className={simLayout.scrollBody}>
                 {screen === 'history' && (
                     <>
@@ -200,12 +201,17 @@ export default function PhoneSimulatorView({
                                 Add
                             </SimulatorButton>
                         </div>
-                        <SimulatorList className="simulator-list--flush">
+                        <SimulatorList className={joinClasses('simulator-list--flush', SIM_PHONE_CONTACT_LIST)}>
                             {(contacts ?? []).map((c) => (
                                 <SimulatorListItem
                                     key={c.id}
                                     action
-                                    className={joinClasses(simLayout.rowBetween, simSpacing.py2, 'simulator-text--sm')}
+                                    className={joinClasses(
+                                        simLayout.rowBetween,
+                                        simSpacing.py2,
+                                        'simulator-text--sm',
+                                        SIM_PHONE_CONTACT_ROW,
+                                    )}
                                 >
                                     <span>{c.displayName}</span>
                                     {c.number != null && (

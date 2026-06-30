@@ -23,6 +23,7 @@ import {
     SIM_TEXT_START,
     simBadgeToneClass,
 } from '../ui/simulatorClasses.js';
+import { SIM_PHONE_INCOMING_CALL_HISTORY } from '../ui/semanticSimulatorClasses.js';
 
 /** Light blue profile icon for call/contact rows (wireframe). */
 function ProfileIcon({ className }: Readonly<{ className?: string }>) {
@@ -170,7 +171,7 @@ export default function PhoneHistoryList({
     const showVoicemailRow = hasVoicemail && (!searchQuery.trim() || 'voicemail'.includes(searchQuery.toLowerCase().trim()));
 
     return (
-        <div className={simLayout.stack}>
+        <div className={joinClasses(simLayout.stack, SIM_PHONE_INCOMING_CALL_HISTORY)}>
             <SimulatorSearchInput
                 value={searchQuery}
                 onChange={setSearchQuery}

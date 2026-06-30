@@ -21,6 +21,11 @@ import {
     SIM_TEXT_SM,
     simBadgeToneClass,
 } from '../ui/simulatorClasses.js';
+import {
+    SIM_EMAIL_INBOX,
+    SIM_EMAIL_MESSAGE_ROW,
+    SIM_EMAIL_STATUS_BADGE,
+} from '../ui/semanticSimulatorClasses.js';
 
 export interface EmailInboxListProps {
     inbox: SimulatorInboxRow[];
@@ -107,6 +112,7 @@ export default function EmailInboxList({
                         className={joinClasses(
                             simRowSurface.selectable,
                             selectedMessageId === row.id ? simRowSurface.selected : simRowSurface.default,
+                            SIM_EMAIL_MESSAGE_ROW,
                         )}
                         style={{ cursor: 'pointer' }}
                     >
@@ -131,6 +137,7 @@ export default function EmailInboxList({
                                 simBadgeToneClass(row.unread ? 'primary' : 'neutral'),
                                 SIM_ROUNDED_NONE,
                                 SIM_FLEX_SHRINK_0,
+                                SIM_EMAIL_STATUS_BADGE,
                             )}
                         >
                             {row.unread ? 'Unread' : 'Read'}
@@ -142,7 +149,7 @@ export default function EmailInboxList({
     }
 
     return (
-        <div className={simLayout.stack}>
+        <div className={joinClasses(simLayout.stack, SIM_EMAIL_INBOX)}>
             <div className={simLayout.headerRowBetween}>
                 <span className={joinClasses(SIM_FLEX_GROW_1, 'simulator-text--center', SIM_TEXT_SM, 'simulator-text--semibold', 'simulator-text--body')}>
                     {folderLabel}

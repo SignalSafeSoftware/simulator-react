@@ -22,6 +22,7 @@ import {
     SIM_MIN_H_0,
     SIM_OVERFLOW_AUTO,
 } from '../ui/simulatorClasses.js';
+import { SIM_EMAIL } from '../ui/semanticSimulatorClasses.js';
 
 const EMAIL_NAV_ITEMS = [
     { id: 'list', label: 'Inbox' },
@@ -78,7 +79,7 @@ export default function EmailSimulatorView({
             : joinClasses(SIM_FLEX_GROW_1, SIM_MIN_H_0, SIM_OVERFLOW_AUTO);
 
     return (
-        <div className={simLayout.screenColumn}>
+        <div className={joinClasses(simLayout.screenColumn, SIM_EMAIL)}>
             <div className={scrollClass}>
                 {screen === 'list' && (
                     <EmailInboxList

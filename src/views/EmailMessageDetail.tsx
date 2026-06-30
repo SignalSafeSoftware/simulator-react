@@ -26,6 +26,7 @@ import {
     SIM_SURFACE_LIGHT,
     SIM_TEXT_SM,
 } from '../ui/simulatorClasses.js';
+import { SIM_EMAIL_MESSAGE_DETAIL } from '../ui/semanticSimulatorClasses.js';
 
 export interface EmailMessageDetailProps {
     message: EmailTemplateContent;
@@ -63,7 +64,7 @@ export default function EmailMessageDetail({
     const keyedLinks = withStableLinkKeys(message.links ?? []);
 
     return (
-        <div className={simLayout.screenColumn}>
+        <div className={joinClasses(simLayout.screenColumn, SIM_EMAIL_MESSAGE_DETAIL)}>
             {onBack && (
                 <>
                     <SimulatorDetailBackBar onBack={onBack} title="Message" ariaLabel="Back to inbox" titleOnly />
