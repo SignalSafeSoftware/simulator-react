@@ -34,7 +34,11 @@ export {
 export * from './adapters/templateToSession.js';
 
 /** API template detail shape consumed by {@link templateDetailToPayload} (see `src/types/portableSimulator.ts`). */
-export type { SimulatorTemplateDetail } from './types/portableSimulator.js';
+export type {
+    SimulatorTemplateDetail,
+    SimulatorDevicePayload,
+    SimulatorEntryPoint,
+} from './types/portableSimulator.js';
 
 /** Merge helpers for partial simulator payload slices (authoring overlays). */
 export { type SimulatorWorldPartial, deepMergeSections, applyPartials } from './utils/simulatorWorldSections.js';
