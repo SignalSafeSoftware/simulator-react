@@ -21,6 +21,7 @@ import {
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
 } from './ui/simulatorClasses.js';
+import { SIM_ERROR, SIM_ERROR_DIAGNOSTICS } from './ui/semanticSimulatorClasses.js';
 
 export interface SimulatorErrorBoundaryProps {
     children: ReactNode;
@@ -76,7 +77,11 @@ export default class SimulatorErrorBoundary extends Component<SimulatorErrorBoun
 
             return (
                 <div
-                    className={`${simSpacing.blockPadding} ${simStatus.errorBox}`}
+                    className={joinClasses(
+                        SIM_ERROR,
+                        simSpacing.blockPadding,
+                        simStatus.errorBox,
+                    )}
                     role="alert"
                     data-testid="simulator-error-fallback"
                     data-show-diagnostics={showDiagnostics ? 'true' : 'false'}
@@ -85,7 +90,14 @@ export default class SimulatorErrorBoundary extends Component<SimulatorErrorBoun
                     <p className={joinClasses(simSpacing.mb1, 'simulator-text--break')}>{body}</p>
                     {showDiagnostics && errorInfo?.componentStack ? (
                         <pre
-                            className={joinClasses(SIM_TEXT_SM, SIM_MUTED, simSpacing.mb2, SIM_MONO, SIM_OVERFLOW_AUTO)}
+                            className={joinClasses(
+                                SIM_ERROR_DIAGNOSTICS,
+                                SIM_TEXT_SM,
+                                SIM_MUTED,
+                                simSpacing.mb2,
+                                SIM_MONO,
+                                SIM_OVERFLOW_AUTO,
+                            )}
                             style={{ whiteSpace: 'pre-wrap', maxHeight: 120 }}
                             data-testid="simulator-error-diagnostics-stack"
                         >

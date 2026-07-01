@@ -12,6 +12,7 @@ import {
 } from './constants.js';
 import type { SimulatorApp } from './types/portableSimulator.js';
 import { joinClasses, SIM_TEXT_MEDIUM } from './ui/simulatorClasses.js';
+import { SIM_UNSUPPORTED } from './ui/semanticSimulatorClasses.js';
 
 export interface UnsupportedScreenFallbackProps {
     app: SimulatorApp;
@@ -29,7 +30,7 @@ export default function UnsupportedScreenFallback({
 }: Readonly<UnsupportedScreenFallbackProps>) {
     return (
         <div
-            className={`${simSpacing.blockPadding} ${simStatus.warningBox}`}
+            className={joinClasses(SIM_UNSUPPORTED, simSpacing.blockPadding, simStatus.warningBox)}
             role="alert"
             data-testid="simulator-unsupported-screen"
             data-show-diagnostics={showDiagnostics ? 'true' : 'false'}

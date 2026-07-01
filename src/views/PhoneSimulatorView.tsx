@@ -36,12 +36,19 @@ import {
 } from '../ui/primitives.js';
 import {
     joinClasses,
+    SIM_AVATAR,
     SIM_FLEX_GROW_1,
     SIM_FLEX_SHRINK_0,
     SIM_ROUNDED_NONE,
+    SIM_SURFACE_AVATAR,
     SIM_TEXT_CENTER,
 } from '../ui/simulatorClasses.js';
-import { SIM_PHONE, SIM_PHONE_CONTACT_LIST, SIM_PHONE_CONTACT_ROW } from '../ui/semanticSimulatorClasses.js';
+import {
+    SIM_PHONE,
+    SIM_PHONE_CONTACT_LIST,
+    SIM_PHONE_CONTACT_ROW,
+    SIM_PHONE_CONTACT_ROW_AVATAR,
+} from '../ui/semanticSimulatorClasses.js';
 
 function PhoneAddContactForm({
     onSave,
@@ -242,6 +249,21 @@ export default function PhoneSimulatorView({
                                         SIM_PHONE_CONTACT_ROW,
                                     )}
                                 >
+                                    <div
+                                        className={joinClasses(
+                                            SIM_PHONE_CONTACT_ROW_AVATAR,
+                                            SIM_AVATAR,
+                                            SIM_SURFACE_AVATAR,
+                                            'simulator-flex simulator-flex--center',
+                                            SIM_FLEX_SHRINK_0,
+                                        )}
+                                        style={{ width: 40, height: 40 }}
+                                        aria-hidden
+                                    >
+                                        <span className="simulator-text--primary" style={{ fontSize: '1.25rem' }}>
+                                            👤
+                                        </span>
+                                    </div>
                                     <span>{c.displayName}</span>
                                     {c.number != null && (
                                         <SimulatorButton

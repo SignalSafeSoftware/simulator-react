@@ -23,7 +23,15 @@ import {
     SIM_TEXT_START,
     simBadgeToneClass,
 } from '../ui/simulatorClasses.js';
-import { SIM_PHONE_INCOMING_CALL_HISTORY } from '../ui/semanticSimulatorClasses.js';
+import {
+    SIM_PHONE_INCOMING_CALL_HISTORY,
+    SIM_PHONE_HISTORY_INCOMING_ROW,
+    SIM_CALL_STATUS_BADGE,
+    SIM_CALL_STATUS_BADGE_INCOMING,
+    SIM_CALL_STATUS_BADGE_MISSED,
+    SIM_CALL_STATUS_BADGE_OUTBOUND,
+    SIM_CALL_STATUS_BADGE_UNKNOWN,
+} from '../ui/semanticSimulatorClasses.js';
 
 /** Light blue profile icon for call/contact rows (wireframe). */
 function ProfileIcon({ className }: Readonly<{ className?: string }>) {
@@ -72,6 +80,19 @@ function kindLabel(kind: CallHistoryEntryKind): string {
         case 'missed': return 'Missed';
         case 'voicemail': return 'Voicemail';
         default: return 'Call';
+    }
+}
+
+function kindStatusBadgeClass(kind: CallHistoryEntryKind): string {
+    switch (kind) {
+        case 'missed':
+            return SIM_CALL_STATUS_BADGE_MISSED;
+        case 'outgoing':
+            return SIM_CALL_STATUS_BADGE_OUTBOUND;
+        case 'incoming':
+            return SIM_CALL_STATUS_BADGE_INCOMING;
+        default:
+            return SIM_CALL_STATUS_BADGE_UNKNOWN;
     }
 }
 
@@ -183,7 +204,7 @@ export default function PhoneHistoryList({
             {showIncoming && (
                 <PhoneHistoryRowButton
                     onClick={onSelectIncoming}
-                    className={incomingCardClass}
+                    className={joinClasses(incomingCardClass, SIM_PHONE_HISTORY_INCOMING_ROW)}
                     aria-label="Incoming call"
                 >
                     <ProfileIcon />
@@ -195,7 +216,15 @@ export default function PhoneHistoryList({
                             <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>{incomingCallContent.phone_number}</span>
                         )}
                     </div>
-                    <span className={joinClasses(simBadgeToneClass('neutral'), SIM_ROUNDED_NONE, SIM_FLEX_SHRINK_0)}>
+                    <span
+                        className={joinClasses(
+                            simBadgeToneClass('neutral'),
+                            SIM_CALL_STATUS_BADGE,
+                            SIM_CALL_STATUS_BADGE_INCOMING,
+                            SIM_ROUNDED_NONE,
+                            SIM_FLEX_SHRINK_0,
+                        )}
+                    >
                         Incoming
                     </span>
                 </PhoneHistoryRowButton>
@@ -228,6 +257,8 @@ export default function PhoneHistoryList({
                     );
                     const badgeClass = joinClasses(
                         simBadgeToneClass(kindBadgeTone(kind)),
+                        SIM_CALL_STATUS_BADGE,
+                        kindStatusBadgeClass(kind),
                         SIM_ROUNDED_NONE,
                         SIM_FLEX_SHRINK_0,
                     );

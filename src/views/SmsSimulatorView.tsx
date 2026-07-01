@@ -21,7 +21,13 @@ import {
     SIM_TEXT_SEMIBOLD,
     SIM_TEXT_SM,
 } from '../ui/simulatorClasses.js';
-import { SIM_MESSAGES_THREAD_DETAIL } from '../ui/semanticSimulatorClasses.js';
+import {
+    SIM_MESSAGES_BUBBLE,
+    SIM_MESSAGES_BUBBLE_ME,
+    SIM_MESSAGES_BUBBLE_THEM,
+    SIM_MESSAGES_MESSAGE_TIMELINE,
+    SIM_MESSAGES_THREAD_DETAIL,
+} from '../ui/semanticSimulatorClasses.js';
 import {
     renderSimulatorChoice,
     type SimulatorChoiceRenderProps,
@@ -145,7 +151,14 @@ export default function SmsSimulatorView({
                     <p className={simTypo.secondaryTight}>No messages in this thread.</p>
                 )}
                 <ul
-                    className={joinClasses(SIM_FLEX_COL, simSpacing.gap2, 'simulator-list--plain', simSpacing.mb0, 'simulator-spacing--p-0')}
+                    className={joinClasses(
+                        SIM_MESSAGES_MESSAGE_TIMELINE,
+                        SIM_FLEX_COL,
+                        simSpacing.gap2,
+                        'simulator-list--plain',
+                        simSpacing.mb0,
+                        'simulator-spacing--p-0',
+                    )}
                     aria-label="Message timeline"
                 >
                     {visible.map((msg, idx) => (
@@ -155,7 +168,11 @@ export default function SmsSimulatorView({
                             style={{ maxWidth: '88%', alignSelf: msg.from === 'them' ? 'flex-start' : 'flex-end' }}
                         >
                             <div
-                                className={msg.from === 'them' ? bubbleThem : bubbleMe}
+                                className={joinClasses(
+                                    SIM_MESSAGES_BUBBLE,
+                                    msg.from === 'them' ? SIM_MESSAGES_BUBBLE_THEM : SIM_MESSAGES_BUBBLE_ME,
+                                    msg.from === 'them' ? bubbleThem : bubbleMe,
+                                )}
                                 style={{
                                     lineHeight: 1.45,
                                     borderTopLeftRadius: msg.from === 'them' ? 0 : 8,

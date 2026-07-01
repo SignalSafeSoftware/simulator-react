@@ -24,6 +24,15 @@ export const SIM_PHONE_INCOMING_CALL_CALLER_NAME = 'simulator-phone__incoming-ca
 export const SIM_PHONE_INCOMING_CALL_NUMBER = 'simulator-phone__incoming-call-number';
 export const SIM_PHONE_INCOMING_CALL_ACTIONS = 'simulator-phone__incoming-call-actions';
 export const SIM_PHONE_CONTACT_ROW_AVATAR = 'simulator-phone__contact-row-avatar';
+export const SIM_PHONE_HISTORY_INCOMING_ROW = 'simulator-phone__history-incoming-row';
+export const SIM_PHONE_DIALER_NUMBER = 'simulator-phone__dialer-number';
+export const SIM_PHONE_DIALER_BACKSPACE = 'simulator-phone__dialer-backspace';
+
+export const SIM_CALL_STATUS_BADGE = 'simulator-call-status-badge';
+export const SIM_CALL_STATUS_BADGE_INCOMING = 'simulator-call-status-badge--incoming';
+export const SIM_CALL_STATUS_BADGE_MISSED = 'simulator-call-status-badge--missed';
+export const SIM_CALL_STATUS_BADGE_OUTBOUND = 'simulator-call-status-badge--outbound';
+export const SIM_CALL_STATUS_BADGE_UNKNOWN = 'simulator-call-status-badge--unknown';
 
 export const SIM_EMAIL = 'simulator-email';
 export const SIM_EMAIL_INBOX = 'simulator-email__inbox';
@@ -36,6 +45,14 @@ export const SIM_MESSAGES = 'simulator-messages';
 export const SIM_MESSAGES_THREAD_LIST = 'simulator-messages__thread-list';
 export const SIM_MESSAGES_THREAD_ROW = 'simulator-messages__thread-row';
 export const SIM_MESSAGES_THREAD_DETAIL = 'simulator-messages__thread-detail';
+export const SIM_MESSAGES_MESSAGE_TIMELINE = 'simulator-messages__message-timeline';
+export const SIM_MESSAGES_BUBBLE = 'simulator-messages__bubble';
+export const SIM_MESSAGES_BUBBLE_THEM = 'simulator-messages__bubble--them';
+export const SIM_MESSAGES_BUBBLE_ME = 'simulator-messages__bubble--me';
+
+export const SIM_ERROR = 'simulator-error';
+export const SIM_ERROR_DIAGNOSTICS = 'simulator-error__diagnostics';
+export const SIM_UNSUPPORTED = 'simulator-unsupported';
 
 /** Map shell bottom-nav channel id to a semantic channel modifier class. */
 export function simChannelModifierForShellChannel(channel: string): string | undefined {

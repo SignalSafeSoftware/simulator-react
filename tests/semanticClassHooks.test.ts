@@ -32,7 +32,17 @@ import {
     SIM_PHONE_CONTACT_ROW,
     SIM_PHONE_CONTACT_ROW_AVATAR,
     SIM_PHONE_DIALER,
+    SIM_PHONE_DIALER_BACKSPACE,
     SIM_PHONE_DIALER_CALL_BUTTON,
+    SIM_PHONE_DIALER_NUMBER,
+    SIM_PHONE_HISTORY_INCOMING_ROW,
+    SIM_CALL_STATUS_BADGE_INCOMING,
+    SIM_MESSAGES_BUBBLE,
+    SIM_MESSAGES_BUBBLE_THEM,
+    SIM_MESSAGES_MESSAGE_TIMELINE,
+    SIM_ERROR,
+    SIM_ERROR_DIAGNOSTICS,
+    SIM_UNSUPPORTED,
     SIM_PHONE_INCOMING_CALL_ACTIONS,
     SIM_PHONE_INCOMING_CALL_AVATAR,
     SIM_PHONE_INCOMING_CALL_CALLER_NAME,
@@ -47,6 +57,8 @@ import {
 import { SIM_BTN_SCREEN_BACK } from '../src/ui/simulatorClasses.js';
 import PhoneIncomingScene from '../src/views/PhoneIncomingScene';
 import { SimulatorDetailBackBar } from '../src/components/SimulatorDetail';
+import SimulatorErrorBoundary from '../src/SimulatorErrorBoundary';
+import UnsupportedScreenFallback from '../src/UnsupportedScreenFallback';
 
 vi.mock('../src/shell/PhoneSimulatorShell', () => ({
     default: ({ children }: { children?: React.ReactNode }) =>
@@ -378,5 +390,102 @@ describe('semantic simulator class hooks', () => {
 
         const backButton = renderer!.root.findByProps({ 'aria-label': 'Back to list' });
         expect(classNames(backButton)).toContain(SIM_BTN_SCREEN_BACK);
+    });
+
+    it('renders contact row avatar in PhoneSimulatorView contacts screen', async () => {
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(PhoneSimulatorView, {
+                    payload: { content: null, callHistory: [] },
+                    contacts: [{ id: 'c1', displayName: 'Alex', number: '555' }],
+                    phoneCapabilities: { dial: true, voicemail: false, directory: false },
+                    screen: 'contacts',
+                    onNavigate: vi.fn(),
+                    onAction: vi.fn(),
+                }),
+            );
+        });
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_AVATAR)).toBeTruthy();
+    });
+
+    it('renders history incoming row and status badge classes', async () => {
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(PhoneHistoryList, {
+                    entries: [],
+                    incomingCallContent: {
+                        transcript: 'Incoming',
+                        choices: [],
+                        caller_name: 'Alex',
+                        phone_number: '+15550000000',
+                    },
+                    hasVoicemail: false,
+                    onSelectIncoming: vi.fn(),
+                    onSelectVoicemail: vi.fn(),
+                }),
+            );
+        });
+        expect(findWithClass(renderer!.root, SIM_PHONE_HISTORY_INCOMING_ROW)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_CALL_STATUS_BADGE_INCOMING)).toBeTruthy();
+    });
+
+    it('renders dialer number and backspace semantic classes', async () => {
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(PhoneDialView, { onDial: vi.fn() }),
+            );
+        });
+        expect(findWithClass(renderer!.root, SIM_PHONE_DIALER_NUMBER)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_DIALER_BACKSPACE)).toBeTruthy();
+    });
+
+    it('renders messages timeline and bubble semantic classes', async () => {
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(SmsSimulatorView, {
+                    payload: {
+                        thread: {
+                            sender_display_name: 'Alex',
+                            messages: [{ from: 'them', text: 'Hello' }],
+                        },
+                    },
+                    visibleCount: 1,
+                    onAction: vi.fn(),
+                    onRevealNext: vi.fn(),
+                }),
+            );
+        });
+        expect(findWithClass(renderer!.root, SIM_MESSAGES_MESSAGE_TIMELINE)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_MESSAGES_BUBBLE)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_MESSAGES_BUBBLE_THEM)).toBeTruthy();
+    });
+
+    it('renders error and unsupported semantic classes', async () => {
+        function Boom(): JSX.Element {
+            throw new Error('boom');
+        }
+
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(
+                    SimulatorErrorBoundary,
+                    { showDiagnostics: true },
+                    React.createElement(Boom),
+                ),
+            );
+        });
+        expect(findWithClass(renderer!.root, SIM_ERROR)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_ERROR_DIAGNOSTICS)).toBeTruthy();
+
+        await act(async () => {
+            renderer!.update(
+                React.createElement(UnsupportedScreenFallback, {
+                    app: 'phone',
+                    screen: 'unknown',
+                    showDiagnostics: true,
+                }),
+            );
+        });
+        expect(findWithClass(renderer!.root, SIM_UNSUPPORTED)).toBeTruthy();
     });
 });
