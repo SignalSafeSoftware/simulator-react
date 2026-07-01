@@ -31,6 +31,9 @@ import {
     SIM_PHONE_CONTACT_LIST,
     SIM_PHONE_CONTACT_ROW,
     SIM_PHONE_CONTACT_ROW_AVATAR,
+    SIM_PHONE_CONTACT_ROW_MAIN,
+    SIM_PHONE_CONTACT_ROW_NAME,
+    SIM_PHONE_CONTACT_ROW_NUMBER,
     SIM_PHONE_DIALER,
     SIM_PHONE_DIALER_BACKSPACE,
     SIM_PHONE_DIALER_CALL_BUTTON,
@@ -214,6 +217,8 @@ describe('semantic simulator class hooks', () => {
         });
         expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_LIST)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_MAIN)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NAME)).toBeTruthy();
     });
 
     it('renders contact row avatar class in ContactsView', async () => {
@@ -228,6 +233,24 @@ describe('semantic simulator class hooks', () => {
             );
         });
         expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_AVATAR)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_MAIN)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NAME)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NUMBER)).toBeTruthy();
+    });
+
+    it('renders compact contact row main/name/number classes without phone local nav', async () => {
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(ContactsView, {
+                    contacts: [{ id: 'c1', displayName: 'Alice Chen', number: '+1 555-0100' }],
+                    onBack: vi.fn(),
+                }),
+            );
+        });
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_MAIN)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NAME)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NUMBER)).toBeTruthy();
     });
 
     it('renders contact detail class in ContactsView', async () => {

@@ -37,17 +37,24 @@ import {
 import {
     joinClasses,
     SIM_AVATAR,
+    SIM_FLEX_COL,
     SIM_FLEX_GROW_1,
     SIM_FLEX_SHRINK_0,
+    SIM_MUTED,
     SIM_ROUNDED_NONE,
     SIM_SURFACE_AVATAR,
     SIM_TEXT_CENTER,
+    SIM_TEXT_MEDIUM,
+    SIM_TEXT_SM,
 } from '../ui/simulatorClasses.js';
 import {
     SIM_PHONE,
     SIM_PHONE_CONTACT_LIST,
     SIM_PHONE_CONTACT_ROW,
     SIM_PHONE_CONTACT_ROW_AVATAR,
+    SIM_PHONE_CONTACT_ROW_MAIN,
+    SIM_PHONE_CONTACT_ROW_NAME,
+    SIM_PHONE_CONTACT_ROW_NUMBER,
 } from '../ui/semanticSimulatorClasses.js';
 
 function PhoneAddContactForm({
@@ -264,7 +271,14 @@ export default function PhoneSimulatorView({
                                             👤
                                         </span>
                                     </div>
-                                    <span>{c.displayName}</span>
+                                    <div className={joinClasses(SIM_PHONE_CONTACT_ROW_MAIN, SIM_FLEX_GROW_1, 'simulator-min-w-0', SIM_FLEX_COL)}>
+                                        <span className={joinClasses(SIM_PHONE_CONTACT_ROW_NAME, SIM_TEXT_MEDIUM)}>{c.displayName}</span>
+                                        {c.number != null && c.number !== '' && (
+                                            <span className={joinClasses(SIM_PHONE_CONTACT_ROW_NUMBER, SIM_MUTED, SIM_TEXT_SM)}>
+                                                {c.number}
+                                            </span>
+                                        )}
+                                    </div>
                                     {c.number != null && (
                                         <SimulatorButton
                                             tone="outline-primary"

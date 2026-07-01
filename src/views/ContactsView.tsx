@@ -30,6 +30,9 @@ import {
     SIM_PHONE_CONTACT_LIST,
     SIM_PHONE_CONTACT_ROW,
     SIM_PHONE_CONTACT_ROW_AVATAR,
+    SIM_PHONE_CONTACT_ROW_MAIN,
+    SIM_PHONE_CONTACT_ROW_NAME,
+    SIM_PHONE_CONTACT_ROW_NUMBER,
 } from '../ui/semanticSimulatorClasses.js';
 import type { SimulatorSessionContact } from '../types/session.js';
 import {
@@ -303,10 +306,18 @@ function renderPhoneContactList(
                     style={{ cursor: 'pointer' }}
                 >
                     <ContactProfileIcon />
-                    <div className={joinClasses(SIM_FLEX_COL, 'simulator-min-w-0', SIM_FLEX_GROW_1)}>
-                        <span className={joinClasses(SIM_TEXT_MEDIUM, 'simulator-text--truncate')}>{c.displayName}</span>
-                        {c.number && <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED, 'simulator-text--truncate')}>{c.number}</span>}
-                        {c.email && !c.number && <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED, 'simulator-text--truncate')}>{c.email}</span>}
+                    <div className={joinClasses(SIM_PHONE_CONTACT_ROW_MAIN, SIM_FLEX_COL, 'simulator-min-w-0', SIM_FLEX_GROW_1)}>
+                        <span className={joinClasses(SIM_PHONE_CONTACT_ROW_NAME, SIM_TEXT_MEDIUM, 'simulator-text--truncate')}>{c.displayName}</span>
+                        {c.number && (
+                            <span className={joinClasses(SIM_PHONE_CONTACT_ROW_NUMBER, SIM_TEXT_SM, SIM_MUTED, 'simulator-text--truncate')}>
+                                {c.number}
+                            </span>
+                        )}
+                        {c.email && !c.number && (
+                            <span className={joinClasses(SIM_PHONE_CONTACT_ROW_NUMBER, SIM_TEXT_SM, SIM_MUTED, 'simulator-text--truncate')}>
+                                {c.email}
+                            </span>
+                        )}
                     </div>
                 </button>
             ))}
@@ -330,10 +341,12 @@ function renderCompactContactList(
                     onClick={() =>
                         openContact(c, setSelectedId, onOpenContact, hostOwnsPhoneContactDetail, onPhoneContactOpen)
                     }
-                    className="simulator-flex--between"
+                    className={joinClasses('simulator-flex--between', SIM_PHONE_CONTACT_ROW)}
                 >
-                    <span className={SIM_TEXT_MEDIUM}>{c.displayName}</span>
-                    {c.number && <span className={simTypo.secondary}>{c.number}</span>}
+                    <div className={joinClasses(SIM_PHONE_CONTACT_ROW_MAIN, SIM_FLEX_GROW_1, 'simulator-min-w-0', 'simulator-flex--between', 'simulator-flex--align-center')}>
+                        <span className={joinClasses(SIM_PHONE_CONTACT_ROW_NAME, SIM_TEXT_MEDIUM)}>{c.displayName}</span>
+                        {c.number && <span className={joinClasses(SIM_PHONE_CONTACT_ROW_NUMBER, simTypo.secondary)}>{c.number}</span>}
+                    </div>
                 </SimulatorListItem>
             ))}
         </SimulatorList>
