@@ -26,7 +26,7 @@ import {
     SIM_SURFACE_LIGHT,
     SIM_TEXT_SM,
 } from '../ui/simulatorClasses.js';
-import { SIM_EMAIL_MESSAGE_DETAIL } from '../ui/semanticSimulatorClasses.js';
+import { SIM_EMAIL_MESSAGE_DETAIL, SIM_EMAIL_MESSAGE_DETAIL_BODY } from '../ui/semanticSimulatorClasses.js';
 
 export interface EmailMessageDetailProps {
     message: EmailTemplateContent;
@@ -116,7 +116,12 @@ export default function EmailMessageDetail({
                         <SimulatorTextarea
                             readOnly
                             value={message.body ?? ''}
-                            className={joinClasses(readOnlyFieldClass, SIM_FLEX_GROW_1, SIM_OVERFLOW_AUTO)}
+                            className={joinClasses(
+                                SIM_EMAIL_MESSAGE_DETAIL_BODY,
+                                readOnlyFieldClass,
+                                SIM_FLEX_GROW_1,
+                                SIM_OVERFLOW_AUTO,
+                            )}
                             style={{ whiteSpace: 'pre-wrap', lineHeight: 1.5, minHeight: 0, resize: 'none' }}
                             aria-label="Body"
                         />

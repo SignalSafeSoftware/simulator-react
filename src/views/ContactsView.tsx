@@ -29,6 +29,7 @@ import {
     SIM_PHONE_CONTACT_DETAIL,
     SIM_PHONE_CONTACT_LIST,
     SIM_PHONE_CONTACT_ROW,
+    SIM_PHONE_CONTACT_ROW_AVATAR,
 } from '../ui/semanticSimulatorClasses.js';
 import type { SimulatorSessionContact } from '../types/session.js';
 import {
@@ -106,6 +107,7 @@ function ContactProfileIcon({ className }: Readonly<{ className?: string }>) {
     return (
         <div
             className={joinClasses(
+                SIM_PHONE_CONTACT_ROW_AVATAR,
                 SIM_AVATAR,
                 SIM_SURFACE_AVATAR,
                 'simulator-flex simulator-flex--center',

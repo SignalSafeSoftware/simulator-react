@@ -2,6 +2,8 @@
 
 export const SIM_RUNTIME = 'simulator-runtime';
 export const SIM_RUNTIME_SCREEN = 'simulator-runtime__screen';
+export const SIM_RUNTIME_APP_ROOT = 'simulator-runtime__app-root';
+export const SIM_RUNTIME_DIAGNOSTICS_BAND = 'simulator-runtime__diagnostics-band';
 export const SIM_CHANNEL = 'simulator-channel';
 export const SIM_CHANNEL_PHONE = 'simulator-channel--phone';
 export const SIM_CHANNEL_EMAIL = 'simulator-channel--email';
@@ -16,11 +18,18 @@ export const SIM_PHONE_CONTACT_DETAIL = 'simulator-phone__contact-detail';
 export const SIM_PHONE_INCOMING_CALL_HISTORY = 'simulator-phone__incoming-call-history';
 export const SIM_PHONE_INCOMING_CALL_EXTRA = 'simulator-phone__incoming-call-extra';
 export const SIM_PHONE_INCOMING_CALL_AFTER_ACTIONS = 'simulator-phone__incoming-call-after-actions';
+export const SIM_PHONE_INCOMING_CALL_SCENE = 'simulator-phone__incoming-call-scene';
+export const SIM_PHONE_INCOMING_CALL_AVATAR = 'simulator-phone__incoming-call-avatar';
+export const SIM_PHONE_INCOMING_CALL_CALLER_NAME = 'simulator-phone__incoming-call-caller-name';
+export const SIM_PHONE_INCOMING_CALL_NUMBER = 'simulator-phone__incoming-call-number';
+export const SIM_PHONE_INCOMING_CALL_ACTIONS = 'simulator-phone__incoming-call-actions';
+export const SIM_PHONE_CONTACT_ROW_AVATAR = 'simulator-phone__contact-row-avatar';
 
 export const SIM_EMAIL = 'simulator-email';
 export const SIM_EMAIL_INBOX = 'simulator-email__inbox';
 export const SIM_EMAIL_MESSAGE_ROW = 'simulator-email__message-row';
 export const SIM_EMAIL_MESSAGE_DETAIL = 'simulator-email__message-detail';
+export const SIM_EMAIL_MESSAGE_DETAIL_BODY = 'simulator-email__message-detail-body';
 export const SIM_EMAIL_STATUS_BADGE = 'simulator-email__status-badge';
 
 export const SIM_MESSAGES = 'simulator-messages';

@@ -14,6 +14,7 @@ export const SIM_LIST_ITEM_ACTIVE = 'simulator-list__item--active';
 export const SIM_BTN = 'simulator-btn';
 export const SIM_BTN_SM = 'simulator-btn--sm';
 export const SIM_BTN_BLOCK = 'simulator-btn--block';
+export const SIM_BTN_SCREEN_BACK = 'simulator-btn--screen-back';
 export const SIM_INPUT = 'simulator-input';
 export const SIM_INPUT_SM = 'simulator-input--sm';
 export const SIM_FIELD = 'simulator-field';

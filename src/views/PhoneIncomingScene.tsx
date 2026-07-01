@@ -22,6 +22,13 @@ import {
     SIM_TEXT_SM,
 } from '../ui/simulatorClasses.js';
 import {
+    SIM_PHONE_INCOMING_CALL_ACTIONS,
+    SIM_PHONE_INCOMING_CALL_AVATAR,
+    SIM_PHONE_INCOMING_CALL_CALLER_NAME,
+    SIM_PHONE_INCOMING_CALL_NUMBER,
+    SIM_PHONE_INCOMING_CALL_SCENE,
+} from '../ui/semanticSimulatorClasses.js';
+import {
     renderSimulatorChoice,
     type SimulatorChoiceRenderProps,
 } from '../ui/renderSlots.js';
@@ -56,6 +63,7 @@ export default function PhoneIncomingScene({
     return (
         <div
             className={joinClasses(
+                SIM_PHONE_INCOMING_CALL_SCENE,
                 SIM_FLEX_COL,
                 'simulator-flex--align-center',
                 simSpacing.py3,
@@ -69,6 +77,7 @@ export default function PhoneIncomingScene({
         >
             <div
                 className={joinClasses(
+                    SIM_PHONE_INCOMING_CALL_AVATAR,
                     SIM_ROUNDED_NONE,
                     SIM_OVERFLOW_HIDDEN,
                     SIM_SURFACE_AVATAR,
@@ -92,19 +101,41 @@ export default function PhoneIncomingScene({
             </div>
 
             <h2
-                className={joinClasses('simulator-heading simulator-heading--sub', simSpacing.mb1, SIM_TEXT_BOLD, SIM_TEXT_DARK, SIM_TEXT_CENTER)}
+                className={joinClasses(
+                    SIM_PHONE_INCOMING_CALL_CALLER_NAME,
+                    'simulator-heading simulator-heading--sub',
+                    simSpacing.mb1,
+                    SIM_TEXT_BOLD,
+                    SIM_TEXT_DARK,
+                    SIM_TEXT_CENTER,
+                )}
                 data-testid="phone-simulator-caller-name"
             >
                 {callingLabel}
             </h2>
             <p
-                className={joinClasses(simSpacing.mb3, SIM_TEXT_SM, SIM_MUTED, SIM_TEXT_CENTER)}
+                className={joinClasses(
+                    SIM_PHONE_INCOMING_CALL_NUMBER,
+                    simSpacing.mb3,
+                    SIM_TEXT_SM,
+                    SIM_MUTED,
+                    SIM_TEXT_CENTER,
+                )}
                 data-testid="phone-simulator-number"
             >
                 {phoneNumber}
             </p>
 
-            <div className={joinClasses(simLayout.row, simSpacing.gap2, 'simulator-w-full', 'simulator-spacing--mt-auto')} data-testid="phone-simulator-actions">
+            <div
+                className={joinClasses(
+                    SIM_PHONE_INCOMING_CALL_ACTIONS,
+                    simLayout.row,
+                    simSpacing.gap2,
+                    'simulator-w-full',
+                    'simulator-spacing--mt-auto',
+                )}
+                data-testid="phone-simulator-actions"
+            >
                 {renderSimulatorChoice(
                     {
                         label: 'ANSWER',

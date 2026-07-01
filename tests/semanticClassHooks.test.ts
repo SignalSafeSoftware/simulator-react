@@ -19,6 +19,7 @@ import {
     SIM_CHANNEL_PHONE,
     SIM_EMAIL_INBOX,
     SIM_EMAIL_MESSAGE_DETAIL,
+    SIM_EMAIL_MESSAGE_DETAIL_BODY,
     SIM_EMAIL_MESSAGE_ROW,
     SIM_EMAIL_STATUS_BADGE,
     SIM_MESSAGES,
@@ -29,12 +30,23 @@ import {
     SIM_PHONE_CONTACT_DETAIL,
     SIM_PHONE_CONTACT_LIST,
     SIM_PHONE_CONTACT_ROW,
+    SIM_PHONE_CONTACT_ROW_AVATAR,
     SIM_PHONE_DIALER,
     SIM_PHONE_DIALER_CALL_BUTTON,
+    SIM_PHONE_INCOMING_CALL_ACTIONS,
+    SIM_PHONE_INCOMING_CALL_AVATAR,
+    SIM_PHONE_INCOMING_CALL_CALLER_NAME,
     SIM_PHONE_INCOMING_CALL_HISTORY,
+    SIM_PHONE_INCOMING_CALL_NUMBER,
+    SIM_PHONE_INCOMING_CALL_SCENE,
     SIM_RUNTIME,
+    SIM_RUNTIME_APP_ROOT,
+    SIM_RUNTIME_DIAGNOSTICS_BAND,
     SIM_RUNTIME_SCREEN,
 } from '../src/ui/semanticSimulatorClasses.js';
+import { SIM_BTN_SCREEN_BACK } from '../src/ui/simulatorClasses.js';
+import PhoneIncomingScene from '../src/views/PhoneIncomingScene';
+import { SimulatorDetailBackBar } from '../src/components/SimulatorDetail';
 
 vi.mock('../src/shell/PhoneSimulatorShell', () => ({
     default: ({ children }: { children?: React.ReactNode }) =>
@@ -86,9 +98,42 @@ describe('semantic simulator class hooks', () => {
         });
 
         expect(findWithClass(renderer!.root, SIM_RUNTIME)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_RUNTIME_APP_ROOT)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_RUNTIME_SCREEN)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_CHANNEL)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_CHANNEL_PHONE)).toBeTruthy();
+    });
+
+    it('renders runtime app root without diagnostics band when developer tools are disabled', async () => {
+        const dispatch = vi.fn();
+        const state = getInitialSessionState(minimalPhoneWorld());
+
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(SimulatorWithSession, { state, dispatch }),
+            );
+        });
+
+        expect(findWithClass(renderer!.root, SIM_RUNTIME_APP_ROOT)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_RUNTIME_DIAGNOSTICS_BAND)).toBeUndefined();
+    });
+
+    it('renders diagnostics band when developer tools are enabled', async () => {
+        const dispatch = vi.fn();
+        const state = getInitialSessionState(minimalPhoneWorld());
+
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(SimulatorWithSession, {
+                    state,
+                    dispatch,
+                    developerTools: { enabled: true },
+                }),
+            );
+        });
+
+        expect(findWithClass(renderer!.root, SIM_RUNTIME_DIAGNOSTICS_BAND)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_RUNTIME_APP_ROOT)).toBeTruthy();
     });
 
     it('renders email channel modifier when email app is active', async () => {
@@ -159,6 +204,20 @@ describe('semantic simulator class hooks', () => {
         expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW)).toBeTruthy();
     });
 
+    it('renders contact row avatar class in ContactsView', async () => {
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(ContactsView, {
+                    contacts: [{ id: 'c1', displayName: 'Alex', number: '555' }],
+                    onBack: vi.fn(),
+                    phoneLocalNavItems: [{ id: 'contacts', label: 'Contacts' }],
+                    onPhoneNavSelect: vi.fn(),
+                }),
+            );
+        });
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_AVATAR)).toBeTruthy();
+    });
+
     it('renders contact detail class in ContactsView', async () => {
         await act(async () => {
             renderer = TestRenderer.create(
@@ -209,6 +268,7 @@ describe('semantic simulator class hooks', () => {
             );
         });
         expect(findWithClass(renderer!.root, SIM_EMAIL_MESSAGE_DETAIL)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_EMAIL_MESSAGE_DETAIL_BODY)).toBeTruthy();
     });
 
     it('renders messages semantic classes', async () => {
@@ -280,5 +340,43 @@ describe('semantic simulator class hooks', () => {
         });
 
         expect(findWithClass(renderer!.root, SIM_CHANNEL_MESSAGES)).toBeTruthy();
+    });
+
+    it('renders incoming call scene semantic classes', async () => {
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(PhoneIncomingScene, {
+                    content: {
+                        transcript: 'Incoming call.',
+                        choices: [],
+                        caller_name: 'Alex',
+                        phone_number: '+15550000000',
+                    },
+                    onAnswer: vi.fn(),
+                    onIgnore: vi.fn(),
+                }),
+            );
+        });
+
+        expect(findWithClass(renderer!.root, SIM_PHONE_INCOMING_CALL_SCENE)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_INCOMING_CALL_AVATAR)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_INCOMING_CALL_CALLER_NAME)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_INCOMING_CALL_NUMBER)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_INCOMING_CALL_ACTIONS)).toBeTruthy();
+    });
+
+    it('renders screen-back class on SimulatorDetailBackBar', async () => {
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(SimulatorDetailBackBar, {
+                    onBack: vi.fn(),
+                    title: 'Detail',
+                    ariaLabel: 'Back to list',
+                }),
+            );
+        });
+
+        const backButton = renderer!.root.findByProps({ 'aria-label': 'Back to list' });
+        expect(classNames(backButton)).toContain(SIM_BTN_SCREEN_BACK);
     });
 });

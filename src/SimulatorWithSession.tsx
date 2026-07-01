@@ -29,6 +29,8 @@ import { joinClasses } from './ui/simulatorClasses.js';
 import {
     SIM_CHANNEL,
     SIM_RUNTIME,
+    SIM_RUNTIME_APP_ROOT,
+    SIM_RUNTIME_DIAGNOSTICS_BAND,
     SIM_RUNTIME_SCREEN,
     simChannelModifierForShellChannel,
 } from './ui/semanticSimulatorClasses.js';
@@ -153,6 +155,11 @@ export default function SimulatorWithSession({
             />
         );
 
+    const showDiagnosticsBand =
+        developerControls.showDeveloperToolsToolbar ||
+        developerControls.showParentDeveloperControls ||
+        developerControls.resolvedDeveloperTools.enabled;
+
     return (
         <SimulatorErrorBoundary>
             <div
@@ -161,69 +168,83 @@ export default function SimulatorWithSession({
                 data-simulator-screen={screenMeta.screen}
                 data-simulator-label={screenMeta.label}
             >
-                {developerControls.showDeveloperToolsToolbar && (
-                    <SimulatorDeveloperToolbar
-                        sections={developerControls.developerToolbarSections}
-                        visibleSections={developerControls.visibleDeveloperSections}
-                        onToggleSection={developerControls.toggleDeveloperSection}
-                    />
-                )}
-                {developerControls.showParentDeveloperControls && (
-                    <SimulatorDeveloperControlsBar
-                        showSnapshotExport={developerControls.showResolvedSnapshotExport}
-                        showNavGraph={developerControls.showResolvedNavGraph}
-                        enableKeyboardShortcuts={developerControls.enableResolvedKeyboardShortcuts}
-                        snapshotCopied={developerControls.snapshotCopied}
-                        graphCopied={developerControls.graphCopied}
-                        shortcutsHelpOpen={developerControls.shortcutsHelpOpen}
-                        navGraph={developerControls.navGraph}
-                        onCopySnapshot={developerControls.handleCopySnapshot}
-                        onCopyNavGraph={developerControls.handleCopyNavGraph}
-                        onToggleShortcutsHelp={() =>
-                            developerControls.setShortcutsHelpOpen((prev) => !prev)
-                        }
-                    />
-                )}
-                <SimulatorDeveloperToolsPanel
-                    developerTools={developerControls.renderedDeveloperTools}
-                    payload={payload}
-                    timelineEntries={developerToolsTimelineEntries}
-                    runtimeIssues={developerToolsRuntimeIssues}
-                    className={simSpacing.mb3}
-                />
-                <PhoneSimulatorShell
-                    activeChannel={activeChannel}
-                    onChannelChange={handleChannelChange}
-                    exitSlot={exitLink}
-                    exitTo={exitLink ? undefined : exitTo}
-                    exitLabel={exitLabel}
-                    compact={compact}
-                    hideBottomNav={
-                        (activeApp === 'messages' &&
-                            (currentScreenForApp === 'thread_detail' || currentScreenForApp === 'new_thread')) ||
-                        (activeApp === 'email' && currentScreenForApp === 'detail')
-                    }
-                    secondaryMenu={
-                        secondaryMenu
-                            ? {
-                                  items: secondaryMenu.items,
-                                  activeId: secondaryMenu.activeId,
-                                  onSelect: secondaryMenu.onSelect,
-                                  onSecondaryBack: secondaryMenu.onSecondaryBack,
-                              }
-                            : undefined
-                    }
-                >
-                    <div
-                        className={joinClasses(
-                            SIM_RUNTIME_SCREEN,
-                            SIM_CHANNEL,
-                            simChannelModifierForShellChannel(activeChannel),
+                {showDiagnosticsBand ? (
+                    <div className={SIM_RUNTIME_DIAGNOSTICS_BAND}>
+                        {developerControls.showDeveloperToolsToolbar && (
+                            <SimulatorDeveloperToolbar
+                                sections={developerControls.developerToolbarSections}
+                                visibleSections={developerControls.visibleDeveloperSections}
+                                onToggleSection={developerControls.toggleDeveloperSection}
+                            />
                         )}
-                    >
-                        {activeContent}
+                        {developerControls.showParentDeveloperControls && (
+                            <SimulatorDeveloperControlsBar
+                                showSnapshotExport={developerControls.showResolvedSnapshotExport}
+                                showNavGraph={developerControls.showResolvedNavGraph}
+                                enableKeyboardShortcuts={developerControls.enableResolvedKeyboardShortcuts}
+                                snapshotCopied={developerControls.snapshotCopied}
+                                graphCopied={developerControls.graphCopied}
+                                shortcutsHelpOpen={developerControls.shortcutsHelpOpen}
+                                navGraph={developerControls.navGraph}
+                                onCopySnapshot={developerControls.handleCopySnapshot}
+                                onCopyNavGraph={developerControls.handleCopyNavGraph}
+                                onToggleShortcutsHelp={() =>
+                                    developerControls.setShortcutsHelpOpen((prev) => !prev)
+                                }
+                            />
+                        )}
+                        <SimulatorDeveloperToolsPanel
+                            developerTools={developerControls.renderedDeveloperTools}
+                            payload={payload}
+                            timelineEntries={developerToolsTimelineEntries}
+                            runtimeIssues={developerToolsRuntimeIssues}
+                            className={simSpacing.mb3}
+                        />
                     </div>
-                </PhoneSimulatorShell>
+                ) : (
+                    <SimulatorDeveloperToolsPanel
+                        developerTools={developerControls.renderedDeveloperTools}
+                        payload={payload}
+                        timelineEntries={developerToolsTimelineEntries}
+                        runtimeIssues={developerToolsRuntimeIssues}
+                        className={simSpacing.mb3}
+                    />
+                )}
+                <div className={SIM_RUNTIME_APP_ROOT}>
+                    <PhoneSimulatorShell
+                        activeChannel={activeChannel}
+                        onChannelChange={handleChannelChange}
+                        exitSlot={exitLink}
+                        exitTo={exitLink ? undefined : exitTo}
+                        exitLabel={exitLabel}
+                        compact={compact}
+                        hideBottomNav={
+                            (activeApp === 'messages' &&
+                                (currentScreenForApp === 'thread_detail' || currentScreenForApp === 'new_thread')) ||
+                            (activeApp === 'email' && currentScreenForApp === 'detail')
+                        }
+                        secondaryMenu={
+                            secondaryMenu
+                                ? {
+                                      items: secondaryMenu.items,
+                                      activeId: secondaryMenu.activeId,
+                                      onSelect: secondaryMenu.onSelect,
+                                      onSecondaryBack: secondaryMenu.onSecondaryBack,
+                                  }
+                                : undefined
+                        }
+                    >
+                        <div
+                            className={joinClasses(
+                                SIM_RUNTIME_SCREEN,
+                                SIM_CHANNEL,
+                                simChannelModifierForShellChannel(activeChannel),
+                            )}
+                        >
+                            {activeContent}
+                        </div>
+                    </PhoneSimulatorShell>
+                </div>
             </div>
             <SimulatorDialog
                 open={view.contactsPanelOpen}
