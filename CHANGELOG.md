@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.9] - 2026-07-02
+
+### Changed
+
+- Re-export canonical device payload types from `@signalsafe/simulator-core` in `portableSimulator.ts` instead of duplicating definitions in `@signalsafe/simulator-react`.
+- Bumped `@signalsafe/simulator-core` dependency to `^0.1.8`.
+
+### Added
+
+- Tests asserting portable payload re-exports align with `@signalsafe/simulator-core` guards.
+
+### Notes
+
+- Additive compatibility release — existing `@signalsafe/simulator-react` import paths for payload types remain valid.
+- Required by `@signalsafe/simulator-device@0.3.3` and DeliveryPlus registry pins.
+
 ## [0.2.4] - 2026-06-28
 
 ### Added
