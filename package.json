@@ -1,6 +1,6 @@
 {
   "name": "@signalsafe/simulator-react",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "type": "module",
   "description": "UI-kit agnostic React device simulator shell, session state, and utilities (no routing or API).",
   "license": "MIT",
@@ -90,7 +90,7 @@
     "test:monorepo": "cd ../../frontend && yarn vitest run --config vitest.simulator-react.config.ts"
   },
   "dependencies": {
-    "@signalsafe/simulator-core": "^0.1.7",
+    "@signalsafe/simulator-core": "^0.1.8",
     "@signalsafe/tree-spec": "^0.3.3"
   },
   "peerDependencies": {
@@ -101,12 +101,12 @@
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@types/react-test-renderer": "^18.3.0",
+    "@vitest/coverage-v8": "^3.2.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-test-renderer": "^18.3.1",
     "tsx": "^4.19.2",
     "typescript": "^5.4.2",
-    "@vitest/coverage-v8": "^3.2.4",
     "vitest": "^3.2.4"
   }
 }

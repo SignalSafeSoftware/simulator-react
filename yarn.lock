@@ -473,10 +473,10 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.62.2.tgz#3671ce3f9b928d5c01f879792d5c0b60ae14d4ad"
   integrity sha512-BfzEnDJOt9T8M989/lA37EcJgat01wLRnoi5dQf3QzOH7jzpqTAzdDbVfRljVr5r+jzKqpbHeyOfAaXxAd0PAA==
 
-"@signalsafe/simulator-core@^0.1.7":
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/@signalsafe/simulator-core/-/simulator-core-0.1.7.tgz#85dd6c706589a2b0a0531cd8cd6114a5ae72ea52"
-  integrity sha512-l3oKUqcxPFntyR1UzhTDPP2n94AU+LePDMZ3Xo2qRr5sbrLVVb1lxQjQjGQH4zZkCHhAj4cRQ8UqSQP4V/iizQ==
+"@signalsafe/simulator-core@^0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@signalsafe/simulator-core/-/simulator-core-0.1.8.tgz#e16b43e0fb49388e82407a026a8bbade5b32f9fd"
+  integrity sha512-OwAE26GKL0NCsik/DLebzFxzgAKUQEFKGlCgJcSgITLwl8cpIGLKt5EO6N6cvCh3+uvHyLT387NA4YE1GlKUJw==
   dependencies:
     "@signalsafe/tree-spec" "^0.3.3"
 
