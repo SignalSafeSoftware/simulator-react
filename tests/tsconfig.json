@@ -1,14 +1,13 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "..",
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "paths": {
-      "@signalsafe/tree-spec": ["../tree-spec/src/index.ts"],
-      "@signalsafe/tree-spec/*": ["../tree-spec/src/*"],
-      "@signalsafe/simulator-core": ["../simulator-core/src/index.ts"],
-      "@signalsafe/simulator-core/*": ["../simulator-core/src/*"],
+      "@signalsafe/tree-spec": ["../../tree-spec/src/index.ts"],
+      "@signalsafe/tree-spec/*": ["../../tree-spec/src/*"],
+      "@signalsafe/simulator-core": ["../../simulator-core/src/index.ts"],
+      "@signalsafe/simulator-core/*": ["../../simulator-core/src/*"],
       "@signalsafe/simulator-react": ["../src/index.ts"],
       "@signalsafe/simulator-react/*": ["../src/*"],
       "@workspace-simulator-test-support/*": ["./support/*"],
