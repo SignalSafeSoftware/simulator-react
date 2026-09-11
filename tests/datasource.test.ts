@@ -5,6 +5,7 @@ import {
   deviceJsonToPayload,
   simulatorDatasourceToPayload,
   updateSimulatorDatasource,
+  updateSimulatorPayload,
 } from '../src/datasource/datasource.js';
 import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 import { simulatorSessionReducer } from '../src/state/simulatorSessionReducer.js';
@@ -130,4 +131,24 @@ describe('JSON datasource compatibility', () => {
     expect(next.view.email.selectedMessageId).toBeNull();
     expect(next.view.phone).toBe(state.view.phone);
   });
+  it('keeps mutable calls, SMS, email and context copies independent of the snapshot', () => {
+    const source = createSimulatorDatasource(json);
+    const original = simulatorDatasourceToPayload(source);
+    const copy = simulatorDatasourceToPayload(source);
+    if (copy.phone) copy.phone.content.transcript = 'Edited scenario';
+    if (copy.sms) copy.sms.thread.messages.pop();
+    if (copy.email) copy.email.inbox.pop();
+    if (copy.home) copy.home.settingsSections.pop();
+    expect(simulatorDatasourceToPayload(source)).toEqual(original);
+    expect(copy).not.toEqual(original);
+  });
+  it('reconciles an already converted payload without allocating another content copy', () => {
+    const source = createSimulatorDatasource(json);
+    const payload = simulatorDatasourceToPayload(source);
+    const state = getInitialSessionState(payload);
+    const next = updateSimulatorPayload(state, payload);
+    expect(next.payload).toBe(payload);
+    expect(next.view).toBe(state.view);
+  });
+
 });

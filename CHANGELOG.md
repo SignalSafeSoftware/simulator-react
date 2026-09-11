@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0 — 2026-09-11
+
+- Expose deeply readonly datasource snapshots, matching recursive runtime freezing. Nested writes now fail at compile time; use the existing mutable session conversion when editing content.
+- Add `updateSimulatorPayload` to reconcile a previously converted payload without cloning content again.
+- Compile negative public type checks alongside source checks and verify mutable-copy isolation.
+
 ## 0.3.0 — 2026-09-11
 
 - Add validated JSON datasource snapshots sharing the existing full-device/session model.

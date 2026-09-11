@@ -7,17 +7,22 @@ import { templateDetailToPayload } from '../adapters/templateToSession.js';
 import { validateSimulatorPayload } from '../utils/validateSimulatorPayload.js';
 import { validateDeviceJson } from './validateDeviceJson.js';
 
+/** JSON-shaped snapshot fields, including all nested arrays and objects. */
+export type SimulatorReadonly<T> = {
+  readonly [Key in keyof T]: SimulatorReadonly<T[Key]>;
+};
+
 type Context = Omit<
   SimulatorTemplatePayload,
   'phone' | 'contacts' | 'sms' | 'email'
 >;
 /** Read-only content, not a transport or an action provider. Calls retain scenario and history separately. */
 export interface SimulatorDatasource {
-  readonly calls: SimulatorTemplatePayload['phone'];
-  readonly contacts: SimulatorTemplatePayload['contacts'];
-  readonly sms: SimulatorTemplatePayload['sms'];
-  readonly email: SimulatorTemplatePayload['email'];
-  readonly context: Context;
+  readonly calls: SimulatorReadonly<SimulatorTemplatePayload['phone']>;
+  readonly contacts: SimulatorReadonly<SimulatorTemplatePayload['contacts']>;
+  readonly sms: SimulatorReadonly<SimulatorTemplatePayload['sms']>;
+  readonly email: SimulatorReadonly<SimulatorTemplatePayload['email']>;
+  readonly context: SimulatorReadonly<Context>;
 }
 
 function freeze<T>(value: T): T {
@@ -90,13 +95,15 @@ export function deviceJsonToPayload(
 export function simulatorDatasourceToPayload(
   datasource: SimulatorDatasource,
 ): SimulatorTemplatePayload {
+  // structuredClone creates writable objects and arrays at every level. The
+  // assertion is confined to this copy boundary; snapshots remain deeply readonly.
   return structuredClone({
     ...datasource.context,
     phone: datasource.calls,
     contacts: datasource.contacts,
     sms: datasource.sms,
     email: datasource.email,
-  });
+  }) as SimulatorTemplatePayload;
 }
 
 /** Refresh content without restarting the scenario, navigation stacks, choices or component drafts. */
@@ -104,7 +111,14 @@ export function updateSimulatorDatasource(
   state: SimulatorSessionState,
   datasource: SimulatorDatasource,
 ): SimulatorSessionState {
-  const payload = simulatorDatasourceToPayload(datasource);
+  return updateSimulatorPayload(state, simulatorDatasourceToPayload(datasource));
+}
+
+/** Reconcile an already converted session payload without copying it again. */
+export function updateSimulatorPayload(
+  state: SimulatorSessionState,
+  payload: SimulatorTemplatePayload,
+): SimulatorSessionState {
   const selected = state.view.email.selectedMessageId;
   const emailStillExists =
     selected === null ||

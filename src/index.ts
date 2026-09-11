@@ -118,9 +118,10 @@ export {
     createSimulatorDatasourceFromPayload,
     simulatorDatasourceToPayload,
     updateSimulatorDatasource,
+    updateSimulatorPayload,
     deviceJsonToPayload,
 } from './datasource/datasource.js';
-export type { SimulatorDatasource } from './datasource/datasource.js';
+export type { SimulatorDatasource, SimulatorReadonly } from './datasource/datasource.js';
 
 export { default as PhoneKeypad } from './views/PhoneKeypad.js';
 export type { PhoneKeypadProps, PhoneKeypadDigit } from './views/PhoneKeypad.js';
