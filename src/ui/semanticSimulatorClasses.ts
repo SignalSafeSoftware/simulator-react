@@ -4,6 +4,10 @@ export const SIM_RUNTIME = 'simulator-runtime';
 export const SIM_RUNTIME_SCREEN = 'simulator-runtime__screen';
 export const SIM_RUNTIME_APP_ROOT = 'simulator-runtime__app-root';
 export const SIM_RUNTIME_DIAGNOSTICS_BAND = 'simulator-runtime__diagnostics-band';
+export const SIM_SCREEN_HEADER = 'simulator-screen__header';
+export const SIM_SCREEN_HEADER_ROW = 'simulator-screen__header-row';
+export const SIM_HOME_SETTINGS_BACK_BAR = 'simulator-home-settings__back-bar';
+export const SIM_HOME_SETTINGS_HEADER = 'simulator-home-settings__header';
 export const SIM_CHANNEL = 'simulator-channel';
 export const SIM_CHANNEL_PHONE = 'simulator-channel--phone';
 export const SIM_CHANNEL_EMAIL = 'simulator-channel--email';
@@ -43,6 +47,7 @@ export const SIM_EMAIL_MESSAGE_ROW = 'simulator-email__message-row';
 export const SIM_EMAIL_MESSAGE_DETAIL = 'simulator-email__message-detail';
 export const SIM_EMAIL_MESSAGE_DETAIL_BODY = 'simulator-email__message-detail-body';
 export const SIM_EMAIL_STATUS_BADGE = 'simulator-email__status-badge';
+export const SIM_EMAIL_COMPOSE_ACTION = 'simulator-email__compose-action';
 
 export const SIM_MESSAGES = 'simulator-messages';
 export const SIM_MESSAGES_THREAD_LIST = 'simulator-messages__thread-list';
@@ -52,6 +57,7 @@ export const SIM_MESSAGES_MESSAGE_TIMELINE = 'simulator-messages__message-timeli
 export const SIM_MESSAGES_BUBBLE = 'simulator-messages__bubble';
 export const SIM_MESSAGES_BUBBLE_THEM = 'simulator-messages__bubble--them';
 export const SIM_MESSAGES_BUBBLE_ME = 'simulator-messages__bubble--me';
+export const SIM_MESSAGES_COMPOSE_ACTION = 'simulator-messages__compose-action';
 
 export const SIM_ERROR = 'simulator-error';
 export const SIM_ERROR_DIAGNOSTICS = 'simulator-error__diagnostics';
@@ -70,3 +76,9 @@ export function simChannelModifierForShellChannel(channel: string): string | und
             return undefined;
     }
 }
+
+/** Native history list consumer hooks. */
+export const SIM_PHONE_HISTORY_ROW = 'simulator-phone-history-row';
+export const SIM_PHONE_HISTORY_ACTIONS = 'simulator-phone-history-actions';
+export const SIM_PHONE_HISTORY_SEARCH = 'simulator-phone-history-search';
+export const SIM_PHONE_HISTORY_ENTRY = 'simulator-phone-history-entry';

@@ -1,6 +1,8 @@
+import { resolveScreenOverride, type SimulatorScreenOverrides } from './contract/screenOverrides.js';
 /**
  * Shared simulator core: given session state, renders shell + active app + contacts modal.
  */
+import { createSimulatorNavigationDispatch, type SimulatorNavigationOptions } from './contract/navigation.js';
 import type { ReactNode } from 'react';
 import { useCallback, useMemo, useRef } from 'react';
 import PhoneSimulatorShell from './shell/PhoneSimulatorShell.js';
@@ -51,6 +53,10 @@ export interface SimulatorWithSessionProps {
     state: SimulatorSessionState;
     dispatch: (action: SimulatorDispatchAction) => void;
     onSimulatorEvent?: HostSimulatorEventHandler;
+    onNavigation?: SimulatorNavigationOptions['onNavigation'];
+    onNavigationEvent?: SimulatorNavigationOptions['onNavigationEvent'];
+    /** Host content for explicit app/screen destinations, inside the existing shell. */
+    screenOverrides?: SimulatorScreenOverrides;
     exitLink?: ReactNode;
     exitTo?: string;
     exitLabel?: string;
@@ -75,8 +81,11 @@ export interface SimulatorWithSessionProps {
 
 export default function SimulatorWithSession({
     state,
-    dispatch,
+    dispatch: rawDispatch,
+    onNavigation,
+    onNavigationEvent,
     onSimulatorEvent,
+    screenOverrides,
     exitLink,
     exitTo,
     exitLabel = SHELL_EXIT_LABEL,
@@ -94,6 +103,9 @@ export default function SimulatorWithSession({
 }: Readonly<SimulatorWithSessionProps>) {
     const stateRef = useRef(state);
     stateRef.current = state;
+    const dispatch = useMemo(() => onNavigation === undefined && onNavigationEvent === undefined ? rawDispatch : createSimulatorNavigationDispatch({
+        getState: () => stateRef.current, dispatch: rawDispatch, onNavigation, onNavigationEvent,
+    }), [rawDispatch, onNavigation, onNavigationEvent]);
 
     const payload = state.payload;
     const view = state.view;
@@ -134,10 +146,22 @@ export default function SimulatorWithSession({
 
     const currentScreenForApp = getCurrentScreenForApp(view);
 
-    const activeContent =
+    const renderDefault = () =>
         renderActiveScreen(activeApp, renderContext) ?? (
             <UnsupportedScreenFallback app={activeApp} screen={currentScreenForApp} />
         );
+
+    const ScreenOverride = resolveScreenOverride(screenOverrides, state);
+    const activeContent = ScreenOverride === undefined ? renderDefault() : (
+        <ScreenOverride
+            key={`${activeApp}:${currentScreenForApp}`}
+            state={state}
+            location={{ app: activeApp, screen: currentScreenForApp, primaryMenu: view.showPrimaryMenu }}
+            dispatch={dispatch}
+            onBack={renderContext.onBack}
+            renderDefault={renderDefault}
+        />
+    );
 
     const screenMeta = useMemo(() => getScreenMetadata(view, payload), [view, payload]);
 

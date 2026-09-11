@@ -8,6 +8,7 @@ import ContactsView from '../src/views/ContactsView';
 import EmailInboxList from '../src/views/EmailInboxList';
 import EmailMessageDetail from '../src/views/EmailMessageDetail';
 import MessagesThreadListView from '../src/views/MessagesThreadListView';
+import HomeSimulatorView from '../src/views/HomeSimulatorView';
 import PhoneDialView from '../src/views/PhoneDialView';
 import PhoneHistoryList from '../src/views/PhoneHistoryList';
 import PhoneSimulatorView from '../src/views/PhoneSimulatorView';
@@ -56,6 +57,11 @@ import {
     SIM_RUNTIME_APP_ROOT,
     SIM_RUNTIME_DIAGNOSTICS_BAND,
     SIM_RUNTIME_SCREEN,
+    SIM_EMAIL_COMPOSE_ACTION,
+    SIM_MESSAGES_COMPOSE_ACTION,
+    SIM_SCREEN_HEADER_ROW,
+    SIM_HOME_SETTINGS_BACK_BAR,
+    SIM_HOME_SETTINGS_HEADER,
 } from '../src/ui/semanticSimulatorClasses.js';
 import { SIM_BTN_SCREEN_BACK } from '../src/ui/simulatorClasses.js';
 import PhoneIncomingScene from '../src/views/PhoneIncomingScene';
@@ -283,12 +289,15 @@ describe('semantic simulator class hooks', () => {
                     ],
                     selectedMessageId: null,
                     onSelectMessage: vi.fn(),
+                    onCompose: vi.fn(),
                 }),
             );
         });
         expect(findWithClass(renderer!.root, SIM_EMAIL_INBOX)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_EMAIL_MESSAGE_ROW)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_EMAIL_STATUS_BADGE)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_SCREEN_HEADER_ROW)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_EMAIL_COMPOSE_ACTION)?.props['aria-label']).toBe('Compose email');
 
         await act(async () => {
             renderer!.update(
@@ -312,12 +321,15 @@ describe('semantic simulator class hooks', () => {
                 React.createElement(MessagesThreadListView, {
                     threads: [{ id: 't1', preview: 'Hello', senderName: 'Alex' }],
                     onSelectThread: vi.fn(),
+                    onCompose: vi.fn(),
                 }),
             );
         });
         expect(findWithClass(renderer!.root, SIM_MESSAGES)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_MESSAGES_THREAD_LIST)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_MESSAGES_THREAD_ROW)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_SCREEN_HEADER_ROW)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_MESSAGES_COMPOSE_ACTION)?.props['aria-label']).toBe('New thread');
 
         await act(async () => {
             renderer!.update(
@@ -335,6 +347,25 @@ describe('semantic simulator class hooks', () => {
             );
         });
         expect(findWithClass(renderer!.root, SIM_MESSAGES_THREAD_DETAIL)).toBeTruthy();
+    });
+
+    it('renders explicit Home Settings chrome hooks without changing the back button name', async () => {
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(HomeSimulatorView, {
+                    payload: { widgets: [], featuredApps: [], settingsSections: [] },
+                    homeCapabilities: { store: false, settings: true },
+                    screen: 'settings',
+                    onNavigate: vi.fn(),
+                    onAction: vi.fn(),
+                    onBack: vi.fn(),
+                }),
+            );
+        });
+
+        expect(findWithClass(renderer!.root, SIM_HOME_SETTINGS_BACK_BAR)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_HOME_SETTINGS_HEADER)).toBeTruthy();
+        expect(renderer!.root.findByProps({ 'aria-label': 'Back to Home' })).toBeTruthy();
     });
 
     it('renders incoming call history wrapper on PhoneHistoryList', async () => {

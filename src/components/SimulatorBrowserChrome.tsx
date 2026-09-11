@@ -151,7 +151,6 @@ export default function SimulatorBrowserChrome({
                         {renderUrlWithHighlights(url, urlHighlightSegments)}
                     </span>
                 </div>
-                <span className={joinClasses('simulator-text--secondary', SIM_TEXT_SM, simSpacing.ms1)} aria-hidden>Q</span>
             </div>
             <div
                 className={joinClasses(

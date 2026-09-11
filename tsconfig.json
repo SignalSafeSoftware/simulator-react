@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "jsx": "react-jsx",
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -12,15 +16,23 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "paths": {
-      "@signalsafe/tree-spec": ["../tree-spec/src/index.ts"],
-      "@signalsafe/tree-spec/*": ["../tree-spec/src/*"],
-      "@signalsafe/simulator-core": ["../simulator-core/src/index.ts"],
-      "@signalsafe/simulator-core/*": ["../simulator-core/src/*"],
-      "react": ["./node_modules/@types/react/index.d.ts"],
-      "react/jsx-runtime": ["./node_modules/@types/react/jsx-runtime.d.ts"],
-      "react-dom": ["./node_modules/@types/react-dom/index.d.ts"]
+      "react": [
+        "./node_modules/@types/react/index.d.ts"
+      ],
+      "react/jsx-runtime": [
+        "./node_modules/@types/react/jsx-runtime.d.ts"
+      ],
+      "react-dom": [
+        "./node_modules/@types/react-dom/index.d.ts"
+      ]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "tests"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "tests"
+  ]
 }

@@ -23,8 +23,10 @@ import {
 } from '../ui/simulatorClasses.js';
 import {
     SIM_EMAIL_INBOX,
+    SIM_EMAIL_COMPOSE_ACTION,
     SIM_EMAIL_MESSAGE_ROW,
     SIM_EMAIL_STATUS_BADGE,
+    SIM_SCREEN_HEADER_ROW,
 } from '../ui/semanticSimulatorClasses.js';
 
 export interface EmailInboxListProps {
@@ -150,14 +152,14 @@ export default function EmailInboxList({
 
     return (
         <div className={joinClasses(simLayout.stack, SIM_EMAIL_INBOX)}>
-            <div className={simLayout.headerRowBetween}>
+            <div className={joinClasses(simLayout.headerRowBetween, SIM_SCREEN_HEADER_ROW)}>
                 <span className={joinClasses(SIM_FLEX_GROW_1, 'simulator-text--center', SIM_TEXT_SM, 'simulator-text--semibold', 'simulator-text--body')}>
                     {folderLabel}
                 </span>
                 {onCompose != null && (
                     <SimulatorButton
                         tone="outline-primary"
-                        className={joinClasses(SIM_ROUNDED_NONE, simSpacing.py1, simSpacing.px2, simSpacing.me2, 'simulator-btn--sm')}
+                        className={joinClasses(SIM_ROUNDED_NONE, simSpacing.py1, simSpacing.px2, simSpacing.me2, 'simulator-btn--sm', SIM_EMAIL_COMPOSE_ACTION)}
                         onClick={onCompose}
                         aria-label="Compose email"
                     >

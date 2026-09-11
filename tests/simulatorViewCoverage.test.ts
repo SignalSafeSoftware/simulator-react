@@ -318,10 +318,16 @@ describe('simulator view coverage', () => {
                 })
             );
         });
+        expect(renderer!.root.findByProps({ 'aria-label': 'Send' }).props.disabled).toBe(true);
+        onBack.mockClear();
         await act(async () => {
             renderer!.root.findByProps({ 'aria-label': 'Send' }).props.onClick();
         });
-        expect(onBack).toHaveBeenCalled();
+        expect(onBack).not.toHaveBeenCalled();
+        await act(async () => {
+            renderer!.root.findByProps({ 'aria-label': 'Cancel' }).props.onClick();
+        });
+        expect(onBack).toHaveBeenCalledOnce();
 
         await act(async () => {
             renderer!.update(
@@ -446,7 +452,7 @@ describe('simulator view coverage', () => {
         let threadRenderer: ReactTestRenderer | null = null;
         await act(async () => {
             threadRenderer = TestRenderer.create(
-                React.createElement(MessagesNewThreadView, { onBack })
+                React.createElement(MessagesNewThreadView, { onBack, onSend: vi.fn() })
             );
         });
         const threadInputs = threadRenderer!.root.findAllByType('input');
@@ -608,10 +614,6 @@ describe('simulator view coverage', () => {
         });
         expect(flattenText(homeRenderer!.toJSON())).toContain('News');
         await act(async () => {
-            homeRenderer!.root.findByProps({ 'aria-label': 'Search' }).props.onKeyDown({
-                key: 'Enter',
-                preventDefault: vi.fn(),
-            });
             homeRenderer!.root.findByProps({ 'aria-label': 'Store' }).props.onClick();
             homeRenderer!.root.findByProps({ 'aria-label': 'Settings' }).props.onClick();
         });
@@ -702,10 +704,10 @@ describe('simulator view coverage', () => {
         });
         expect(flattenText(homeRenderer!.toJSON())).toContain('General');
         await act(async () => {
-            homeRenderer!.root.findByProps({ 'aria-label': 'Search settings' }).props.onKeyDown({
-                key: 'Enter',
-                preventDefault: vi.fn(),
-            });
+            homeRenderer!.root.findByProps({ 'aria-label': 'Search settings' }).props.onChange({ target: { value: 'missing' } });
+        });
+        expect(flattenText(homeRenderer!.toJSON())).toContain('No matching settings.');
+        await act(async () => {
             homeRenderer!.root.findByProps({ 'aria-label': 'Back to Home' }).props.onClick();
         });
         expect(onBack).toHaveBeenCalled();
@@ -744,7 +746,7 @@ describe('simulator view coverage', () => {
                 })
             );
         });
-        expect(flattenText(homeRenderer!.toJSON())).toContain('No settings.');
+        expect(flattenText(homeRenderer!.toJSON())).toContain('No settings are configured for this scenario.');
     });
 
     it('covers populated directory local-nav rendering and missing-contact detail fallback', async () => {

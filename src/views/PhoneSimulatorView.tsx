@@ -2,7 +2,7 @@
  * Phone app: secondary nav (History, Contacts, Dial, Back) + content. Defaults to History.
  * Wireframe-style segmented local nav; Back from voicemail or secondary Back returns to primary menu.
  */
-import { useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import type { SimulatorDispatchAction } from '../state/simulatorSessionReducer.js';
 import type {
     PhoneScreenId,
@@ -28,9 +28,6 @@ import { getPhoneLocalNavItems } from '../utils/phoneLocalNavItems.js';
 import { simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles.js';
 import {
     SimulatorButton,
-    SimulatorField,
-    SimulatorInput,
-    SimulatorLabel,
     SimulatorList,
     SimulatorListItem,
 } from '../ui/primitives.js';
@@ -55,53 +52,18 @@ import {
     SIM_PHONE_CONTACT_ROW_MAIN,
     SIM_PHONE_CONTACT_ROW_NAME,
     SIM_PHONE_CONTACT_ROW_NUMBER,
+    SIM_SCREEN_HEADER_ROW,
 } from '../ui/semanticSimulatorClasses.js';
 
-function PhoneAddContactForm({
-    onSave,
-    onCancel,
-}: Readonly<{
-    onSave: () => void;
-    onCancel: () => void;
-}>) {
-    const [name, setName] = useState('');
-    const [number, setNumber] = useState('');
-    const nameInputId = 'phone-add-contact-name';
-    const numberInputId = 'phone-add-contact-number';
+function PhoneAddContactEmptyState({ onBack }: Readonly<{ onBack: () => void }>) {
     return (
         <>
             <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>Add Contact</div>
             <div className={simSpacing.p2}>
-                <SimulatorField className={simSpacing.mb2}>
-                    <SimulatorLabel className={simLayout.fieldLabel}>Name</SimulatorLabel>
-                    <SimulatorInput
-                        id={nameInputId}
-                        type="text"
-                        className="simulator-input--sm"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Name"
-                    />
-                </SimulatorField>
-                <SimulatorField className={simSpacing.mb2}>
-                    <SimulatorLabel className={simLayout.fieldLabel}>Number</SimulatorLabel>
-                    <SimulatorInput
-                        id={numberInputId}
-                        type="tel"
-                        className="simulator-input--sm"
-                        value={number}
-                        onChange={(e) => setNumber(e.target.value)}
-                        placeholder="Number"
-                    />
-                </SimulatorField>
-                <div className={joinClasses(simLayout.actionsRow, 'simulator-flex--end')}>
-                    <SimulatorButton tone="outline-secondary" className="simulator-btn--sm" onClick={onCancel}>
-                        Cancel
-                    </SimulatorButton>
-                    <SimulatorButton tone="primary" className="simulator-btn--sm" onClick={onSave}>
-                        Save
-                    </SimulatorButton>
-                </div>
+                <p className={simTypo.emptyState}>Contact creation is not configured for this scenario.</p>
+                <SimulatorButton tone="outline-secondary" className="simulator-btn--sm" onClick={onBack}>
+                    Back to contacts
+                </SimulatorButton>
             </div>
         </>
     );
@@ -233,7 +195,7 @@ export default function PhoneSimulatorView({
 
                 {screen === 'contacts' && (
                     <>
-                        <div className={simLayout.headerRowBetween}>
+                        <div className={joinClasses(simLayout.headerRowBetween, SIM_SCREEN_HEADER_ROW)}>
                             <span className={joinClasses(SIM_FLEX_GROW_1, SIM_TEXT_CENTER)}>Contacts</span>
                             <SimulatorButton
                                 tone="outline-primary"
@@ -298,10 +260,7 @@ export default function PhoneSimulatorView({
                 )}
 
                 {screen === 'add_contact' && (
-                    <PhoneAddContactForm
-                        onSave={() => onNavigate('contacts')}
-                        onCancel={() => onNavigate('contacts')}
-                    />
+                    <PhoneAddContactEmptyState onBack={() => onNavigate('contacts')} />
                 )}
 
                 {screen === 'dial' && (

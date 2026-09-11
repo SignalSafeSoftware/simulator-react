@@ -33,6 +33,7 @@ import {
     SIM_PHONE_CONTACT_ROW_MAIN,
     SIM_PHONE_CONTACT_ROW_NAME,
     SIM_PHONE_CONTACT_ROW_NUMBER,
+    SIM_SCREEN_HEADER_ROW,
 } from '../ui/semanticSimulatorClasses.js';
 import type { SimulatorSessionContact } from '../types/session.js';
 import {
@@ -222,7 +223,7 @@ export default function ContactsView({
                 {onAddContact == null ? (
                     <SimulatorDetailBackBar onBack={onBack} title={title} ariaLabel="Back" titleOnly />
                 ) : (
-                    <div className={simLayout.headerRowBetween}>
+                    <div className={joinClasses(simLayout.headerRowBetween, SIM_SCREEN_HEADER_ROW)}>
                         <span className={joinClasses(SIM_FLEX_GROW_1, 'simulator-text--center')}>{title}</span>
                         <SimulatorButton
                             tone="outline-primary"

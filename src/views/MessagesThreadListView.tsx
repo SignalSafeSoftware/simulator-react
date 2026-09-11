@@ -22,8 +22,10 @@ import {
 } from '../ui/simulatorClasses.js';
 import {
     SIM_MESSAGES,
+    SIM_MESSAGES_COMPOSE_ACTION,
     SIM_MESSAGES_THREAD_LIST,
     SIM_MESSAGES_THREAD_ROW,
+    SIM_SCREEN_HEADER_ROW,
 } from '../ui/semanticSimulatorClasses.js';
 
 export interface ThreadListRow {
@@ -126,14 +128,14 @@ export default function MessagesThreadListView({
 
     return (
         <div className={joinClasses(simLayout.stack, SIM_MESSAGES)}>
-            <div className={simLayout.headerRowBetween}>
+            <div className={joinClasses(simLayout.headerRowBetween, SIM_SCREEN_HEADER_ROW)}>
                 <span className={joinClasses(SIM_FLEX_GROW_1, 'simulator-text--center', SIM_TEXT_SM, 'simulator-text--semibold', 'simulator-text--body')}>
                     Threads
                 </span>
                 {onCompose != null && (
                     <SimulatorButton
                         tone="outline-primary"
-                        className={joinClasses(SIM_ROUNDED_NONE, simSpacing.py1, simSpacing.px2, simSpacing.me2, 'simulator-btn--sm')}
+                        className={joinClasses(SIM_ROUNDED_NONE, simSpacing.py1, simSpacing.px2, simSpacing.me2, 'simulator-btn--sm', SIM_MESSAGES_COMPOSE_ACTION)}
                         onClick={onCompose}
                         aria-label="New thread"
                     >
@@ -144,8 +146,7 @@ export default function MessagesThreadListView({
             <SimulatorSearchInput
                 value={searchQuery}
                 onChange={setSearchQuery}
-                onSubmit={() => {}}
-                placeholder="Q Search"
+                placeholder="Search threads"
                 ariaLabel="Search threads"
                 className={simSpacing.mb3}
             />

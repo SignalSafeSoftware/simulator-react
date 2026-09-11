@@ -216,12 +216,10 @@ describe('phone and panel coverage', () => {
                 })
             );
         });
-        const addContactInputs = phoneRenderer!.root.findAllByType('input');
+        expect(flattenText(phoneRenderer!.toJSON())).toContain('Contact creation is not configured for this scenario.');
+        expect(phoneRenderer!.root.findAllByType('input')).toHaveLength(0);
         await act(async () => {
-            addContactInputs[0].props.onChange({ target: { value: 'New Person' } });
-            addContactInputs[1].props.onChange({ target: { value: '+1555' } });
-            phoneRenderer!.root.findByProps({ children: 'Save' }).props.onClick();
-            phoneRenderer!.root.findByProps({ children: 'Cancel' }).props.onClick();
+            phoneRenderer!.root.findByProps({ children: 'Back to contacts' }).props.onClick();
         });
         expect(onNavigate).toHaveBeenCalledWith('contacts');
 

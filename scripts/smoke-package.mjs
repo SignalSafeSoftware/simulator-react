@@ -2,6 +2,7 @@ import { runSmokePackage } from './smoke-package-lib.mjs';
 
 runSmokePackage({
     runtimeChecks: [
+        { exports: ['createSimulatorDatasource', 'createSimulatorDatasourceFromPayload', 'simulatorDatasourceToPayload', 'updateSimulatorDatasource', 'PhoneCallView', 'PhoneContactEditor', 'PhoneHistoryDetail', 'PhoneHistoryPagination', 'PhoneKeypad', 'SimulatorScreenTile'] },
         {
             subpath: './utils/validateSimulatorPayload',
             exports: ['validateSimulatorPayload'],

@@ -36,6 +36,7 @@ import {
     SIM_AVATAR,
     joinClasses,
 } from './ui/simulatorClasses.js';
+import { SIM_SCREEN_HEADER } from './ui/semanticSimulatorClasses.js';
 
 /** Spacing: section gaps, block padding, action bar. */
 export const simSpacing = {
@@ -77,7 +78,7 @@ export const simScreen = {
     header: joinClasses(
         'simulator-text--center',
         SIM_BORDER_SECONDARY,
-        'simulator-screen__header',
+        SIM_SCREEN_HEADER,
         'simulator-text--sm',
         'simulator-text--semibold',
     ),

@@ -26,6 +26,13 @@ See [docs/ERROR_BOUNDARIES.md](./docs/ERROR_BOUNDARIES.md) for learner-safe erro
 - Provide **shallow lint** (`lintSimulatorPayload`), reachability, deep-link, preview-fallback, and diff utilities.
 - Optional **`SimulatorDeveloperToolsPanel`** for QA/debug views.
 
+Default reusable screens only render interactive controls when the package can complete the
+interaction. Store and Settings search filter supplied scenario content. Settings sections are
+read-only labels because the portable payload has no setting values or save callback. The default
+Add Contact destination explains that creation is not configured; hosts can provide a working form
+through `screenOverrides.phone.add_contact`. An explicit legacy-style demo payload is available in
+[`examples/demo-home-fixture.ts`](./examples/demo-home-fixture.ts).
+
 ## What this package does not do
 
 - Routing, HTTP clients, authentication, or persistence.
@@ -237,3 +244,11 @@ See [SECURITY.md](./SECURITY.md). Treat scenario payloads as trusted authoring c
 
 - [CHANGELOG.md](./CHANGELOG.md)
 - [RELEASING.md](./RELEASING.md)
+
+## Unpublished presentation contract
+
+See [presentation hooks](docs/presentation-contract.md) for explicit banner, compose-action, and Settings chrome hooks. These source additions require release/adoption before hosts remove installed-version fallbacks. Existing navigation, screen-override, and placeholder contracts remain unchanged.
+
+## Datasource and controlled phone views (0.3)
+
+See [datasource contract and examples](docs/datasource.md) for JSON snapshots, refresh semantics, optional call/contact/history presentation and host-owned API adapters. The original scenario engine and JSON entry point remain supported.

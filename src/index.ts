@@ -102,3 +102,32 @@ export { default as SimulatorLintBanner } from './components/SimulatorLintBanner
 export type { SessionStartedEntry, TimelineEntry } from './components/SimulatorSessionTimeline.js';
 
 export type { HostSimulatorEventHandler } from './contract/hostContractTypes.js';
+
+export { createSimulatorNavigationDispatch } from './contract/navigation.js';
+export type { SimulatorNavigationRequest, SimulatorNavigationEvent, SimulatorNavigationHandler, SimulatorNavigationOptions } from './contract/navigation.js';
+export { default as PhoneHistoryList } from './views/PhoneHistoryList.js';
+export type { PhoneHistoryListProps } from './views/PhoneHistoryList.js';
+
+export type { SimulatorScreenOverrides, SimulatorScreenOverrideProps } from './contract/screenOverrides.js';
+
+export type { EmailComposeViewProps } from './views/EmailComposeView.js';
+export type { MessagesNewThreadViewProps } from './views/MessagesNewThreadView.js';
+
+export {
+    createSimulatorDatasource,
+    createSimulatorDatasourceFromPayload,
+    simulatorDatasourceToPayload,
+    updateSimulatorDatasource,
+    deviceJsonToPayload,
+} from './datasource/datasource.js';
+export type { SimulatorDatasource } from './datasource/datasource.js';
+
+export { default as PhoneKeypad } from './views/PhoneKeypad.js';
+export type { PhoneKeypadProps, PhoneKeypadDigit } from './views/PhoneKeypad.js';
+export { default as PhoneCallView, formatPhoneCallDuration } from './views/PhoneCallView.js';
+export type { PhoneCallViewProps } from './views/PhoneCallView.js';
+export { default as PhoneContactEditor } from './views/PhoneContactEditor.js';
+export type { PhoneContactEditorProps } from './views/PhoneContactEditor.js';
+export { default as PhoneHistoryDetail, PhoneHistoryPagination } from './views/PhoneHistoryDetail.js';
+export type { PhoneHistoryDetailProps } from './views/PhoneHistoryDetail.js';
+export { default as SimulatorScreenTile } from './views/SimulatorScreenTile.js';

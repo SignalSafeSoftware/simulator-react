@@ -23,6 +23,7 @@ import {
 
 export interface MessagesNewThreadViewProps {
     onBack: () => void;
+    onSend?: (message: { phoneNumber: string; messageBody: string }) => void;
 }
 
 const footerBtnClass = joinClasses(
@@ -33,22 +34,26 @@ const footerBtnClass = joinClasses(
     SIM_FLEX_GROW_1,
 );
 
-export default function MessagesNewThreadView({ onBack }: Readonly<MessagesNewThreadViewProps>) {
+export default function MessagesNewThreadView({ onBack, onSend }: Readonly<MessagesNewThreadViewProps>) {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [messageBody, setMessageBody] = useState('');
 
     const handleSend = () => {
+        if (!onSend) return;
+        onSend({ phoneNumber: phoneNumber.trim(), messageBody: messageBody.trim() });
         onBack();
     };
 
     return (
         <div className={simLayout.screenColumn}>
             <div className={joinClasses(simScreen.header, simSpacing.mb3, SIM_FLEX_SHRINK_0)}>New Thread</div>
+            {!onSend && <p role="status">Message sending is not configured for this scenario.</p>}
             <div className={joinClasses(simSpacing.px3, simSpacing.pt3, SIM_FLEX_SHRINK_0)}>
                 <SimulatorField>
                     <SimulatorLabel className={simLayout.fieldLabel}>Phone Number</SimulatorLabel>
                     <SimulatorInput
                         type="tel"
+                        disabled={!onSend}
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
                         placeholder=""
@@ -63,6 +68,7 @@ export default function MessagesNewThreadView({ onBack }: Readonly<MessagesNewTh
                     <SimulatorLabel className={simLayout.fieldLabel}>Message</SimulatorLabel>
                     <SimulatorTextarea
                         rows={3}
+                        disabled={!onSend}
                         value={messageBody}
                         onChange={(e) => setMessageBody(e.target.value)}
                         placeholder="I will send you a message"
@@ -71,7 +77,7 @@ export default function MessagesNewThreadView({ onBack }: Readonly<MessagesNewTh
                     />
                 </SimulatorField>
                 <div className={simLayout.actionsRow}>
-                    <SimulatorButton tone="primary" className={footerBtnClass} onClick={handleSend} aria-label="Send">
+                    <SimulatorButton tone="primary" className={footerBtnClass} onClick={handleSend} disabled={!onSend} aria-label="Send">
                         Send
                     </SimulatorButton>
                     <SimulatorButton tone="secondary" className={footerBtnClass} onClick={onBack} aria-label="Cancel">

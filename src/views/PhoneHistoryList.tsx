@@ -1,9 +1,9 @@
 /**
  * Phone History tab: list of recent calls by kind (incoming, outgoing, missed, voicemail)
  * + optional "Incoming call" card + optional Voicemail summary row.
- * Wireframe: search bar ("Q Search"), profile icon (left), name/number, date, rectangular status tag.
+ * Wireframe: search bar, profile icon (left), name/number, date, rectangular status tag.
  */
-import { useState, useMemo } from 'react';
+import { Fragment, useState, useMemo, type ReactNode } from 'react';
 import type { SimulatorCallHistoryEntry, CallHistoryEntryKind } from '../types/session.js';
 import type { PhoneSimulatorContent } from '../types/portableSimulator.js';
 import { SimulatorSearchInput } from '../components/SimulatorSearchInput.js';
@@ -26,6 +26,10 @@ import {
 import {
     SIM_PHONE_INCOMING_CALL_HISTORY,
     SIM_PHONE_HISTORY_INCOMING_ROW,
+    SIM_PHONE_HISTORY_ROW,
+    SIM_PHONE_HISTORY_ENTRY,
+    SIM_PHONE_HISTORY_ACTIONS,
+    SIM_PHONE_HISTORY_SEARCH,
     SIM_CALL_STATUS_BADGE,
     SIM_CALL_STATUS_BADGE_INCOMING,
     SIM_CALL_STATUS_BADGE_MISSED,
@@ -61,6 +65,14 @@ export interface PhoneHistoryListProps {
     onSelectIncoming: () => void;
     onSelectVoicemail: () => void;
     onSelectEntry?: (id: string) => void;
+    /** Controlled search value. Omit to retain the built-in local search state. */
+    searchQuery?: string;
+    onSearchQueryChange?: (query: string) => void;
+    searchAriaLabel?: string;
+    /** Current selection is announced on its native row without changing navigation. */
+    selectedEntryId?: string | null;
+    /** Host actions render beside the native row, never inside its button. */
+    renderEntryActions?: (entry: SimulatorCallHistoryEntry) => ReactNode;
 }
 
 /** Derive kind from entry for backward compat (label or default). */
@@ -154,11 +166,13 @@ function PhoneHistoryRowButton({
     onClick,
     className,
     ariaLabel,
+    selected,
     children,
 }: Readonly<{
     onClick: () => void;
     className: string;
     ariaLabel?: string;
+    selected?: boolean;
     children: React.ReactNode;
 }>): JSX.Element {
     return (
@@ -168,6 +182,7 @@ function PhoneHistoryRowButton({
             className={className}
             style={{ cursor: 'pointer' }}
             aria-label={ariaLabel}
+            aria-current={selected || undefined}
         >
             {children}
         </button>
@@ -181,8 +196,18 @@ export default function PhoneHistoryList({
     onSelectIncoming,
     onSelectVoicemail,
     onSelectEntry,
+    searchQuery: controlledSearchQuery,
+    onSearchQueryChange,
+    searchAriaLabel = 'Search calls',
+    selectedEntryId,
+    renderEntryActions,
 }: Readonly<PhoneHistoryListProps>) {
-    const [searchQuery, setSearchQuery] = useState('');
+    const [localSearchQuery, setLocalSearchQuery] = useState('');
+    const searchQuery = controlledSearchQuery ?? localSearchQuery;
+    const setSearchQuery = (query: string) => {
+        if (controlledSearchQuery === undefined) setLocalSearchQuery(query);
+        onSearchQueryChange?.(query);
+    };
     const filteredEntries = useMemo(
         () => entries.filter((e) => matchesSearch(e, searchQuery)),
         [entries, searchQuery]
@@ -196,16 +221,15 @@ export default function PhoneHistoryList({
             <SimulatorSearchInput
                 value={searchQuery}
                 onChange={setSearchQuery}
-                onSubmit={() => {}}
-                placeholder="Q Search"
-                ariaLabel="Search calls"
-                className={simSpacing.mb2}
+                placeholder="Search calls"
+                ariaLabel={searchAriaLabel}
+                className={joinClasses(simSpacing.mb2, SIM_PHONE_HISTORY_SEARCH)}
             />
             {showIncoming && (
                 <PhoneHistoryRowButton
                     onClick={onSelectIncoming}
                     className={joinClasses(incomingCardClass, SIM_PHONE_HISTORY_INCOMING_ROW)}
-                    aria-label="Incoming call"
+                    ariaLabel="Incoming call"
                 >
                     <ProfileIcon />
                     <div className={joinClasses(SIM_FLEX_COL, 'simulator-min-w-0', SIM_FLEX_GROW_1)}>
@@ -233,7 +257,7 @@ export default function PhoneHistoryList({
                 <PhoneHistoryRowButton
                     onClick={onSelectVoicemail}
                     className={joinClasses(listRowClass, SIM_SURFACE_WHITE)}
-                    aria-label="Voicemail"
+                    ariaLabel="Voicemail"
                 >
                     <ProfileIcon />
                     <span className={joinClasses('simulator-text--medium', SIM_FLEX_GROW_1)}>Voicemail</span>
@@ -253,6 +277,7 @@ export default function PhoneHistoryList({
                     const secondary = entry.name != null && entry.number ? entry.number : null;
                     const rowSurface = joinClasses(
                         listRowClass,
+                        SIM_PHONE_HISTORY_ROW,
                         kind === 'incoming' || kind === 'missed' ? SIM_SURFACE_LIGHT : SIM_SURFACE_WHITE,
                     );
                     const badgeClass = joinClasses(
@@ -275,13 +300,26 @@ export default function PhoneHistoryList({
                             <span className={badgeClass}>{kindLabel(kind)}</span>
                         </>
                     );
-                    return actionable ? (
-                        <PhoneHistoryRowButton key={entry.id} onClick={handleClick} className={rowSurface}>
+                    const actions = renderEntryActions?.(entry);
+                    const row = actionable ? (
+                        <PhoneHistoryRowButton
+                            onClick={handleClick}
+                            className={rowSurface}
+                            selected={selectedEntryId === entry.id}
+                        >
                             {rowContent}
                         </PhoneHistoryRowButton>
                     ) : (
-                        <div key={entry.id} className={rowSurface}>{rowContent}</div>
+                        <div className={rowSurface} aria-current={selectedEntryId === entry.id || undefined}>
+                            {rowContent}
+                        </div>
                     );
+                    return actions != null ? (
+                        <div key={entry.id} className={SIM_PHONE_HISTORY_ENTRY}>
+                            {row}
+                            <div className={SIM_PHONE_HISTORY_ACTIONS}>{actions}</div>
+                        </div>
+                    ) : <Fragment key={entry.id}>{row}</Fragment>;
                 })}
             </div>
             {filteredEntries.length === 0 && !showIncoming && !showVoicemailRow && (

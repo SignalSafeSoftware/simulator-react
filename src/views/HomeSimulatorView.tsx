@@ -15,7 +15,7 @@ import type {
 import { SimulatorActions } from '../actions/index.js';
 import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles.js';
 import type { SimulatorCapabilities } from '../utils/simulatorCapabilities.js';
-import { SimulatorButton, SimulatorField, SimulatorInput, SimulatorLabel } from '../ui/primitives.js';
+import { SimulatorButton } from '../ui/primitives.js';
 import {
     joinClasses,
     SIM_AVATAR,
@@ -31,6 +31,10 @@ import {
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
 } from '../ui/simulatorClasses.js';
+import {
+    SIM_HOME_SETTINGS_BACK_BAR,
+    SIM_HOME_SETTINGS_HEADER,
+} from '../ui/semanticSimulatorClasses.js';
 
 export interface HomeSimulatorViewProps {
     payload: SimulatorHomePayload | null;
@@ -89,11 +93,9 @@ const dashboardNavBtnClass = joinClasses(
 /** Store subview: header, search, app cards (icon, name, Download). Back returns to Home. */
 function HomeStoreScreen({
     featuredApps,
-    onBack: _onBack,
     onAction,
 }: Readonly<{
     featuredApps: SimulatorHomeStoreApp[];
-    onBack: () => void;
     onAction: (action: SimulatorAction) => void;
 }>) {
     const [search, setSearch] = useState('');
@@ -137,8 +139,7 @@ function HomeStoreScreen({
             <SimulatorSearchInput
                 value={search}
                 onChange={setSearch}
-                onSubmit={() => {}}
-                placeholder="Q Test"
+                placeholder="Search apps"
                 ariaLabel="Search store"
                 className={simSpacing.mb3}
             />
@@ -147,7 +148,7 @@ function HomeStoreScreen({
     );
 }
 
-/** Settings subview: header, search, sections (title + input). Back returns to Home. */
+/** Settings subview: header, functional title search, and read-only section labels. Back returns to Home. */
 function HomeSettingsScreen({
     settingsSections,
     onBack,
@@ -156,36 +157,36 @@ function HomeSettingsScreen({
     onBack: () => void;
 }>) {
     const [search, setSearch] = useState('');
+    const normalizedSearch = search.trim().toLowerCase();
+    const filteredSections = normalizedSearch
+        ? settingsSections.filter((section) => section.title.toLowerCase().includes(normalizedSearch))
+        : settingsSections;
 
     return (
         <div className={simLayout.stack}>
-            <SimulatorDetailBackBar onBack={onBack} title="Settings" ariaLabel="Back to Home" />
-            <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>Settings</div>
+            <SimulatorDetailBackBar
+                onBack={onBack}
+                title="Settings"
+                ariaLabel="Back to Home"
+                className={SIM_HOME_SETTINGS_BACK_BAR}
+            />
+            <div className={joinClasses(simScreen.header, simSpacing.sectionGap, SIM_HOME_SETTINGS_HEADER)}>Settings</div>
             <SimulatorSearchInput
                 value={search}
                 onChange={setSearch}
-                onSubmit={() => {}}
-                placeholder="Q Test"
+                placeholder="Search settings"
                 ariaLabel="Search settings"
                 className={simSpacing.mb3}
             />
             {settingsSections.length === 0 ? (
-                <p className={simTypo.emptyState}>No settings.</p>
+                <p className={simTypo.emptyState}>No settings are configured for this scenario.</p>
+            ) : filteredSections.length === 0 ? (
+                <p className={simTypo.emptyState}>No matching settings.</p>
             ) : (
                 <div className={joinClasses(SIM_FLEX_COL, 'simulator-spacing--gap-3')}>
-                    {settingsSections.map((section) => (
+                    {filteredSections.map((section) => (
                         <div key={section.id} className={joinClasses(simBorder.tile, SIM_ROUNDED_NONE, simSpacing.p3, SIM_SURFACE_WHITE)}>
-                            <SimulatorField>
-                                <SimulatorLabel className={joinClasses(simLayout.fieldLabel, 'simulator-text--block', simSpacing.mb2)}>
-                                    {section.title}
-                                </SimulatorLabel>
-                                <SimulatorInput
-                                    type="text"
-                                    placeholder=""
-                                    className={SIM_ROUNDED_NONE}
-                                    aria-label={section.title}
-                                />
-                            </SimulatorField>
+                            <span className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_BODY)}>{section.title}</span>
                         </div>
                     ))}
                 </div>
@@ -194,7 +195,7 @@ function HomeSettingsScreen({
     );
 }
 
-/** Home dashboard: centered header, search, Store and Settings as rectangular buttons. */
+/** Home dashboard: Store and Settings as rectangular buttons followed by supplied widgets. */
 function HomeDashboard({
     widgets,
     hasStore,
@@ -208,18 +209,8 @@ function HomeDashboard({
     onNavigate: (screen: HomeScreenId) => void;
     onAction: (action: SimulatorAction) => void;
 }>) {
-    const [search, setSearch] = useState('');
-
     return (
         <div className={simLayout.stack}>
-            <SimulatorSearchInput
-                value={search}
-                onChange={setSearch}
-                onSubmit={() => {}}
-                placeholder="Q Search"
-                ariaLabel="Search"
-                className={simSpacing.mb3}
-            />
             {(hasStore || hasSettings) && (
                 <div className={joinClasses(simLayout.actionsRow, simSpacing.mb3)}>
                     {hasStore && (
@@ -283,7 +274,7 @@ export default function HomeSimulatorView({
     const settingsSections = payload?.settingsSections ?? [];
 
     if (screen === 'store') {
-        return <HomeStoreScreen featuredApps={featuredApps} onBack={onBack} onAction={onAction} />;
+        return <HomeStoreScreen featuredApps={featuredApps} onAction={onAction} />;
     }
     if (screen === 'settings') {
         return <HomeSettingsScreen settingsSections={settingsSections} onBack={onBack} />;

@@ -12,6 +12,7 @@ export interface SimulatorDetailBackBarProps {
     title?: string;
     ariaLabel?: string;
     titleOnly?: boolean;
+    className?: string;
 }
 
 export function SimulatorDetailBackBar({
@@ -19,9 +20,10 @@ export function SimulatorDetailBackBar({
     title,
     ariaLabel = 'Back',
     titleOnly = false,
+    className,
 }: Readonly<SimulatorDetailBackBarProps>) {
     return (
-        <div className={simBackBar.container}>
+        <div className={`${simBackBar.container} ${className ?? ''}`.trim()}>
             {!titleOnly && (
                 <SimulatorButton
                     tone="link"
