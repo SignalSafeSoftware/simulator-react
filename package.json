@@ -91,7 +91,7 @@
   },
   "dependencies": {
     "@signalsafe/simulator-core": "^0.1.10",
-    "@signalsafe/tree-spec": "^0.3.4"
+    "@signalsafe/tree-spec": "^0.4.0"
   },
   "peerDependencies": {
     "react": "^18.0.0",
