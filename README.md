@@ -227,7 +227,7 @@ yarn test
 
 Requires Node.js **>=22.12.0** (`engines.node`). CI runs checks, tests, and smoke on Node **22** and **24**; publish uses Node **24**. Node 20 is no longer supported (GitHub Actions Node 20 deprecation).
 
-`yarn build` uses `tsconfig.build.json` and resolves `@signalsafe/*` from `node_modules`. Ecosystem sibling `paths` in `tsconfig.json` apply to local typecheck/tests only.
+`yarn build` uses `tsconfig.build.json` and resolves `@signalsafe/*` from `node_modules`. No sibling checkout is required for release validation.
 
 ```bash
 yarn install
@@ -245,10 +245,36 @@ See [SECURITY.md](./SECURITY.md). Treat scenario payloads as trusted authoring c
 - [CHANGELOG.md](./CHANGELOG.md)
 - [RELEASING.md](./RELEASING.md)
 
-## Unpublished presentation contract
+## Presentation contract
 
-See [presentation hooks](docs/presentation-contract.md) for explicit banner, compose-action, and Settings chrome hooks. These source additions require release/adoption before hosts remove installed-version fallbacks. Existing navigation, screen-override, and placeholder contracts remain unchanged.
+See [presentation hooks](docs/presentation-contract.md) for explicit banner, compose-action, and Settings chrome hooks. These hooks are included in this release; consumers must install matching runtime/theme versions before removing older-version fallbacks. Existing navigation, screen-override, and placeholder contracts remain unchanged.
 
 ## Datasource and controlled phone views (0.3)
 
 See [datasource contract and examples](docs/datasource.md) for JSON snapshots, refresh semantics, optional call/contact/history presentation and host-owned API adapters. The original scenario engine and JSON entry point remain supported.
+
+## Host-controlled contact and compose workflows
+
+- `PhoneNumberFormatContext` formats display values across contact lists/details,
+  messages, call views and history. It does not rewrite callback identifiers or dial targets.
+- `ContactValuesEditor` supplies labeled phone/email/postal groups, stable value IDs,
+  preferences, suggestions, add/remove controls and formatting without changing raw input.
+- `PhoneContactEditor` accepts `valueFields`, `identityImage`, and `notice` slots. Its
+  scalar-number contract is an alternative to grouped fields; unsupported scalar props
+  are rejected when grouped fields own the values.
+- `ContactPhotoControls` renders host-supplied current/fallback/selected previews and
+  accessible change/remove/restore actions. The host owns validation, object URLs and storage.
+- `EmailComposeContext`, `MessageComposeContext`, and `PhoneDialDraftContext` support
+  controlled drafts. Email includes Bcc. Async compose failure preserves input.
+- `SimulatorCapabilitiesContext` uses `SimulatorActionCapabilities` to declare action
+  availability and visible reasons. This is distinct from the existing payload-inspection
+  `SimulatorCapabilities` type. `CapabilityButton` associates its unavailable reason
+  with the disabled control for assistive technology.
+
+Contact search includes secondary values, labels and optional `postalAddresses`.
+The theme owns contact-group layout and keypad geometry. Number entry and keypad
+edits share one selection-aware value and preserve canonical submission callbacks.
+
+## Release 0.16.2
+
+Requires simulator-core 0.3.1 and TreeSpec ^0.4.0. React and React DOM remain on the supported 18.x peer contract. `ContactPhotoControls` supplies default SVG actions with localized accessible labels; hosts may override `actionIcons`. The optional theme owns dimensions and visual styling. Network requests, import identities, provider configuration and persistence remain host responsibilities.

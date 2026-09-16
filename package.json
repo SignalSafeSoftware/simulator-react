@@ -1,6 +1,6 @@
 {
   "name": "@signalsafe/simulator-react",
-  "version": "0.4.0",
+  "version": "0.16.2",
   "type": "module",
   "description": "UI-kit agnostic React device simulator shell, session state, and utilities (no routing or API).",
   "license": "MIT",
@@ -60,7 +60,9 @@
     "dist",
     "README.md",
     "LICENSE",
-    "docs"
+    "docs",
+    "CHANGELOG.md",
+    "RELEASING.md"
   ],
   "engines": {
     "node": ">=22.12.0"
@@ -73,25 +75,16 @@
     "build": "tsc -p tsconfig.build.json && tsx ./scripts/fix-node-esm-relative-imports.ts dist",
     "lint": "yarn typecheck",
     "typecheck": "tsc --noEmit",
-    "pack:local": "npm pack --pack-destination ../../dist/reusable-npm",
-    "release:check": "node ../../scripts/run-private-package-release-checks.mjs --mode prepublish",
-    "release:verify": "node ../../scripts/run-private-package-release-checks.mjs --mode postpublish",
-    "publish:preflight": "node ../../scripts/check-private-registry-preflight.mjs --scope @signalsafe",
     "publish:dry-run": "npm publish --dry-run",
-    "publish:verify": "node ../../scripts/check-private-package-postpublish.mjs --scope @signalsafe --package @signalsafe/simulator-react --version $npm_package_version",
-    "pack:check": "node ../../scripts/check-package-tarball.mjs --tgz \"../../dist/reusable-npm/signalsafe-simulator-react-$npm_package_version.tgz\" --expect package/dist/index.js --expect package/dist/index.d.ts --expect package/package.json --expect package/README.md",
-    "smoke:external": "node ../../scripts/smoke-simulator-react-external-consumer.mjs",
-    "smoke:published": "node ../../scripts/smoke-simulator-react-external-consumer.mjs --source registry",
     "smoke:package": "node scripts/smoke-package.mjs",
     "prepublishOnly": "npm run build",
     "prepare": "npm run build",
     "test": "vitest run",
-    "test:coverage": "yarn test --coverage",
-    "test:monorepo": "cd ../../frontend && yarn vitest run --config vitest.simulator-react.config.ts"
+    "test:coverage": "yarn test --coverage"
   },
   "dependencies": {
-    "@signalsafe/simulator-core": "^0.1.10",
-    "@signalsafe/tree-spec": "^0.3.4"
+    "@signalsafe/simulator-core": "0.3.1",
+    "@signalsafe/tree-spec": "^0.4.0"
   },
   "peerDependencies": {
     "react": "^18.0.0",
@@ -101,12 +94,13 @@
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@types/react-test-renderer": "^18.3.0",
-    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/coverage-v8": "^5.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-test-renderer": "^18.3.1",
-    "tsx": "^4.19.2",
+    "tsx": "^4.23.13",
     "typescript": "^7.0.2",
-    "vitest": "^3.2.4"
+    "vitest": "^5.0.1",
+    "vite": "^8.3.0"
   }
 }

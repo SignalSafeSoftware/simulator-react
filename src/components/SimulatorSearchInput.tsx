@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Search input for simulator list screens.
  */
@@ -20,11 +21,12 @@ function SimulatorSearchInput({
     value,
     onChange,
     onSubmit,
-    placeholder = 'Search',
-    ariaLabel = 'Search',
+    placeholder,
+    ariaLabel,
     className = '',
     dataSimulatorSearch,
 }: Readonly<SimulatorSearchInputProps>) {
+    const locale = useSimulatorLocale();
     return (
         <SimulatorInput
             type="search"
@@ -36,8 +38,8 @@ function SimulatorSearchInput({
                     onSubmit?.(value);
                 }
             }}
-            placeholder={placeholder}
-            aria-label={ariaLabel}
+            placeholder={placeholder ?? locale.t('list.search')}
+            aria-label={ariaLabel ?? locale.t('list.search')}
             className={joinClasses(simInput.control, className)}
             data-simulator-search={dataSimulatorSearch ? true : undefined}
         />

@@ -127,47 +127,30 @@ export function applyBack(state: SimulatorViewState): SimulatorViewState {
     const next = { ...state };
     switch (app) {
         case 'phone': {
-            const stack = state.phone.stack;
-            if (stack.length === 0) {
-                next.showPrimaryMenu = true;
-                return next;
-            }
-            const prev = stack.at(-1);
-            next.phone = {
-                ...state.phone,
-                screen: prev ?? DEFAULT_PHONE_SCREEN,
-                stack: stack.slice(0, -1),
-            };
+            const screen = state.phone.screen;
+            const parent = screen === 'add_contact' || screen === 'directory'
+                ? 'contacts' : screen === 'incoming_call' || screen === 'voicemail'
+                  ? 'history' : null;
+            next.phone = { ...state.phone, screen: parent ?? screen, stack: [] };
+            next.showPrimaryMenu = parent === null;
+            if (parent === null) { next.activeApp = 'home'; next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN }; }
             break;
         }
         case 'email': {
-            const stack = state.email.stack;
-            if (stack.length === 0) {
-                next.email = {
-                    ...state.email,
-                    screen: DEFAULT_EMAIL_SCREEN,
-                    stack: [],
-                    selectedMessageId: null,
-                };
-                return next;
-            }
-            const prev = stack.at(-1);
-            next.email = {
-                ...state.email,
-                screen: prev ?? DEFAULT_EMAIL_SCREEN,
-                stack: stack.slice(0, -1),
-                selectedMessageId: null,
-            };
+            const screen = state.email.screen;
+            const isDetail = screen === 'detail' || screen === 'compose';
+            const folder = [...state.email.stack].reverse().find(
+                (item) => item === 'list' || item === 'outbox' || item === 'trash',
+            ) ?? DEFAULT_EMAIL_SCREEN;
+            next.email = { ...state.email, screen: isDetail ? folder : screen, stack: [], selectedMessageId: null };
+            next.showPrimaryMenu = !isDetail;
+            if (!isDetail) { next.activeApp = 'home'; next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN }; }
             break;
         }
         case 'messages': {
-            const stack = state.messages.stack;
-            const prev: MessagesScreenId = stack.at(-1) ?? DEFAULT_MESSAGES_SCREEN;
-            next.messages = {
-                ...state.messages,
-                screen: prev,
-                stack: stack.slice(0, -1),
-            };
+            next.messages = { ...state.messages, screen: DEFAULT_MESSAGES_SCREEN, stack: [] };
+            next.showPrimaryMenu = state.messages.screen === DEFAULT_MESSAGES_SCREEN;
+            if (next.showPrimaryMenu) { next.activeApp = 'home'; next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN }; }
             break;
         }
         case 'internet': {

@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
 /**
  * Error boundary scoped to simulator content. Catches render/lifecycle errors
  * in the simulator shell content so the rest of the page (chrome, nav) does not crash.
@@ -6,10 +7,6 @@
  * Pass `showDiagnostics` for author/admin or local debugging surfaces.
  */
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-import {
-    LEARNER_SIMULATOR_ERROR_MESSAGE,
-    LEARNER_SIMULATOR_ERROR_TITLE,
-} from './constants.js';
 import { simSpacing, simStatus } from './simulatorStyles.js';
 import { SimulatorButton } from './ui/primitives.js';
 import {
@@ -60,33 +57,43 @@ export default class SimulatorErrorBoundary extends Component<SimulatorErrorBoun
 
     render(): ReactNode {
         const { error, errorInfo } = this.state;
-        const {
-            children,
-            fallbackTitle,
-            onRetry,
-            showDiagnostics = false,
-        } = this.props;
+        const { children, fallbackTitle, onRetry, showDiagnostics = false } = this.props;
 
         if (error != null) {
+            return <ErrorFallback error={error} errorInfo={errorInfo} fallbackTitle={fallbackTitle} onRetry={onRetry} showDiagnostics={showDiagnostics} />;
+        }
+
+        return children;
+    }
+}
+
+function ErrorDismiss({ onRetry }: { onRetry: () => void }) {
+    const locale = useSimulatorLocale();
+    return (
+        <SimulatorButton tone="outline-secondary" className="simulator-btn--sm" onClick={onRetry}>
+            {locale.t('screen.simulatorErrorBoundary.dismiss')}
+        </SimulatorButton>
+    );
+}
+
+function ErrorFallback({ error, errorInfo, fallbackTitle, onRetry, showDiagnostics }: State & Omit<SimulatorErrorBoundaryProps, 'children'>) {
+    const locale = useSimulatorLocale();
+    if (!error) return null;
             const title =
                 fallbackTitle ??
-                (showDiagnostics ? 'Simulator error' : LEARNER_SIMULATOR_ERROR_TITLE);
-            const body = showDiagnostics
-                ? error.message
-                : LEARNER_SIMULATOR_ERROR_MESSAGE;
+                (showDiagnostics ? locale.t('fallback.error') : locale.t('fallback.learner_simulator_error_title'));
+            const body = showDiagnostics ? error.message : locale.t('fallback.learner_simulator_error_message');
 
             return (
                 <div
-                    className={joinClasses(
-                        SIM_ERROR,
-                        simSpacing.blockPadding,
-                        simStatus.errorBox,
-                    )}
+                    className={joinClasses(SIM_ERROR, simSpacing.blockPadding, simStatus.errorBox)}
                     role="alert"
                     data-testid="simulator-error-fallback"
                     data-show-diagnostics={showDiagnostics ? 'true' : 'false'}
                 >
-                    <p className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_DANGER, simSpacing.mb1)}>{title}</p>
+                    <p className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_DANGER, simSpacing.mb1)}>
+                        {title}
+                    </p>
                     <p className={joinClasses(simSpacing.mb1, 'simulator-text--break')}>{body}</p>
                     {showDiagnostics && errorInfo?.componentStack ? (
                         <pre
@@ -104,15 +111,7 @@ export default class SimulatorErrorBoundary extends Component<SimulatorErrorBoun
                             {errorInfo.componentStack}
                         </pre>
                     ) : null}
-                    {onRetry != null && (
-                        <SimulatorButton tone="outline-secondary" className="simulator-btn--sm" onClick={onRetry}>
-                            Dismiss
-                        </SimulatorButton>
-                    )}
+                    {onRetry != null && <ErrorDismiss onRetry={onRetry} />}
                 </div>
             );
-        }
-
-        return children;
-    }
 }

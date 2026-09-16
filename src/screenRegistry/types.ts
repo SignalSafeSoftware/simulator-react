@@ -1,3 +1,4 @@
+import type { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Typed screen registry: app + screen → renderer component + getProps.
  * Keeps rendering concerns separate from reducer/session state.
@@ -24,6 +25,7 @@ import type { DirectoryViewProps } from '../views/DirectoryView.js';
 
 /** Context passed to getProps: state, dispatch, capabilities, and shell-level handlers. */
 export interface SimulatorRenderContext {
+    locale?: ReturnType<typeof useSimulatorLocale>;
     state: SimulatorSessionState;
     dispatch: (action: SimulatorDispatchAction) => void;
     /** Derived from payload; controls visibility of Store, Settings, Dial, Directory, voicemail, etc. */

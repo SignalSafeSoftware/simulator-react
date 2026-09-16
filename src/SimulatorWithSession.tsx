@@ -1,8 +1,15 @@
-import { resolveScreenOverride, type SimulatorScreenOverrides } from './contract/screenOverrides.js';
+import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
+import {
+    resolveScreenOverride,
+    type SimulatorScreenOverrides,
+} from './contract/screenOverrides.js';
 /**
  * Shared simulator core: given session state, renders shell + active app + contacts modal.
  */
-import { createSimulatorNavigationDispatch, type SimulatorNavigationOptions } from './contract/navigation.js';
+import {
+    createSimulatorNavigationDispatch,
+    type SimulatorNavigationOptions,
+} from './contract/navigation.js';
 import type { ReactNode } from 'react';
 import { useCallback, useMemo, useRef } from 'react';
 import PhoneSimulatorShell from './shell/PhoneSimulatorShell.js';
@@ -10,7 +17,6 @@ import SimulatorDeveloperToolsPanel from './SimulatorDeveloperToolsPanel.js';
 import type { SimulatorDispatchAction } from './state/simulatorSessionReducer.js';
 import type { SimulatorSessionState } from './types/session.js';
 import { viewStateToActiveChannel, getCurrentScreenForApp } from './types/session.js';
-import { SHELL_EXIT_LABEL } from './constants.js';
 import type { HostSimulatorEventHandler } from './contract/hostContractTypes.js';
 import ContactsView from './views/ContactsView.js';
 import { renderActiveScreen } from './screenRegistry/index.js';
@@ -88,7 +94,7 @@ export default function SimulatorWithSession({
     screenOverrides,
     exitLink,
     exitTo,
-    exitLabel = SHELL_EXIT_LABEL,
+    exitLabel,
     compact = false,
     initialContactsSearch,
     developerTools,
@@ -101,34 +107,41 @@ export default function SimulatorWithSession({
     hostOwnsPhoneContactDetail,
     onPhoneContactOpen,
 }: Readonly<SimulatorWithSessionProps>) {
+    const screenLocale = useSimulatorLocale();
+
     const stateRef = useRef(state);
     stateRef.current = state;
-    const dispatch = useMemo(() => onNavigation === undefined && onNavigationEvent === undefined ? rawDispatch : createSimulatorNavigationDispatch({
-        getState: () => stateRef.current, dispatch: rawDispatch, onNavigation, onNavigationEvent,
-    }), [rawDispatch, onNavigation, onNavigationEvent]);
+    const dispatch = useMemo(
+        () =>
+            onNavigation === undefined && onNavigationEvent === undefined
+                ? rawDispatch
+                : createSimulatorNavigationDispatch({
+                      getState: () => stateRef.current,
+                      dispatch: rawDispatch,
+                      onNavigation,
+                      onNavigationEvent,
+                  }),
+        [rawDispatch, onNavigation, onNavigationEvent],
+    );
 
     const payload = state.payload;
     const view = state.view;
     const activeApp = view.activeApp;
     const activeChannel = viewStateToActiveChannel(activeApp);
 
-    const {
-        onToggleContactsPanel,
-        handleChannelChange,
-        renderContext,
-        capabilities,
-    } = useSimulatorSessionHandlers({
-        state,
-        dispatch,
-        onSimulatorEvent,
-        initialContactsSearch,
-        stateRef,
-        renderChoice,
-        renderFeedback,
-        renderIncomingCallExtra,
-        hostOwnsPhoneContactDetail,
-        onPhoneContactOpen,
-    });
+    const { onToggleContactsPanel, handleChannelChange, renderContext, capabilities } =
+        useSimulatorSessionHandlers({
+            state,
+            dispatch,
+            onSimulatorEvent,
+            initialContactsSearch,
+            stateRef,
+            renderChoice,
+            renderFeedback,
+            renderIncomingCallExtra,
+            hostOwnsPhoneContactDetail,
+            onPhoneContactOpen,
+        });
 
     const secondaryMenu = useSimulatorSecondaryMenu(view, dispatch, capabilities.phone);
 
@@ -141,43 +154,49 @@ export default function SimulatorWithSession({
 
     const getVerificationContext = useCallback(
         () => getVerificationContextForApp(activeApp, payload),
-        [activeApp, payload]
+        [activeApp, payload],
     );
 
     const currentScreenForApp = getCurrentScreenForApp(view);
 
     const renderDefault = () =>
-        renderActiveScreen(activeApp, renderContext) ?? (
+        renderActiveScreen(activeApp, { ...renderContext, locale: screenLocale }) ?? (
             <UnsupportedScreenFallback app={activeApp} screen={currentScreenForApp} />
         );
 
     const ScreenOverride = resolveScreenOverride(screenOverrides, state);
-    const activeContent = ScreenOverride === undefined ? renderDefault() : (
-        <ScreenOverride
-            key={`${activeApp}:${currentScreenForApp}`}
-            state={state}
-            location={{ app: activeApp, screen: currentScreenForApp, primaryMenu: view.showPrimaryMenu }}
-            dispatch={dispatch}
-            onBack={renderContext.onBack}
-            renderDefault={renderDefault}
-        />
-    );
+    const activeContent =
+        ScreenOverride === undefined ? (
+            renderDefault()
+        ) : (
+            <ScreenOverride
+                key={`${activeApp}:${currentScreenForApp}`}
+                state={state}
+                location={{
+                    app: activeApp,
+                    screen: currentScreenForApp,
+                    primaryMenu: view.showPrimaryMenu,
+                }}
+                dispatch={dispatch}
+                onBack={renderContext.onBack}
+                renderDefault={renderDefault}
+            />
+        );
 
     const screenMeta = useMemo(() => getScreenMetadata(view, payload), [view, payload]);
 
-    const contactsOverlayContent =
-        renderContactsOverlay?.({
-            contacts: payload.contacts,
-            verificationContext: getVerificationContext(),
-            onClose: onToggleContactsPanel,
-        }) ?? (
-            <ContactsView
-                contacts={payload.contacts}
-                title="Verify contact"
-                verificationContext={getVerificationContext()}
-                onBack={onToggleContactsPanel}
-            />
-        );
+    const contactsOverlayContent = renderContactsOverlay?.({
+        contacts: payload.contacts,
+        verificationContext: getVerificationContext(),
+        onClose: onToggleContactsPanel,
+    }) ?? (
+        <ContactsView
+            contacts={payload.contacts}
+            title={screenLocale.t('screen.simulatorWithSession.verify.contact')}
+            verificationContext={getVerificationContext()}
+            onBack={onToggleContactsPanel}
+        />
+    );
 
     const showDiagnosticsBand =
         developerControls.showDeveloperToolsToolbar ||
@@ -205,7 +224,9 @@ export default function SimulatorWithSession({
                             <SimulatorDeveloperControlsBar
                                 showSnapshotExport={developerControls.showResolvedSnapshotExport}
                                 showNavGraph={developerControls.showResolvedNavGraph}
-                                enableKeyboardShortcuts={developerControls.enableResolvedKeyboardShortcuts}
+                                enableKeyboardShortcuts={
+                                    developerControls.enableResolvedKeyboardShortcuts
+                                }
                                 snapshotCopied={developerControls.snapshotCopied}
                                 graphCopied={developerControls.graphCopied}
                                 shortcutsHelpOpen={developerControls.shortcutsHelpOpen}
@@ -244,7 +265,8 @@ export default function SimulatorWithSession({
                         compact={compact}
                         hideBottomNav={
                             (activeApp === 'messages' &&
-                                (currentScreenForApp === 'thread_detail' || currentScreenForApp === 'new_thread')) ||
+                                (currentScreenForApp === 'thread_detail' ||
+                                    currentScreenForApp === 'new_thread')) ||
                             (activeApp === 'email' && currentScreenForApp === 'detail')
                         }
                         secondaryMenu={
@@ -273,7 +295,7 @@ export default function SimulatorWithSession({
             <SimulatorDialog
                 open={view.contactsPanelOpen}
                 onClose={onToggleContactsPanel}
-                aria-label="Verify contact"
+                aria-label={screenLocale.t('screen.simulatorWithSession.verify.contact')}
             >
                 {contactsOverlayContent}
             </SimulatorDialog>

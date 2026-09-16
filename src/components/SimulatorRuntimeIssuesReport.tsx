@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 import { useId, useState } from 'react';
 import {
     SimulatorCard,
@@ -47,15 +48,25 @@ export default function SimulatorRuntimeIssuesReport({
     className,
     defaultExpanded = false,
 }: Readonly<SimulatorRuntimeIssuesReportProps>) {
+    const screenLocale = useSimulatorLocale();
+
     const bodyId = useId();
     const [open, setOpen] = useState(defaultExpanded);
     const errorCount = issues.filter((issue) => issue.severity === 'error').length;
     const summary = formatIssueCountSummary(issues.length, errorCount);
 
     return (
-        <SimulatorCard className={joinClasses(simSpacing.mb2, className)} data-testid="simulator-runtime-issues-report">
+        <SimulatorCard
+            className={joinClasses(simSpacing.mb2, className)}
+            data-testid="simulator-runtime-issues-report"
+        >
             <SimulatorCardHeader
-                className={joinClasses('simulator-text--sm', 'simulator-surface--header', simSpacing.py1, simSpacing.px2)}
+                className={joinClasses(
+                    'simulator-text--sm',
+                    'simulator-surface--header',
+                    simSpacing.py1,
+                    simSpacing.px2,
+                )}
             >
                 <button
                     type="button"
@@ -69,25 +80,43 @@ export default function SimulatorRuntimeIssuesReport({
                     aria-expanded={open}
                     aria-controls={bodyId}
                 >
-                    Runtime issues
+                    {screenLocale.t('screen.simulatorRuntimeIssuesReport.runtime.issues')}
                 </button>
                 <span className={joinClasses(SIM_MUTED, 'simulator-inline-gap')}>{summary}</span>
             </SimulatorCardHeader>
             <SimulatorCollapse open={open}>
-                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}>
+                <SimulatorCardBody
+                    id={bodyId}
+                    className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}
+                >
                     {issues.length === 0 ? (
-                        <div className={SIM_MUTED}>No runtime issues detected.</div>
+                        <div className={SIM_MUTED}>
+                            {screenLocale.t(
+                                'screen.simulatorRuntimeIssuesReport.no.runtime.issues.detected',
+                            )}
+                        </div>
                     ) : (
                         <ul className={joinClasses(simSpacing.mb0, 'simulator-spacing--ps-3')}>
                             {issues.map((issue, index) => (
-                                <li key={`${issue.severity}-${issue.message}-${issue.node_id ?? ''}-${issue.choice_id ?? ''}-${index}`}>
-                                    <span className={issue.severity === 'error' ? 'simulator-text--danger' : 'simulator-text--warning'}>
+                                <li
+                                    key={`${issue.severity}-${issue.message}-${issue.node_id ?? ''}-${issue.choice_id ?? ''}-${index}`}
+                                >
+                                    <span
+                                        className={
+                                            issue.severity === 'error'
+                                                ? 'simulator-text--danger'
+                                                : 'simulator-text--warning'
+                                        }
+                                    >
                                         {issue.severity}
                                     </span>
                                     {': '}
                                     <span>{issue.message}</span>
                                     {formatIssueLocation(issue) != null && (
-                                        <span className={SIM_MUTED}> {formatIssueLocation(issue)}</span>
+                                        <span className={SIM_MUTED}>
+                                            {' '}
+                                            {formatIssueLocation(issue)}
+                                        </span>
                                     )}
                                 </li>
                             ))}

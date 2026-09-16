@@ -33,16 +33,10 @@ describe('phone and panel coverage', () => {
         await act(async () => {
             dialRenderer = TestRenderer.create(React.createElement(PhoneDialView, { onDial }));
         });
-        await act(async () => {
-            dialRenderer!.root.findByProps({ 'aria-label': 'Digit 1' }).props.onClick();
-            dialRenderer!.root.findByProps({ 'aria-label': 'Digit 2 ABC' }).props.onClick();
-            dialRenderer!.root.findByProps({ 'aria-label': 'Digit 3 DEF' }).props.onClick();
-            dialRenderer!.root.findByProps({ 'aria-label': 'Digit 0 +' }).props.onClick();
-            dialRenderer!.root.findByProps({ 'aria-label': 'Backspace' }).props.onClick();
-        });
-        await act(async () => {
-            dialRenderer!.root.findByProps({ 'aria-label': 'Call' }).props.onClick();
-        });
+        for (const label of ['Digit 1', 'Digit 2 ABC', 'Digit 3 DEF', 'Digit 0 +', 'Backspace']) {
+            await act(async () => { dialRenderer!.root.findByProps({ 'aria-label': label }).props.onClick(); });
+        }
+        await act(async () => { dialRenderer!.root.findByType('form').props.onSubmit({ preventDefault() {} }); });
         expect(onDial).toHaveBeenCalledWith('123');
 
         const onSelectIncoming = vi.fn();
@@ -246,7 +240,7 @@ describe('phone and panel coverage', () => {
             phoneRenderer!.root.findByProps({ 'aria-label': 'Digit 2 ABC' }).props.onClick();
         });
         await act(async () => {
-            phoneRenderer!.root.findByProps({ 'aria-label': 'Call' }).props.onClick();
+            phoneRenderer!.root.findByType('form').props.onSubmit({ preventDefault() {} });
         });
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'dial_phone', dialedNumber: '2' }));
 
@@ -400,13 +394,12 @@ describe('phone and panel coverage', () => {
             smsRenderer!.root.findByProps({ 'aria-label': 'Reply to message' }).props.onChange({ target: { value: ' Reply ' } });
         });
         await act(async () => {
-            smsRenderer!.root.findByProps({ 'aria-label': 'Send' }).props.onClick();
-            smsRenderer!.root.findByProps({ 'aria-label': 'Cancel' }).props.onClick();
+            smsRenderer!.root.findByType('form').props.onSubmit({ preventDefault() {} });
         });
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'click_link', href: '/invoice.pdf' }));
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'click_link', href: 'https://example.test' }));
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'send_reply', replyText: 'Reply' }));
-        expect(onBack).toHaveBeenCalledTimes(1);
+        expect(onBack).not.toHaveBeenCalled();
 
         await act(async () => {
             smsRenderer!.update(
@@ -464,7 +457,7 @@ describe('phone and panel coverage', () => {
             renderer!.root.findByProps({ 'aria-label': 'Reply to message' }).props.onChange({ target: { value: ' Enter send ' } });
         });
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Reply to message' }).props.onKeyDown({ key: 'Enter' });
+            renderer!.root.findByType('form').props.onSubmit({ preventDefault() {} });
             renderer!.root.findByProps({ 'aria-label': 'Link: https://example.test/fallback' }).props.onClick();
         });
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'send_reply', replyText: 'Enter send' }));

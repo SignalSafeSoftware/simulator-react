@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Device shell: frame, bottom nav, optional secondary menu, exit slot.
  * No react-router — pass `exitSlot` for client-side navigation (e.g. <Link>) or rely on `exitTo` as a plain anchor.
@@ -41,13 +42,13 @@ export interface PhoneSimulatorShellProps {
     hideBottomNav?: boolean;
 }
 
-const PRIMARY_CHANNELS: { id: string; label: string; icon: string }[] = [
-    { id: 'contacts', label: 'Phone', icon: '📞' },
-    { id: 'email', label: 'Email', icon: '📧' },
-    { id: 'browser', label: 'Internet', icon: '🌐' },
-    { id: 'sms', label: 'Messages', icon: '💬' },
-    { id: 'home', label: 'Home', icon: '🏠' },
-];
+const PRIMARY_CHANNELS = [
+    { id: 'contacts', labelKey: 'nav.phone', icon: '📞' },
+    { id: 'email', labelKey: 'nav.email', icon: '📧' },
+    { id: 'browser', labelKey: 'nav.internet', icon: '🌐' },
+    { id: 'sms', labelKey: 'nav.messages', icon: '💬' },
+    { id: 'home', labelKey: 'nav.home', icon: '🏠' },
+] as const;
 
 function getHeaderClass(hasTitle: boolean): string {
     return hasTitle ? simShell.headerBetween : simShell.headerEnd;
@@ -75,11 +76,13 @@ function PhoneSimulatorShell({
     className,
     exitSlot,
     exitTo,
-    exitLabel = 'Exit',
+    exitLabel,
     compact = false,
     secondaryMenu,
     hideBottomNav = false,
 }: Readonly<PhoneSimulatorShellProps>) {
+    const screenLocale = useSimulatorLocale();
+
     const deviceFrameStyle: CSSProperties = compact
         ? {
               width: '100%',
@@ -106,7 +109,7 @@ function PhoneSimulatorShell({
         exitSlot ??
         (exitTo ? (
             <a href={exitTo} className={simShell.exitLink}>
-                {exitLabel}
+                {exitLabel ?? screenLocale.t('nav.exit')}
             </a>
         ) : null);
 
@@ -116,7 +119,11 @@ function PhoneSimulatorShell({
     let navigation: ReactNode = null;
     if (resolvedSecondaryMenu) {
         navigation = (
-            <div className={simShell.nav} role="tablist" aria-label="App secondary menu">
+            <div
+                className={simShell.nav}
+                role="tablist"
+                aria-label={screenLocale.t('screen.phoneSimulatorShell.app.secondary.menu')}
+            >
                 {resolvedSecondaryMenu.items.map((item, idx) => {
                     const isBack = item.id === 'back';
                     const isActive = !isBack && resolvedSecondaryMenu.activeId === item.id;
@@ -131,7 +138,9 @@ function PhoneSimulatorShell({
                             className={getNavTabClass(isLast, isBack || !isActive)}
                             style={{ minWidth: 0 }}
                             onClick={() =>
-                                isBack ? resolvedSecondaryMenu.onSecondaryBack() : resolvedSecondaryMenu.onSelect(item.id)
+                                isBack
+                                    ? resolvedSecondaryMenu.onSecondaryBack()
+                                    : resolvedSecondaryMenu.onSelect(item.id)
                             }
                         >
                             {item.icon != null && item.icon !== '' && (
@@ -147,7 +156,11 @@ function PhoneSimulatorShell({
         );
     } else if (showPrimary) {
         navigation = (
-            <div className={simShell.nav} role="tablist" aria-label="Simulator channels">
+            <div
+                className={simShell.nav}
+                role="tablist"
+                aria-label={screenLocale.t('screen.phoneSimulatorShell.simulator.channels')}
+            >
                 {PRIMARY_CHANNELS.map((ch, idx) => {
                     const isActive = activeChannel === ch.id;
                     const isLast = idx === PRIMARY_CHANNELS.length - 1;
@@ -157,7 +170,7 @@ function PhoneSimulatorShell({
                             type="button"
                             role="tab"
                             aria-selected={isActive}
-                            aria-label={ch.label}
+                            aria-label={screenLocale.t(ch.labelKey)}
                             className={getNavTabClass(isLast, !isActive)}
                             style={{ minWidth: 0 }}
                             onClick={() => onChannelChange(ch.id)}
@@ -165,7 +178,7 @@ function PhoneSimulatorShell({
                             <span className={simShell.navTabLabel} aria-hidden>
                                 {ch.icon}
                             </span>
-                            <span>{ch.label}</span>
+                            <span>{screenLocale.t(ch.labelKey)}</span>
                         </button>
                     );
                 })}
@@ -181,7 +194,13 @@ function PhoneSimulatorShell({
                     {exitArea}
                 </div>
             )}
-            <div className={compact ? simShell.outerColumn : joinClasses(simShell.outerColumnPadded, 'simulator-min-vh-100')}>
+            <div
+                className={
+                    compact
+                        ? simShell.outerColumn
+                        : joinClasses(simShell.outerColumnPadded, 'simulator-min-vh-100')
+                }
+            >
                 <div
                     className={compact ? simShell.frameStretch : simShell.frameCentered}
                     style={deviceFrameStyle}

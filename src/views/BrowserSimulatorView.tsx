@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Internet app: page-based browser. Wireframe: "Internet" banner, then browser chrome + page content.
  * Resolves current page by screen (page id), emits open_page, delegates to BrowserPageRenderer.
@@ -31,9 +32,10 @@ export default function BrowserSimulatorView({
     renderChoice,
     renderFeedback,
 }: Readonly<BrowserSimulatorViewProps>) {
+    const screenLocale = useSimulatorLocale();
+
     const pages = payload?.pages ?? [];
-    const currentPage =
-        pages.find((p) => p.id === screen) ?? pages[0] ?? null;
+    const currentPage = pages.find((p) => p.id === screen) ?? pages[0] ?? null;
 
     const onActionRef = useRef(onAction);
     onActionRef.current = onAction;
@@ -48,10 +50,18 @@ export default function BrowserSimulatorView({
     }, [currentPage?.id]);
 
     if (payload == null) {
-        return <p className={joinClasses(SIM_MUTED, 'simulator-text--sm', 'simulator-text--empty')}>No browser for this scenario.</p>;
+        return (
+            <p className={joinClasses(SIM_MUTED, 'simulator-text--sm', 'simulator-text--empty')}>
+                {screenLocale.t('screen.browserSimulatorView.no.browser.for.this.scenario')}
+            </p>
+        );
     }
     if (pages.length === 0 || currentPage == null) {
-        return <p className={joinClasses(SIM_MUTED, 'simulator-text--sm', 'simulator-text--empty')}>No pages for this site.</p>;
+        return (
+            <p className={joinClasses(SIM_MUTED, 'simulator-text--sm', 'simulator-text--empty')}>
+                {screenLocale.t('screen.browserSimulatorView.no.pages.for.this.site')}
+            </p>
+        );
     }
 
     return (

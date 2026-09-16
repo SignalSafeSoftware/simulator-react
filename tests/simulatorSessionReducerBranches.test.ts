@@ -343,13 +343,13 @@ describe('simulatorSessionReducer branch coverage', () => {
             createState({ view: { activeApp: 'phone', phone: { screen: 'dial', stack: ['history'], chosenIndex: null } } }),
             { type: 'BACK' }
         );
-        expect(phoneBackFromStack.view.phone).toEqual({ screen: 'history', stack: [], chosenIndex: null });
+        expect(phoneBackFromStack.view.phone).toEqual({ screen: 'dial', stack: [], chosenIndex: null });
 
         const phoneBackUndefinedFallback = simulatorSessionReducer(
             createState({ view: { activeApp: 'phone', phone: { screen: 'dial', stack: [undefined as never], chosenIndex: null } } }),
             { type: 'BACK' }
         );
-        expect(phoneBackUndefinedFallback.view.phone).toEqual({ screen: 'history', stack: [], chosenIndex: null });
+        expect(phoneBackUndefinedFallback.view.phone).toEqual({ screen: 'dial', stack: [], chosenIndex: null });
 
         const emailBackEmpty = simulatorSessionReducer(
             createState({ view: { activeApp: 'email', email: { screen: 'detail', stack: [], selectedMessageId: 'm1' } } }),
@@ -361,13 +361,13 @@ describe('simulatorSessionReducer branch coverage', () => {
             createState({ view: { activeApp: 'email', email: { screen: 'trash', stack: ['outbox'], selectedMessageId: 'm1' } } }),
             { type: 'BACK' }
         );
-        expect(emailBackFromStack.view.email).toEqual({ screen: 'outbox', stack: [], selectedMessageId: null });
+        expect(emailBackFromStack.view.email).toEqual({ screen: 'trash', stack: [], selectedMessageId: null });
 
         const emailBackUndefinedFallback = simulatorSessionReducer(
             createState({ view: { activeApp: 'email', email: { screen: 'trash', stack: [undefined as never], selectedMessageId: 'm1' } } }),
             { type: 'BACK' }
         );
-        expect(emailBackUndefinedFallback.view.email).toEqual({ screen: 'list', stack: [], selectedMessageId: null });
+        expect(emailBackUndefinedFallback.view.email).toEqual({ screen: 'trash', stack: [], selectedMessageId: null });
 
         const messagesBack = simulatorSessionReducer(
             createState({ view: { activeApp: 'messages', messages: { screen: 'thread_detail', stack: [], visibleCount: 0 } } }),
@@ -556,4 +556,17 @@ describe('simulatorSessionReducer branch coverage', () => {
         );
         expect(unknownReducerAction.view).toEqual(createState().view);
     });
+});
+
+
+it.each(['list', 'outbox', 'trash'] as const)('returns email details to %s then up to primary navigation', (folder) => {
+    const state = createState({ view: { activeApp: 'email', showPrimaryMenu: false, email: { screen: 'detail', stack: ['list', folder], selectedMessageId: 'm1' } } });
+    const parent = simulatorSessionReducer(state, { type: 'BACK' });
+    expect(parent.view.email.screen).toBe(folder);
+    expect(parent.view.showPrimaryMenu).toBe(false);
+    const root = simulatorSessionReducer(parent, { type: 'BACK' });
+    expect(root.view.showPrimaryMenu).toBe(true);
+    expect(root.view.activeApp).toBe('home');
+    expect(root.view.home.screen).toBe('home');
+    expect(root.view.email.screen).toBe(folder);
 });

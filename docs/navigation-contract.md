@@ -1,4 +1,4 @@
-# Navigation contract (unreleased)
+# Navigation contract
 
 `SimulatorWithSession`, `SimulatorPhoneDevice`, `SimulatorDevice`, and standalone
 `SimulatorPhoneNav` accept `onNavigation` and `onNavigationEvent`. Hosts that
@@ -46,52 +46,4 @@ No package stack entry is added for an intercepted host surface.
 
 ## Release and consumer migration
 
-These APIs are additive source changes, not published artifacts. Release a new
-simulator-react minor with these exports first, then simulator-device with its
-minimum simulator-react dependency raised to that release. Preserve React 18
-peer requirements. Run each repository's existing release preflight, package
-smoke, and clean external consumer install checks against the selected versions.
-Do not release device against the old dependency floor: it imports the new
-factory at runtime. No version, lockfile, registry, or PhoneMe dependency was
-changed in this batch. Consumers may keep legacy observers during migration;
-move host navigation decisions to the synchronous handler before adopting
-screen overrides. No screen slots, PhoneMe settings, credentials, or providers
-are part of this contract.
-
-Source compatibility tests use the actual sibling simulator-react source while
-building device against the newly built declaration artifact, without editing
-node_modules. The rendered Settings tests exercise both packages and preserve
-legacy observers. Production consumers continue using their installed releases
-until this ordered release and dependency upgrade is approved.
-
-## Fifth-batch source verification
-
-Node 24.16.0: simulator-react `npm test -- --maxWorkers=2` passed 289 tests,
-`npm run lint` passed (Yarn 1 emitted its existing `url.parse` deprecation and
-used a writable temporary cache), and `npm run build` passed. The first sandboxed
-build blocked tsx's transient IPC socket; the approved build outside that socket
-restriction passed. No package service or call runtime was started.
-
-Simulator-device `npm test -- --config /private/tmp/phoneme-device-vitest.config.mjs`
-passed 93 tests against sibling react source. Its strict `npm run typecheck --
---project /private/tmp/phoneme-device-build.json` and `npm run build -- --project
-/private/tmp/phoneme-device-build.json` passed against new react declarations,
-with device output isolated in `/private/tmp/phoneme-device-dist`. Those temporary
-configs only select sibling source/declarations, preserve compiler strictness,
-and avoid changing installed packages. The device's installed dependency is still
-the old release; these are coordinated-source checks, not an installed-release
-certification.
-
-PhoneMe's existing smartphone, phone, Twilio provider and microphone tests passed
-54/54 with temporary aliases to both actual source repositories. Its complete
-strict TypeScript check also passed against the newly built package declarations.
-The first consumer check caught `PhoneHistoryList` present in PhoneMe's installed
-artifact exports but absent from the source barrel. The existing component is now
-exported from source to retain that consumer contract. No installed artifact was
-edited and no broader package-patch remediation was performed.
-
-Both repositories initially had no tracked modifications and only their existing
-untracked `.codex/` directories. Private tracked-source snapshots were taken before
-edits. Hash comparison afterward found changes only in the assigned navigation
-files and documentation; no original tracked files were removed. No credentials,
-live records, `.codex/` contents, or other private ignored files were copied.
+Navigation interception is included in the published 0.3 React / 0.4 device lines and retained by React/device 0.16.2. Hosts may retain observers while moving navigation decisions to the synchronous handler. Install simulator-core, React and device in dependency order using their declared registry versions. React 18 peers remain supported. Package navigation has no application settings, credentials or provider dependency. See each repository's RELEASING.md and CHANGELOG.md for current release checks.

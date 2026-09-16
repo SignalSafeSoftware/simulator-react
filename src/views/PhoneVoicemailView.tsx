@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Phone Voicemail screen: optional caller/timestamp header + transcript + Back.
  */
@@ -20,12 +21,23 @@ export default function PhoneVoicemailView({
     callerName,
     timestamp,
 }: Readonly<PhoneVoicemailViewProps>) {
+    const screenLocale = useSimulatorLocale();
+
     return (
         <div className="simulator-flex simulator-flex--column">
-            <SimulatorDetailBackBar onBack={onBack} title="Voicemail" ariaLabel="Back" titleOnly />
+            <SimulatorDetailBackBar
+                onBack={onBack}
+                title={screenLocale.t('screen.phoneVoicemailView.voicemail')}
+                ariaLabel={screenLocale.t('a11y.back')}
+                titleOnly
+            />
             {(callerName != null || timestamp != null) && (
                 <div className={simTypo.secondaryTight}>
-                    {callerName != null && <span className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_BODY)}>{callerName}</span>}
+                    {callerName != null && (
+                        <span className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_BODY)}>
+                            {callerName}
+                        </span>
+                    )}
                     {callerName != null && timestamp != null && ' · '}
                     {timestamp != null && <span>{timestamp}</span>}
                 </div>

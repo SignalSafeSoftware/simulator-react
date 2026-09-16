@@ -1,3 +1,4 @@
+import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Maps full-device payload (simulator) sections to unified session slice types.
  * Small helpers per app/domain; strict types, no any.
@@ -126,6 +127,8 @@ export function mapContacts(contacts: SimulatorDevicePayload['contacts']): Simul
         .map((c, index) => ({
             id: typeof c.id === 'string' ? c.id : `c-${index}`,
             displayName: c.display_name,
+            phoneNumbers: c.phone_numbers,
+            emailAddresses: c.email_addresses,
             number: typeof c.number === 'string' ? c.number : undefined,
             email: typeof c.email === 'string' ? c.email : undefined,
         }));
@@ -164,6 +167,7 @@ function emailDetailToContent(detail: SimulatorEmailMessageDetail): EmailTemplat
         cc: optionalString(d.cc),
         date_at: optionalString(d.date_at),
         unread: d.unread,
+        bcc: optionalString(detail.bcc),
         reply_to: optionalString(detail.reply_to),
         return_path: optionalString(detail.return_path),
         links: mapEmailLinks(detail.links),
@@ -351,7 +355,7 @@ export function mapPhone(phone: SimulatorDevicePayload['phone']): SimulatorPhone
     const voicemailTimestamp = optionalString(voicemailSection?.timestamp);
     return {
         content: {
-            transcript: transcript || 'Incoming call.',
+            transcript: transcript || englishLocale.t("copy.fullDeviceToSession.incoming.call"),
             choices: [],
             phone_number: optionalString(incoming.phone_number),
             caller_name: optionalString(incoming.caller_name),
@@ -420,7 +424,7 @@ export function mapInternet(internet: SimulatorDevicePayload['internet']): Simul
             url: firstUrl + DEFAULT_BROWSER_SUBMIT_TARGET,
             title: 'Result',
             layout: DEFAULT_BROWSER_SUBMIT_TARGET,
-            content: 'Simulation complete.',
+            content: englishLocale.t("copy.fullDeviceToSession.simulation.complete"),
         });
     }
 

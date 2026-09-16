@@ -132,3 +132,25 @@ export type { PhoneContactEditorProps } from './views/PhoneContactEditor.js';
 export { default as PhoneHistoryDetail, PhoneHistoryPagination } from './views/PhoneHistoryDetail.js';
 export type { PhoneHistoryDetailProps } from './views/PhoneHistoryDetail.js';
 export { default as SimulatorScreenTile } from './views/SimulatorScreenTile.js';
+
+export { SimulatorListGroup, SimulatorListLoadingContext } from './components/SimulatorListGroup.js';
+export type { SimulatorListGroupProps } from './components/SimulatorListGroup.js';
+
+export * from './i18n/catalog.js';
+export * from './i18n/SimulatorLocale.js';
+export * from './components/ContactValuesEditor.js';
+export * from './components/SimulatorPage.js';
+
+export { EmailComposeContext, useEmailComposeOptions } from './views/emailComposeContract.js';
+export type { EmailComposeDraft, EmailComposeOptions } from './views/emailComposeContract.js';
+
+export { PhoneNumberFormatContext, usePhoneNumberFormatter } from './contract/phonePresentation.js';
+export type { PhoneNumberFormatter } from './contract/phonePresentation.js';
+
+export { MessageComposeContext, useMessageComposeOptions } from './views/messageComposeContract.js';
+export type { MessageComposeDraft, MessageComposeOptions } from './views/messageComposeContract.js';
+
+export * from './contract/capabilities.js';
+export * from './components/ContactPhotoControls.js';
+
+export * from './views/phoneDialContract.js';

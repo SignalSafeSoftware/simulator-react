@@ -1,8 +1,11 @@
+import { useSimulatorCapabilities } from '../contract/capabilities.js';
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
+import { useMessageComposeOptions } from './messageComposeContract.js';
 /**
  * Messages app: New Thread page. Wireframe (Messages.png): header "New Thread",
  * Phone Number field, Message body textarea, Send (blue) and Cancel (grey) buttons.
  */
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { simLayout, simScreen, simSpacing } from '../simulatorStyles.js';
 import {
@@ -23,7 +26,8 @@ import {
 
 export interface MessagesNewThreadViewProps {
     onBack: () => void;
-    onSend?: (message: { phoneNumber: string; messageBody: string }) => void;
+    navRenderedByShell?: boolean;
+    onSend?: (message: { phoneNumber: string; messageBody: string }) => void | Promise<void>;
 }
 
 const footerBtnClass = joinClasses(
@@ -34,57 +38,141 @@ const footerBtnClass = joinClasses(
     SIM_FLEX_GROW_1,
 );
 
-export default function MessagesNewThreadView({ onBack, onSend }: Readonly<MessagesNewThreadViewProps>) {
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [messageBody, setMessageBody] = useState('');
+export default function MessagesNewThreadView({
+    onBack,
+    onSend: send,
+    navRenderedByShell = false,
+}: Readonly<MessagesNewThreadViewProps>) {
+    const compose = useMessageComposeOptions();
+    const { t } = useSimulatorLocale();
+    const onSend = send ?? compose?.onSend;
+    const capability = useSimulatorCapabilities().sendMessage;
+    const unavailable =
+        capability && capability.state !== 'enabled'
+            ? capability.reason
+            : !onSend
+              ? t('messages.unconfigured')
+              : '';
+    const [pending, setPending] = useState(false);
+    const [error, setError] = useState('');
+    const sending = useRef(false);
+    const [localNumber, setLocalNumber] = useState('');
+    const [localBody, setLocalBody] = useState('');
+    const phoneNumber = compose?.draft.phoneNumber ?? localNumber;
+    const messageBody = compose?.draft.messageBody ?? localBody;
+    const setPhoneNumber = (next: string) => {
+        setLocalNumber(next);
+        if (compose) compose.onChange({ ...compose.draft, phoneNumber: next });
+    };
+    const setMessageBody = (next: string) => {
+        setLocalBody(next);
+        if (compose) compose.onChange({ ...compose.draft, messageBody: next });
+    };
 
-    const handleSend = () => {
-        if (!onSend) return;
-        onSend({ phoneNumber: phoneNumber.trim(), messageBody: messageBody.trim() });
-        onBack();
+    const handleSend = async () => {
+        if (!onSend || unavailable || sending.current || !phoneNumber.trim() || !messageBody.trim())
+            return;
+        sending.current = true;
+        setPending(true);
+        setError('');
+        try {
+            await onSend({ phoneNumber: phoneNumber.trim(), messageBody });
+            setLocalNumber('');
+            setLocalBody('');
+            compose?.onChange({ phoneNumber: '', messageBody: '' });
+            compose?.onAccepted?.();
+            onBack();
+        } catch (failure) {
+            setError(failure instanceof Error ? failure.message : t('messages.sendFailed'));
+        } finally {
+            sending.current = false;
+            setPending(false);
+        }
     };
 
     return (
-        <div className={simLayout.screenColumn}>
-            <div className={joinClasses(simScreen.header, simSpacing.mb3, SIM_FLEX_SHRINK_0)}>New Thread</div>
-            {!onSend && <p role="status">Message sending is not configured for this scenario.</p>}
+        <form
+            className={`${simLayout.screenColumn} simulator-messages__composer`}
+            onSubmit={(event) => {
+                event.preventDefault();
+                void handleSend();
+            }}
+        >
+            <div className={joinClasses(simScreen.header, simSpacing.mb3, SIM_FLEX_SHRINK_0)}>
+                {t('messages.newThread')}
+            </div>
+            {unavailable && <p role="status">{unavailable}</p>}
+            {!unavailable && !pending && (!phoneNumber.trim() || !messageBody.trim()) && (
+                <p role="status">{t('messages.enterRecipientAndBody')}</p>
+            )}
+            {pending && <p role="status">{t('messages.sending')}</p>}
+            {error && <p role="alert">{error}</p>}
             <div className={joinClasses(simSpacing.px3, simSpacing.pt3, SIM_FLEX_SHRINK_0)}>
                 <SimulatorField>
-                    <SimulatorLabel className={simLayout.fieldLabel}>Phone Number</SimulatorLabel>
+                    <SimulatorLabel className={simLayout.fieldLabel}>
+                        {t('phone.number')}
+                    </SimulatorLabel>
                     <SimulatorInput
                         type="tel"
-                        disabled={!onSend}
+                        disabled={pending || (!onSend && !compose)}
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
                         placeholder=""
                         className={SIM_ROUNDED_NONE}
-                        aria-label="Phone number"
+                        aria-label={t('phone.number')}
                     />
                 </SimulatorField>
             </div>
             <div className={joinClasses(SIM_FLEX_GROW_1, SIM_MIN_H_0)} aria-hidden />
-            <div className={simLayout.footerActions}>
+            <div className="simulator-new-thread__fields">
                 <SimulatorField className={simSpacing.mb0}>
-                    <SimulatorLabel className={simLayout.fieldLabel}>Message</SimulatorLabel>
+                    <SimulatorLabel className={simLayout.fieldLabel}>
+                        {t('messages.message')}
+                    </SimulatorLabel>
                     <SimulatorTextarea
                         rows={3}
-                        disabled={!onSend}
+                        disabled={pending || (!onSend && !compose)}
                         value={messageBody}
                         onChange={(e) => setMessageBody(e.target.value)}
-                        placeholder="I will send you a message"
+                        placeholder={t('messages.placeholder')}
                         className={SIM_ROUNDED_NONE}
-                        aria-label="Message body"
+                        aria-label={t('messages.body')}
                     />
                 </SimulatorField>
-                <div className={simLayout.actionsRow}>
-                    <SimulatorButton tone="primary" className={footerBtnClass} onClick={handleSend} disabled={!onSend} aria-label="Send">
-                        Send
-                    </SimulatorButton>
-                    <SimulatorButton tone="secondary" className={footerBtnClass} onClick={onBack} aria-label="Cancel">
-                        Cancel
-                    </SimulatorButton>
-                </div>
+                {!navRenderedByShell && (
+                    <div
+                        className={joinClasses(
+                            simLayout.actionsRow,
+                            'simulator-new-thread__inline-actions',
+                        )}
+                    >
+                        <SimulatorButton
+                            tone="primary"
+                            className={footerBtnClass}
+                            type="submit"
+                            disabled={
+                                Boolean(unavailable) ||
+                                pending ||
+                                !phoneNumber.trim() ||
+                                !messageBody.trim()
+                            }
+                            aria-label={t('action.send')}
+                        >
+                            {t('action.send')}
+                        </SimulatorButton>
+                        <SimulatorButton
+                            tone="secondary"
+                            className={footerBtnClass}
+                            type="button"
+                            disabled={pending}
+                            onClick={onBack}
+                            aria-label={t('action.cancel')}
+                        >
+                            {t('action.cancel')}
+                        </SimulatorButton>
+                    </div>
+                )}
             </div>
-        </div>
+        </form>
     );
 }

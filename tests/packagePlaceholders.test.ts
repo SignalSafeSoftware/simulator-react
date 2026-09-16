@@ -22,7 +22,11 @@ describe('reusable screen placeholders', () => {
             }
             const send = renderer!.root.findByProps({ 'aria-label': 'Send' });
             expect(send.props.disabled).toBe(true);
-            await act(async () => { send.props.onClick(); });
+            await act(async () => {
+                const forms = renderer!.root.findAllByType('form');
+                if (forms.length) forms[0].props.onSubmit({ preventDefault() {} });
+                else send.props.onClick();
+            });
             expect(onBack).not.toHaveBeenCalled();
             await act(async () => { renderer!.unmount(); });
         }
@@ -37,8 +41,8 @@ describe('reusable screen placeholders', () => {
             renderer!.root.findByProps({ 'aria-label': 'Phone number' }).props.onChange({ target: { value: ' 5550100 ' } });
             renderer!.root.findByProps({ 'aria-label': 'Message body' }).props.onChange({ target: { value: ' Synthetic message ' } });
         });
-        await act(async () => { renderer!.root.findByProps({ 'aria-label': 'Send' }).props.onClick(); });
-        expect(onSend).toHaveBeenCalledWith({ phoneNumber: '5550100', messageBody: 'Synthetic message' });
+        await act(async () => { renderer!.root.findByType('form').props.onSubmit({ preventDefault() {} }); });
+        expect(onSend).toHaveBeenCalledWith({ phoneNumber: '5550100', messageBody: ' Synthetic message ' });
         expect(onBack).toHaveBeenCalledOnce();
         renderer!.unmount();
     });

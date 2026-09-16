@@ -1,3 +1,4 @@
+import type { SimulatorContactValue } from '@signalsafe/simulator-core';
 /**
  * Unified simulator session state and payload contract.
  * Full-device: entry_point, device defaults, contacts, and per-app slices.
@@ -133,6 +134,7 @@ export interface SimulatorThreadListRow {
     id: string;
     preview: string;
     senderName?: string;
+    avatarUrl?: string;
     senderNumber?: string;
     timestamp?: string;
     unread?: boolean;
@@ -140,6 +142,9 @@ export interface SimulatorThreadListRow {
 
 /** SMS payload slice. */
 export interface SimulatorSmsPayload {
+    avatarUrl?: string;
+    readOnly?: boolean;
+    loadingMessage?: string;
     thread: SmsThreadContent;
     /** Number of messages revealed (delayed reveal). */
     visibleMessageCount: number;
@@ -181,6 +186,12 @@ export type CallHistoryEntryKind = 'incoming' | 'outgoing' | 'missed' | 'voicema
 
 /** Single call history row (from full-device or derived). */
 export interface SimulatorCallHistoryEntry {
+    /** Original display address, independent of the dialable number. */
+    displayNumber?: string;
+    /** Label of the matched contact value, when unambiguous. */
+    numberLabel?: string;
+    /** Elapsed seconds; null or absent means unknown, while zero is known. */
+    durationSeconds?: number | null;
     id: string;
     number: string;
     name?: string;
@@ -239,6 +250,9 @@ export type SimulatorAction =
 
 /** Single contact for list/detail and search (from full-device payload). */
 export interface SimulatorSessionContact {
+    phoneNumbers?: SimulatorContactValue[];
+    emailAddresses?: SimulatorContactValue[];
+    postalAddresses?: SimulatorContactValue[];
     id: string;
     displayName: string;
     number?: string;

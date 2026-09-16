@@ -1,3 +1,4 @@
+import { createTranslator, simulatorEnglish } from '../i18n/catalog.js';
 /**
  * Phone app secondary nav items per wireframe: History, Contacts, Dial, Back.
  * Back returns to primary menu; Directory is not in the strip (can be reached from Contacts if needed).
@@ -12,13 +13,13 @@ export interface PhoneLocalNavItem {
 }
 
 /** Secondary strip order per wireframe: History, Contacts, Dial, Back. */
-const SECONDARY_STRIP: PhoneLocalNavItem[] = [
-    { id: 'history', label: 'History', icon: '🕐' },
-    { id: 'contacts', label: 'Contacts', icon: '👤' },
-    { id: 'dial', label: 'Dial', icon: '📞' },
-    { id: 'back', label: 'Back', icon: '↩' },
-];
+const SECONDARY_STRIP = [
+    { id: 'history', labelKey: 'nav.history', icon: '🕐' },
+    { id: 'contacts', labelKey: 'nav.contacts', icon: '👤' },
+    { id: 'dial', labelKey: 'nav.dial', icon: '📞' },
+    { id: 'back', labelKey: 'nav.back', icon: '↩' },
+] as const;
 
-export function getPhoneLocalNavItems(_phone: SimulatorCapabilities['phone']): PhoneLocalNavItem[] {
-    return SECONDARY_STRIP;
+export function getPhoneLocalNavItems(_phone: SimulatorCapabilities['phone'], locale = createTranslator(simulatorEnglish)): PhoneLocalNavItem[] {
+    return SECONDARY_STRIP.map(({ labelKey, ...item }) => ({ ...item, label: locale.t(labelKey) }));
 }

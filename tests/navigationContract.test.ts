@@ -19,7 +19,8 @@ describe('one navigation contract', () => {
             dispatch(action);
             expect(state.view.phone.stack).toEqual(['history']);
             dispatch({ type: 'BACK' });
-            expect(state.view.phone.screen).toBe('history');
+            expect(state.view.phone.screen).toBe('contacts');
+            expect(state.view.showPrimaryMenu).toBe(true);
             return events.mock.calls;
         });
         expect(results[0]).toEqual(results[1]);

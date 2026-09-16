@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Phone incoming call scene: wireframe order — large profile icon, "Name calling (URGENT)", number,
  * rectangular Answer / Ignore. Emits answer_call / ignore_call via callbacks.
@@ -28,10 +29,7 @@ import {
     SIM_PHONE_INCOMING_CALL_NUMBER,
     SIM_PHONE_INCOMING_CALL_SCENE,
 } from '../ui/semanticSimulatorClasses.js';
-import {
-    renderSimulatorChoice,
-    type SimulatorChoiceRenderProps,
-} from '../ui/renderSlots.js';
+import { renderSimulatorChoice, type SimulatorChoiceRenderProps } from '../ui/renderSlots.js';
 
 export interface PhoneIncomingSceneProps {
     content: PhoneSimulatorContent;
@@ -54,10 +52,14 @@ export default function PhoneIncomingScene({
     onIgnore,
     renderChoice,
 }: Readonly<PhoneIncomingSceneProps>) {
+    const screenLocale = useSimulatorLocale();
+
     const phoneNumber = content.phone_number ?? '+1 555 000-0000';
     const callerName = content.caller_name ?? 'Unknown';
     const urgencyPart = content.caller_title ?? (content.urgency ? content.urgency : null);
-    const callingLabel = urgencyPart ? `${callerName} calling (${urgencyPart.toUpperCase()})` : `${callerName} calling`;
+    const callingLabel = urgencyPart
+        ? `${callerName} calling (${urgencyPart.toUpperCase()})`
+        : `${callerName} calling`;
     const avatarUrl = content.avatar_url;
 
     return (
@@ -94,7 +96,11 @@ export default function PhoneIncomingScene({
                         className="simulator-w-full simulator-h-full simulator-object-fit-cover"
                     />
                 ) : (
-                    <span className="simulator-text--primary" style={{ fontSize: '3.5rem' }} aria-hidden>
+                    <span
+                        className="simulator-text--primary"
+                        style={{ fontSize: '3.5rem' }}
+                        aria-hidden
+                    >
                         👤
                     </span>
                 )}
@@ -138,7 +144,7 @@ export default function PhoneIncomingScene({
             >
                 {renderSimulatorChoice(
                     {
-                        label: 'ANSWER',
+                        label: screenLocale.t('screen.phoneIncomingScene.answer'),
                         tone: 'success',
                         className: actionBtnClass,
                         onClick: onAnswer,
@@ -148,7 +154,7 @@ export default function PhoneIncomingScene({
                 )}
                 {renderSimulatorChoice(
                     {
-                        label: 'IGNORE',
+                        label: screenLocale.t('screen.phoneIncomingScene.ignore'),
                         tone: 'danger',
                         className: actionBtnClass,
                         onClick: onIgnore,

@@ -1,12 +1,10 @@
+import { getEmailSecondaryItems } from '../utils/simulatorSecondaryMenuHelpers.js';
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Email app view: inbox list, compose, or message detail.
  * Wireframe: top "Email" banner, rectangular bottom nav (Inbox, Outbox, Trash, Back).
  */
-import type {
-    EmailScreenId,
-    SimulatorAction,
-    SimulatorEmailPayload,
-} from '../types/session.js';
+import type { EmailScreenId, SimulatorAction, SimulatorEmailPayload } from '../types/session.js';
 import SimulatorLocalNav from '../components/SimulatorLocalNav.js';
 import EmailInboxList from './EmailInboxList.js';
 import EmailMessageDetail from './EmailMessageDetail.js';
@@ -24,12 +22,7 @@ import {
 } from '../ui/simulatorClasses.js';
 import { SIM_EMAIL } from '../ui/semanticSimulatorClasses.js';
 
-const EMAIL_NAV_ITEMS = [
-    { id: 'list', label: 'Inbox' },
-    { id: 'outbox', label: 'Outbox' },
-    { id: 'trash', label: 'Trash' },
-    { id: 'back', label: 'Back' },
-] as const;
+
 
 export interface EmailSimulatorViewProps {
     payload: SimulatorEmailPayload | null;
@@ -62,6 +55,8 @@ export default function EmailSimulatorView({
     onNavigate,
     navRenderedByShell = false,
 }: Readonly<EmailSimulatorViewProps>) {
+    const screenLocale = useSimulatorLocale();
+
     const inbox = payload?.inbox ?? [];
     const outbox = payload?.outbox ?? [];
     const trash = payload?.trash ?? [];
@@ -96,7 +91,8 @@ export default function EmailSimulatorView({
                         selectedMessageId={selectedMessageId}
                         onSelectMessage={onSelectMessage}
                         onCompose={() => onNavigate?.('compose')}
-                        folderLabel="Outbox"
+                        folder="outbox"
+                        folderLabel={screenLocale.t('nav.outbox')}
                     />
                 )}
 
@@ -105,57 +101,75 @@ export default function EmailSimulatorView({
                         inbox={trash}
                         selectedMessageId={selectedMessageId}
                         onSelectMessage={onSelectMessage}
-                        folderLabel="Trash"
+                        folder="trash"
+                        folderLabel={screenLocale.t('nav.trash')}
                     />
                 )}
 
                 {screen === 'compose' && (
-                    <EmailComposeView onCancel={() => onBack?.()} />
+                    <EmailComposeView
+                        onCancel={() => onBack?.()}
+                        hideActions={navRenderedByShell}
+                    />
                 )}
 
-                {screen === 'detail' && (() => {
-                    let message = payload?.selectedMessage;
-                    if (message == null && selectedMessageId != null && selectedMessageId !== '') {
-                        const allRows = [...inbox, ...outbox, ...trash];
-                        const row = allRows.find((r) => r.id === selectedMessageId);
-                        if (row != null) {
-                            message = {
-                                subject: row.subject,
-                                from: row.from,
-                                body: row.snippet ?? '',
-                                from_display_name: row.from_display_name,
-                            };
+                {screen === 'detail' &&
+                    (() => {
+                        let message = payload?.selectedMessage;
+                        if (
+                            message == null &&
+                            selectedMessageId != null &&
+                            selectedMessageId !== ''
+                        ) {
+                            const allRows = [...inbox, ...outbox, ...trash];
+                            const row = allRows.find((r) => r.id === selectedMessageId);
+                            if (row != null) {
+                                message = {
+                                    subject: row.subject,
+                                    from: row.from,
+                                    body: row.snippet ?? '',
+                                    from_display_name: row.from_display_name,
+                                };
+                            }
                         }
-                    }
-                    if (message == null) {
+                        if (message == null) {
+                            return (
+                                <EmailInboxList
+                                    inbox={inbox}
+                                    selectedMessageId={selectedMessageId}
+                                    onSelectMessage={onSelectMessage}
+                                    onCompose={() => onNavigate?.('compose')}
+                                />
+                            );
+                        }
                         return (
-                            <EmailInboxList
-                                inbox={inbox}
-                                selectedMessageId={selectedMessageId}
-                                onSelectMessage={onSelectMessage}
-                                onCompose={() => onNavigate?.('compose')}
+                            <EmailMessageDetail
+                                folderLabel={
+                                    outbox.some((row) => row.id === selectedMessageId)
+                                        ? screenLocale.t('nav.outbox')
+                                        : trash.some((row) => row.id === selectedMessageId)
+                                          ? screenLocale.t('nav.trash')
+                                          : screenLocale.t('nav.inbox')
+                                }
+                                hideActions={navRenderedByShell}
+                                message={message}
+                                onAction={onAction}
+                                onBack={onBack}
+                                onNavigate={onNavigate}
                             />
                         );
-                    }
-                    return (
-                        <EmailMessageDetail
-                            message={message}
-                            onAction={onAction}
-                            onBack={onBack}
-                            onNavigate={onNavigate}
-                        />
-                    );
-                })()}
+                    })()}
             </div>
-            {!navRenderedByShell && (screen === 'list' || screen === 'outbox' || screen === 'trash') && (
-                <SimulatorLocalNav
-                    items={[...EMAIL_NAV_ITEMS]}
-                    activeId={screen === 'list' ? 'list' : screen}
-                    onSelect={handleNavSelect}
-                    className={localNavClass}
-                    aria-label="Email folder"
-                />
-            )}
+            {!navRenderedByShell &&
+                (screen === 'list' || screen === 'outbox' || screen === 'trash') && (
+                    <SimulatorLocalNav
+                        items={getEmailSecondaryItems(screenLocale)}
+                        activeId={screen === 'list' ? 'list' : screen}
+                        onSelect={handleNavSelect}
+                        className={localNavClass}
+                        aria-label={screenLocale.t('screen.emailSimulatorView.email.folder')}
+                    />
+                )}
         </div>
     );
 }

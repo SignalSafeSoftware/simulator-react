@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Reusable structure for simulator detail-style screens: back bar and content block.
  */
@@ -18,20 +19,24 @@ export interface SimulatorDetailBackBarProps {
 export function SimulatorDetailBackBar({
     onBack,
     title,
-    ariaLabel = 'Back',
+    ariaLabel,
     titleOnly = false,
     className,
 }: Readonly<SimulatorDetailBackBarProps>) {
+    const screenLocale = useSimulatorLocale();
+
     return (
-        <div className={`${simBackBar.container} ${className ?? ''}`.trim()}>
+        <div
+            className={`${titleOnly ? 'simulator-screen__header' : simBackBar.container} ${className ?? ''}`.trim()}
+        >
             {!titleOnly && (
                 <SimulatorButton
                     tone="link"
                     className={`simulator-btn--plain ${SIM_BTN_SCREEN_BACK}`.trim()}
                     onClick={onBack}
-                    aria-label={ariaLabel}
+                    aria-label={ariaLabel ?? screenLocale.t('screen.simulatorDetail.back')}
                 >
-                    ← Back
+                    {screenLocale.t('screen.simulatorDetail.back')}
                 </SimulatorButton>
             )}
             {title != null && title !== '' && <span className={simBackBar.title}>{title}</span>}
@@ -50,6 +55,7 @@ export function SimulatorDetailBlock({
     className = '',
     variant = 'default',
 }: Readonly<SimulatorDetailBlockProps>) {
-    const padding = variant === 'compact' ? simSpacing.blockPaddingCompact : simSpacing.blockPadding;
+    const padding =
+        variant === 'compact' ? simSpacing.blockPaddingCompact : simSpacing.blockPadding;
     return <div className={`${simBorder.block} ${padding} ${className}`.trim()}>{children}</div>;
 }

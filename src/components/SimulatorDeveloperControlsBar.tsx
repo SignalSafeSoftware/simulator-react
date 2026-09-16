@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Developer controls bar: snapshot/graph copy and keyboard shortcuts help.
  */
@@ -43,6 +44,8 @@ export default function SimulatorDeveloperControlsBar({
     onCopyNavGraph,
     onToggleShortcutsHelp,
 }: Readonly<SimulatorDeveloperControlsBarProps>) {
+    const screenLocale = useSimulatorLocale();
+
     const showBar = showSnapshotExport || showNavGraph || enableKeyboardShortcuts;
     if (!showBar && !(enableKeyboardShortcuts && shortcutsHelpOpen)) {
         return null;
@@ -77,9 +80,15 @@ export default function SimulatorDeveloperControlsBar({
                                 type="button"
                                 className={devLinkClass}
                                 onClick={onCopySnapshot}
-                                aria-label="Copy simulator snapshot for debug"
+                                aria-label={screenLocale.t(
+                                    'screen.simulatorDeveloperControlsBar.copy.simulator.snapshot.for.debug',
+                                )}
                             >
-                                {snapshotCopied ? 'Copied' : 'Copy snapshot'}
+                                {snapshotCopied
+                                    ? screenLocale.t('screen.simulatorDeveloperControlsBar.copied')
+                                    : screenLocale.t(
+                                          'screen.simulatorDeveloperControlsBar.copy.snapshot',
+                                      )}
                             </button>
                         )}
                         {showNavGraph && (
@@ -87,9 +96,15 @@ export default function SimulatorDeveloperControlsBar({
                                 type="button"
                                 className={devLinkClass}
                                 onClick={onCopyNavGraph}
-                                aria-label="Copy nav graph for debug"
+                                aria-label={screenLocale.t(
+                                    'screen.simulatorDeveloperControlsBar.copy.nav.graph.for.debug',
+                                )}
                             >
-                                {graphCopied ? 'Copied' : 'Copy graph'}
+                                {graphCopied
+                                    ? screenLocale.t('screen.simulatorDeveloperControlsBar.copied')
+                                    : screenLocale.t(
+                                          'screen.simulatorDeveloperControlsBar.copy.graph',
+                                      )}
                             </button>
                         )}
                         {enableKeyboardShortcuts && (
@@ -97,18 +112,37 @@ export default function SimulatorDeveloperControlsBar({
                                 type="button"
                                 className={devLinkClass}
                                 onClick={onToggleShortcutsHelp}
-                                aria-label="Keyboard shortcuts"
+                                aria-label={screenLocale.t(
+                                    'screen.simulatorDeveloperControlsBar.keyboard.shortcuts',
+                                )}
                             >
-                                Shortcuts
+                                {screenLocale.t('screen.simulatorDeveloperControlsBar.shortcuts')}
                             </button>
                         )}
                     </div>
                     {showNavGraph && navGraph && (
-                        <details className={joinClasses(SIM_TEXT_SM, SIM_MUTED, simSpacing.mb2, 'simulator-spacing--px-1')}>
+                        <details
+                            className={joinClasses(
+                                SIM_TEXT_SM,
+                                SIM_MUTED,
+                                simSpacing.mb2,
+                                'simulator-spacing--px-1',
+                            )}
+                        >
                             <summary className="simulator-cursor-pointer simulator-user-select-none">
-                                Nav graph: {navGraph.nodes.length} nodes, {navGraph.edges.length} edges, entry{' '}
+                                {screenLocale.t('screen.simulatorDeveloperControlsBar.nav.graph')}
+                                {navGraph.nodes.length}
+                                {screenLocale.t('screen.simulatorDeveloperControlsBar.nodes')}
+                                {navGraph.edges.length}
+                                {screenLocale.t(
+                                    'screen.simulatorDeveloperControlsBar.edges.entry',
+                                )}{' '}
                                 {navGraph.entry.app}:{navGraph.entry.screen}
-                                {navGraph.browserHasCycle ? ', browser has cycle' : ''}
+                                {navGraph.browserHasCycle
+                                    ? screenLocale.t(
+                                          'screen.simulatorDeveloperControlsBar.browser.has.cycle',
+                                      )
+                                    : ''}
                             </summary>
                             <pre
                                 className={joinClasses(
@@ -142,17 +176,31 @@ export default function SimulatorDeveloperControlsBar({
                         SIM_ROUNDED_NONE,
                         SIM_SURFACE_LIGHT,
                     )}
-                    aria-label="Simulator keyboard shortcuts"
+                    aria-label={screenLocale.t(
+                        'screen.simulatorDeveloperControlsBar.simulator.keyboard.shortcuts',
+                    )}
                 >
-                    <p className={joinClasses(SIM_TEXT_MEDIUM, simSpacing.mb1)}>Keyboard shortcuts</p>
-                    <ul className={joinClasses(simSpacing.mb0, 'simulator-spacing--ps-3', 'simulator-list--plain')}>
+                    <p className={joinClasses(SIM_TEXT_MEDIUM, simSpacing.mb1)}>
+                        {screenLocale.t('screen.simulatorDeveloperControlsBar.keyboard.shortcuts')}
+                    </p>
+                    <ul
+                        className={joinClasses(
+                            simSpacing.mb0,
+                            'simulator-spacing--ps-3',
+                            'simulator-list--plain',
+                        )}
+                    >
                         {SIMULATOR_KEYBOARD_COMMANDS.map((cmd) => (
                             <li key={`${cmd.keys}-${cmd.description}`}>
                                 <kbd className={SIM_TEXT_SM}>{cmd.keys}</kbd> — {cmd.description}
                             </li>
                         ))}
                     </ul>
-                    <p className={joinClasses(SIM_TEXT_SM, simSpacing.mb0, simSpacing.mt1)}>Press Escape to close.</p>
+                    <p className={joinClasses(SIM_TEXT_SM, simSpacing.mb0, simSpacing.mt1)}>
+                        {screenLocale.t(
+                            'screen.simulatorDeveloperControlsBar.press.escape.to.close',
+                        )}
+                    </p>
                 </dialog>
             )}
         </>

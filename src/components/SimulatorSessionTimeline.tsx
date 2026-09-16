@@ -1,3 +1,5 @@
+import { englishLocale } from '../i18n/englishLocale.js';
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Session timeline view for dev/admin/QA: timestamp, app/screen, event type, target summary.
  * Uses normalized SimulatorInteractionEvent; no TreeSpec scoring. Shown only in preview/compact mode.
@@ -10,12 +12,7 @@ import {
     SimulatorCollapse,
 } from '../ui/primitives.js';
 import { simSpacing } from '../simulatorStyles.js';
-import {
-    joinClasses,
-    SIM_FLEX,
-    SIM_MUTED,
-    simBtnToneClass,
-} from '../ui/simulatorClasses.js';
+import { joinClasses, SIM_FLEX, SIM_MUTED, simBtnToneClass } from '../ui/simulatorClasses.js';
 import type { SimulatorInteractionEvent } from '../types/simulatorEvents.js';
 
 /** Synthetic entry for "session started" (not part of API event contract). */
@@ -35,7 +32,11 @@ function isSessionStarted(e: TimelineEntry): e is SessionStartedEntry {
 function formatTime(iso: string): string {
     try {
         const d = new Date(iso);
-        return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        return d.toLocaleTimeString(undefined, {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
     } catch {
         return iso.slice(11, 19) || iso;
     }
@@ -43,29 +44,29 @@ function formatTime(iso: string): string {
 
 function kindLabel(kind: string): string {
     const labels: Record<string, string> = {
-        session_started: 'Session started',
-        app_opened: 'App opened',
-        screen_viewed: 'Screen viewed',
-        email_opened: 'Email opened',
-        thread_opened: 'Thread opened',
-        contact_opened: 'Contact opened',
-        link_clicked: 'Link clicked',
-        form_submitted: 'Form submitted',
-        report_clicked: 'Report clicked',
-        call_answered: 'Call answered',
-        call_ignored: 'Call ignored',
-        dial_started: 'Dial started',
-        check_contact_clicked: 'Check contact',
-        directory_entry_viewed: 'Directory viewed',
-        page_viewed: 'Page viewed',
-        voicemail_opened: 'Voicemail opened',
-        open_store: 'Store opened',
-        store_opened: 'Store opened',
-        settings_opened: 'Settings opened',
-        attachment_opened: 'Attachment opened',
-        attachment_downloaded: 'Attachment downloaded',
-        message_sent: 'Message sent',
-        download_clicked: 'Download clicked',
+        session_started: englishLocale.t("copy.SimulatorSessionTimeline.session.started"),
+        app_opened: englishLocale.t("copy.SimulatorSessionTimeline.app.opened"),
+        screen_viewed: englishLocale.t("copy.SimulatorSessionTimeline.screen.viewed"),
+        email_opened: englishLocale.t("copy.SimulatorSessionTimeline.email.opened"),
+        thread_opened: englishLocale.t("copy.SimulatorSessionTimeline.thread.opened"),
+        contact_opened: englishLocale.t("copy.SimulatorSessionTimeline.contact.opened"),
+        link_clicked: englishLocale.t("copy.SimulatorSessionTimeline.link.clicked"),
+        form_submitted: englishLocale.t("copy.SimulatorSessionTimeline.form.submitted"),
+        report_clicked: englishLocale.t("copy.SimulatorSessionTimeline.report.clicked"),
+        call_answered: englishLocale.t("copy.SimulatorSessionTimeline.call.answered"),
+        call_ignored: englishLocale.t("copy.SimulatorSessionTimeline.call.ignored"),
+        dial_started: englishLocale.t("copy.SimulatorSessionTimeline.dial.started"),
+        check_contact_clicked: englishLocale.t("copy.SimulatorSessionTimeline.check.contact"),
+        directory_entry_viewed: englishLocale.t("copy.SimulatorSessionTimeline.directory.viewed"),
+        page_viewed: englishLocale.t("copy.SimulatorSessionTimeline.page.viewed"),
+        voicemail_opened: englishLocale.t("copy.SimulatorSessionTimeline.voicemail.opened"),
+        open_store: englishLocale.t("copy.SimulatorSessionTimeline.store.opened"),
+        store_opened: englishLocale.t("copy.SimulatorSessionTimeline.store.opened"),
+        settings_opened: englishLocale.t("copy.SimulatorSessionTimeline.settings.opened"),
+        attachment_opened: englishLocale.t("copy.SimulatorSessionTimeline.attachment.opened"),
+        attachment_downloaded: englishLocale.t("copy.SimulatorSessionTimeline.attachment.downloaded"),
+        message_sent: englishLocale.t("copy.SimulatorSessionTimeline.message.sent"),
+        download_clicked: englishLocale.t("copy.SimulatorSessionTimeline.download.clicked"),
         search_performed: 'Search',
     };
     return labels[kind] ?? kind.replaceAll('_', ' ');
@@ -123,12 +124,22 @@ export default function SimulatorSessionTimeline({
     className,
     defaultExpanded = false,
 }: Readonly<SimulatorSessionTimelineProps>) {
+    const screenLocale = useSimulatorLocale();
+
     const bodyId = useId();
     const [open, setOpen] = useState(defaultExpanded);
     return (
-        <SimulatorCard className={joinClasses(simSpacing.mb2, className)} data-testid="simulator-session-timeline">
+        <SimulatorCard
+            className={joinClasses(simSpacing.mb2, className)}
+            data-testid="simulator-session-timeline"
+        >
             <SimulatorCardHeader
-                className={joinClasses('simulator-text--sm', 'simulator-surface--header', simSpacing.py1, simSpacing.px2)}
+                className={joinClasses(
+                    'simulator-text--sm',
+                    'simulator-surface--header',
+                    simSpacing.py1,
+                    simSpacing.px2,
+                )}
             >
                 <button
                     type="button"
@@ -142,14 +153,27 @@ export default function SimulatorSessionTimeline({
                     aria-expanded={open}
                     aria-controls={bodyId}
                 >
-                    Session timeline
+                    {screenLocale.t('screen.simulatorSessionTimeline.session.timeline')}
                 </button>
-                <span className={joinClasses(SIM_MUTED, 'simulator-inline-gap')}>— {entries.length} event{entries.length === 1 ? '' : 's'}</span>
+                <span className={joinClasses(SIM_MUTED, 'simulator-inline-gap')}>
+                    — {entries.length}
+                    {screenLocale.t('screen.simulatorSessionTimeline.event')}
+                    {entries.length === 1
+                        ? ''
+                        : screenLocale.t('screen.simulatorSessionTimeline.s')}
+                </span>
             </SimulatorCardHeader>
             <SimulatorCollapse open={open}>
-                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}>
+                <SimulatorCardBody
+                    id={bodyId}
+                    className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}
+                >
                     {entries.length === 0 ? (
-                        <div className={SIM_MUTED}>No events yet. Interact with the simulator to see the timeline.</div>
+                        <div className={SIM_MUTED}>
+                            {screenLocale.t(
+                                'screen.simulatorSessionTimeline.no.events.yet.interact.with.the.simulator.to.see.t',
+                            )}
+                        </div>
                     ) : (
                         <ul className={joinClasses('simulator-list--plain', simSpacing.mb0)}>
                             {entries.map((entry, i) => {
@@ -173,9 +197,18 @@ export default function SimulatorSessionTimeline({
                                         <span className="simulator-text--body">
                                             {entry.app}/{entry.screen}
                                         </span>
-                                        <span className="simulator-text--semibold">{kindLabel(entry.kind)}</span>
+                                        <span className="simulator-text--semibold">
+                                            {kindLabel(entry.kind)}
+                                        </span>
                                         {target != null && (
-                                            <span className={joinClasses(SIM_MUTED, 'simulator-text--break')}>{target}</span>
+                                            <span
+                                                className={joinClasses(
+                                                    SIM_MUTED,
+                                                    'simulator-text--break',
+                                                )}
+                                            >
+                                                {target}
+                                            </span>
                                         )}
                                     </li>
                                 );

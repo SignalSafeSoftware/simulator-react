@@ -1,3 +1,4 @@
+import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Optional keyboard command map for simulator development, preview, and accessibility.
  * Only active when explicitly enabled (e.g. admin/preview). Does not run in normal run mode.
@@ -23,15 +24,15 @@ export interface SimulatorKeyboardCommandHandlers {
 /** Human-readable command list for help (debug/admin). */
 export const SIMULATOR_KEYBOARD_COMMANDS = [
     { keys: 'Escape', description: 'Back' },
-    { keys: 'Alt + 1', description: 'Switch to Phone' },
-    { keys: 'Alt + 2', description: 'Switch to Email' },
-    { keys: 'Alt + 3', description: 'Switch to Internet' },
-    { keys: 'Alt + 4', description: 'Switch to Messages' },
-    { keys: 'Alt + 5', description: 'Switch to Home' },
-    { keys: '/', description: 'Focus search (Contacts only)' },
-    { keys: 'Alt + ↓', description: 'Next item (list views)' },
-    { keys: 'Alt + ↑', description: 'Previous item (list views)' },
-    { keys: '?', description: 'Show this shortcut help' },
+    { keys: 'Alt + 1', description: englishLocale.t("copy.simulatorKeyboardCommands.switch.to.phone") },
+    { keys: 'Alt + 2', description: englishLocale.t("copy.simulatorKeyboardCommands.switch.to.email") },
+    { keys: 'Alt + 3', description: englishLocale.t("copy.simulatorKeyboardCommands.switch.to.internet") },
+    { keys: 'Alt + 4', description: englishLocale.t("copy.simulatorKeyboardCommands.switch.to.messages") },
+    { keys: 'Alt + 5', description: englishLocale.t("copy.simulatorKeyboardCommands.switch.to.home") },
+    { keys: '/', description: englishLocale.t("copy.simulatorKeyboardCommands.focus.search.contacts.only") },
+    { keys: 'Alt + ↓', description: englishLocale.t("copy.simulatorKeyboardCommands.next.item.list.views") },
+    { keys: 'Alt + ↑', description: englishLocale.t("copy.simulatorKeyboardCommands.previous.item.list.views") },
+    { keys: '?', description: englishLocale.t("copy.simulatorKeyboardCommands.show.this.shortcut.help") },
 ] as const;
 
 const LIST_NAV_EVENT = 'simulator-keyboard-list-nav';

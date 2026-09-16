@@ -46,6 +46,7 @@ export interface EmailTemplateContent {
     body: string;
     from_display_name?: string;
     to?: string;
+    bcc?: string;
     cc?: string;
     date_at?: string;
     unread?: boolean;

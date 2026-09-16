@@ -1,3 +1,5 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
+import { SimulatorListGroup } from '../components/SimulatorListGroup.js';
 /**
  * Reusable email inbox list: wireframe rows (profile icon, sender, snippet, date, Read/Unread tag).
  * Optional search bar and compose (pencil) button.
@@ -35,6 +37,8 @@ export interface EmailInboxListProps {
     onSelectMessage: (messageId: string) => void;
     /** Optional folder label (e.g. "Inbox", "Outbox", "Trash"). */
     folderLabel?: string;
+    /** Folder behavior is independent of its displayed label. */
+    folder?: 'inbox' | 'outbox' | 'trash';
     /** When set, show pencil icon to open compose. */
     onCompose?: () => void;
     /** Optional controlled search; when omitted, local state is used and list is filtered. */
@@ -56,7 +60,9 @@ function InboxProfileIcon({ className }: Readonly<{ className?: string }>) {
             style={{ width: 40, height: 40 }}
             aria-hidden
         >
-            <span className="simulator-text--primary" style={{ fontSize: '1.25rem' }}>👤</span>
+            <span className="simulator-text--primary" style={{ fontSize: '1.25rem' }}>
+                👤
+            </span>
         </div>
     );
 }
@@ -68,19 +74,27 @@ function matchesSearch(row: SimulatorInboxRow, q: string): boolean {
     const from = (row.from ?? '').toLowerCase();
     const fromName = (row.from_display_name ?? '').toLowerCase();
     const snippet = (row.snippet ?? '').toLowerCase();
-    return sub.includes(lower) || from.includes(lower) || fromName.includes(lower) || snippet.includes(lower);
+    return (
+        sub.includes(lower) ||
+        from.includes(lower) ||
+        fromName.includes(lower) ||
+        snippet.includes(lower)
+    );
 }
 
 export default function EmailInboxList({
     inbox,
     selectedMessageId,
     onSelectMessage,
-    folderLabel = 'Inbox',
+    folderLabel,
+    folder = 'inbox',
     onCompose,
     searchQuery: controlledQuery,
     onSearchChange: controlledSetQuery,
     onSearchSubmit,
 }: Readonly<EmailInboxListProps>) {
+    const screenLocale = useSimulatorLocale();
+
     const [localQuery, setLocalQuery] = useState('');
     const isControlled = controlledQuery !== undefined && controlledSetQuery !== undefined;
     const searchQuery = isControlled ? controlledQuery : localQuery;
@@ -88,19 +102,36 @@ export default function EmailInboxList({
 
     const filtered = useMemo(
         () => inbox.filter((row) => matchesSearch(row, searchQuery)),
-        [inbox, searchQuery]
+        [inbox, searchQuery],
     );
     let content: ReactNode;
     if (inbox.length === 0) {
         content = (
-            <p className={joinClasses(simTypo.emptyState, simSpacing.pt3, simSpacing.px2, 'simulator-text--start')}>
-                {folderLabel === 'Trash' ? 'No emails in Trash.' : 'No emails.'}
+            <p
+                className={joinClasses(
+                    simTypo.emptyState,
+                    simSpacing.pt3,
+                    simSpacing.px2,
+                    'simulator-text--start',
+                )}
+            >
+                {folder === 'trash'
+                    ? screenLocale.t('screen.emailInboxList.no.emails.in.trash')
+                    : screenLocale.t('screen.emailInboxList.no.emails')}
             </p>
         );
     } else if (filtered.length === 0) {
         content = (
-            <p className={joinClasses(simTypo.emptyState, simSpacing.pt3, simSpacing.px2, 'simulator-text--start')}>
-                No results for &quot;{searchQuery}&quot;.
+            <p
+                className={joinClasses(
+                    simTypo.emptyState,
+                    simSpacing.pt3,
+                    simSpacing.px2,
+                    'simulator-text--start',
+                )}
+            >
+                {screenLocale.t('screen.emailInboxList.no.results.for')}
+                {searchQuery}&quot;.
             </p>
         );
     } else {
@@ -113,25 +144,50 @@ export default function EmailInboxList({
                         onClick={() => onSelectMessage(row.id)}
                         className={joinClasses(
                             simRowSurface.selectable,
-                            selectedMessageId === row.id ? simRowSurface.selected : simRowSurface.default,
+                            selectedMessageId === row.id
+                                ? simRowSurface.selected
+                                : simRowSurface.default,
                             SIM_EMAIL_MESSAGE_ROW,
                         )}
                         style={{ cursor: 'pointer' }}
                     >
                         <InboxProfileIcon />
-                        <div className={joinClasses(SIM_FLEX_COL, 'simulator-min-w-0', SIM_FLEX_GROW_1)}>
-                            <span className={joinClasses(SIM_TEXT_MEDIUM, 'simulator-text--truncate', row.unread && SIM_TEXT_BOLD)}>
+                        <div
+                            className={joinClasses(
+                                SIM_FLEX_COL,
+                                'simulator-min-w-0',
+                                SIM_FLEX_GROW_1,
+                            )}
+                        >
+                            <span
+                                className={joinClasses(
+                                    SIM_TEXT_MEDIUM,
+                                    'simulator-text--truncate',
+                                    row.unread && SIM_TEXT_BOLD,
+                                )}
+                            >
                                 {row.from_display_name != null && row.from_display_name !== ''
                                     ? row.from_display_name
                                     : row.from}
                             </span>
                             {row.snippet != null && row.snippet !== '' && (
-                                <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED, 'simulator-text--break')} style={{ lineHeight: 1.35 }}>
+                                <span
+                                    className={joinClasses(
+                                        SIM_TEXT_SM,
+                                        SIM_MUTED,
+                                        'simulator-text--break',
+                                    )}
+                                    style={{ lineHeight: 1.35 }}
+                                >
                                     {row.snippet}
                                 </span>
                             )}
                             {row.date_at != null && (
-                                <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED, simSpacing.mt1)}>{row.date_at}</span>
+                                <span
+                                    className={joinClasses(SIM_TEXT_SM, SIM_MUTED, simSpacing.mt1)}
+                                >
+                                    {row.date_at}
+                                </span>
                             )}
                         </div>
                         <span
@@ -142,7 +198,9 @@ export default function EmailInboxList({
                                 SIM_EMAIL_STATUS_BADGE,
                             )}
                         >
-                            {row.unread ? 'Unread' : 'Read'}
+                            {row.unread
+                                ? screenLocale.t('screen.emailInboxList.unread')
+                                : screenLocale.t('screen.emailInboxList.read')}
                         </span>
                     </button>
                 ))}
@@ -153,29 +211,49 @@ export default function EmailInboxList({
     return (
         <div className={joinClasses(simLayout.stack, SIM_EMAIL_INBOX)}>
             <div className={joinClasses(simLayout.headerRowBetween, SIM_SCREEN_HEADER_ROW)}>
-                <span className={joinClasses(SIM_FLEX_GROW_1, 'simulator-text--center', SIM_TEXT_SM, 'simulator-text--semibold', 'simulator-text--body')}>
-                    {folderLabel}
+                <span
+                    className={joinClasses(
+                        SIM_FLEX_GROW_1,
+                        'simulator-text--center',
+                        SIM_TEXT_SM,
+                        'simulator-text--semibold',
+                        'simulator-text--body',
+                    )}
+                >
+                    {folderLabel ?? screenLocale.t(`nav.${folder}`)}
                 </span>
                 {onCompose != null && (
                     <SimulatorButton
                         tone="outline-primary"
-                        className={joinClasses(SIM_ROUNDED_NONE, simSpacing.py1, simSpacing.px2, simSpacing.me2, 'simulator-btn--sm', SIM_EMAIL_COMPOSE_ACTION)}
+                        className={joinClasses(
+                            SIM_ROUNDED_NONE,
+                            simSpacing.py1,
+                            simSpacing.px2,
+                            simSpacing.me2,
+                            'simulator-btn--sm',
+                            SIM_EMAIL_COMPOSE_ACTION,
+                        )}
                         onClick={onCompose}
-                        aria-label="Compose email"
+                        aria-label={screenLocale.t('screen.emailInboxList.compose.email')}
                     >
-                        Compose
+                        {screenLocale.t('screen.emailInboxList.compose')}
                     </SimulatorButton>
                 )}
             </div>
-            <SimulatorSearchInput
-                value={searchQuery}
-                onChange={setSearchQuery}
-                onSubmit={onSearchSubmit ?? (() => {})}
-                placeholder="Search"
-                ariaLabel="Search"
-                className={simSpacing.mb2}
-            />
-            {content}
+            <SimulatorListGroup
+                search={
+                    <SimulatorSearchInput
+                        value={searchQuery}
+                        onChange={setSearchQuery}
+                        onSubmit={onSearchSubmit ?? (() => {})}
+                        placeholder={screenLocale.t('screen.emailInboxList.search')}
+                        ariaLabel={screenLocale.t('list.search')}
+                        className={simSpacing.mb2}
+                    />
+                }
+            >
+                {content}
+            </SimulatorListGroup>
         </div>
     );
 }

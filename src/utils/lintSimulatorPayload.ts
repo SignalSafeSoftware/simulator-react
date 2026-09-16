@@ -1,3 +1,4 @@
+import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Advisory linting for simulator template payloads.
  * Runs after validation; does not throw. Catches quality/authoring issues that
@@ -46,11 +47,11 @@ function lintEmailEntry(
     const hasInbox = (payload.email?.inbox?.length ?? 0) > 0;
     const hasDetail = payload.email?.selectedMessage != null;
     if (screen === 'detail' && !hasDetail && !hasInbox) {
-        add(warnings, 'entry_app_empty', 'Entry point is email/detail but there is no message or inbox.', 'entry_point');
+        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.email.detail.but.there.is.no.message.or.inbox"), 'entry_point');
         return;
     }
     if (!hasInbox && !hasDetail) {
-        add(warnings, 'entry_app_empty', 'Entry point is email but inbox and selected message are empty.', 'entry_point');
+        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.email.but.inbox.and.selected.message.are.empty"), 'entry_point');
     }
 }
 
@@ -61,11 +62,11 @@ function lintMessagesEntry(
 ): void {
     const hasThread = (payload.sms?.thread?.messages?.length ?? 0) > 0;
     if (screen === 'thread_detail' && !hasThread) {
-        add(warnings, 'entry_app_empty', 'Entry point is messages/thread_detail but the thread has no messages.', 'entry_point');
+        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.messages.thread.detail.but.the.thread.has.no.messages"), 'entry_point');
         return;
     }
     if (!hasThread) {
-        add(warnings, 'entry_app_empty', 'Entry point is messages but the SMS thread is empty.', 'entry_point');
+        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.messages.but.the.sms.thread.is.empty"), 'entry_point');
     }
 }
 
@@ -78,7 +79,7 @@ function lintInternetEntry(
     const pages = payload.browser?.pages ?? [];
     const pageIds = new Set(pages.map((p) => p?.id).filter(Boolean));
     if (pages.length === 0) {
-        add(warnings, 'entry_app_empty', 'Entry point is internet but there are no browser pages.', 'entry_point');
+        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.internet.but.there.are.no.browser.pages"), 'entry_point');
         return;
     }
     if (screen != null && screen !== 'landing' && !pageIds.has(screen)) {
@@ -102,7 +103,7 @@ function lintPhoneEntry(
         screen === 'dial' ||
         screen === 'contacts';
     if (needsPhoneContent && !hasPhone && payload.phone == null) {
-        add(warnings, 'entry_app_empty', 'Entry point is phone but phone content is missing.', 'entry_point');
+        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.phone.but.phone.content.is.missing"), 'entry_point');
     }
 }
 
@@ -113,7 +114,7 @@ function lintHomeEntry(
     const widgets = payload.home?.widgets ?? [];
     const apps = payload.home?.featuredApps ?? [];
     if (widgets.length === 0 && apps.length === 0) {
-        add(warnings, 'entry_app_empty', 'Entry point is home but widgets and featured apps are empty.', 'entry_point');
+        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.home.but.widgets.and.featured.apps.are.empty"), 'entry_point');
     }
 }
 
@@ -180,7 +181,7 @@ function lintBareBrowserPages(
             add(
                 warnings,
                 'browser_page_bare',
-                'Browser page has no title, url, or content.',
+                englishLocale.t("copy.lintSimulatorPayload.browser.page.has.no.title.url.or.content"),
                 `browser.pages[${i}]`
             );
         }
@@ -222,7 +223,7 @@ function lintPhoneVerificationContacts(
         add(
             warnings,
             'phone_verification_without_contacts',
-            'Phone scenario has choices (e.g. verification) but no contacts list; learners cannot match a contact.',
+            englishLocale.t("copy.lintSimulatorPayload.phone.scenario.has.choices.e.g.verification.but.no.contacts.list.learners.cannot.match.a.c"),
             'phone'
         );
     }

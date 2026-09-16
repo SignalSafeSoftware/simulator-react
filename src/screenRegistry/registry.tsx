@@ -1,3 +1,5 @@
+import { createTranslator, simulatorEnglish } from '../i18n/catalog.js';
+const defaultLocale = createTranslator(simulatorEnglish);
 /**
  * Screen registry: declarative (app, screen) → component + getProps.
  * Resolution: exact (app, screen) first, then (app) default. No reducer logic here.
@@ -42,7 +44,7 @@ function buildMessagesThreadList(payload: SimulatorRenderContext['state']['paylo
 
 function getThreadPreview(text: string | undefined): string {
     if (typeof text !== 'string') {
-        return 'New message';
+        return defaultLocale.t('messages.newMessage');
     }
     if (text.length > 60) {
         return `${text.slice(0, 60)}…`;
@@ -131,14 +133,14 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             const isItHelpdeskWireframe = payload.templateKey === 'harness-phone-contact-it-helpdesk';
             return {
                 contacts: payload.contacts,
-                title: 'Contacts',
+                title: (ctx.locale ?? defaultLocale).t('nav.contacts'),
                 onBack: ctx.onBack,
                 onOpenContact: ctx.onOpenContactFromPhone,
                 onSearchSubmit: (query) => ctx.onAction(SimulatorActions.searchContacts(query)),
                 initialSearch: ctx.initialContactsSearch,
                 searchQuery: contactsSearchQuery,
                 onSearchChange: (query) => ctx.dispatch({ type: 'SET_CONTACTS_SEARCH', query }),
-                phoneLocalNavItems: navRenderedByShell ? undefined : getPhoneLocalNavItems(ctx.capabilities.phone),
+                phoneLocalNavItems: navRenderedByShell ? undefined : getPhoneLocalNavItems(ctx.capabilities.phone, ctx.locale),
                 phoneActiveId: phoneScreen,
                 onPhoneNavSelect: navRenderedByShell ? undefined : onPhoneNav,
                 onAddContact: () =>
@@ -180,7 +182,7 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
                 onBack: ctx.onBack,
                 onAction: ctx.onAction,
                 onViewEntry: (entryId: string) => ctx.onAction(SimulatorActions.viewDirectoryEntry(entryId)),
-                phoneLocalNavItems: navRenderedByShell ? undefined : getPhoneLocalNavItems(ctx.capabilities.phone),
+                phoneLocalNavItems: navRenderedByShell ? undefined : getPhoneLocalNavItems(ctx.capabilities.phone, ctx.locale),
                 phoneActiveId: phoneScreen,
                 onPhoneNavSelect: navRenderedByShell ? undefined : onPhoneNav,
                 initialSelectedDirectoryId,

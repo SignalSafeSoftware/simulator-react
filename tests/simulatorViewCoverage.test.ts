@@ -321,7 +321,7 @@ describe('simulator view coverage', () => {
         expect(renderer!.root.findByProps({ 'aria-label': 'Send' }).props.disabled).toBe(true);
         onBack.mockClear();
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Send' }).props.onClick();
+            renderer!.root.findByType('form').props.onSubmit({ preventDefault() {} });
         });
         expect(onBack).not.toHaveBeenCalled();
         await act(async () => {
@@ -439,13 +439,11 @@ describe('simulator view coverage', () => {
                 })
             );
         });
-        await act(async () => {
-            composeRenderer!.root.findByProps({ 'aria-label': 'Recipient' }).props.onChange({ target: { value: ' user@example.test ' } });
-            composeRenderer!.root.findByProps({ 'aria-label': 'Subject' }).props.onChange({ target: { value: ' Subject ' } });
-            composeRenderer!.root.findByProps({ 'aria-label': 'Body' }).props.onChange({ target: { value: ' Body ' } });
-            composeRenderer!.root.findByProps({ 'aria-label': 'Send' }).props.onClick();
-        });
-        expect(onSend).toHaveBeenCalledWith(expect.objectContaining({ to: expect.any(String), subject: expect.any(String), body: expect.any(String) }));
+        for (const [label, value] of [['Recipient', ' user@example.test '], ['Bcc', 'hidden@example.test'], ['Subject', ' Subject '], ['Body', ' Body ']]) {
+            await act(async () => { composeRenderer!.root.findByProps({ 'aria-label': label }).props.onChange({ target: { value } }); });
+        }
+        await act(async () => { composeRenderer!.root.findByType('form').props.onSubmit({ preventDefault() {} }); });
+        expect(onSend).toHaveBeenCalledWith({ to: 'user@example.test', bcc: 'hidden@example.test', subject: 'Subject', body: ' Body ' });
         expect(onCancel).toHaveBeenCalled();
 
         const onBack = vi.fn();
@@ -459,7 +457,11 @@ describe('simulator view coverage', () => {
         await act(async () => {
             threadInputs[0].props.onChange({ target: { value: '+15551230000' } });
             threadRenderer!.root.findByProps({ 'aria-label': 'Message body' }).props.onChange({ target: { value: 'Hello' } });
-            threadRenderer!.root.findByProps({ 'aria-label': 'Send' }).props.onClick();
+        });
+        await act(async () => {
+            threadRenderer!.root.findByType('form').props.onSubmit({ preventDefault() {} });
+        });
+        await act(async () => {
             threadRenderer!.root.findByProps({ 'aria-label': 'Cancel' }).props.onClick();
         });
         expect(onBack).toHaveBeenCalledTimes(2);

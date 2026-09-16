@@ -1,3 +1,4 @@
+import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Lightweight realism checks for canonical simulator examples.
  * Quality controls for reference templates: believable inbox/contacts, browser URLs/titles,
@@ -52,7 +53,7 @@ function checkEmailListEntry(
     blocker(
         blockers,
         'realism_email_list_empty',
-        'Entry is email list but inbox is empty; list view looks implausible.',
+        englishLocale.t("copy.simulatorRealismChecks.entry.is.email.list.but.inbox.is.empty.list.view.looks.implausible"),
         'email.inbox'
     );
 }
@@ -76,7 +77,7 @@ function checkVerificationSources(
         blocker(
             blockers,
             'realism_verification_no_contacts',
-            'Email has links and browser pages but no contacts or directory; verification flow is not possible.',
+            englishLocale.t("copy.simulatorRealismChecks.email.has.links.and.browser.pages.but.no.contacts.or.directory.verification.flow.is.not.po"),
             'contacts'
         );
     }
@@ -107,7 +108,7 @@ function checkBrowserPages(
             blocker(
                 blockers,
                 'realism_browser_page_no_url_or_title',
-                'Browser page has no url or title; address bar and tab would look empty.',
+                englishLocale.t("copy.simulatorRealismChecks.browser.page.has.no.url.or.title.address.bar.and.tab.would.look.empty"),
                 path
             );
             return;
@@ -117,7 +118,7 @@ function checkBrowserPages(
             suggest(
                 suggestions,
                 'realism_browser_page_no_title',
-                'Browser page has url but no title; consider adding a title for tab/header.',
+                englishLocale.t("copy.simulatorRealismChecks.browser.page.has.url.but.no.title.consider.adding.a.title.for.tab.header"),
                 path
             );
         }
@@ -141,14 +142,14 @@ function checkPhoneEntry(
                 blocker(
                     blockers,
                     'realism_phone_incoming_bare',
-                    'Incoming call has no transcript, number, or caller name; screen would look empty.',
+                    englishLocale.t("copy.simulatorRealismChecks.incoming.call.has.no.transcript.number.or.caller.name.screen.would.look.empty"),
                     'phone.content'
                 );
             } else if (transcript === '' && number === '') {
                 suggest(
                     suggestions,
                     'realism_phone_incoming_transcript',
-                    'Incoming call has caller name but no transcript or number; add transcript for realism.',
+                    englishLocale.t("copy.simulatorRealismChecks.incoming.call.has.caller.name.but.no.transcript.or.number.add.transcript.for.realism"),
                     'phone.content'
                 );
             }
@@ -159,7 +160,7 @@ function checkPhoneEntry(
         blocker(
             blockers,
             'realism_phone_directory_empty',
-            'Entry is phone directory but directory and contacts are empty.',
+            englishLocale.t("copy.simulatorRealismChecks.entry.is.phone.directory.but.directory.and.contacts.are.empty"),
             'directory'
         );
     }

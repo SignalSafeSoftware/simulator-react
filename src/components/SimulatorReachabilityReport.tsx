@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Development/admin reachability report for simulator templates.
  * Shows which screens and entities are reachable from the entry flow.
@@ -79,6 +80,8 @@ export default function SimulatorReachabilityReport({
     className,
     defaultExpanded = false,
 }: Readonly<SimulatorReachabilityReportProps>) {
+    const screenLocale = useSimulatorLocale();
+
     const bodyId = useId();
     const [open, setOpen] = useState(defaultExpanded);
     const {
@@ -97,9 +100,17 @@ export default function SimulatorReachabilityReport({
         unreachable.browserPageIds.length > 0;
 
     return (
-        <SimulatorCard className={joinClasses(simSpacing.mb2, className)} data-testid="simulator-reachability-report">
+        <SimulatorCard
+            className={joinClasses(simSpacing.mb2, className)}
+            data-testid="simulator-reachability-report"
+        >
             <SimulatorCardHeader
-                className={joinClasses('simulator-text--sm', 'simulator-surface--header', simSpacing.py1, simSpacing.px2)}
+                className={joinClasses(
+                    'simulator-text--sm',
+                    'simulator-surface--header',
+                    simSpacing.py1,
+                    simSpacing.px2,
+                )}
             >
                 <button
                     type="button"
@@ -113,55 +124,114 @@ export default function SimulatorReachabilityReport({
                     aria-expanded={open}
                     aria-controls={bodyId}
                 >
-                    Reachability {hasUnreachable ? `(${unreachable.screens.length + unreachable.contacts.length + unreachable.inboxMessageIds.length + unreachable.browserPageIds.length} unreachable)` : ''}
+                    {screenLocale.t('screen.simulatorReachabilityReport.reachability')}
+                    {hasUnreachable
+                        ? screenLocale.t('screen.simulatorReachabilityReport.value1.unreachable', {
+                              value1: String(
+                                  unreachable.screens.length +
+                                      unreachable.contacts.length +
+                                      unreachable.inboxMessageIds.length +
+                                      unreachable.browserPageIds.length,
+                              ),
+                          })
+                        : ''}
                 </button>
             </SimulatorCardHeader>
             <SimulatorCollapse open={open}>
-                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}>
-                    <Line label="Entry app" value={entryApp ?? '—'} />
-                    <Line label="Reachable apps" value={reachableApps} />
+                <SimulatorCardBody
+                    id={bodyId}
+                    className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}
+                >
+                    <Line
+                        label={screenLocale.t('screen.simulatorReachabilityReport.entry.app')}
+                        value={entryApp ?? '—'}
+                    />
+                    <Line
+                        label={screenLocale.t('screen.simulatorReachabilityReport.reachable.apps')}
+                        value={reachableApps}
+                    />
                     {reachableApps.map((app) => {
                         const screens = reachableScreens[app];
                         if (screens.length === 0) return null;
                         return (
-                            <Line key={app} label={`${app} screens`} value={screens} />
+                            <Line
+                                key={app}
+                                label={screenLocale.t(
+                                    'screen.simulatorReachabilityReport.value1.screens',
+                                    { value1: String(app) },
+                                )}
+                                value={screens}
+                            />
                         );
                     })}
-                    {(reachableEntities.contacts.length > 0 || reachableEntities.inboxMessageIds.length > 0 || reachableEntities.browserPageIds.length > 0) && (
+                    {(reachableEntities.contacts.length > 0 ||
+                        reachableEntities.inboxMessageIds.length > 0 ||
+                        reachableEntities.browserPageIds.length > 0) && (
                         <>
                             {reachableEntities.contacts.length > 0 && (
-                                <Line label="Reachable contacts" value={reachableEntities.contacts} />
+                                <Line
+                                    label={screenLocale.t(
+                                        'screen.simulatorReachabilityReport.reachable.contacts',
+                                    )}
+                                    value={reachableEntities.contacts}
+                                />
                             )}
                             {reachableEntities.inboxMessageIds.length > 0 && (
-                                <Line label="Reachable inbox" value={reachableEntities.inboxMessageIds} />
+                                <Line
+                                    label={screenLocale.t(
+                                        'screen.simulatorReachabilityReport.reachable.inbox',
+                                    )}
+                                    value={reachableEntities.inboxMessageIds}
+                                />
                             )}
                             {reachableEntities.browserPageIds.length > 0 && (
-                                <Line label="Reachable pages" value={reachableEntities.browserPageIds} />
+                                <Line
+                                    label={screenLocale.t(
+                                        'screen.simulatorReachabilityReport.reachable.pages',
+                                    )}
+                                    value={reachableEntities.browserPageIds}
+                                />
                             )}
                         </>
                     )}
                     {hasUnreachable && (
-                        <div className={joinClasses(simSpacing.mt2, simSpacing.pt2, SIM_BORDER_TOP)}>
-                            <span className={joinClasses(SIM_MUTED, 'simulator-text--semibold')}>Unreachable</span>
+                        <div
+                            className={joinClasses(simSpacing.mt2, simSpacing.pt2, SIM_BORDER_TOP)}
+                        >
+                            <span className={joinClasses(SIM_MUTED, 'simulator-text--semibold')}>
+                                {screenLocale.t('screen.simulatorReachabilityReport.unreachable')}
+                            </span>
                             {unreachable.screens.length > 0 && (
                                 <div className={simSpacing.mt1}>
-                                    Screens: {unreachable.screens.map((s) => formatScreenRef(s)).join(', ')}
+                                    {screenLocale.t('screen.simulatorReachabilityReport.screens')}
+                                    {unreachable.screens.map((s) => formatScreenRef(s)).join(', ')}
                                 </div>
                             )}
                             {unreachable.contacts.length > 0 && (
-                                <div>Contacts: {unreachable.contacts.join(', ')}</div>
+                                <div>
+                                    {screenLocale.t('screen.simulatorReachabilityReport.contacts')}
+                                    {unreachable.contacts.join(', ')}
+                                </div>
                             )}
                             {unreachable.inboxMessageIds.length > 0 && (
-                                <div>Inbox: {unreachable.inboxMessageIds.join(', ')}</div>
+                                <div>
+                                    {screenLocale.t('screen.simulatorReachabilityReport.inbox')}
+                                    {unreachable.inboxMessageIds.join(', ')}
+                                </div>
                             )}
                             {unreachable.browserPageIds.length > 0 && (
-                                <div>Pages: {unreachable.browserPageIds.join(', ')}</div>
+                                <div>
+                                    {screenLocale.t('screen.simulatorReachabilityReport.pages')}
+                                    {unreachable.browserPageIds.join(', ')}
+                                </div>
                             )}
                         </div>
                     )}
                     {browserHasCycle && (
                         <div className={joinClasses(simSpacing.mt2, 'simulator-text--warning')}>
-                            Browser navigation has a cycle (e.g. A → B → A).
+                            {screenLocale.t(
+                                'screen.simulatorReachabilityReport.browser.navigation.has.a.cycle.e.g.a.b.a',
+                            )}
                         </div>
                     )}
                 </SimulatorCardBody>

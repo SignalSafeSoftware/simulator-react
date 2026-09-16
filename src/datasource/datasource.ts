@@ -1,3 +1,4 @@
+import { englishLocale } from '../i18n/englishLocale.js';
 import type { SimulatorDevicePayload } from '../types/portableSimulator.js';
 import type {
   SimulatorTemplatePayload,
@@ -55,7 +56,7 @@ export function createSimulatorDatasource(input: unknown): SimulatorDatasource {
     try {
       value = JSON.parse(input);
     } catch {
-      throw new Error('Invalid simulator JSON: source is not valid JSON text.');
+      throw new Error(englishLocale.t("copy.datasource.invalid.simulator.json.source.is.not.valid.json.text"));
     }
   }
   validateDeviceJson(value);

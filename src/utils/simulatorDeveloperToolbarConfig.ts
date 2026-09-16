@@ -1,3 +1,4 @@
+import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Developer toolbar labels and icons for SimulatorWithSession.
  */
@@ -11,7 +12,7 @@ export const DEVELOPER_TOOLBAR_LABELS: Record<SimulatorDeveloperSectionKey, stri
     navGraph: 'Graph',
     snapshotExport: 'Snapshot',
     shortcuts: 'Shortcuts',
-    runtimeIssues: 'Runtime issues',
+    runtimeIssues: englishLocale.t("copy.simulatorDeveloperToolbarConfig.runtime.issues"),
 };
 
 export const DEVELOPER_TOOLBAR_ICONS: Record<SimulatorDeveloperSectionKey, string> = {

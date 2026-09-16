@@ -1,3 +1,4 @@
+import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Lightweight validation for simulator template shape.
  * Throws with a clear, author-facing message so callers can show an error without crashing the page.
@@ -22,7 +23,7 @@ const HINT = ' See docs/simulator/simulator-authoring.md for schema and allowed 
  */
 export function validateSimulatorPayload(payload: unknown): void {
     if (payload == null || typeof payload !== 'object') {
-        throw new Error('Invalid simulator payload: payload is missing or not an object.' + HINT);
+        throw new Error(englishLocale.t("copy.validateSimulatorPayload.invalid.simulator.payload.payload.is.missing.or.not.an.object") + HINT);
     }
     const p = payload as Record<string, unknown>;
     if (typeof p.channel !== 'string' || !VALID_CHANNELS.includes(p.channel as SimulatorChannel)) {

@@ -1,3 +1,4 @@
+import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Lightweight diff for simulator payloads (simulator_json).
  * Produces a short, meaning-focused summary of changes for authors/admins.
@@ -102,7 +103,7 @@ function addDeviceDiff(
         out.push({
             section: 'device',
             change: `Device menu: ${leftMenu.length} → ${rightMenu.length} items`,
-            detail: leftMenu.length === rightMenu.length ? 'Order or ids changed' : undefined,
+            detail: leftMenu.length === rightMenu.length ? englishLocale.t("copy.simulatorPayloadDiff.order.or.ids.changed") : undefined,
         });
     }
 
@@ -126,7 +127,7 @@ function addDeviceDiff(
     if (defaultChanges.length > 0) {
         out.push({
             section: 'device',
-            change: 'Device secondary_defaults changed',
+            change: englishLocale.t("copy.simulatorPayloadDiff.device.secondary.defaults.changed"),
             detail: defaultChanges.join('; '),
         });
     }
@@ -161,7 +162,7 @@ function addPhoneDiff(
     if (leftHasIncoming !== rightHasIncoming) {
         out.push({
             section: 'phone',
-            change: rightHasIncoming ? 'Phone: incoming_call added' : 'Phone: incoming_call removed',
+            change: rightHasIncoming ? englishLocale.t("copy.simulatorPayloadDiff.phone.incoming.call.added") : englishLocale.t("copy.simulatorPayloadDiff.phone.incoming.call.removed"),
         });
     }
 
@@ -185,7 +186,7 @@ function addEmailDiff(
     const leftInbox = idsFromArray(leftEmail?.messages ?? []);
     const rightInbox = idsFromArray(rightEmail?.messages ?? []);
 
-    addCollectionDiff(out, 'email', 'Email inbox', leftInbox, rightInbox, (diff) => {
+    addCollectionDiff(out, 'email', englishLocale.t("copy.simulatorPayloadDiff.email.inbox"), leftInbox, rightInbox, (diff) => {
         const details = [...diff.added.map((id) => `+${id}`), ...diff.removed.map((id) => `-${id}`)];
         return details.slice(0, 8).join(', ') + (details.length > 8 ? '…' : '');
     });
@@ -199,7 +200,7 @@ function addEmailDiff(
     if (String(leftDetailSubject) !== String(rightDetailSubject)) {
         out.push({
             section: 'email',
-            change: 'Email detail (subject) changed',
+            change: englishLocale.t("copy.simulatorPayloadDiff.email.detail.subject.changed"),
         });
     }
 }
@@ -249,7 +250,7 @@ function addInternetDiff(
     const rightInternet = right.internet as Record<string, unknown> | undefined;
     const leftPages = idsFromArray(leftInternet?.pages ?? []);
     const rightPages = idsFromArray(rightInternet?.pages ?? []);
-    addCollectionDiff(out, 'internet', 'Browser pages', leftPages, rightPages, (diff) => {
+    addCollectionDiff(out, 'internet', englishLocale.t("copy.simulatorPayloadDiff.browser.pages"), leftPages, rightPages, (diff) => {
         const details = [...diff.added.map((id) => `+${id}`), ...diff.removed.map((id) => `-${id}`)].join(', ');
         return details || undefined;
     });

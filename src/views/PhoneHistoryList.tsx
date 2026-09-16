@@ -1,3 +1,6 @@
+import { usePhoneNumberFormatter } from '../contract/phonePresentation.js';
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
+import { SimulatorListGroup } from '../components/SimulatorListGroup.js';
 /**
  * Phone History tab: list of recent calls by kind (incoming, outgoing, missed, voicemail)
  * + optional "Incoming call" card + optional Voicemail summary row.
@@ -51,7 +54,9 @@ function ProfileIcon({ className }: Readonly<{ className?: string }>) {
             style={{ width: 40, height: 40 }}
             aria-hidden
         >
-            <span className="simulator-text--primary" style={{ fontSize: '1.25rem' }}>👤</span>
+            <span className="simulator-text--primary" style={{ fontSize: '1.25rem' }}>
+                👤
+            </span>
         </div>
     );
 }
@@ -85,16 +90,6 @@ function entryKind(entry: SimulatorCallHistoryEntry): CallHistoryEntryKind {
     return 'incoming';
 }
 
-function kindLabel(kind: CallHistoryEntryKind): string {
-    switch (kind) {
-        case 'incoming': return 'Incoming';
-        case 'outgoing': return 'Outbound';
-        case 'missed': return 'Missed';
-        case 'voicemail': return 'Voicemail';
-        default: return 'Call';
-    }
-}
-
 function kindStatusBadgeClass(kind: CallHistoryEntryKind): string {
     switch (kind) {
         case 'missed':
@@ -110,11 +105,16 @@ function kindStatusBadgeClass(kind: CallHistoryEntryKind): string {
 
 function kindBadgeTone(kind: CallHistoryEntryKind): string {
     switch (kind) {
-        case 'missed': return 'danger';
-        case 'voicemail': return 'neutral';
-        case 'outgoing': return 'primary';
-        case 'incoming': return 'success';
-        default: return 'neutral';
+        case 'missed':
+            return 'danger';
+        case 'voicemail':
+            return 'neutral';
+        case 'outgoing':
+            return 'primary';
+        case 'incoming':
+            return 'success';
+        default:
+            return 'neutral';
     }
 }
 
@@ -125,10 +125,18 @@ function matchesSearch(entry: SimulatorCallHistoryEntry, q: string): boolean {
     const number = (entry.number ?? '').toLowerCase();
     const timestamp = (entry.timestamp ?? '').toLowerCase();
     const label = (entry.label ?? '').toLowerCase();
-    return name.includes(lower) || number.includes(lower) || timestamp.includes(lower) || label.includes(lower);
+    return (
+        name.includes(lower) ||
+        number.includes(lower) ||
+        timestamp.includes(lower) ||
+        label.includes(lower)
+    );
 }
 
-function incomingMatchesSearch(content: PhoneSimulatorContent | null | undefined, q: string): boolean {
+function incomingMatchesSearch(
+    content: PhoneSimulatorContent | null | undefined,
+    q: string,
+): boolean {
     if (!content || !q.trim()) return true;
     const lower = q.toLowerCase().trim();
     const name = (content.caller_name ?? '').toLowerCase();
@@ -198,10 +206,14 @@ export default function PhoneHistoryList({
     onSelectEntry,
     searchQuery: controlledSearchQuery,
     onSearchQueryChange,
-    searchAriaLabel = 'Search calls',
+    searchAriaLabel,
     selectedEntryId,
     renderEntryActions,
 }: Readonly<PhoneHistoryListProps>) {
+    const screenLocale = useSimulatorLocale();
+
+    const formatNumber = usePhoneNumberFormatter();
+    const { t } = useSimulatorLocale();
     const [localSearchQuery, setLocalSearchQuery] = useState('');
     const searchQuery = controlledSearchQuery ?? localSearchQuery;
     const setSearchQuery = (query: string) => {
@@ -210,125 +222,226 @@ export default function PhoneHistoryList({
     };
     const filteredEntries = useMemo(
         () => entries.filter((e) => matchesSearch(e, searchQuery)),
-        [entries, searchQuery]
+        [entries, searchQuery],
     );
     const showIncoming =
         incomingCallContent != null && incomingMatchesSearch(incomingCallContent, searchQuery);
-    const showVoicemailRow = hasVoicemail && (!searchQuery.trim() || 'voicemail'.includes(searchQuery.toLowerCase().trim()));
+    const showVoicemailRow =
+        hasVoicemail &&
+        (!searchQuery.trim() || 'voicemail'.includes(searchQuery.toLowerCase().trim()));
 
     return (
         <div className={joinClasses(simLayout.stack, SIM_PHONE_INCOMING_CALL_HISTORY)}>
-            <SimulatorSearchInput
-                value={searchQuery}
-                onChange={setSearchQuery}
-                placeholder="Search calls"
-                ariaLabel={searchAriaLabel}
-                className={joinClasses(simSpacing.mb2, SIM_PHONE_HISTORY_SEARCH)}
-            />
-            {showIncoming && (
-                <PhoneHistoryRowButton
-                    onClick={onSelectIncoming}
-                    className={joinClasses(incomingCardClass, SIM_PHONE_HISTORY_INCOMING_ROW)}
-                    ariaLabel="Incoming call"
-                >
-                    <ProfileIcon />
-                    <div className={joinClasses(SIM_FLEX_COL, 'simulator-min-w-0', SIM_FLEX_GROW_1)}>
-                        <span className={joinClasses('simulator-text--medium', 'simulator-text--truncate')}>
-                            {incomingCallContent.caller_name ?? incomingCallContent.phone_number ?? 'Unknown'}
+            <SimulatorListGroup
+                empty={filteredEntries.length === 0 && !showIncoming && !showVoicemailRow}
+                emptyMessage={
+                    entries.length === 0 && !incomingCallContent && !hasVoicemail
+                        ? t('calls.empty')
+                        : t('search.empty', { query: searchQuery })
+                }
+                search={
+                    <SimulatorSearchInput
+                        value={searchQuery}
+                        onChange={setSearchQuery}
+                        placeholder={t('calls.search')}
+                        ariaLabel={searchAriaLabel ?? t('calls.search')}
+                        className={joinClasses(simSpacing.mb2, SIM_PHONE_HISTORY_SEARCH)}
+                    />
+                }
+            >
+                {showIncoming && (
+                    <PhoneHistoryRowButton
+                        onClick={onSelectIncoming}
+                        className={joinClasses(incomingCardClass, SIM_PHONE_HISTORY_INCOMING_ROW)}
+                        ariaLabel={screenLocale.t('a11y.incoming.call')}
+                    >
+                        <ProfileIcon />
+                        <div
+                            className={joinClasses(
+                                SIM_FLEX_COL,
+                                'simulator-min-w-0',
+                                SIM_FLEX_GROW_1,
+                            )}
+                        >
+                            <span
+                                className={joinClasses(
+                                    'simulator-text--medium',
+                                    'simulator-text--truncate',
+                                )}
+                            >
+                                {incomingCallContent.caller_name ??
+                                    incomingCallContent.phone_number ??
+                                    screenLocale.t('screen.phoneHistoryList.unknown')}
+                            </span>
+                            {incomingCallContent.phone_number && (
+                                <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>
+                                    {formatNumber(incomingCallContent.phone_number)}
+                                </span>
+                            )}
+                        </div>
+                        <span
+                            className={joinClasses(
+                                simBadgeToneClass('neutral'),
+                                SIM_CALL_STATUS_BADGE,
+                                SIM_CALL_STATUS_BADGE_INCOMING,
+                                SIM_ROUNDED_NONE,
+                                SIM_FLEX_SHRINK_0,
+                            )}
+                        >
+                            {screenLocale.t('screen.phoneHistoryList.incoming')}
                         </span>
-                        {incomingCallContent.phone_number && (
-                            <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>{incomingCallContent.phone_number}</span>
-                        )}
-                    </div>
-                    <span
-                        className={joinClasses(
-                            simBadgeToneClass('neutral'),
+                    </PhoneHistoryRowButton>
+                )}
+                {showVoicemailRow && (
+                    <PhoneHistoryRowButton
+                        onClick={onSelectVoicemail}
+                        className={joinClasses(listRowClass, SIM_SURFACE_WHITE)}
+                        ariaLabel={screenLocale.t('a11y.voicemail')}
+                    >
+                        <ProfileIcon />
+                        <span className={joinClasses('simulator-text--medium', SIM_FLEX_GROW_1)}>
+                            {screenLocale.t('screen.phoneHistoryList.voicemail')}
+                        </span>
+                        <span
+                            className={joinClasses(simBadgeToneClass('neutral'), SIM_ROUNDED_NONE)}
+                        >
+                            {screenLocale.t('screen.phoneHistoryList.new')}
+                        </span>
+                    </PhoneHistoryRowButton>
+                )}
+                <div className="simulator-list--flush">
+                    {filteredEntries.map((entry) => {
+                        const kind = entryKind(entry);
+                        const isVoicemail = kind === 'voicemail';
+                        const handleClick = () => {
+                            if (isVoicemail) onSelectVoicemail();
+                            else onSelectEntry?.(entry.id);
+                        };
+                        const actionable = isVoicemail || !!onSelectEntry;
+                        const primary =
+                            entry.name ||
+                            (entry.number ? formatNumber(entry.number) : t('value.unknown'));
+                        const displayNumber =
+                            entry.displayNumber ??
+                            (entry.number ? formatNumber(entry.number) : undefined);
+                        const secondary = [
+                            entry.numberLabel,
+                            displayNumber !== primary ? displayNumber : null,
+                        ]
+                            .filter(Boolean)
+                            .join(' · ');
+                        const rowSurface = joinClasses(
+                            listRowClass,
+                            SIM_PHONE_HISTORY_ROW,
+                            kind === 'incoming' || kind === 'missed'
+                                ? SIM_SURFACE_LIGHT
+                                : SIM_SURFACE_WHITE,
+                        );
+                        const badgeClass = joinClasses(
+                            simBadgeToneClass(kindBadgeTone(kind)),
                             SIM_CALL_STATUS_BADGE,
-                            SIM_CALL_STATUS_BADGE_INCOMING,
+                            kindStatusBadgeClass(kind),
                             SIM_ROUNDED_NONE,
                             SIM_FLEX_SHRINK_0,
+                        );
+                        const rowContent = (
+                            <>
+                                <ProfileIcon />
+                                <div
+                                    className={joinClasses(
+                                        SIM_FLEX_COL,
+                                        'simulator-min-w-0',
+                                        SIM_FLEX_GROW_1,
+                                    )}
+                                >
+                                    <span
+                                        className={joinClasses(
+                                            'simulator-text--medium',
+                                            'simulator-text--truncate',
+                                        )}
+                                    >
+                                        {primary}
+                                    </span>
+                                    {secondary && (
+                                        <span
+                                            className={joinClasses(
+                                                SIM_TEXT_SM,
+                                                SIM_MUTED,
+                                                'simulator-text--truncate',
+                                            )}
+                                        >
+                                            {secondary}
+                                        </span>
+                                    )}
+                                    {entry.durationSeconds != null && (
+                                        <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>
+                                            {t('calls.duration', {
+                                                minutes: Math.floor(entry.durationSeconds / 60),
+                                                seconds: entry.durationSeconds % 60,
+                                            })}
+                                        </span>
+                                    )}
+                                    {entry.timestamp != null && (
+                                        <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>
+                                            {entry.timestamp}
+                                        </span>
+                                    )}
+                                </div>
+                                <span className={badgeClass}>
+                                    {t(
+                                        kind === 'incoming' ||
+                                            kind === 'outgoing' ||
+                                            kind === 'missed' ||
+                                            kind === 'voicemail'
+                                            ? `calls.${kind}`
+                                            : 'calls.unknown',
+                                    )}
+                                </span>
+                            </>
+                        );
+                        const actions = renderEntryActions?.(entry);
+                        const row = actionable ? (
+                            <PhoneHistoryRowButton
+                                onClick={handleClick}
+                                className={rowSurface}
+                                selected={selectedEntryId === entry.id}
+                            >
+                                {rowContent}
+                            </PhoneHistoryRowButton>
+                        ) : (
+                            <div
+                                className={rowSurface}
+                                aria-current={selectedEntryId === entry.id || undefined}
+                            >
+                                {rowContent}
+                            </div>
+                        );
+                        return actions != null ? (
+                            <div key={entry.id} className={SIM_PHONE_HISTORY_ENTRY}>
+                                {row}
+                                <div className={SIM_PHONE_HISTORY_ACTIONS}>{actions}</div>
+                            </div>
+                        ) : (
+                            <Fragment key={entry.id}>{row}</Fragment>
+                        );
+                    })}
+                </div>
+                {filteredEntries.length === 0 && !showIncoming && !showVoicemailRow && (
+                    <p
+                        className={joinClasses(
+                            SIM_MUTED,
+                            SIM_TEXT_SM,
+                            simSpacing.mt2,
+                            simSpacing.mb0,
+                            simSpacing.px2,
                         )}
                     >
-                        Incoming
-                    </span>
-                </PhoneHistoryRowButton>
-            )}
-            {showVoicemailRow && (
-                <PhoneHistoryRowButton
-                    onClick={onSelectVoicemail}
-                    className={joinClasses(listRowClass, SIM_SURFACE_WHITE)}
-                    ariaLabel="Voicemail"
-                >
-                    <ProfileIcon />
-                    <span className={joinClasses('simulator-text--medium', SIM_FLEX_GROW_1)}>Voicemail</span>
-                    <span className={joinClasses(simBadgeToneClass('neutral'), SIM_ROUNDED_NONE)}>New</span>
-                </PhoneHistoryRowButton>
-            )}
-            <div className="simulator-list--flush">
-                {filteredEntries.map((entry) => {
-                    const kind = entryKind(entry);
-                    const isVoicemail = kind === 'voicemail';
-                    const handleClick = () => {
-                        if (isVoicemail) onSelectVoicemail();
-                        else onSelectEntry?.(entry.id);
-                    };
-                    const actionable = isVoicemail || !!onSelectEntry;
-                    const primary = entry.name ?? entry.number ?? 'Unknown';
-                    const secondary = entry.name != null && entry.number ? entry.number : null;
-                    const rowSurface = joinClasses(
-                        listRowClass,
-                        SIM_PHONE_HISTORY_ROW,
-                        kind === 'incoming' || kind === 'missed' ? SIM_SURFACE_LIGHT : SIM_SURFACE_WHITE,
-                    );
-                    const badgeClass = joinClasses(
-                        simBadgeToneClass(kindBadgeTone(kind)),
-                        SIM_CALL_STATUS_BADGE,
-                        kindStatusBadgeClass(kind),
-                        SIM_ROUNDED_NONE,
-                        SIM_FLEX_SHRINK_0,
-                    );
-                    const rowContent = (
-                        <>
-                            <ProfileIcon />
-                            <div className={joinClasses(SIM_FLEX_COL, 'simulator-min-w-0', SIM_FLEX_GROW_1)}>
-                                <span className={joinClasses('simulator-text--medium', 'simulator-text--truncate')}>{primary}</span>
-                                {secondary && <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED, 'simulator-text--truncate')}>{secondary}</span>}
-                                {entry.timestamp != null && (
-                                    <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>{entry.timestamp}</span>
-                                )}
-                            </div>
-                            <span className={badgeClass}>{kindLabel(kind)}</span>
-                        </>
-                    );
-                    const actions = renderEntryActions?.(entry);
-                    const row = actionable ? (
-                        <PhoneHistoryRowButton
-                            onClick={handleClick}
-                            className={rowSurface}
-                            selected={selectedEntryId === entry.id}
-                        >
-                            {rowContent}
-                        </PhoneHistoryRowButton>
-                    ) : (
-                        <div className={rowSurface} aria-current={selectedEntryId === entry.id || undefined}>
-                            {rowContent}
-                        </div>
-                    );
-                    return actions != null ? (
-                        <div key={entry.id} className={SIM_PHONE_HISTORY_ENTRY}>
-                            {row}
-                            <div className={SIM_PHONE_HISTORY_ACTIONS}>{actions}</div>
-                        </div>
-                    ) : <Fragment key={entry.id}>{row}</Fragment>;
-                })}
-            </div>
-            {filteredEntries.length === 0 && !showIncoming && !showVoicemailRow && (
-                <p className={joinClasses(SIM_MUTED, SIM_TEXT_SM, simSpacing.mt2, simSpacing.mb0, simSpacing.px2)}>
-                    {entries.length === 0 && !incomingCallContent && !hasVoicemail
-                        ? 'No recent calls.'
-                        : `No results for "${searchQuery}".`}
-                </p>
-            )}
+                        {entries.length === 0 && !incomingCallContent && !hasVoicemail
+                            ? t('calls.empty')
+                            : t('search.empty', { query: searchQuery })}
+                    </p>
+                )}
+            </SimulatorListGroup>
         </div>
     );
 }

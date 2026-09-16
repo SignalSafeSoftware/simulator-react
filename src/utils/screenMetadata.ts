@@ -1,3 +1,4 @@
+import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Structured screen metadata for the simulator: current app/screen, list-detail relationship,
  * back/cancel affordances, and optional labels. Used by admin preview, debug logging, and
@@ -39,7 +40,7 @@ const PHONE_SCREEN_LABELS: Record<string, string> = {
     history: 'History',
     contacts: 'Contacts',
     dial: 'Dial',
-    incoming_call: 'Incoming call',
+    incoming_call: englishLocale.t("copy.screenMetadata.incoming.call"),
     voicemail: 'Voicemail',
     directory: 'Directory',
 };

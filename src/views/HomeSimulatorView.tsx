@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Home app: dashboard (Store/Settings launcher), Store (app cards), Settings (sections + inputs).
  * Wireframe: centered headers, search bar, rectangular buttons/cards. Store and Settings are subviews; Back returns to Home.
@@ -58,7 +59,9 @@ function StoreAppIcon({ className }: Readonly<{ className?: string }>) {
             style={{ width: 48, height: 48 }}
             aria-hidden
         >
-            <span className="simulator-text--primary" style={{ fontSize: '1.5rem' }}>👤</span>
+            <span className="simulator-text--primary" style={{ fontSize: '1.5rem' }}>
+                👤
+            </span>
         </div>
     );
 }
@@ -98,32 +101,55 @@ function HomeStoreScreen({
     featuredApps: SimulatorHomeStoreApp[];
     onAction: (action: SimulatorAction) => void;
 }>) {
+    const screenLocale = useSimulatorLocale();
+
     const [search, setSearch] = useState('');
     const filtered = search.trim()
         ? featuredApps.filter((a) => a.name.toLowerCase().includes(search.toLowerCase().trim()))
         : featuredApps;
     let storeContent: ReactNode;
     if (featuredApps.length === 0) {
-        storeContent = <p className={simTypo.emptyState}>No apps.</p>;
+        storeContent = (
+            <p className={simTypo.emptyState}>
+                {screenLocale.t('screen.homeSimulatorView.no.apps')}
+            </p>
+        );
     } else if (filtered.length === 0) {
-        storeContent = <p className={simTypo.emptyState}>No results.</p>;
+        storeContent = (
+            <p className={simTypo.emptyState}>
+                {screenLocale.t('screen.homeSimulatorView.no.results')}
+            </p>
+        );
     } else {
         storeContent = (
             <div className={simLayout.stack}>
                 {filtered.map((app) => (
                     <div key={app.id} className={storeCardClass}>
                         <StoreAppIcon />
-                        <div className={joinClasses(SIM_FLEX_COL, 'simulator-min-w-0', SIM_FLEX_GROW_1)}>
-                            <span className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_BODY)}>{app.name}</span>
+                        <div
+                            className={joinClasses(
+                                SIM_FLEX_COL,
+                                'simulator-min-w-0',
+                                SIM_FLEX_GROW_1,
+                            )}
+                        >
+                            <span className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_BODY)}>
+                                {app.name}
+                            </span>
                             <div className={joinClasses(simLayout.rowBetween, simSpacing.mt2)}>
-                                <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>App</span>
+                                <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>
+                                    {screenLocale.t('screen.homeSimulatorView.app')}
+                                </span>
                                 <SimulatorButton
                                     tone="primary"
                                     className={joinClasses('simulator-btn--sm', SIM_ROUNDED_NONE)}
                                     onClick={() => onAction(SimulatorActions.openStore())}
-                                    aria-label={`Download ${app.name}`}
+                                    aria-label={screenLocale.t(
+                                        'screen.homeSimulatorView.download.value1',
+                                        { value1: String(app.name) },
+                                    )}
                                 >
-                                    Download
+                                    {screenLocale.t('screen.homeSimulatorView.download')}
                                 </SimulatorButton>
                             </div>
                         </div>
@@ -135,12 +161,14 @@ function HomeStoreScreen({
 
     return (
         <div className={simLayout.stack}>
-            <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>Store</div>
+            <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>
+                {screenLocale.t('screen.homeSimulatorView.store')}
+            </div>
             <SimulatorSearchInput
                 value={search}
                 onChange={setSearch}
-                placeholder="Search apps"
-                ariaLabel="Search store"
+                placeholder={screenLocale.t('screen.homeSimulatorView.search.apps')}
+                ariaLabel={screenLocale.t('a11y.search.store')}
                 className={simSpacing.mb3}
             />
             {storeContent}
@@ -156,37 +184,65 @@ function HomeSettingsScreen({
     settingsSections: SimulatorHomeSettingsSection[];
     onBack: () => void;
 }>) {
+    const screenLocale = useSimulatorLocale();
+
     const [search, setSearch] = useState('');
     const normalizedSearch = search.trim().toLowerCase();
     const filteredSections = normalizedSearch
-        ? settingsSections.filter((section) => section.title.toLowerCase().includes(normalizedSearch))
+        ? settingsSections.filter((section) =>
+              section.title.toLowerCase().includes(normalizedSearch),
+          )
         : settingsSections;
 
     return (
         <div className={simLayout.stack}>
             <SimulatorDetailBackBar
                 onBack={onBack}
-                title="Settings"
-                ariaLabel="Back to Home"
+                title={screenLocale.t('screen.homeSimulatorView.settings')}
+                ariaLabel={screenLocale.t('a11y.back.to.home')}
                 className={SIM_HOME_SETTINGS_BACK_BAR}
             />
-            <div className={joinClasses(simScreen.header, simSpacing.sectionGap, SIM_HOME_SETTINGS_HEADER)}>Settings</div>
+            <div
+                className={joinClasses(
+                    simScreen.header,
+                    simSpacing.sectionGap,
+                    SIM_HOME_SETTINGS_HEADER,
+                )}
+            >
+                {screenLocale.t('screen.homeSimulatorView.settings')}
+            </div>
             <SimulatorSearchInput
                 value={search}
                 onChange={setSearch}
-                placeholder="Search settings"
-                ariaLabel="Search settings"
+                placeholder={screenLocale.t('screen.homeSimulatorView.search.settings')}
+                ariaLabel={screenLocale.t('a11y.search.settings')}
                 className={simSpacing.mb3}
             />
             {settingsSections.length === 0 ? (
-                <p className={simTypo.emptyState}>No settings are configured for this scenario.</p>
+                <p className={simTypo.emptyState}>
+                    {screenLocale.t(
+                        'screen.homeSimulatorView.no.settings.are.configured.for.this.scenario',
+                    )}
+                </p>
             ) : filteredSections.length === 0 ? (
-                <p className={simTypo.emptyState}>No matching settings.</p>
+                <p className={simTypo.emptyState}>
+                    {screenLocale.t('screen.homeSimulatorView.no.matching.settings')}
+                </p>
             ) : (
                 <div className={joinClasses(SIM_FLEX_COL, 'simulator-spacing--gap-3')}>
                     {filteredSections.map((section) => (
-                        <div key={section.id} className={joinClasses(simBorder.tile, SIM_ROUNDED_NONE, simSpacing.p3, SIM_SURFACE_WHITE)}>
-                            <span className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_BODY)}>{section.title}</span>
+                        <div
+                            key={section.id}
+                            className={joinClasses(
+                                simBorder.tile,
+                                SIM_ROUNDED_NONE,
+                                simSpacing.p3,
+                                SIM_SURFACE_WHITE,
+                            )}
+                        >
+                            <span className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_BODY)}>
+                                {section.title}
+                            </span>
                         </div>
                     ))}
                 </div>
@@ -209,6 +265,8 @@ function HomeDashboard({
     onNavigate: (screen: HomeScreenId) => void;
     onAction: (action: SimulatorAction) => void;
 }>) {
+    const screenLocale = useSimulatorLocale();
+
     return (
         <div className={simLayout.stack}>
             {(hasStore || hasSettings) && (
@@ -221,9 +279,9 @@ function HomeDashboard({
                                 onAction(SimulatorActions.openStore());
                                 onNavigate('store');
                             }}
-                            aria-label="Store"
+                            aria-label={screenLocale.t('screen.homeSimulatorView.store')}
                         >
-                            Store
+                            {screenLocale.t('screen.homeSimulatorView.store')}
                         </SimulatorButton>
                     )}
                     {hasSettings && (
@@ -234,9 +292,9 @@ function HomeDashboard({
                                 onAction(SimulatorActions.openSettings());
                                 onNavigate('settings');
                             }}
-                            aria-label="Settings"
+                            aria-label={screenLocale.t('screen.homeSimulatorView.settings')}
                         >
-                            Settings
+                            {screenLocale.t('screen.homeSimulatorView.settings')}
                         </SimulatorButton>
                     )}
                 </div>
@@ -255,7 +313,9 @@ function HomeDashboard({
                 </div>
             )}
             {widgets.length === 0 && !hasStore && !hasSettings && (
-                <p className={simTypo.emptyState}>No content on home.</p>
+                <p className={simTypo.emptyState}>
+                    {screenLocale.t('screen.homeSimulatorView.no.content.on.home')}
+                </p>
             )}
         </div>
     );

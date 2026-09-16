@@ -48,8 +48,7 @@ export default function PhoneKeypad({
       key={digit}
       type="button"
       disabled={disabled}
-      className={call ? 'simulator-call-key' : keyClass}
-      style={call ? undefined : { width: 72, height: 52 }}
+      className={call ? 'simulator-call-key' : joinClasses(keyClass, 'simulator-phone__dialer-key')}
       onClick={() => onDigit(digit)}
       aria-label={
         digitLabel?.(digit, letters) ??
@@ -75,7 +74,7 @@ export default function PhoneKeypad({
         letters && (
           <span
             className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}
-            style={{ lineHeight: 1, fontSize: '0.65rem' }}
+            style={{ lineHeight: 1, fontSize: 'var(--simulator-phone-dialer-letters-font-size, 0.65rem)' }}
           >
             {letters}
           </span>

@@ -1,3 +1,4 @@
+import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Preview-only fallback world: minimal placeholders so partial templates can preview.
  * Used when entry_point points at an app/screen but that slice is missing or empty.
@@ -37,14 +38,14 @@ function buildEmailFallback(): SimulatorEmailPayload {
         id,
         subject: PLACEHOLDER_LABEL,
         from: 'preview@example',
-        snippet: 'Add email content in simulator_json.',
+        snippet: englishLocale.t("copy.previewFallbackWorld.add.email.content.in.simulator.json"),
     };
     return {
         inbox: [row],
         selectedMessage: {
             subject: PLACEHOLDER_LABEL,
             from: 'preview@example',
-            body: 'Add email content in simulator_json to replace this placeholder.',
+            body: englishLocale.t("copy.previewFallbackWorld.add.email.content.in.simulator.json.to.replace.this.placeholder"),
             from_display_name: undefined,
             to: undefined,
             cc: undefined,
@@ -101,7 +102,7 @@ function buildBrowserFallback(entryScreen: string): SimulatorBrowserPayload {
         url: 'https://example.com/',
         title: PLACEHOLDER_LABEL,
         layout: 'content',
-        content: 'Add browser.pages in simulator_json to replace this placeholder.',
+        content: englishLocale.t("copy.previewFallbackWorld.add.browser.pages.in.simulator.json.to.replace.this.placeholder"),
     };
     return {
         pages: [page],

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.16.2 — 2026-09-16
+
+- Refresh release tooling to Vitest 5; preserve React 18 compatibility.
+- Add localized semantic page/list-group, contact-value and photo controls with default accessible SVG photo actions.
+- Add controlled email/message/dial drafts, explicit action capabilities, selection-aware keypad editing and grouped contact fields.
+- Preserve host navigation interception, screen overrides, readonly datasource snapshots and React 18 compatibility.
+- Require simulator-core 0.3.1 and refresh TreeSpec dependencies; use standalone registry lockfiles.
+
+
 ## 0.4.0 — 2026-09-11
 
 - Expose deeply readonly datasource snapshots, matching recursive runtime freezing. Nested writes now fail at compile time; use the existing mutable session conversion when editing content.

@@ -138,7 +138,8 @@ describe('simulator accessible list views', () => {
                     inbox: [],
                     selectedMessageId: null,
                     onSelectMessage,
-                    folderLabel: 'Trash',
+                    folderLabel: 'Deleted mail',
+                    folder: 'trash',
                 })
             );
         });
@@ -370,7 +371,7 @@ describe('simulator accessible list views', () => {
         await act(async () => {
             renderer!.root.findByProps({ 'aria-label': 'Forward' }).props.onClick();
             renderer!.root.findByProps({ 'aria-label': 'Dispose' }).props.onClick();
-            renderer!.root.findByProps({ 'aria-label': 'Cancel' }).props.onClick();
+            renderer!.root.findByProps({ 'aria-label': 'Back' }).props.onClick();
         });
         expect(onBack).toHaveBeenCalledTimes(3);
 

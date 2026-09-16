@@ -40,4 +40,4 @@ When the screen registry cannot resolve `(app, screen)`:
 - Author lint: `lintSimulatorPayload`, `SimulatorLintBanner`
 - Author runtime issues: `treeSpecRuntimeIssues` (core), `SimulatorRuntimeIssuesReport` (react dev tools)
 
-See also [SECURITY.md](./SECURITY.md).
+See also [SECURITY.md](../SECURITY.md).

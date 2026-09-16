@@ -1,7 +1,7 @@
 /**
  * Reusable list shell for simulator list-style UIs.
  */
-import type { ReactNode } from 'react';
+import type { LiHTMLAttributes, ReactNode } from 'react';
 
 import { SimulatorList as SimList, SimulatorListItem as SimListItem } from '../ui/primitives.js';
 import { simBorder, simListRow } from '../simulatorStyles.js';
@@ -20,7 +20,7 @@ export function SimulatorList({ children, className = '' }: Readonly<SimulatorLi
     return <SimList className={`${LIST_CLASS} ${className}`.trim()}>{children}</SimList>;
 }
 
-export interface SimulatorListItemProps {
+export interface SimulatorListItemProps extends Omit<LiHTMLAttributes<HTMLLIElement>, 'onClick'> {
     children: ReactNode;
     onClick?: () => void;
     active?: boolean;
@@ -34,10 +34,12 @@ export function SimulatorListItem({
     active = false,
     variant = 'default',
     className = '',
+    ...attributes
 }: Readonly<SimulatorListItemProps>) {
     const paddingClass = variant === 'compact' ? LIST_ITEM_COMPACT : LIST_ITEM_DEFAULT;
     return (
         <SimListItem
+            {...attributes}
             action={onClick != null}
             active={active}
             onClick={onClick}

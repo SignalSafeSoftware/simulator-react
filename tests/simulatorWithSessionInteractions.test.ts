@@ -343,7 +343,7 @@ describe('SimulatorWithSession interactions', () => {
             (secondaryMenu.onSecondaryBack as () => void)();
         });
         expect(dispatch).toHaveBeenCalledWith({ type: 'NAV_LOCAL', app: 'phone', screen: 'contacts' });
-        expect(dispatch).toHaveBeenCalledWith({ type: 'BACK_TO_PRIMARY' });
+        expect(dispatch).toHaveBeenCalledWith({ type: 'BACK' });
 
         const root = renderer!.root;
         await act(async () => {
@@ -489,7 +489,7 @@ describe('SimulatorWithSession interactions', () => {
             (emailSecondaryMenu.onSecondaryBack as () => void)();
         });
         expect(dispatch).toHaveBeenCalledWith({ type: 'NAV_LOCAL', app: 'email', screen: 'outbox' });
-        expect(dispatch).toHaveBeenCalledWith({ type: 'BACK_TO_PRIMARY' });
+        expect(dispatch).toHaveBeenCalledWith({ type: 'BACK' });
 
         expect(mockState.latestDeveloperPanelProps?.payload).toBeTruthy();
         expect(mockState.latestDeveloperPanelProps?.timelineEntries).toBeUndefined();

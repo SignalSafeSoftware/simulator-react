@@ -60,19 +60,6 @@ do not replace those separate contact-detail or incoming-call-extra contracts.
 Hosts own accessible labels, headings and focus management inside custom content.
 Keep package shell/menu focus behavior intact and provide a clear Back control.
 
-## Release and adoption gate
+## Release compatibility
 
-This is source acceptance only. No package is published and PhoneMe dependencies
-remain unchanged. Release simulator-react as an additive minor containing both
-PKG-02 and these exported types first. Then raise simulator-device's dependency
-floor to that exact new minimum and release its additive minor; the device already
-forwards the typed property through its inherited session contract. Publish/build
-verification must check emitted declarations and included docs. Upgrade approved
-consumers only after both releases, perform a clean install with React 18 peers,
-and rerun default-consumer and override/back journeys against release artifacts.
-Remove temporary source aliases from release checks. PhoneMe Settings integration
-(APP-01) is separate work; PKG-01's release/adoption acceptance stays pending.
-
-Tests in simulator-device `screenOverrides.test.tsx` are isolated generic consumers
-of both actual source packages: Settings menu/local/action entry, fallback/null,
-mount/unmount, intercepted navigation and Back. No Twilio or SSM dependency exists.
+Screen overrides are part of the released navigation/composition contract and retained in React/device 0.16.2. Install the versions declared by the device package and validate host overrides through the complete shell. Host settings and provider integration remain application-owned.

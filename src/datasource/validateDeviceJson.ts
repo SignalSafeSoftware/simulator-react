@@ -62,6 +62,7 @@ const emailFields = {
   unread: boolean,
   body: text,
   snippet: text,
+  bcc: text,
   reply_to: text,
   return_path: text,
   links: array(link),
@@ -89,7 +90,10 @@ const schema = object(
       }),
     }),
     contacts: array(
-      object({ id: text, display_name: text, number: text, email: text }, [
+      object({ id: text, display_name: text, number: text, email: text,
+        phone_numbers: array(object({label: text, value: text, number: text}, ['label', 'value'])),
+        email_addresses: array(object({label: text, value: text, number: text}, ['label', 'value'])),
+      }, [
         'id',
         'display_name',
       ]),

@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Structured author preview report: entry point, apps, counts, key actions, validation/lint.
  * Shown in admin/workspace preview only; compact and readable.
@@ -47,7 +48,9 @@ function previewKeyBase(value: React.ReactNode): string {
     return 'unknown';
 }
 
-function withStablePreviewKeys(values: React.ReactNode[]): Array<{ key: string; value: React.ReactNode }> {
+function withStablePreviewKeys(
+    values: React.ReactNode[],
+): Array<{ key: string; value: React.ReactNode }> {
     const counts = new Map<string, number>();
     return values.map((value) => {
         const base = previewKeyBase(value);
@@ -124,6 +127,8 @@ export default function SimulatorAuthorPreviewReport({
     className,
     defaultExpanded = false,
 }: Readonly<SimulatorAuthorPreviewReportProps>) {
+    const screenLocale = useSimulatorLocale();
+
     const bodyId = useId();
     const [open, setOpen] = useState(defaultExpanded);
     const {
@@ -156,9 +161,17 @@ export default function SimulatorAuthorPreviewReport({
         .join(' · ');
 
     return (
-        <SimulatorCard className={joinClasses(simSpacing.mb2, className)} data-testid="simulator-author-preview-report">
+        <SimulatorCard
+            className={joinClasses(simSpacing.mb2, className)}
+            data-testid="simulator-author-preview-report"
+        >
             <SimulatorCardHeader
-                className={joinClasses('simulator-text--sm', 'simulator-surface--header', simSpacing.py1, simSpacing.px2)}
+                className={joinClasses(
+                    'simulator-text--sm',
+                    'simulator-surface--header',
+                    simSpacing.py1,
+                    simSpacing.px2,
+                )}
             >
                 <button
                     type="button"
@@ -172,37 +185,92 @@ export default function SimulatorAuthorPreviewReport({
                     aria-expanded={open}
                     aria-controls={bodyId}
                 >
-                    Template summary
+                    {screenLocale.t('screen.simulatorAuthorPreviewReport.template.summary')}
                 </button>
                 <span className={joinClasses(SIM_MUTED, 'simulator-inline-gap')}>— {summary}</span>
             </SimulatorCardHeader>
             <SimulatorCollapse open={open}>
-                <SimulatorCardBody id={bodyId} className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}>
-                    <Line label="Entry" value={`${entryPoint.app} / ${entryPoint.screen}`} />
-                    <Line label="Apps used" value={appsUsed.join(', ') || '—'} />
-                    <Line label="Contacts" value={String(contactsCount)} />
-                    <Line label="Inbox messages" value={String(inboxCount)} />
-                    <Line label="SMS thread messages" value={String(threadMessageCount)} />
-                    <Line label="Browser pages" value={String(browserPagesCount)} />
-                    <Line label="Directory (trusted sources)" value={String(directoryCount)} />
-                    <Line label="Key actions" value={keyActions.length > 0 ? keyActions : '—'} />
+                <SimulatorCardBody
+                    id={bodyId}
+                    className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}
+                >
+                    <Line
+                        label={screenLocale.t('screen.simulatorAuthorPreviewReport.entry')}
+                        value={`${entryPoint.app} / ${entryPoint.screen}`}
+                    />
+                    <Line
+                        label={screenLocale.t('screen.simulatorAuthorPreviewReport.apps.used')}
+                        value={appsUsed.join(', ') || '—'}
+                    />
+                    <Line
+                        label={screenLocale.t('screen.simulatorAuthorPreviewReport.contacts')}
+                        value={String(contactsCount)}
+                    />
+                    <Line
+                        label={screenLocale.t('screen.simulatorAuthorPreviewReport.inbox.messages')}
+                        value={String(inboxCount)}
+                    />
+                    <Line
+                        label={screenLocale.t(
+                            'screen.simulatorAuthorPreviewReport.sms.thread.messages',
+                        )}
+                        value={String(threadMessageCount)}
+                    />
+                    <Line
+                        label={screenLocale.t('screen.simulatorAuthorPreviewReport.browser.pages')}
+                        value={String(browserPagesCount)}
+                    />
+                    <Line
+                        label={screenLocale.t(
+                            'screen.simulatorAuthorPreviewReport.directory.trusted.sources',
+                        )}
+                        value={String(directoryCount)}
+                    />
+                    <Line
+                        label={screenLocale.t('screen.simulatorAuthorPreviewReport.key.actions')}
+                        value={keyActions.length > 0 ? keyActions : '—'}
+                    />
                     <div className={joinClasses(simSpacing.mt2, simSpacing.pt2, SIM_BORDER_TOP)}>
                         <Line
-                            label="Validation"
+                            label={screenLocale.t('screen.simulatorAuthorPreviewReport.validation')}
                             value={
                                 validationOk ? (
-                                    <span className="simulator-text--success">OK</span>
+                                    <span className="simulator-text--success">
+                                        {screenLocale.t('screen.simulatorAuthorPreviewReport.ok')}
+                                    </span>
                                 ) : (
-                                    <span className="simulator-text--danger">Failed</span>
+                                    <span className="simulator-text--danger">
+                                        {screenLocale.t(
+                                            'screen.simulatorAuthorPreviewReport.failed',
+                                        )}
+                                    </span>
                                 )
                             }
                         />
-                        <Line label="Lint warnings" value={String(lintWarningCount)} />
+                        <Line
+                            label={screenLocale.t(
+                                'screen.simulatorAuthorPreviewReport.lint.warnings',
+                            )}
+                            value={String(lintWarningCount)}
+                        />
                         {unreachableCount > 0 && (
-                            <Line label="Unreachable items" value={<span className="simulator-text--warning">{unreachableCount}</span>} />
+                            <Line
+                                label={screenLocale.t(
+                                    'screen.simulatorAuthorPreviewReport.unreachable.items',
+                                )}
+                                value={
+                                    <span className="simulator-text--warning">
+                                        {unreachableCount}
+                                    </span>
+                                }
+                            />
                         )}
                         {browserHasCycle && (
-                            <div className={joinClasses('simulator-text--warning', simSpacing.mt1)}>Browser has navigation cycle.</div>
+                            <div className={joinClasses('simulator-text--warning', simSpacing.mt1)}>
+                                {screenLocale.t(
+                                    'screen.simulatorAuthorPreviewReport.browser.has.navigation.cycle',
+                                )}
+                            </div>
                         )}
                     </div>
                 </SimulatorCardBody>

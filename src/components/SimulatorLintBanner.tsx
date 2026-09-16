@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Advisory template lint warnings for authors/admins.
  */
@@ -12,22 +13,38 @@ export interface SimulatorLintBannerProps {
     className?: string;
 }
 
-export default function SimulatorLintBanner({ warnings, className }: Readonly<SimulatorLintBannerProps>) {
+export default function SimulatorLintBanner({
+    warnings,
+    className,
+}: Readonly<SimulatorLintBannerProps>) {
+    const screenLocale = useSimulatorLocale();
+
     const listId = useId();
     const [open, setOpen] = useState(true);
     if (warnings.length === 0) return null;
     return (
-        <SimulatorAlert tone="warning" className={joinClasses('simulator-text--sm', className)} data-testid="simulator-lint-banner">
+        <SimulatorAlert
+            tone="warning"
+            className={joinClasses('simulator-text--sm', className)}
+            data-testid="simulator-lint-banner"
+        >
             <button
                 type="button"
-                className={joinClasses(simBtnToneClass('link'), 'simulator-btn--plain', 'simulator-text--semibold')}
+                className={joinClasses(
+                    simBtnToneClass('link'),
+                    'simulator-btn--plain',
+                    'simulator-text--semibold',
+                )}
                 onClick={() => setOpen((prev: boolean) => !prev)}
                 aria-expanded={open}
                 aria-controls={listId}
             >
-                Template suggestions ({warnings.length})
+                {screenLocale.t('screen.simulatorLintBanner.template.suggestions')}
+                {warnings.length})
             </button>
-            <span className={joinClasses(SIM_MUTED, 'simulator-inline-gap')}>— advisory; scenario still runs.</span>
+            <span className={joinClasses(SIM_MUTED, 'simulator-inline-gap')}>
+                {screenLocale.t('screen.simulatorLintBanner.advisory.scenario.still.runs')}
+            </span>
             <SimulatorCollapse open={open} id={listId} className="simulator-collapse__body">
                 <ul className="simulator-list--plain">
                     {warnings.map((w, i) => (

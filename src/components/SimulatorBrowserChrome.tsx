@@ -1,3 +1,4 @@
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Wireframe-style browser chrome: page title above, then nav bar (back, forward, refresh, home)
  * and address/search bar (simulator UI chrome, not app routing).
@@ -39,7 +40,7 @@ export interface SimulatorBrowserChromeProps {
 
 function getHighlightedSegmentKey(
     part: { text: string; highlight: boolean },
-    counts: Map<string, number>
+    counts: Map<string, number>,
 ): string {
     const base = `${part.highlight ? 'highlight' : 'plain'}:${part.text}`;
     const nextCount = (counts.get(base) ?? 0) + 1;
@@ -49,7 +50,7 @@ function getHighlightedSegmentKey(
 
 function renderUrlWithHighlights(
     url: string,
-    segments: { start: number; end: number }[] | undefined
+    segments: { start: number; end: number }[] | undefined,
 ): React.ReactNode {
     const s = url || 'Web Page Title';
     if (segments == null || segments.length === 0) return s;
@@ -80,7 +81,7 @@ function renderUrlWithHighlights(
                     </span>
                 ) : (
                     p.text
-                )
+                ),
             )}
         </>
     );
@@ -105,12 +106,16 @@ export default function SimulatorBrowserChrome({
     children,
     className = '',
 }: Readonly<SimulatorBrowserChromeProps>) {
+    const screenLocale = useSimulatorLocale();
+
     return (
         <div
             className={joinClasses(SIM_FLEX_COL, SIM_SURFACE_LIGHT, className)}
             style={{ border: '1px solid #dee2e6' }}
         >
-            <div className={joinClasses(simScreen.header, SIM_SURFACE_WHITE)}>{title || 'Web Page Title'}</div>
+            <div className={joinClasses(simScreen.header, SIM_SURFACE_WHITE)}>
+                {title || screenLocale.t('screen.simulatorBrowserChrome.web.page.title')}
+            </div>
             <div
                 className={joinClasses(
                     simLayout.row,
@@ -122,16 +127,36 @@ export default function SimulatorBrowserChrome({
                 )}
                 style={{ minHeight: 40 }}
             >
-                <button type="button" className={chromeNavBtnClass} onClick={onBack} aria-label="Back">
+                <button
+                    type="button"
+                    className={chromeNavBtnClass}
+                    onClick={onBack}
+                    aria-label={screenLocale.t('screen.simulatorBrowserChrome.back')}
+                >
                     ←
                 </button>
-                <button type="button" className={chromeNavBtnClass} onClick={onForward} aria-label="Forward">
+                <button
+                    type="button"
+                    className={chromeNavBtnClass}
+                    onClick={onForward}
+                    aria-label={screenLocale.t('screen.simulatorBrowserChrome.forward')}
+                >
                     →
                 </button>
-                <button type="button" className={chromeNavBtnClass} onClick={onRefresh} aria-label="Refresh">
+                <button
+                    type="button"
+                    className={chromeNavBtnClass}
+                    onClick={onRefresh}
+                    aria-label={screenLocale.t('screen.simulatorBrowserChrome.refresh')}
+                >
                     ↻
                 </button>
-                <button type="button" className={chromeNavBtnClass} onClick={onHome} aria-label="Home">
+                <button
+                    type="button"
+                    className={chromeNavBtnClass}
+                    onClick={onHome}
+                    aria-label={screenLocale.t('screen.simulatorBrowserChrome.home')}
+                >
                     ⌂
                 </button>
                 <div

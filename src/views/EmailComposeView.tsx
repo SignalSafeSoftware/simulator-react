@@ -1,87 +1,142 @@
-/**
- * Compose email screen: Recipient, Subject, Body; Send (blue), Cancel.
- * Wireframe: labeled fields, rectangular buttons. Cancel returns to list.
- */
-import { useState } from 'react';
-
-import { simLayout, simScreen, simSpacing } from '../simulatorStyles.js';
+import { useSimulatorCapabilities } from '../contract/capabilities.js';
+import { useRef, useState } from 'react';
+import { SimulatorPage } from '../components/SimulatorPage.js';
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 import {
-    SimulatorButton,
-    SimulatorField,
-    SimulatorInput,
-    SimulatorLabel,
-    SimulatorTextarea,
-} from '../ui/primitives.js';
-import { joinClasses, SIM_FLEX_GROW_1, SIM_ROUNDED_NONE, SIM_TEXT_SEMIBOLD } from '../ui/simulatorClasses.js';
+    useEmailComposeOptions,
+    type EmailComposeDraft,
+    type EmailComposeOptions,
+} from './emailComposeContract.js';
 
-export interface EmailComposeViewProps {
-    onSend?: (opts: { to: string; subject: string; body: string }) => void;
+export interface EmailComposeViewProps extends EmailComposeOptions {
     onCancel: () => void;
+    hideActions?: boolean;
 }
 
-const footerBtnClass = joinClasses(SIM_ROUNDED_NONE, 'simulator-btn--block', simSpacing.py2, SIM_TEXT_SEMIBOLD, SIM_FLEX_GROW_1);
+const EMPTY_DRAFT: EmailComposeDraft = { to: '', bcc: '', subject: '', body: '' };
 
-export default function EmailComposeView({ onSend, onCancel }: Readonly<EmailComposeViewProps>) {
-    const [to, setTo] = useState('');
-    const [subject, setSubject] = useState('');
-    const [body, setBody] = useState('');
-
-    const handleSend = () => {
-        if (!onSend) return;
-        onSend({ to: to.trim(), subject: subject.trim(), body: body.trim() });
-        onCancel();
+/** One submission path for form, keyboard and shell navigation. Sending belongs to the host. */
+export default function EmailComposeView({
+    onCancel,
+    hideActions = false,
+    ...props
+}: Readonly<EmailComposeViewProps>) {
+    const capability = useSimulatorCapabilities().sendEmail;
+    const options = useEmailComposeOptions();
+    const onSend = props.onSend ?? options?.onSend;
+    const onDraftChange = props.onDraftChange ?? options?.onDraftChange;
+    const [localDraft, setLocalDraft] = useState<EmailComposeDraft>(EMPTY_DRAFT);
+    const draft = props.draft ?? options?.draft ?? localDraft;
+    const [pending, setPending] = useState(false);
+    const [error, setError] = useState('');
+    const sending = useRef(false);
+    const { t } = useSimulatorLocale();
+    const unavailable =
+        capability && capability.state !== 'enabled'
+            ? capability.reason
+            : !onSend
+              ? t('email.unconfigured')
+              : '';
+    const update = (key: keyof EmailComposeDraft, value: string) => {
+        const next = { ...draft, [key]: value };
+        setLocalDraft(next);
+        onDraftChange?.(next);
     };
-
+    const submit = async () => {
+        if (unavailable || !onSend || sending.current || !draft.to.trim()) return;
+        sending.current = true;
+        setPending(true);
+        setError('');
+        try {
+            await onSend({
+                ...draft,
+                to: draft.to.trim(),
+                bcc: draft.bcc.trim(),
+                subject: draft.subject.trim(),
+            });
+            setLocalDraft(EMPTY_DRAFT);
+            onDraftChange?.(EMPTY_DRAFT);
+            onCancel();
+        } catch (failure) {
+            setError(failure instanceof Error ? failure.message : t('email.sendFailed'));
+        } finally {
+            sending.current = false;
+            setPending(false);
+        }
+    };
     return (
-        <div className={simLayout.stack}>
-            <div className={joinClasses(simScreen.header, simSpacing.mb3)}>Compose Email</div>
-            {!onSend && <p role="status">Email sending is not configured for this scenario.</p>}
-            <div className={joinClasses(simLayout.stack, 'simulator-spacing--gap-3')}>
-                <SimulatorField>
-                    <SimulatorLabel className={simLayout.fieldLabel}>Recipient</SimulatorLabel>
-                    <SimulatorInput
-                        type="text"
-                        disabled={!onSend}
-                        value={to}
-                        onChange={(e) => setTo(e.target.value)}
-                        placeholder=""
-                        className={SIM_ROUNDED_NONE}
-                        aria-label="Recipient"
-                    />
-                </SimulatorField>
-                <SimulatorField>
-                    <SimulatorLabel className={simLayout.fieldLabel}>Subject</SimulatorLabel>
-                    <SimulatorInput
-                        type="text"
-                        disabled={!onSend}
-                        value={subject}
-                        onChange={(e) => setSubject(e.target.value)}
-                        placeholder=""
-                        className={SIM_ROUNDED_NONE}
-                        aria-label="Subject"
-                    />
-                </SimulatorField>
-                <SimulatorField className={SIM_FLEX_GROW_1}>
-                    <SimulatorLabel className={simLayout.fieldLabel}>Body</SimulatorLabel>
-                    <SimulatorTextarea
+        <SimulatorPage
+            className="simulator-flex simulator-flex--column"
+            header={<div className="simulator-screen__header">{t('email.compose')}</div>}
+        >
+            {unavailable && <p role="status">{unavailable}</p>}
+            {!unavailable && !pending && !draft.to.trim() && (
+                <p role="status">{t('email.enterRecipient')}</p>
+            )}
+            {pending && <p role="status">{t('email.sending')}</p>}
+            {error && <p role="alert">{error}</p>}
+            <form
+                className="simulator-email__composer simulator-flex simulator-flex--column simulator-spacing--gap-3"
+                onSubmit={(event) => {
+                    event.preventDefault();
+                    void submit();
+                }}
+            >
+                {(['to', 'bcc', 'subject'] as const).map((key) => {
+                    const label = t(
+                        key === 'to'
+                            ? 'email.recipient'
+                            : key === 'bcc'
+                              ? 'email.bcc'
+                              : 'email.subject',
+                    );
+                    return (
+                        <label className="simulator-field" key={key}>
+                            <span className="simulator-field__label">{label}</span>
+                            <input
+                                className="simulator-input simulator-rounded--none"
+                                aria-label={label}
+                                value={draft[key]}
+                                disabled={pending || (!onSend && !onDraftChange)}
+                                required={key === 'to'}
+                                onChange={(event) => update(key, event.target.value)}
+                            />
+                        </label>
+                    );
+                })}
+                <label className="simulator-field">
+                    <span className="simulator-field__label">{t('email.body')}</span>
+                    <textarea
+                        className="simulator-input simulator-rounded--none"
                         rows={6}
-                        disabled={!onSend}
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                        placeholder=""
-                        className={SIM_ROUNDED_NONE}
-                        aria-label="Body"
+                        aria-label={t('email.body')}
+                        value={draft.body}
+                        disabled={pending || (!onSend && !onDraftChange)}
+                        onChange={(event) => update('body', event.target.value)}
                     />
-                </SimulatorField>
-            </div>
-            <div className={joinClasses(simLayout.actionsRow, simSpacing.mt3)}>
-                <SimulatorButton tone="primary" className={footerBtnClass} onClick={handleSend} disabled={!onSend} aria-label="Send">
-                    Send
-                </SimulatorButton>
-                <SimulatorButton tone="secondary" className={footerBtnClass} onClick={onCancel} aria-label="Cancel">
-                    Cancel
-                </SimulatorButton>
-            </div>
-        </div>
+                </label>
+                {!hideActions && (
+                    <div className="simulator-flex simulator-flex--row">
+                        <button
+                            type="submit"
+                            aria-label={t('action.send')}
+                            disabled={
+                                Boolean(unavailable) || !onSend || pending || !draft.to.trim()
+                            }
+                        >
+                            {t('action.send')}
+                        </button>
+                        <button
+                            type="button"
+                            aria-label={t('action.cancel')}
+                            disabled={pending}
+                            onClick={onCancel}
+                        >
+                            {t('action.cancel')}
+                        </button>
+                    </div>
+                )}
+            </form>
+        </SimulatorPage>
     );
 }
