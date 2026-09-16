@@ -225,7 +225,7 @@ yarn test
 
 ## Development
 
-Requires Node.js **>=22.12.0** (`engines.node`). CI runs checks, tests, and smoke on Node **22** and **24**; publish uses Node **24**. Node 20 is no longer supported (GitHub Actions Node 20 deprecation).
+Requires Node.js **>=19.0.0** (`engines.node`). CI runs checks, tests, and smoke on Node **22** and **24**; publish uses Node **24**.
 
 `yarn build` uses `tsconfig.build.json` and resolves `@signalsafe/*` from `node_modules`. No sibling checkout is required for release validation.
 
@@ -278,3 +278,14 @@ edits share one selection-aware value and preserve canonical submission callback
 ## Release 0.16.2
 
 Requires simulator-core 0.3.1 and TreeSpec ^0.4.0. React and React DOM remain on the supported 18.x peer contract. `ContactPhotoControls` supplies default SVG actions with localized accessible labels; hosts may override `actionIcons`. The optional theme owns dimensions and visual styling. Network requests, import identities, provider configuration and persistence remain host responsibilities.
+
+## Node runtime compatibility
+
+The runtime requirement is Node >=19.0.0. Build, unit-test and coverage tools use
+Node 22/24 (use Node 24.16+ locally). A separate CI job installs packed artifacts
+with strict engine checks and tests runtime behavior on Node 19.0.0 and 19–24.
+
+This experiment tests updated simulator dependencies built from the pinned CI
+revisions in the workflow. Before publishing, release core, then React, then
+device, updating dependency versions and lockfiles to those Node 19 releases.
+The existing registry releases of core/React still require Node 22.12.
