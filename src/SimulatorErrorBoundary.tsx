@@ -67,7 +67,7 @@ export default class SimulatorErrorBoundary extends Component<SimulatorErrorBoun
     }
 }
 
-function ErrorDismiss({ onRetry }: { onRetry: () => void }) {
+function ErrorDismiss({ onRetry }: Readonly<{ onRetry: () => void }>) {
     const locale = useSimulatorLocale();
     return (
         <SimulatorButton tone="outline-secondary" className="simulator-btn--sm" onClick={onRetry}>
@@ -76,42 +76,44 @@ function ErrorDismiss({ onRetry }: { onRetry: () => void }) {
     );
 }
 
-function ErrorFallback({ error, errorInfo, fallbackTitle, onRetry, showDiagnostics }: State & Omit<SimulatorErrorBoundaryProps, 'children'>) {
+function ErrorFallback({ error, errorInfo, fallbackTitle, onRetry, showDiagnostics }: Readonly<State & Omit<SimulatorErrorBoundaryProps, 'children'>>) {
     const locale = useSimulatorLocale();
-    if (!error) return null;
-            const title =
-                fallbackTitle ??
-                (showDiagnostics ? locale.t('fallback.error') : locale.t('fallback.learner_simulator_error_title'));
-            const body = showDiagnostics ? error.message : locale.t('fallback.learner_simulator_error_message');
+    if (!error) {
+        return null;
+    }
+    const title =
+        fallbackTitle ??
+        (showDiagnostics ? locale.t('fallback.error') : locale.t('fallback.learner_simulator_error_title'));
+    const body = showDiagnostics ? error.message : locale.t('fallback.learner_simulator_error_message');
 
-            return (
-                <div
-                    className={joinClasses(SIM_ERROR, simSpacing.blockPadding, simStatus.errorBox)}
-                    role="alert"
-                    data-testid="simulator-error-fallback"
-                    data-show-diagnostics={showDiagnostics ? 'true' : 'false'}
+    return (
+        <div
+            className={joinClasses(SIM_ERROR, simSpacing.blockPadding, simStatus.errorBox)}
+            role="alert"
+            data-testid="simulator-error-fallback"
+            data-show-diagnostics={showDiagnostics ? 'true' : 'false'}
+        >
+            <p className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_DANGER, simSpacing.mb1)}>
+                {title}
+            </p>
+            <p className={joinClasses(simSpacing.mb1, 'simulator-text--break')}>{body}</p>
+            {showDiagnostics && errorInfo?.componentStack ? (
+                <pre
+                    className={joinClasses(
+                        SIM_ERROR_DIAGNOSTICS,
+                        SIM_TEXT_SM,
+                        SIM_MUTED,
+                        simSpacing.mb2,
+                        SIM_MONO,
+                        SIM_OVERFLOW_AUTO,
+                    )}
+                    style={{ whiteSpace: 'pre-wrap', maxHeight: 120 }}
+                    data-testid="simulator-error-diagnostics-stack"
                 >
-                    <p className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_DANGER, simSpacing.mb1)}>
-                        {title}
-                    </p>
-                    <p className={joinClasses(simSpacing.mb1, 'simulator-text--break')}>{body}</p>
-                    {showDiagnostics && errorInfo?.componentStack ? (
-                        <pre
-                            className={joinClasses(
-                                SIM_ERROR_DIAGNOSTICS,
-                                SIM_TEXT_SM,
-                                SIM_MUTED,
-                                simSpacing.mb2,
-                                SIM_MONO,
-                                SIM_OVERFLOW_AUTO,
-                            )}
-                            style={{ whiteSpace: 'pre-wrap', maxHeight: 120 }}
-                            data-testid="simulator-error-diagnostics-stack"
-                        >
-                            {errorInfo.componentStack}
-                        </pre>
-                    ) : null}
-                    {onRetry != null && <ErrorDismiss onRetry={onRetry} />}
-                </div>
-            );
+                    {errorInfo.componentStack}
+                </pre>
+            ) : null}
+            {onRetry != null && <ErrorDismiss onRetry={onRetry} />}
+        </div>
+    );
 }

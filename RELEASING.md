@@ -18,3 +18,14 @@ Core and React require checks, coverage tests, Sonar scanning and artifact smoke
 ## Consumer adoption
 
 Verify the exact version and registry integrity after the tag workflow succeeds. Update consumers to exact registry versions, regenerate their lockfiles, and run a clean install plus consumer validation. Remove local archives only after registry installation succeeds. Keep published tags immutable; corrections use a new version.
+
+## Node runtime compatibility
+
+The runtime requirement is Node >=19.0.0. Build, unit-test and coverage tools use
+Node 22/24 (use Node 24.16+ locally). A separate CI job installs packed artifacts
+with strict engine checks and tests runtime behavior on Node 19.0.0 and 19–24.
+
+This experiment tests updated simulator dependencies built from the pinned CI
+revisions in the workflow. Before publishing, release core, then React, then
+device, updating dependency versions and lockfiles to those Node 19 releases.
+The existing registry releases of core/React still require Node 22.12.

@@ -31,7 +31,7 @@ export function ContactPhotoControls({
     restoreCapability = capability,
     error,
     status,
-}: ContactPhotoControlsProps) {
+}: Readonly<ContactPhotoControlsProps>) {
     const { t } = useSimulatorLocale();
     const input = useRef<HTMLInputElement>(null);
     const titleId = useId();
@@ -89,13 +89,13 @@ export function ContactPhotoControls({
                 </div>
             </div>
             {error && <p role="alert">{error}</p>}
-            {status && <p role="status">{status}</p>}
+            {status && <p><output>{status}</output></p>}
         </section>
     );
 }
 
 
-function PhotoActionIcon({ action }: { action: 'change' | 'remove' | 'restore' }) {
+function PhotoActionIcon({ action }: Readonly<{ action: 'change' | 'remove' | 'restore' }>) {
     return (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             {action === 'restore' ? (

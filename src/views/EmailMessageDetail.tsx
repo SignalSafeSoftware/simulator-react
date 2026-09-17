@@ -75,16 +75,14 @@ export default function EmailMessageDetail({
     return (
         <div className={joinClasses(simLayout.screenColumn, SIM_EMAIL_MESSAGE_DETAIL)}>
             {onBack && (
-                <>
-                    <SimulatorDetailBackBar
-                        onBack={onBack}
-                        title={screenLocale.t('screen.emailMessageDetail.value1.message', {
-                            value1: String(folderLabel),
-                        })}
-                        ariaLabel={screenLocale.t('email.backToFolder', { folder: folderLabel })}
-                        titleOnly
-                    />
-                </>
+                <SimulatorDetailBackBar
+                    onBack={onBack}
+                    title={screenLocale.t('screen.emailMessageDetail.value1.message', {
+                        value1: String(folderLabel),
+                    })}
+                    ariaLabel={screenLocale.t('email.backToFolder', { folder: folderLabel })}
+                    titleOnly
+                />
             )}
             <div
                 className={joinClasses(

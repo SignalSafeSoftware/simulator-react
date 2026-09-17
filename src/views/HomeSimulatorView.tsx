@@ -194,6 +194,13 @@ function HomeSettingsScreen({
           )
         : settingsSections;
 
+    let emptySettingsMessage: string | null = null;
+    if (settingsSections.length === 0) {
+        emptySettingsMessage = screenLocale.t('screen.homeSimulatorView.no.settings.are.configured.for.this.scenario');
+    } else if (filteredSections.length === 0) {
+        emptySettingsMessage = screenLocale.t('screen.homeSimulatorView.no.matching.settings');
+    }
+
     return (
         <div className={simLayout.stack}>
             <SimulatorDetailBackBar
@@ -218,16 +225,8 @@ function HomeSettingsScreen({
                 ariaLabel={screenLocale.t('a11y.search.settings')}
                 className={simSpacing.mb3}
             />
-            {settingsSections.length === 0 ? (
-                <p className={simTypo.emptyState}>
-                    {screenLocale.t(
-                        'screen.homeSimulatorView.no.settings.are.configured.for.this.scenario',
-                    )}
-                </p>
-            ) : filteredSections.length === 0 ? (
-                <p className={simTypo.emptyState}>
-                    {screenLocale.t('screen.homeSimulatorView.no.matching.settings')}
-                </p>
+            {emptySettingsMessage !== null ? (
+                <p className={simTypo.emptyState}>{emptySettingsMessage}</p>
             ) : (
                 <div className={joinClasses(SIM_FLEX_COL, 'simulator-spacing--gap-3')}>
                     {filteredSections.map((section) => (

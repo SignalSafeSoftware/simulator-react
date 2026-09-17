@@ -16,7 +16,7 @@ describe('reusable screen placeholders', () => {
         ]) {
             let renderer: TestRenderer.ReactTestRenderer;
             await act(async () => { renderer = TestRenderer.create(view); });
-            expect(renderer!.root.findByProps({ role: 'status' }).props.children).toContain('not configured');
+            expect(renderer!.root.findByType('output').props.children).toContain('not configured');
             for (const field of [...renderer!.root.findAllByType('input'), ...renderer!.root.findAllByType('textarea')]) {
                 expect(field.props.disabled).toBe(true);
             }

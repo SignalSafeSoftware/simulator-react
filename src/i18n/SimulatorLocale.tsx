@@ -19,7 +19,7 @@ export function SimulatorLocaleProvider({
     messages,
     locale = 'en',
     timeZone,
-}: SimulatorLocaleProviderProps) {
+}: Readonly<SimulatorLocaleProviderProps>) {
     const value = useMemo(
         () => createTranslator(simulatorEnglish, messages, { locale, timeZone }),
         [messages, locale, timeZone],

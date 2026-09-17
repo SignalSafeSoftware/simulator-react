@@ -84,6 +84,12 @@ export interface ContactsViewProps {
     onPhoneContactOpen?: (contactId: string, contact: SimulatorSessionContact) => void;
 }
 
+function matchesPrimaryEmail(email: string | undefined, emailQuery: string, nameQuery: string): boolean {
+    if (!email) return false;
+    if (emailQuery) return normalizeEmailForMatch(email).includes(emailQuery);
+    return normalizeNameForMatch(email).includes(nameQuery);
+}
+
 /** True if contact matches query (name, number, or email). Exported for tests. */
 export function contactMatchesSearch(contact: SimulatorSessionContact, query: string): boolean {
     if (!query) return true;
@@ -114,14 +120,7 @@ export function contactMatchesSearch(contact: SimulatorSessionContact, query: st
     )
         return true;
     if (contact.number && qPhone && phoneDigitsOnly(contact.number).includes(qPhone)) return true;
-    if (
-        contact.email &&
-        (qEmail
-            ? normalizeEmailForMatch(contact.email).includes(qEmail)
-            : normalizeNameForMatch(contact.email).includes(qName))
-    )
-        return true;
-    return false;
+    return matchesPrimaryEmail(contact.email, qEmail, qName);
 }
 
 /** True if verification context (name/number) matches contact. Exported for tests. */

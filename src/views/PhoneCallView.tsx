@@ -40,6 +40,15 @@ export default function PhoneCallView(props: Readonly<PhoneCallViewProps>) {
         return () => clearInterval(timer);
     }, []);
     const ringing = props.incoming && props.phase === 'ringing';
+    let statusLabel = screenLocale.t('screen.phoneCallView.value1.value2', {
+        value1: String(props.phase.charAt(0).toUpperCase()),
+        value2: String(props.phase.slice(1)),
+    });
+    if (ringing) {
+        statusLabel = screenLocale.t('screen.phoneCallView.incoming.call');
+    } else if (props.phase === 'connected' && props.connectedAt !== null) {
+        statusLabel = formatPhoneCallDuration((now - props.connectedAt) / 1000);
+    }
     return (
         <section
             className="simulator-call-view"
@@ -54,14 +63,7 @@ export default function PhoneCallView(props: Readonly<PhoneCallViewProps>) {
             <h2 className="simulator-screen__header">{props.callerName}</h2>
             {props.number && <p className="simulator-call-number">{formatNumber(props.number)}</p>}
             <output className="simulator-call-status">
-                {ringing
-                    ? screenLocale.t('screen.phoneCallView.incoming.call')
-                    : props.phase === 'connected' && props.connectedAt !== null
-                      ? formatPhoneCallDuration((now - props.connectedAt) / 1000)
-                      : screenLocale.t('screen.phoneCallView.value1.value2', {
-                            value1: String(props.phase.charAt(0).toUpperCase()),
-                            value2: String(props.phase.slice(1)),
-                        })}
+                {statusLabel}
             </output>
             {props.connectedAt !== null && (
                 <>

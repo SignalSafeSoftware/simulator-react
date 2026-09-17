@@ -122,15 +122,30 @@ export function applyNavLocal(state: SimulatorViewState, app: SimulatorApp, scre
     return next;
 }
 
+function phoneParentScreen(screen: PhoneScreenId): PhoneScreenId | null {
+    if (screen === 'add_contact' || screen === 'directory') return 'contacts';
+    if (screen === 'incoming_call' || screen === 'voicemail') return 'history';
+    return null;
+}
+
+function applyInternetBack(state: SimulatorViewState): SimulatorViewState['internet'] {
+    const { stack, screen } = state.internet;
+    if (stack.length > 0) {
+        return { ...state.internet, screen: stack.at(-1) ?? DEFAULT_INTERNET_SCREEN, stack: stack.slice(0, -1) };
+    }
+    if (screen !== DEFAULT_INTERNET_SCREEN) {
+        return { ...state.internet, screen: DEFAULT_INTERNET_SCREEN };
+    }
+    return state.internet;
+}
+
 export function applyBack(state: SimulatorViewState): SimulatorViewState {
     const app = state.activeApp;
     const next = { ...state };
     switch (app) {
         case 'phone': {
             const screen = state.phone.screen;
-            const parent = screen === 'add_contact' || screen === 'directory'
-                ? 'contacts' : screen === 'incoming_call' || screen === 'voicemail'
-                  ? 'history' : null;
+            const parent = phoneParentScreen(screen);
             next.phone = { ...state.phone, screen: parent ?? screen, stack: [] };
             next.showPrimaryMenu = parent === null;
             if (parent === null) { next.activeApp = 'home'; next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN }; }
@@ -153,20 +168,9 @@ export function applyBack(state: SimulatorViewState): SimulatorViewState {
             if (next.showPrimaryMenu) { next.activeApp = 'home'; next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN }; }
             break;
         }
-        case 'internet': {
-            const stack = state.internet.stack;
-            if (stack.length > 0) {
-                const prev = stack.at(-1);
-                next.internet = {
-                    ...state.internet,
-                    screen: prev ?? DEFAULT_INTERNET_SCREEN,
-                    stack: stack.slice(0, -1),
-                };
-            } else if (state.internet.screen !== DEFAULT_INTERNET_SCREEN) {
-                next.internet = { ...state.internet, screen: DEFAULT_INTERNET_SCREEN };
-            }
+        case 'internet':
+            next.internet = applyInternetBack(state);
             break;
-        }
         case 'home':
             if (state.home.screen !== DEFAULT_HOME_SCREEN) {
                 next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN };

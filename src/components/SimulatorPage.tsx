@@ -16,7 +16,7 @@ export function SimulatorPage({
     children,
     lang,
     ...props
-}: SimulatorPageProps) {
+}: Readonly<SimulatorPageProps>) {
     const { locale } = useSimulatorLocale();
     return (
         <Element {...props} lang={lang ?? locale} data-simulator-page="true">

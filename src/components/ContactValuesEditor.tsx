@@ -13,7 +13,7 @@ export interface ContactValuesEditorProps {
     values: readonly Value[];
     preferredId: string | null;
     createId: () => string;
-    label?: import('react').ReactNode;
+    label?: Exclude<import('react').ReactNode, undefined>;
     onChange: (values: Value[], preferred: string | null) => void;
 }
 export function ContactValuesEditor({
@@ -23,23 +23,15 @@ export function ContactValuesEditor({
     createId,
     label,
     onChange,
-}: ContactValuesEditorProps) {
+}: Readonly<ContactValuesEditorProps>) {
     const titleId = useId();
     const contactPhoneDisplay = usePhoneNumberFormatter();
     const { t } = useSimulatorLocale();
     const [focusedValue, setFocusedValue] = useState<string | null>(null);
-    const title =
-        kind === 'phone'
-            ? t('contact.phones')
-            : kind === 'email'
-              ? t('contact.emails')
-              : t('contact.addresses');
-    const singular =
-        kind === 'phone'
-            ? t('contact.phone')
-            : kind === 'email'
-              ? t('contact.email')
-              : t('contact.address');
+    const titleKeys = { phone: 'contact.phones', email: 'contact.emails', address: 'contact.addresses' } as const;
+    const singularKeys = { phone: 'contact.phone', email: 'contact.email', address: 'contact.address' } as const;
+    const title = t(titleKeys[kind]);
+    const singular = t(singularKeys[kind]);
     const labels =
         kind === 'phone'
             ? [t('contact.mobile'), t('contact.home'), t('contact.work')]

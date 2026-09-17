@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Lower the runtime requirement to Node >=19.0.0 and refresh the TreeSpec lockfile to 0.4.1.
+- Add isolated packed-consumer tests on Node 19.0.0 and Node 19–24; retain modern tooling checks on Node 22/24.
+
 ## 0.16.2 — 2026-09-16
 
 - Refresh release tooling to Vitest 5; preserve React 18 compatibility.
