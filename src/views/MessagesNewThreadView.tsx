@@ -47,12 +47,10 @@ export default function MessagesNewThreadView({
     const { t } = useSimulatorLocale();
     const onSend = send ?? compose?.onSend;
     const capability = useSimulatorCapabilities().sendMessage;
-    const unavailable =
-        capability && capability.state !== 'enabled'
-            ? capability.reason
-            : !onSend
-              ? t('messages.unconfigured')
-              : '';
+    let unavailable = onSend ? '' : t('messages.unconfigured');
+    if (capability && capability.state !== 'enabled') {
+        unavailable = capability.reason;
+    }
     const [pending, setPending] = useState(false);
     const [error, setError] = useState('');
     const sending = useRef(false);
@@ -82,8 +80,8 @@ export default function MessagesNewThreadView({
             compose?.onChange({ phoneNumber: '', messageBody: '' });
             compose?.onAccepted?.();
             onBack();
-        } catch (failure) {
-            setError(failure instanceof Error ? failure.message : t('messages.sendFailed'));
+        } catch (error_) {
+            setError(error_ instanceof Error ? error_.message : t('messages.sendFailed'));
         } finally {
             sending.current = false;
             setPending(false);
@@ -101,11 +99,11 @@ export default function MessagesNewThreadView({
             <div className={joinClasses(simScreen.header, simSpacing.mb3, SIM_FLEX_SHRINK_0)}>
                 {t('messages.newThread')}
             </div>
-            {unavailable && <p role="status">{unavailable}</p>}
+            {unavailable && <p><output>{unavailable}</output></p>}
             {!unavailable && !pending && (!phoneNumber.trim() || !messageBody.trim()) && (
-                <p role="status">{t('messages.enterRecipientAndBody')}</p>
+                <p><output>{t('messages.enterRecipientAndBody')}</output></p>
             )}
-            {pending && <p role="status">{t('messages.sending')}</p>}
+            {pending && <p><output>{t('messages.sending')}</output></p>}
             {error && <p role="alert">{error}</p>}
             <div className={joinClasses(simSpacing.px3, simSpacing.pt3, SIM_FLEX_SHRINK_0)}>
                 <SimulatorField>

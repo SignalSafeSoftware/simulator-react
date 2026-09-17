@@ -59,8 +59,8 @@ export interface SimulatorWithSessionProps {
     state: SimulatorSessionState;
     dispatch: (action: SimulatorDispatchAction) => void;
     onSimulatorEvent?: HostSimulatorEventHandler;
-    onNavigation?: SimulatorNavigationOptions['onNavigation'];
-    onNavigationEvent?: SimulatorNavigationOptions['onNavigationEvent'];
+    onNavigation?: NonNullable<SimulatorNavigationOptions['onNavigation']>;
+    onNavigationEvent?: NonNullable<SimulatorNavigationOptions['onNavigationEvent']>;
     /** Host content for explicit app/screen destinations, inside the existing shell. */
     screenOverrides?: SimulatorScreenOverrides;
     exitLink?: ReactNode;

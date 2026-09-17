@@ -188,7 +188,7 @@ export default function SmsSimulatorView({
 
     return (
         <div className={joinClasses(simLayout.screenColumn, SIM_MESSAGES_THREAD_DETAIL)}>
-            {unavailable && <p role="status">{unavailable}</p>}
+            {unavailable && <p><output>{unavailable}</output></p>}
             <div className={simLayout.scrollBody}>
                 <div
                     className={joinClasses(
@@ -213,7 +213,7 @@ export default function SmsSimulatorView({
                     </div>
                 </div>
 
-                {payload.loadingMessage && <p role="status">{payload.loadingMessage}</p>}
+                {payload.loadingMessage && <p><output>{payload.loadingMessage}</output></p>}
                 {visible.length === 0 && !payload.loadingMessage && (
                     <p className={simTypo.secondaryTight}>
                         {screenLocale.t('screen.smsSimulatorView.no.messages.in.this.thread')}
@@ -373,7 +373,7 @@ export default function SmsSimulatorView({
                     }}
                 >
                     {!unavailable && !replyText.trim() && (
-                        <p role="status">{screenLocale.t('messages.enterBody')}</p>
+                        <p><output>{screenLocale.t('messages.enterBody')}</output></p>
                     )}
                     <SimulatorTextarea
                         rows={3}

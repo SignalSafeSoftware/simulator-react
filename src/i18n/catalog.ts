@@ -138,11 +138,12 @@ export function createTranslator<Key extends string>(
         locale,
         t(key: Key, values: Readonly<Record<string, string | number>> = {}): string {
             const message = overrides[key] ?? english[key];
+            const count = typeof values.count === 'number' ? values.count : 0;
             const template =
                 typeof message === 'string'
                     ? message
                     : (message[
-                          plural.select(typeof values.count === 'number' ? values.count : 0)
+                          plural.select(count)
                       ] ?? message.other);
             return template.replace(/\{(\w+)\}/g, (token: string, name: string) =>
                 values[name] === undefined ? token : String(values[name]),

@@ -31,12 +31,10 @@ export default function EmailComposeView({
     const [error, setError] = useState('');
     const sending = useRef(false);
     const { t } = useSimulatorLocale();
-    const unavailable =
-        capability && capability.state !== 'enabled'
-            ? capability.reason
-            : !onSend
-              ? t('email.unconfigured')
-              : '';
+    let unavailable = onSend ? '' : t('email.unconfigured');
+    if (capability && capability.state !== 'enabled') {
+        unavailable = capability.reason;
+    }
     const update = (key: keyof EmailComposeDraft, value: string) => {
         const next = { ...draft, [key]: value };
         setLocalDraft(next);
@@ -57,8 +55,8 @@ export default function EmailComposeView({
             setLocalDraft(EMPTY_DRAFT);
             onDraftChange?.(EMPTY_DRAFT);
             onCancel();
-        } catch (failure) {
-            setError(failure instanceof Error ? failure.message : t('email.sendFailed'));
+        } catch (error_) {
+            setError(error_ instanceof Error ? error_.message : t('email.sendFailed'));
         } finally {
             sending.current = false;
             setPending(false);
@@ -69,11 +67,11 @@ export default function EmailComposeView({
             className="simulator-flex simulator-flex--column"
             header={<div className="simulator-screen__header">{t('email.compose')}</div>}
         >
-            {unavailable && <p role="status">{unavailable}</p>}
+            {unavailable && <p><output>{unavailable}</output></p>}
             {!unavailable && !pending && !draft.to.trim() && (
-                <p role="status">{t('email.enterRecipient')}</p>
+                <p><output>{t('email.enterRecipient')}</output></p>
             )}
-            {pending && <p role="status">{t('email.sending')}</p>}
+            {pending && <p><output>{t('email.sending')}</output></p>}
             {error && <p role="alert">{error}</p>}
             <form
                 className="simulator-email__composer simulator-flex simulator-flex--column simulator-spacing--gap-3"
@@ -83,13 +81,8 @@ export default function EmailComposeView({
                 }}
             >
                 {(['to', 'bcc', 'subject'] as const).map((key) => {
-                    const label = t(
-                        key === 'to'
-                            ? 'email.recipient'
-                            : key === 'bcc'
-                              ? 'email.bcc'
-                              : 'email.subject',
-                    );
+                    const labelKeys = { to: 'email.recipient', bcc: 'email.bcc', subject: 'email.subject' } as const;
+                    const label = t(labelKeys[key]);
                     return (
                         <label className="simulator-field" key={key}>
                             <span className="simulator-field__label">{label}</span>

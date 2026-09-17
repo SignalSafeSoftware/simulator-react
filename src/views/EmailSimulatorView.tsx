@@ -142,15 +142,15 @@ export default function EmailSimulatorView({
                                 />
                             );
                         }
+                        let folderLabel = screenLocale.t('nav.inbox');
+                        if (outbox.some((row) => row.id === selectedMessageId)) {
+                            folderLabel = screenLocale.t('nav.outbox');
+                        } else if (trash.some((row) => row.id === selectedMessageId)) {
+                            folderLabel = screenLocale.t('nav.trash');
+                        }
                         return (
                             <EmailMessageDetail
-                                folderLabel={
-                                    outbox.some((row) => row.id === selectedMessageId)
-                                        ? screenLocale.t('nav.outbox')
-                                        : trash.some((row) => row.id === selectedMessageId)
-                                          ? screenLocale.t('nav.trash')
-                                          : screenLocale.t('nav.inbox')
-                                }
+                                folderLabel={folderLabel}
                                 hideActions={navRenderedByShell}
                                 message={message}
                                 onAction={onAction}
