@@ -278,14 +278,14 @@
   resolved "https://registry.npmjs.org/@rolldown/pluginutils/-/pluginutils-1.0.1.tgz#e3fcee093fbb5ce765e1ad088ff4de2889f6f9be"
   integrity sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==
 
-"@signalsafe/simulator-core@0.3.1":
-  version "0.3.1"
-  resolved "https://registry.npmjs.org/@signalsafe/simulator-core/-/simulator-core-0.3.1.tgz#f6aa2d07b89120153e3b2ebdf9b1f5cce13235e1"
-  integrity sha512-xC3HxD4YM+1ezwaBzkYjnRrMTaluAcn0CBRZwgVFwaTMoqehbYZtmgeGKJBtkEAbPUVmrIF1cRQxY87aYY+j8w==
+"@signalsafe/simulator-core@0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@signalsafe/simulator-core/-/simulator-core-0.3.2.tgz#8fbc8af81c7035a29ff77c9e7008b2878a47b99f"
+  integrity sha512-p9QzK/kqDHnf+5GyBVU3N+speNeTYIwc9UMfp2tAqDuEGs32FNRd3HArQM7zweiVfgPuoaDiIB6a8PAWX1S5+A==
   dependencies:
-    "@signalsafe/tree-spec" "^0.4.0"
+    "@signalsafe/tree-spec" "^0.4.1"
 
-"@signalsafe/tree-spec@^0.4.0", "@signalsafe/tree-spec@^0.4.1":
+"@signalsafe/tree-spec@^0.4.1":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@signalsafe/tree-spec/-/tree-spec-0.4.1.tgz#49e3e671f6425b28bd5776d4ce5077ace00e60b2"
   integrity sha512-abwLzIB4maUk5L4H++oOA8Ikjs4RMFg+4jFJFOs+BQ0qSBiHUtS8zewtTwLwsPymyG0GMcF9N+vZhtAKIyE1kA==

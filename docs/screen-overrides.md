@@ -62,4 +62,4 @@ Keep package shell/menu focus behavior intact and provide a clear Back control.
 
 ## Release compatibility
 
-Screen overrides are part of the released navigation/composition contract and retained in React/device 0.16.2. Install the versions declared by the device package and validate host overrides through the complete shell. Host settings and provider integration remain application-owned.
+Screen overrides are part of the released navigation/composition contract and retained in React/device 0.16.3. Install the versions declared by the device package and validate host overrides through the complete shell. Host settings and provider integration remain application-owned.

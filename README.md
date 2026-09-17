@@ -275,9 +275,9 @@ Contact search includes secondary values, labels and optional `postalAddresses`.
 The theme owns contact-group layout and keypad geometry. Number entry and keypad
 edits share one selection-aware value and preserve canonical submission callbacks.
 
-## Release 0.16.2
+## Release 0.16.3
 
-Requires simulator-core 0.3.1 and TreeSpec ^0.4.0. React and React DOM remain on the supported 18.x peer contract. `ContactPhotoControls` supplies default SVG actions with localized accessible labels; hosts may override `actionIcons`. The optional theme owns dimensions and visual styling. Network requests, import identities, provider configuration and persistence remain host responsibilities.
+Requires simulator-core 0.3.2 and TreeSpec ^0.4.1. React and React DOM remain on the supported 18.x peer contract. `ContactPhotoControls` supplies default SVG actions with localized accessible labels; hosts may override `actionIcons`. The optional theme owns dimensions and visual styling. Network requests, import identities, provider configuration and persistence remain host responsibilities.
 
 ## Node runtime compatibility
 
@@ -285,7 +285,7 @@ The runtime requirement is Node >=19.0.0. Build, unit-test and coverage tools us
 Node 22/24 (use Node 24.16+ locally). A separate CI job installs packed artifacts
 with strict engine checks and tests runtime behavior on Node 19.0.0 and 19–24.
 
-This experiment tests updated simulator dependencies built from the pinned CI
-revisions in the workflow. Before publishing, release core, then React, then
-device, updating dependency versions and lockfiles to those Node 19 releases.
-The existing registry releases of core/React still require Node 22.12.
+The compatibility job builds this package and installs its declared dependencies
+from npm with strict engine checks. Release core 0.3.2 first, then React 0.16.3,
+then device 0.16.3; regenerate each downstream lockfile after its upstream release
+is available. No sibling source overrides are used in the runtime matrix.

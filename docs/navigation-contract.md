@@ -46,4 +46,4 @@ No package stack entry is added for an intercepted host surface.
 
 ## Release and consumer migration
 
-Navigation interception is included in the published 0.3 React / 0.4 device lines and retained by React/device 0.16.2. Hosts may retain observers while moving navigation decisions to the synchronous handler. Install simulator-core, React and device in dependency order using their declared registry versions. React 18 peers remain supported. Package navigation has no application settings, credentials or provider dependency. See each repository's RELEASING.md and CHANGELOG.md for current release checks.
+Navigation interception is included in the published 0.3 React / 0.4 device lines and retained by React/device 0.16.3. Hosts may retain observers while moving navigation decisions to the synchronous handler. Install simulator-core, React and device in dependency order using their declared registry versions. React 18 peers remain supported. Package navigation has no application settings, credentials or provider dependency. See each repository's RELEASING.md and CHANGELOG.md for current release checks.

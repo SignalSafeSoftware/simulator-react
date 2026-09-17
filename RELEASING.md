@@ -25,7 +25,17 @@ The runtime requirement is Node >=19.0.0. Build, unit-test and coverage tools us
 Node 22/24 (use Node 24.16+ locally). A separate CI job installs packed artifacts
 with strict engine checks and tests runtime behavior on Node 19.0.0 and 19–24.
 
-This experiment tests updated simulator dependencies built from the pinned CI
-revisions in the workflow. Before publishing, release core, then React, then
-device, updating dependency versions and lockfiles to those Node 19 releases.
-The existing registry releases of core/React still require Node 22.12.
+The compatibility job builds this package and installs its declared dependencies
+from npm with strict engine checks. Release core 0.3.2 first, then React 0.16.3,
+then device 0.16.3; regenerate each downstream lockfile after its upstream release
+is available. No sibling source overrides are used in the runtime matrix.
+
+## Node 19 release sequence
+
+Publish core `0.3.2`, React `0.16.3`, then device `0.16.3`. React declares core
+`0.3.2`; device declares core `0.3.2` and React `0.16.3`. After each upstream
+publication, regenerate the downstream Yarn lockfile from npm and run a frozen
+install, typecheck, coverage, build, and packed-consumer smoke test before tagging.
+The runtime matrix must pass on Node 19.0.0 and Node 19–24 with strict engine
+checks against registry dependencies. Never substitute an unpublished tarball
+URL or invent registry integrity values in a release lockfile.

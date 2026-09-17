@@ -1,8 +1,11 @@
 # Changelog
 
-## [Unreleased]
+## [0.16.3] - 2026-09-16
 
 ### Changed
+
+- Require simulator-core 0.3.2 and retain TreeSpec ^0.4.1.
+- Include navigation quality fixes and additional runtime, payload, and host-interaction regression tests.
 
 - Lower the runtime requirement to Node >=19.0.0 and refresh the TreeSpec lockfile to 0.4.1.
 - Add isolated packed-consumer tests on Node 19.0.0 and Node 19–24; retain modern tooling checks on Node 22/24.
@@ -14,7 +17,6 @@
 - Add controlled email/message/dial drafts, explicit action capabilities, selection-aware keypad editing and grouped contact fields.
 - Preserve host navigation interception, screen overrides, readonly datasource snapshots and React 18 compatibility.
 - Require simulator-core 0.3.1 and refresh TreeSpec dependencies; use standalone registry lockfiles.
-
 
 ## 0.4.0 — 2026-09-11
 
@@ -28,7 +30,6 @@
 - Add optional controlled call, keypad, contact editor, history detail/pagination and Home tile components.
 - Include reviewed navigation contracts, screen overrides, accessible compose controls and semantic presentation/history hooks previously consumed by PhoneMe as local prereleases.
 - Keep React 18 peers and provider-free scenario behavior; typecheck against declared packages without sibling source aliases.
-
 
 All notable changes to this project will be documented in this file.
 
