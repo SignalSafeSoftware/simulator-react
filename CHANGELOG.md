@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0 — prepared September 29, 2026 (unpublished)
+## 0.17.0 — September 29, 2026
 
 - Export reusable Vault, Photos/editor/location, lock/settings, mutable Mailbox and HTML/React browser screens, page hooks and browser/file helpers.
 - Add `SimulatorAppsProvider` for host formatting, notes editing, map rendering, file/metadata and lock adapters. Default notes use a plain textarea; external maps require an explicit host renderer.

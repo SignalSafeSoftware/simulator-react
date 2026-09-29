@@ -38,9 +38,8 @@ The Node runtime contract remains unchanged.
 
 Publish core first, then React, then device through matching version-tag CI;
 theme can publish independently. Refresh React's registry Yarn lock after core
-is available, and device's after core, React and theme are available. Those
-unpublished upstream resolutions cannot yet be certified by a frozen registry
-install. Never invent integrity values or substitute sibling paths in release
+is available, and device's after core, React and theme are available. Validate each upstream version with a real registry download before updating
+downstream lockfiles; metadata visibility alone does not prove availability. Never invent integrity values or substitute sibling paths in release
 manifests. Run the registry smoke/runtime matrix and Sonar gates as documented
 above before publication; local tarball validation is not registry evidence.
 

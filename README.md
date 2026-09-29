@@ -299,9 +299,9 @@ No sibling source overrides are used in the runtime matrix.
 - Add optional `photo`, `numberLabel` and `description` to `PhoneHistoryDetail`; media and number labels render inside the card body. Existing supplied descriptions still render.
 - Require core 0.4.1; retain React 18 peers and add Lucide icons.
 
-This version is prepared locally; it is not a claim of registry publication. See
-[RELEASING.md](RELEASING.md) for the coordinated release order. PhoneMe validates
-normal packed artifacts; installed package files are never patched.
+Use the matching registry version after its release workflow completes. See
+[RELEASING.md](RELEASING.md) for the coordinated release order and consumer
+validation. Installed package files are never patched.
 
 ### App ownership and adapters
 
