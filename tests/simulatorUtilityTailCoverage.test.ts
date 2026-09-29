@@ -17,7 +17,11 @@ import {
     screenViewedEvent,
 } from '../src/utils/simulatorEventMapper';
 import { getInitialSessionState, initialViewState } from '../src/state/simulatorSessionReducer';
-import type { SimulatorSessionState, SimulatorTemplatePayload, SimulatorViewState } from '../src/types/session';
+import type {
+    SimulatorSessionState,
+    SimulatorTemplatePayload,
+    SimulatorViewState,
+} from '../src/types/session';
 
 const originalNodeEnv = process.env.NODE_ENV;
 const originalWindow = (globalThis as { window?: unknown }).window;
@@ -66,7 +70,12 @@ function createPayload(overrides: Record<string, unknown> = {}): SimulatorTempla
             defaultPageId: 'landing',
             pages: [
                 { id: 'landing', url: 'https://example.test', title: 'Landing', layout: 'landing' },
-                { id: 'pricing', url: 'https://example.test/pricing', title: 'Pricing', layout: 'content' },
+                {
+                    id: 'pricing',
+                    url: 'https://example.test/pricing',
+                    title: 'Pricing',
+                    layout: 'content',
+                },
             ],
         },
         phone: {
@@ -136,7 +145,14 @@ describe('utility tail coverage', () => {
                     main_menu_items: [{ id: 'email' }],
                     secondary_defaults: { phone: circular, email: true, internet: null },
                 },
-                contacts: [{ id: 'c1' }, { id: 'c2' }, { id: 'c3' }, { id: 'c4' }, { id: 'c5' }, { id: 'c6' }],
+                contacts: [
+                    { id: 'c1' },
+                    { id: 'c2' },
+                    { id: 'c3' },
+                    { id: 'c4' },
+                    { id: 'c5' },
+                    { id: 'c6' },
+                ],
                 directory: [{ id: 'd1' }],
                 phone: {
                     incoming_call: { transcript: 'Incoming' },
@@ -166,7 +182,15 @@ describe('utility tail coverage', () => {
                     main_menu_items: [{ id: 'email' }, { id: 'phone' }],
                     secondary_defaults: { phone: 'history', email: false, internet: 2 },
                 },
-                contacts: [{ id: 'c1' }, { id: 'c2' }, { id: 'c7' }, { id: 'c8' }, { id: 'c9' }, { id: 'c10' }, { id: 'c11' }],
+                contacts: [
+                    { id: 'c1' },
+                    { id: 'c2' },
+                    { id: 'c7' },
+                    { id: 'c8' },
+                    { id: 'c9' },
+                    { id: 'c10' },
+                    { id: 'c11' },
+                ],
                 directory: [{ id: 'd2' }, { id: 'd3' }],
                 phone: {
                     history: [{ id: 'call-1' }],
@@ -188,7 +212,7 @@ describe('utility tail coverage', () => {
                     store: { featured_apps: [] },
                     settings: { sections: [] },
                 },
-            }
+            },
         );
 
         expect(diffs.map((item) => item.section)).toEqual(
@@ -202,24 +226,51 @@ describe('utility tail coverage', () => {
                 'messages',
                 'internet',
                 'home',
-            ])
+            ]),
         );
         expect(diffs).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({ change: 'Entry point: email/list → phone/history' }),
                 expect.objectContaining({ section: 'device', change: 'Device menu: 1 → 2 items' }),
-                expect.objectContaining({ section: 'device', detail: expect.stringContaining('(unserializable)') }),
-                expect.objectContaining({ section: 'contacts', detail: expect.stringContaining('+') }),
-                expect.objectContaining({ section: 'directory', change: 'Directory: 1 → 2 entries' }),
-                expect.objectContaining({ section: 'phone', change: 'Phone: incoming_call removed' }),
-                expect.objectContaining({ section: 'phone', change: 'Phone history: 2 → 1 entries' }),
-                expect.objectContaining({ section: 'email', change: 'Email detail (subject) changed' }),
+                expect.objectContaining({
+                    section: 'device',
+                    detail: expect.stringContaining('(unserializable)'),
+                }),
+                expect.objectContaining({
+                    section: 'contacts',
+                    detail: expect.stringContaining('+'),
+                }),
+                expect.objectContaining({
+                    section: 'directory',
+                    change: 'Directory: 1 → 2 entries',
+                }),
+                expect.objectContaining({
+                    section: 'phone',
+                    change: 'Phone: incoming_call removed',
+                }),
+                expect.objectContaining({
+                    section: 'phone',
+                    change: 'Phone history: 2 → 1 entries',
+                }),
+                expect.objectContaining({
+                    section: 'email',
+                    change: 'Email detail (subject) changed',
+                }),
                 expect.objectContaining({ section: 'messages', change: 'Messages threads: 1 → 2' }),
-                expect.objectContaining({ section: 'messages', change: 'Messages thread_detail: 2 → 1 messages' }),
-                expect.objectContaining({ section: 'internet', change: 'Browser pages: landing → pricing, support' }),
+                expect.objectContaining({
+                    section: 'messages',
+                    change: 'Messages thread_detail: 2 → 1 messages',
+                }),
+                expect.objectContaining({
+                    section: 'internet',
+                    change: 'Browser pages: landing → pricing, support',
+                }),
                 expect.objectContaining({ section: 'internet', change: 'Browser forms: 1 → 2' }),
-                expect.objectContaining({ section: 'home', change: 'Home: widgets 1→0, store apps 1→0, settings sections 1→0' }),
-            ])
+                expect.objectContaining({
+                    section: 'home',
+                    change: 'Home: widgets 1→0, store apps 1→0, settings sections 1→0',
+                }),
+            ]),
         );
     });
 
@@ -227,8 +278,13 @@ describe('utility tail coverage', () => {
         const payload = createPayload();
 
         const emailMeta = getScreenMetadata(
-            createState({ view: { activeApp: 'email', email: { screen: 'detail', stack: ['list'], selectedMessageId: 'm1' } } }).view,
-            payload
+            createState({
+                view: {
+                    activeApp: 'email',
+                    email: { screen: 'detail', stack: ['list'], selectedMessageId: 'm1' },
+                },
+            }).view,
+            payload,
         );
         expect(emailMeta).toEqual(
             expect.objectContaining({
@@ -238,69 +294,103 @@ describe('utility tail coverage', () => {
                 showCancel: false,
                 label: 'Email → Message',
                 source: 'detail',
-            })
+            }),
         );
 
         const messagesMeta = getScreenMetadata(
-            createState({ view: { activeApp: 'messages', messages: { screen: 'new_thread', stack: [], visibleCount: 0 } } }).view,
-            payload
+            createState({
+                view: {
+                    activeApp: 'messages',
+                    messages: { screen: 'new_thread', stack: [], visibleCount: 0 },
+                },
+            }).view,
+            payload,
         );
         expect(messagesMeta.label).toBe('Messages → New Thread');
         expect(messagesMeta.source).toBe('new_thread');
 
         const messageDetailMeta = getScreenMetadata(
-            createState({ view: { activeApp: 'messages', messages: { screen: 'thread_detail', stack: ['threads'], visibleCount: 1 } } }).view,
-            payload
+            createState({
+                view: {
+                    activeApp: 'messages',
+                    messages: { screen: 'thread_detail', stack: ['threads'], visibleCount: 1 },
+                },
+            }).view,
+            payload,
         );
         expect(messageDetailMeta.label).toBe('Messages → Thread');
         expect(messageDetailMeta.source).toBe('detail');
         expect(messageDetailMeta.showBack).toBe(true);
 
         const messageListMeta = getScreenMetadata(
-            createState({ view: { activeApp: 'messages', messages: { screen: 'threads', stack: [], visibleCount: 0 } } }).view,
-            payload
+            createState({
+                view: {
+                    activeApp: 'messages',
+                    messages: { screen: 'threads', stack: [], visibleCount: 0 },
+                },
+            }).view,
+            payload,
         );
         expect(messageListMeta.label).toBe('Messages → Threads');
         expect(messageListMeta.source).toBe('list');
         expect(messageListMeta.showCancel).toBe(true);
 
         const internetMeta = getScreenMetadata(
-            createState({ view: { activeApp: 'internet', internet: { screen: 'pricing', stack: ['landing'] } } }).view,
-            payload
+            createState({
+                view: {
+                    activeApp: 'internet',
+                    internet: { screen: 'pricing', stack: ['landing'] },
+                },
+            }).view,
+            payload,
         );
         expect(internetMeta.pageTitle).toBe('Pricing');
         expect(getScreenContextLabel(internetMeta)).toBe('Internet → Pricing');
 
         const internetFallbackMeta = getScreenMetadata(
-            createState({ view: { activeApp: 'internet', internet: { screen: 'missing', stack: [] } } }).view,
-            payload
+            createState({
+                view: { activeApp: 'internet', internet: { screen: 'missing', stack: [] } },
+            }).view,
+            payload,
         );
         expect(internetFallbackMeta.pageTitle).toBeNull();
         expect(internetFallbackMeta.label).toBe('Internet → missing');
         expect(internetFallbackMeta.showCancel).toBe(true);
 
         const phoneMeta = getScreenMetadata(
-            createState({ view: { activeApp: 'phone', phone: { screen: 'directory', stack: [], chosenIndex: null } } }).view,
-            payload
+            createState({
+                view: {
+                    activeApp: 'phone',
+                    phone: { screen: 'directory', stack: [], chosenIndex: null },
+                },
+            }).view,
+            payload,
         );
         expect(phoneMeta.label).toBe('Phone → Directory');
 
         const unknownPhoneMeta = getScreenMetadata(
-            createState({ view: { activeApp: 'phone', phone: { screen: 'custom' as never, stack: [], chosenIndex: null } } }).view,
-            payload
+            createState({
+                view: {
+                    activeApp: 'phone',
+                    phone: { screen: 'custom' as never, stack: [], chosenIndex: null },
+                },
+            }).view,
+            payload,
         );
         expect(unknownPhoneMeta.label).toBe('Phone → custom');
         expect(unknownPhoneMeta.showCancel).toBe(true);
 
         const homeMeta = getScreenMetadata(
             createState({ view: { activeApp: 'home', home: { screen: 'settings' } } }).view,
-            payload
+            payload,
         );
-        expect(homeMeta).toEqual(expect.objectContaining({ parentScreen: 'home', showBack: true, showCancel: false }));
+        expect(homeMeta).toEqual(
+            expect.objectContaining({ parentScreen: 'home', showBack: true, showCancel: false }),
+        );
 
         const homeRootMeta = getScreenMetadata(
             createState({ view: { activeApp: 'home', home: { screen: 'home' } } }).view,
-            payload
+            payload,
         );
         expect(homeRootMeta.label).toBe('Home → Home');
         expect(homeRootMeta.showCancel).toBe(true);
@@ -320,8 +410,12 @@ describe('utility tail coverage', () => {
     it('covers deep-link parsing and app-specific application behavior', () => {
         expect(parseSimulatorSearchParams(new URLSearchParams())).toBeNull();
         expect(parseSimulatorSearchParams(new URLSearchParams('app=bogus'))).toBeNull();
-        expect(parseSimulatorSearchParams(new URLSearchParams('app=email&screen=not-real'))).toBeNull();
-        expect(parseSimulatorSearchParams(new URLSearchParams('app=internet&pageId=pricing'))).toEqual({
+        expect(
+            parseSimulatorSearchParams(new URLSearchParams('app=email&screen=not-real')),
+        ).toBeNull();
+        expect(
+            parseSimulatorSearchParams(new URLSearchParams('app=internet&pageId=pricing')),
+        ).toEqual({
             app: 'internet',
             screen: undefined,
             messageId: undefined,
@@ -329,36 +423,54 @@ describe('utility tail coverage', () => {
             search: undefined,
         });
 
-        const state = getInitialSessionState(createPayload({
-            channel: 'browser',
-            entryPoint: { app: 'internet', screen: 'landing' },
-        }));
+        const state = getInitialSessionState(
+            createPayload({
+                channel: 'browser',
+                entryPoint: { app: 'internet', screen: 'landing' },
+            }),
+        );
 
         const emailNext = applyDeepLinkToState(state, { app: 'email', messageId: 'missing' });
         expect(emailNext.view.activeApp).toBe('email');
         expect(emailNext.view.email.screen).toBe('detail');
         expect(emailNext.view.email.selectedMessageId).toBeNull();
 
-        const messagesNext = applyDeepLinkToState(state, { app: 'messages', screen: 'thread_detail' });
+        const messagesNext = applyDeepLinkToState(state, {
+            app: 'messages',
+            screen: 'thread_detail',
+        });
         expect(messagesNext.view.messages.screen).toBe('thread_detail');
         expect(messagesNext.view.messages.visibleCount).toBe(1);
 
         const internetNext = applyDeepLinkToState(state, { app: 'internet', pageId: 'missing' });
         expect(internetNext.view.internet.screen).toBe('landing');
 
-        const phoneNext = applyDeepLinkToState(state, { app: 'phone', screen: 'contacts', search: 'Ada' });
+        const phoneNext = applyDeepLinkToState(state, {
+            app: 'phone',
+            screen: 'contacts',
+            search: 'Ada',
+        });
         expect(phoneNext.view.phone.screen).toBe('contacts');
         expect(phoneNext.view.phone.stack).toEqual(['history']);
 
-        const phoneUnchanged = applyDeepLinkToState(phoneNext, { app: 'phone', screen: 'contacts' });
+        const phoneUnchanged = applyDeepLinkToState(phoneNext, {
+            app: 'phone',
+            screen: 'contacts',
+        });
         expect(phoneUnchanged.view.phone.stack).toEqual(['history']);
 
         const homeNext = applyDeepLinkToState(state, { app: 'home', screen: 'settings' });
         expect(homeNext.view.home.screen).toBe('settings');
 
-        expect(getDeepLinkContactsSearch({ app: 'phone', screen: 'contacts', search: 'Ada' })).toBe('Ada');
-        expect(getDeepLinkContactsSearch({ app: 'phone', screen: 'contacts', search: '' })).toBeUndefined();
-        expect(getDeepLinkContactsSearch({ app: 'email', screen: 'list', search: 'Ada' })).toBeUndefined();
+        expect(getDeepLinkContactsSearch({ app: 'phone', screen: 'contacts', search: 'Ada' })).toBe(
+            'Ada',
+        );
+        expect(
+            getDeepLinkContactsSearch({ app: 'phone', screen: 'contacts', search: '' }),
+        ).toBeUndefined();
+        expect(
+            getDeepLinkContactsSearch({ app: 'email', screen: 'list', search: 'Ada' }),
+        ).toBeUndefined();
     });
 
     it('covers advisory lint branches for entry content, verification, and naming', () => {
@@ -369,7 +481,10 @@ describe('utility tail coverage', () => {
                 home: { widgets: [], featuredApps: [], settingsSections: [] },
                 contacts: [],
                 phone: {
-                    content: { transcript: 'Incoming', choices: [{ label: 'Answer', correct: true }] },
+                    content: {
+                        transcript: 'Incoming',
+                        choices: [{ label: 'Answer', correct: true }],
+                    },
                     chosenIndex: null,
                 },
                 directory: [],
@@ -381,25 +496,28 @@ describe('utility tail coverage', () => {
                 browser: {
                     defaultPageId: 'landing',
                     pages: [
-                        { id: 'Bad Page', url: '', title: '', content: '', layout: 'content', buttons: [] },
+                        {
+                            id: 'Bad Page',
+                            url: '',
+                            title: '',
+                            content: '',
+                            layout: 'content',
+                            buttons: [],
+                        },
                     ],
                 },
-            })
+            }),
         ).warnings;
 
         expect(warnings.map((warning) => warning.code)).toEqual(
-            expect.arrayContaining([
-                'entry_app_empty',
-                'key_naming',
-                'browser_page_bare',
-            ])
+            expect.arrayContaining(['entry_app_empty', 'key_naming', 'browser_page_bare']),
         );
 
         const emailWarnings = lintSimulatorPayload(
             createPayload({
                 entryPoint: { app: 'email', screen: 'detail' },
                 email: { inbox: [], selectedMessage: null, selectedMessageId: null },
-            })
+            }),
         ).warnings;
         expect(emailWarnings.map((warning) => warning.code)).toContain('entry_app_empty');
 
@@ -407,7 +525,7 @@ describe('utility tail coverage', () => {
             createPayload({
                 entryPoint: { app: 'messages', screen: 'thread_detail' },
                 sms: { thread: { messages: [] }, visibleMessageCount: 0 },
-            })
+            }),
         ).warnings;
         expect(messagesWarnings.map((warning) => warning.code)).toContain('entry_app_empty');
 
@@ -416,18 +534,23 @@ describe('utility tail coverage', () => {
                 entryPoint: { app: 'phone', screen: 'contacts' },
                 contacts: [],
                 phone: {
-                    content: { transcript: 'Incoming', choices: [{ label: 'Answer', correct: true }] },
+                    content: {
+                        transcript: 'Incoming',
+                        choices: [{ label: 'Answer', correct: true }],
+                    },
                     chosenIndex: null,
                 },
-            })
+            }),
         ).warnings;
-        expect(phoneWarnings.map((warning) => warning.code)).toContain('phone_verification_without_contacts');
+        expect(phoneWarnings.map((warning) => warning.code)).toContain(
+            'phone_verification_without_contacts',
+        );
 
         const phoneEntryWarnings = lintSimulatorPayload(
             createPayload({
                 entryPoint: { app: 'phone', screen: 'dial' },
                 phone: null,
-            })
+            }),
         ).warnings;
         expect(phoneEntryWarnings.map((warning) => warning.code)).toContain('entry_app_empty');
     });
@@ -443,15 +566,21 @@ describe('utility tail coverage', () => {
                 home: null,
                 contacts: [],
                 directory: [],
-            })
+            }),
         ).warnings;
         expect(nullEntryWarnings).toEqual([]);
 
         const emailListWarnings = lintSimulatorPayload(
             createPayload({
                 entryPoint: { app: 'email', screen: 'list' },
-                email: { inbox: [], outbox: [], trash: [], selectedMessage: null, selectedMessageId: null },
-            })
+                email: {
+                    inbox: [],
+                    outbox: [],
+                    trash: [],
+                    selectedMessage: null,
+                    selectedMessageId: null,
+                },
+            }),
         ).warnings;
         expect(emailListWarnings).toEqual(
             expect.arrayContaining([
@@ -459,14 +588,14 @@ describe('utility tail coverage', () => {
                     code: 'entry_app_empty',
                     message: 'Entry point is email but inbox and selected message are empty.',
                 }),
-            ])
+            ]),
         );
 
         const messagesListWarnings = lintSimulatorPayload(
             createPayload({
                 entryPoint: { app: 'messages', screen: 'threads' },
                 sms: { thread: { messages: [] }, visibleMessageCount: 0 },
-            })
+            }),
         ).warnings;
         expect(messagesListWarnings).toEqual(
             expect.arrayContaining([
@@ -474,14 +603,14 @@ describe('utility tail coverage', () => {
                     code: 'entry_app_empty',
                     message: 'Entry point is messages but the SMS thread is empty.',
                 }),
-            ])
+            ]),
         );
 
         const internetWarnings = lintSimulatorPayload(
             createPayload({
                 entryPoint: { app: 'internet', screen: 'landing' },
                 browser: { defaultPageId: 'landing', pages: [] },
-            })
+            }),
         ).warnings;
         expect(internetWarnings).toEqual(
             expect.arrayContaining([
@@ -489,7 +618,7 @@ describe('utility tail coverage', () => {
                     code: 'entry_app_empty',
                     message: 'Entry point is internet but there are no browser pages.',
                 }),
-            ])
+            ]),
         );
     });
 
@@ -499,7 +628,11 @@ describe('utility tail coverage', () => {
                 templateKey: 'clean-template',
                 entryPoint: { app: 'internet', screen: 'missing-page' },
                 sms: {
-                    thread: { messages: [{ from: 'them', text: 'Hello' }], sender_display_name: '', sender_number: '' },
+                    thread: {
+                        messages: [{ from: 'them', text: 'Hello' }],
+                        sender_display_name: '',
+                        sender_number: '',
+                    },
                     visibleMessageCount: 1,
                 },
                 browser: {
@@ -516,7 +649,7 @@ describe('utility tail coverage', () => {
                     ],
                 },
                 directory: [{ id: 'Bad Directory', label: 'Directory', number: '+1555' }],
-            })
+            }),
         ).warnings;
 
         expect(warnings).toEqual(
@@ -528,7 +661,7 @@ describe('utility tail coverage', () => {
                     code: 'key_naming',
                     path: 'directory[0].id',
                 }),
-            ])
+            ]),
         );
     });
 
@@ -537,16 +670,27 @@ describe('utility tail coverage', () => {
             createPayload({
                 templateKey: 'clean-template',
                 entryPoint: { app: 'internet', screen: 'landing' },
-                home: { widgets: [{ id: 'widget-1', label: 'News' }], featuredApps: [], settingsSections: [] },
+                home: {
+                    widgets: [{ id: 'widget-1', label: 'News' }],
+                    featuredApps: [],
+                    settingsSections: [],
+                },
                 phone: {
-                    content: { transcript: 'Incoming', choices: [{ label: 'Answer', correct: true }] },
+                    content: {
+                        transcript: 'Incoming',
+                        choices: [{ label: 'Answer', correct: true }],
+                    },
                     chosenIndex: null,
                 },
                 contacts: [{ id: 'contact-1', displayName: 'Ada Lovelace' }],
                 directory: [{ id: 'helpdesk', label: 'Help Desk', number: '+1555' }],
                 email: {
                     inbox: [{ id: 'message-1', subject: 'Alert', from: 'alerts@example.test' }],
-                    selectedMessage: { subject: 'Alert', from: 'alerts@example.test', body: 'Body' },
+                    selectedMessage: {
+                        subject: 'Alert',
+                        from: 'alerts@example.test',
+                        body: 'Body',
+                    },
                     selectedMessageId: 'message-1',
                 },
                 sms: {
@@ -570,7 +714,7 @@ describe('utility tail coverage', () => {
                         },
                     ],
                 },
-            })
+            }),
         ).warnings;
 
         expect(warnings.map((warning) => warning.code)).not.toEqual(
@@ -581,7 +725,7 @@ describe('utility tail coverage', () => {
                 'browser_page_bare',
                 'messages_no_sender_identity',
                 'phone_verification_without_contacts',
-            ])
+            ]),
         );
     });
 
@@ -632,15 +776,34 @@ describe('utility tail coverage', () => {
             },
         });
 
-        logSimulatorTransition(prev, { type: 'SIMULATOR_ACTION', action: { type: 'navigate_screen', app: 'internet', screen: 'pricing' } }, next);
+        logSimulatorTransition(
+            prev,
+            {
+                type: 'SIMULATOR_ACTION',
+                action: { type: 'navigate_screen', app: 'internet', screen: 'pricing' },
+            },
+            next,
+        );
         logSimulatorTransition(prev, { type: 'NAV_LOCAL', app: 'phone', screen: 'contacts' }, next);
         logSimulatorTransition(prev, { type: 'BROWSER_SCREEN', screen: 'pricing' }, next);
         logSimulatorTransition(prev, { type: 'SELECT_EMAIL', messageId: 'm1' }, next);
         logSimulatorTransition(prev, { type: 'SWITCH_APP', app: 'phone' }, next);
         logSimulatorTransition(prev, { type: 'PHONE_CHOOSE', index: 1 }, next);
-        logSimulatorTransition(prev, { type: 'SIMULATOR_ACTION', action: { type: 'open_email', messageId: 'm1' } }, next);
-        logSimulatorTransition(prev, { type: 'SIMULATOR_ACTION', action: { type: 'open_thread', threadId: 't1' } }, next);
-        logSimulatorTransition(prev, { type: 'SIMULATOR_ACTION', action: { type: 'open_page', pageId: 'pricing' } }, next);
+        logSimulatorTransition(
+            prev,
+            { type: 'SIMULATOR_ACTION', action: { type: 'open_email', messageId: 'm1' } },
+            next,
+        );
+        logSimulatorTransition(
+            prev,
+            { type: 'SIMULATOR_ACTION', action: { type: 'open_thread', threadId: 't1' } },
+            next,
+        );
+        logSimulatorTransition(
+            prev,
+            { type: 'SIMULATOR_ACTION', action: { type: 'open_page', pageId: 'pricing' } },
+            next,
+        );
         logSimulatorTransition(prev, { type: 'BACK' }, prev);
 
         const logged = consoleSpy.mock.calls.map(([line]) => String(line)).join('\n');
@@ -690,7 +853,11 @@ describe('utility tail coverage', () => {
             },
         });
 
-        logSimulatorTransition(prev, { type: 'SIMULATOR_ACTION', action: { type: 'report' } }, emailNext);
+        logSimulatorTransition(
+            prev,
+            { type: 'SIMULATOR_ACTION', action: { type: 'report' } },
+            emailNext,
+        );
         logSimulatorTransition(emailNext, { type: 'SELECT_EMAIL', messageId: null }, emailNext);
         logSimulatorTransition(emailNext, { type: 'UNKNOWN_ACTION' }, emailNext as never);
 
@@ -743,7 +910,11 @@ describe('utility tail coverage', () => {
             },
         });
 
-        logSimulatorTransition(messagesPrev, { type: 'SIMULATOR_ACTION', action: { type: 'open_thread', threadId: 't2' } }, messagesNext);
+        logSimulatorTransition(
+            messagesPrev,
+            { type: 'SIMULATOR_ACTION', action: { type: 'open_thread', threadId: 't2' } },
+            messagesNext,
+        );
         logSimulatorTransition(messagesNext, { type: 'SWITCH_APP', app: 'home' }, homeNext);
 
         const logged = consoleSpy.mock.calls.map(([line]) => String(line)).join('\n');
@@ -768,7 +939,7 @@ describe('utility tail coverage', () => {
         try {
             const state = createState();
             expect(() =>
-                logSimulatorTransition(state, { type: 'SWITCH_APP', app: 'email' }, state)
+                logSimulatorTransition(state, { type: 'SWITCH_APP', app: 'email' }, state),
             ).not.toThrow();
         } finally {
             Object.defineProperty(console, 'log', {
@@ -791,30 +962,112 @@ describe('utility tail coverage', () => {
         }).view;
         const payload = createPayload();
 
-        expect(actionToInteractionEvent({ type: 'open_contact', contactId: 'c1' }, view, payload)?.kind).toBe('contact_opened');
-        expect(actionToInteractionEvent({ type: 'click_link', href: 'https://example.test' }, view, payload)?.kind).toBe('link_clicked');
-        expect(actionToInteractionEvent({ type: 'open_attachment', attachmentIndex: 1 }, view, payload)?.kind).toBe('attachment_opened');
-        expect(actionToInteractionEvent({ type: 'download_attachment', attachmentIndex: 2 }, view, payload)?.kind).toBe('attachment_downloaded');
-        expect(actionToInteractionEvent({ type: 'answer_call', choiceIndex: 0 }, view, payload)?.kind).toBe('call_answered');
-        expect(actionToInteractionEvent({ type: 'ignore_call' }, view, payload)?.kind).toBe('call_ignored');
-        expect(actionToInteractionEvent({ type: 'dial_phone', dialedNumber: '+1555' }, view, payload)?.kind).toBe('dial_started');
-        expect(actionToInteractionEvent({ type: 'submit_form', submitMetadata: { ok: true } }, view, payload)?.kind).toBe('form_submitted');
-        expect(actionToInteractionEvent({ type: 'send_reply', replyText: 'Reply' }, view, payload)?.kind).toBe('message_sent');
-        expect(actionToInteractionEvent({ type: 'open_page', pageId: 'pricing' }, view, payload)?.screen).toBe('pricing');
-        expect(actionToInteractionEvent({ type: 'open_voicemail' }, view, payload)?.kind).toBe('voicemail_opened');
-        expect(actionToInteractionEvent({ type: 'open_store' }, view, payload)?.kind).toBe('store_opened');
-        expect(actionToInteractionEvent({ type: 'open_settings' }, view, payload)?.kind).toBe('settings_opened');
-        expect(actionToInteractionEvent({ type: 'report' }, view, payload)?.kind).toBe('report_clicked');
-        expect(actionToInteractionEvent({ type: 'download_click', downloadTarget: '/file.exe' }, view, payload)?.kind).toBe('download_clicked');
-        expect(actionToInteractionEvent({ type: 'check_contact' }, view, payload)?.kind).toBe('check_contact_clicked');
-        expect(actionToInteractionEvent({ type: 'check_contacts' }, view, payload)?.kind).toBe('check_contact_clicked');
-        expect(actionToInteractionEvent({ type: 'view_directory_entry', entryId: 'd1' }, view, payload)?.kind).toBe('directory_entry_viewed');
-        expect(actionToInteractionEvent({ type: 'search_contacts', query: 'Ada' }, view, payload)?.kind).toBe('search_performed');
-        expect(actionToInteractionEvent({ type: 'navigate_screen', app: 'email', screen: 'list' }, view, payload)).toBeNull();
-        expect(actionToInteractionEvent({ type: 'open_app', app: 'email' }, view, payload)).toBeNull();
-        expect(actionToInteractionEvent({ type: 'switch_channel', channel: 'email' }, view, payload)).toBeNull();
-        expect(appOpenedEvent('messages', view, payload)).toEqual(expect.objectContaining({ kind: 'app_opened', app: 'messages', screen: 'thread_detail' }));
-        expect(screenViewedEvent('internet', 'pricing', view, payload)).toEqual(expect.objectContaining({ kind: 'screen_viewed', app: 'internet', screen: 'pricing' }));
-        expect(actionToInteractionEvent({ type: 'open_email', messageId: 'm1' }, view, null)?.template_id).toBeUndefined();
+        expect(
+            actionToInteractionEvent({ type: 'open_contact', contactId: 'c1' }, view, payload)
+                ?.kind,
+        ).toBe('contact_opened');
+        expect(
+            actionToInteractionEvent(
+                { type: 'click_link', href: 'https://example.test' },
+                view,
+                payload,
+            )?.kind,
+        ).toBe('link_clicked');
+        expect(
+            actionToInteractionEvent({ type: 'open_attachment', attachmentIndex: 1 }, view, payload)
+                ?.kind,
+        ).toBe('attachment_opened');
+        expect(
+            actionToInteractionEvent(
+                { type: 'download_attachment', attachmentIndex: 2 },
+                view,
+                payload,
+            )?.kind,
+        ).toBe('attachment_downloaded');
+        expect(
+            actionToInteractionEvent({ type: 'answer_call', choiceIndex: 0 }, view, payload)?.kind,
+        ).toBe('call_answered');
+        expect(actionToInteractionEvent({ type: 'ignore_call' }, view, payload)?.kind).toBe(
+            'call_ignored',
+        );
+        expect(
+            actionToInteractionEvent({ type: 'dial_phone', dialedNumber: '+1555' }, view, payload)
+                ?.kind,
+        ).toBe('dial_started');
+        expect(
+            actionToInteractionEvent(
+                { type: 'submit_form', submitMetadata: { ok: true } },
+                view,
+                payload,
+            )?.kind,
+        ).toBe('form_submitted');
+        expect(
+            actionToInteractionEvent({ type: 'send_reply', replyText: 'Reply' }, view, payload)
+                ?.kind,
+        ).toBe('message_sent');
+        expect(
+            actionToInteractionEvent({ type: 'open_page', pageId: 'pricing' }, view, payload)
+                ?.screen,
+        ).toBe('pricing');
+        expect(actionToInteractionEvent({ type: 'open_voicemail' }, view, payload)?.kind).toBe(
+            'voicemail_opened',
+        );
+        expect(actionToInteractionEvent({ type: 'open_store' }, view, payload)?.kind).toBe(
+            'store_opened',
+        );
+        expect(actionToInteractionEvent({ type: 'open_settings' }, view, payload)?.kind).toBe(
+            'settings_opened',
+        );
+        expect(actionToInteractionEvent({ type: 'report' }, view, payload)?.kind).toBe(
+            'report_clicked',
+        );
+        expect(
+            actionToInteractionEvent(
+                { type: 'download_click', downloadTarget: '/file.exe' },
+                view,
+                payload,
+            )?.kind,
+        ).toBe('download_clicked');
+        expect(actionToInteractionEvent({ type: 'check_contact' }, view, payload)?.kind).toBe(
+            'check_contact_clicked',
+        );
+        expect(actionToInteractionEvent({ type: 'check_contacts' }, view, payload)?.kind).toBe(
+            'check_contact_clicked',
+        );
+        expect(
+            actionToInteractionEvent({ type: 'view_directory_entry', entryId: 'd1' }, view, payload)
+                ?.kind,
+        ).toBe('directory_entry_viewed');
+        expect(
+            actionToInteractionEvent({ type: 'search_contacts', query: 'Ada' }, view, payload)
+                ?.kind,
+        ).toBe('search_performed');
+        expect(
+            actionToInteractionEvent(
+                { type: 'navigate_screen', app: 'email', screen: 'list' },
+                view,
+                payload,
+            ),
+        ).toBeNull();
+        expect(
+            actionToInteractionEvent({ type: 'open_app', app: 'email' }, view, payload),
+        ).toBeNull();
+        expect(
+            actionToInteractionEvent({ type: 'switch_channel', channel: 'email' }, view, payload),
+        ).toBeNull();
+        expect(appOpenedEvent('messages', view, payload)).toEqual(
+            expect.objectContaining({
+                kind: 'app_opened',
+                app: 'messages',
+                screen: 'thread_detail',
+            }),
+        );
+        expect(screenViewedEvent('internet', 'pricing', view, payload)).toEqual(
+            expect.objectContaining({ kind: 'screen_viewed', app: 'internet', screen: 'pricing' }),
+        );
+        expect(
+            actionToInteractionEvent({ type: 'open_email', messageId: 'm1' }, view, null)
+                ?.template_id,
+        ).toBeUndefined();
     });
 });

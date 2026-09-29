@@ -12,7 +12,8 @@ vi.mock('../src/utils/simulatorTransitionLogger', () => ({
 
 describe('simulatorSessionReducerWithLogging', () => {
     it('logs transitions only when transition logging is enabled', async () => {
-        const { getInitialSessionState, simulatorSessionReducerWithLogging } = await import('../src/state/simulatorSessionReducer');
+        const { getInitialSessionState, simulatorSessionReducerWithLogging } =
+            await import('../src/state/simulatorSessionReducer');
 
         const state = getInitialSessionState({
             templateId: null,
@@ -37,11 +38,14 @@ describe('simulatorSessionReducerWithLogging', () => {
         expect(mockLogging.logSimulatorTransition).not.toHaveBeenCalled();
 
         mockLogging.enabled = true;
-        const next = simulatorSessionReducerWithLogging(state, { type: 'SELECT_EMAIL', messageId: 'm1' });
+        const next = simulatorSessionReducerWithLogging(state, {
+            type: 'SELECT_EMAIL',
+            messageId: 'm1',
+        });
         expect(mockLogging.logSimulatorTransition).toHaveBeenCalledWith(
             state,
             { type: 'SELECT_EMAIL', messageId: 'm1' },
-            next
+            next,
         );
     });
 });

@@ -1,5 +1,6 @@
+import { useReportComposerState } from './composerState.js';
 import { useSimulatorCapabilities } from '../contract/capabilities.js';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SimulatorPage } from '../components/SimulatorPage.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 import {
@@ -40,6 +41,14 @@ export default function EmailComposeView({
         setLocalDraft(next);
         onDraftChange?.(next);
     };
+    useReportComposerState(Boolean(onSend && !unavailable && draft.to.trim()), pending);
+    const mounted = useRef(true);
+    useEffect(() => {
+        mounted.current = true;
+        return () => {
+            mounted.current = false;
+        };
+    }, []);
     const submit = async () => {
         if (unavailable || !onSend || sending.current || !draft.to.trim()) return;
         sending.current = true;
@@ -52,10 +61,12 @@ export default function EmailComposeView({
                 bcc: draft.bcc.trim(),
                 subject: draft.subject.trim(),
             });
+            if (!mounted.current) return;
             setLocalDraft(EMPTY_DRAFT);
             onDraftChange?.(EMPTY_DRAFT);
             onCancel();
         } catch (error_) {
+            if (!mounted.current) return;
             setError(error_ instanceof Error ? error_.message : t('email.sendFailed'));
         } finally {
             sending.current = false;
@@ -67,11 +78,21 @@ export default function EmailComposeView({
             className="simulator-flex simulator-flex--column"
             header={<div className="simulator-screen__header">{t('email.compose')}</div>}
         >
-            {unavailable && <p><output>{unavailable}</output></p>}
-            {!unavailable && !pending && !draft.to.trim() && (
-                <p><output>{t('email.enterRecipient')}</output></p>
+            {unavailable && (
+                <p>
+                    <output>{unavailable}</output>
+                </p>
             )}
-            {pending && <p><output>{t('email.sending')}</output></p>}
+            {!unavailable && !pending && !draft.to.trim() && (
+                <p>
+                    <output>{t('email.enterRecipient')}</output>
+                </p>
+            )}
+            {pending && (
+                <p>
+                    <output>{t('email.sending')}</output>
+                </p>
+            )}
             {error && <p role="alert">{error}</p>}
             <form
                 className="simulator-email__composer simulator-flex simulator-flex--column simulator-spacing--gap-3"
@@ -81,7 +102,11 @@ export default function EmailComposeView({
                 }}
             >
                 {(['to', 'bcc', 'subject'] as const).map((key) => {
-                    const labelKeys = { to: 'email.recipient', bcc: 'email.bcc', subject: 'email.subject' } as const;
+                    const labelKeys = {
+                        to: 'email.recipient',
+                        bcc: 'email.bcc',
+                        subject: 'email.subject',
+                    } as const;
                     const label = t(labelKeys[key]);
                     return (
                         <label className="simulator-field" key={key}>

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.17.0 — prepared September 29, 2026 (unpublished)
+
+- Export reusable Vault, Photos/editor/location, lock/settings, mutable Mailbox and HTML/React browser screens, page hooks and browser/file helpers.
+- Add `SimulatorAppsProvider` for host formatting, notes editing, map rendering, file/metadata and lock adapters. Default notes use a plain textarea; external maps require an explicit host renderer.
+- Add mailbox source slots and display adapters without importing host storage or import services.
+- Add optional `photo`, `numberLabel` and `description` to `PhoneHistoryDetail`; media and number labels render inside the card body. Existing supplied descriptions still render.
+- Require core 0.4.1; retain React 18 peers and add Lucide icons.
+
+- Compile and execute the repository examples against the packed public API during package smoke checks.
+
 ## [Unreleased]
 
 ### Changed

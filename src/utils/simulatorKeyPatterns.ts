@@ -31,19 +31,30 @@ export function isSlugLike(value: string): boolean {
  * Advisory checks for key naming. Returns a short message if the key could be improved; null if fine or skipped.
  * Does not reject legacy or numeric ids.
  */
-export function keyNamingSuggestion(
-    key: string,
-    family: KeyFamily
-): string | null {
-    if (key.length === 0) return englishLocale.t("copy.simulatorKeyPatterns.key.should.be.non.empty");
-    if (key.length > ENTITY_ID_MAX_LENGTH) return `Key is longer than ${ENTITY_ID_MAX_LENGTH} chars; consider shortening.`;
+export function keyNamingSuggestion(key: string, family: KeyFamily): string | null {
+    if (key.length === 0)
+        return englishLocale.t('copy.simulatorKeyPatterns.key.should.be.non.empty');
+    if (key.length > ENTITY_ID_MAX_LENGTH)
+        return `Key is longer than ${ENTITY_ID_MAX_LENGTH} chars; consider shortening.`;
     if (family === 'template' && key.length > TEMPLATE_KEY_MAX_LENGTH) {
         return `Template key exceeds ${TEMPLATE_KEY_MAX_LENGTH} chars (backend limit).`;
     }
-    if (/\s/.test(key)) return englishLocale.t("copy.simulatorKeyPatterns.key.contains.spaces.prefer.lowercase.hyphen.separated.e.g.my.key");
-    if (/(?:^-|-$)/.test(key)) return englishLocale.t("copy.simulatorKeyPatterns.key.has.leading.or.trailing.hyphen.remove");
+    if (/\s/.test(key))
+        return englishLocale.t(
+            'copy.simulatorKeyPatterns.key.contains.spaces.prefer.lowercase.hyphen.separated.e.g.my.key',
+        );
+    if (/(?:^-|-$)/.test(key))
+        return englishLocale.t(
+            'copy.simulatorKeyPatterns.key.has.leading.or.trailing.hyphen.remove',
+        );
     if (NUMERIC_ID_REGEX.test(key)) return null; // legacy numeric id: no suggestion
-    if (/[A-Z]/.test(key)) return englishLocale.t("copy.simulatorKeyPatterns.key.contains.uppercase.prefer.lowercase.e.g.my.key");
-    if (/_[a-z]/.test(key) || key.includes('__')) return englishLocale.t("copy.simulatorKeyPatterns.key.contains.underscores.prefer.hyphens.for.new.keys");
+    if (/[A-Z]/.test(key))
+        return englishLocale.t(
+            'copy.simulatorKeyPatterns.key.contains.uppercase.prefer.lowercase.e.g.my.key',
+        );
+    if (/_[a-z]/.test(key) || key.includes('__'))
+        return englishLocale.t(
+            'copy.simulatorKeyPatterns.key.contains.underscores.prefer.hyphens.for.new.keys',
+        );
     return null;
 }

@@ -27,9 +27,22 @@ export default function SimulatorDeveloperToolbar({
     onToggleSection,
 }: Readonly<SimulatorDeveloperToolbarProps>) {
     return (
-        <div className={joinClasses(simSpacing.mb2, simBorder.tile, SIM_ROUNDED_NONE, SIM_OVERFLOW_HIDDEN, SIM_SURFACE_WHITE)}>
+        <div
+            className={joinClasses(
+                simSpacing.mb2,
+                simBorder.tile,
+                SIM_ROUNDED_NONE,
+                SIM_OVERFLOW_HIDDEN,
+                SIM_SURFACE_WHITE,
+            )}
+        >
             <div
-                className={joinClasses(simLayout.row, simSpacing.gap2, simSpacing.px1, simSpacing.py1)}
+                className={joinClasses(
+                    simLayout.row,
+                    simSpacing.gap2,
+                    simSpacing.px1,
+                    simSpacing.py1,
+                )}
                 style={{
                     backgroundColor: '#2f7df6',
                     borderBottom: '1px solid #b9cdef',
@@ -58,7 +71,9 @@ export default function SimulatorDeveloperToolbar({
                                 lineHeight: 1,
                                 color: '#ffffff',
                                 backgroundColor: visible ? 'rgba(255,255,255,0.18)' : 'transparent',
-                                boxShadow: visible ? 'inset 0 0 0 1px rgba(255,255,255,0.35)' : 'none',
+                                boxShadow: visible
+                                    ? 'inset 0 0 0 1px rgba(255,255,255,0.35)'
+                                    : 'none',
                             }}
                         >
                             <span aria-hidden>{DEVELOPER_TOOLBAR_ICONS[section]}</span>

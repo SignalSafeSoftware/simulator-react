@@ -79,7 +79,7 @@ function createState(payload: SimulatorTemplatePayload = createPayload()): Simul
 }
 
 function createKeyboardEvent(
-    overrides: Partial<KeyboardEvent> & { key: string }
+    overrides: Partial<KeyboardEvent> & { key: string },
 ): KeyboardEvent & { preventDefault: ReturnType<typeof vi.fn> } {
     return {
         altKey: false,
@@ -162,14 +162,14 @@ describe('lintSimulatorPayload', () => {
                 'browser_page_bare',
                 'messages_no_sender_identity',
                 'duplicate_keys',
-            ])
+            ]),
         );
         expect(warnings).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({ code: 'duplicate_keys', path: 'contacts' }),
                 expect.objectContaining({ code: 'duplicate_keys', path: 'email.inbox' }),
                 expect.objectContaining({ code: 'browser_page_bare', path: 'browser.pages[0]' }),
-            ])
+            ]),
         );
     });
 });
@@ -208,9 +208,7 @@ describe('captureSimulatorSnapshot', () => {
             ...createState(payload),
             view: {
                 ...createState(payload).view,
-                actionHistory: [
-                    { type: 'search_contacts', query: { nested: 'value' } as never },
-                ],
+                actionHistory: [{ type: 'search_contacts', query: { nested: 'value' } as never }],
             },
         };
 
@@ -277,7 +275,11 @@ describe('captureSimulatorSnapshot', () => {
         const snapshot = captureSimulatorSnapshot(state, { maxActions: 10 });
 
         expect(snapshot.template.entryPoint).toEqual({ app: 'internet', screen: '' });
-        expect(snapshot.view.phone).toEqual({ screen: 'voicemail', stackLength: 2, chosenIndex: 1 });
+        expect(snapshot.view.phone).toEqual({
+            screen: 'voicemail',
+            stackLength: 2,
+            chosenIndex: 1,
+        });
         expect(snapshot.view.contactsPanelOpen).toBe(true);
         expect(snapshot.view.contactsSearchQuery).toBe('Ada');
         expect(snapshot.payloadSummary.pageIds).toEqual([]);
@@ -392,7 +394,15 @@ describe('getSimulatorCapabilities', () => {
             },
             browser: {
                 defaultPageId: 'landing',
-                pages: [{ id: 'landing', url: 'https://example.test', title: 'Landing', layout: 'content', formFields: null as never }],
+                pages: [
+                    {
+                        id: 'landing',
+                        url: 'https://example.test',
+                        title: 'Landing',
+                        layout: 'content',
+                        formFields: null as never,
+                    },
+                ],
             },
             phone: {
                 content: {
@@ -422,7 +432,9 @@ describe('getSimulatorCapabilities', () => {
         const payload: SimulatorTemplatePayload = {
             ...createPayload(),
             email: {
-                inbox: [{ id: 'message-1', subject: 'Alert', from: 'alerts@example.test' } as never],
+                inbox: [
+                    { id: 'message-1', subject: 'Alert', from: 'alerts@example.test' } as never,
+                ],
                 selectedMessage: {
                     subject: 'Alert',
                     from: 'alerts@example.test',
@@ -460,7 +472,7 @@ describe('handleSimulatorKeyboard', () => {
                 onSwitchApp,
                 onFocusSearch: vi.fn(),
             },
-            { activeApp: 'email', activeScreen: 'list' }
+            { activeApp: 'email', activeScreen: 'list' },
         );
 
         expect(result).toEqual({ handled: true });
@@ -491,7 +503,7 @@ describe('handleSimulatorKeyboard', () => {
                 onSwitchApp: vi.fn(),
                 onFocusSearch,
             },
-            { activeApp: 'phone', activeScreen: 'contacts' }
+            { activeApp: 'phone', activeScreen: 'contacts' },
         );
         const ignoredResult = handleSimulatorKeyboard(
             typingEvent,
@@ -500,7 +512,7 @@ describe('handleSimulatorKeyboard', () => {
                 onSwitchApp: vi.fn(),
                 onFocusSearch,
             },
-            { activeApp: 'phone', activeScreen: 'contacts' }
+            { activeApp: 'phone', activeScreen: 'contacts' },
         );
 
         expect(handledResult).toEqual({ handled: true });
@@ -660,8 +672,20 @@ describe('buildSimulatorPreviewReport', () => {
             browser: {
                 defaultPageId: 'landing',
                 pages: [
-                    { id: 'landing', url: 'https://example.test', title: 'Landing', layout: 'content', buttons: [] },
-                    { id: 'pricing', url: 'https://example.test/pricing', title: 'Pricing', layout: 'content', buttons: [] },
+                    {
+                        id: 'landing',
+                        url: 'https://example.test',
+                        title: 'Landing',
+                        layout: 'content',
+                        buttons: [],
+                    },
+                    {
+                        id: 'pricing',
+                        url: 'https://example.test/pricing',
+                        title: 'Pricing',
+                        layout: 'content',
+                        buttons: [],
+                    },
                 ],
             },
             phone: null,
@@ -708,14 +732,28 @@ describe('buildSimulatorPreviewReport', () => {
                 secondaryDefaults: {},
             },
             email: {
-                inbox: [{ id: 'm1', subject: 'Alert', from: 'alerts@example.test', links: [{ href: 'https://example.test' }] as never }],
+                inbox: [
+                    {
+                        id: 'm1',
+                        subject: 'Alert',
+                        from: 'alerts@example.test',
+                        links: [{ href: 'https://example.test' }] as never,
+                    },
+                ],
                 selectedMessage: null,
                 selectedMessageId: null,
             },
             sms: null,
             browser: {
                 defaultPageId: 'landing',
-                pages: [{ id: 'landing', url: 'https://example.test', title: 'Landing', layout: 'content' }],
+                pages: [
+                    {
+                        id: 'landing',
+                        url: 'https://example.test',
+                        title: 'Landing',
+                        layout: 'content',
+                    },
+                ],
             },
             phone: null,
             contacts: [],
@@ -743,7 +781,14 @@ describe('buildSimulatorPreviewReport', () => {
             },
             browser: {
                 defaultPageId: undefined,
-                pages: [{ id: 'landing', url: 'https://example.test', title: 'Landing', layout: 'content' }],
+                pages: [
+                    {
+                        id: 'landing',
+                        url: 'https://example.test',
+                        title: 'Landing',
+                        layout: 'content',
+                    },
+                ],
             },
             phone: null,
             contacts: null,
@@ -825,8 +870,18 @@ describe('buildSimulatorPreviewReport', () => {
             browser: {
                 defaultPageId: 'landing',
                 pages: [
-                    { id: 'landing', url: 'https://example.test', title: 'Landing', layout: 'content' },
-                    { id: 'result', url: 'https://example.test/result', title: 'Result', layout: 'result' },
+                    {
+                        id: 'landing',
+                        url: 'https://example.test',
+                        title: 'Landing',
+                        layout: 'content',
+                    },
+                    {
+                        id: 'result',
+                        url: 'https://example.test/result',
+                        title: 'Result',
+                        layout: 'result',
+                    },
                 ],
             },
             phone: null,
@@ -876,7 +931,6 @@ describe('buildSimulatorPreviewReport', () => {
 
         expect(report.entryPoint).toEqual({ app: 'bogus', screen: 'list' });
     });
-
 });
 
 describe('simulatorKeyPatterns', () => {
@@ -945,7 +999,9 @@ describe('logSimulatorTransition', () => {
 
         expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('SWITCH_APP(internet)'));
         expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('app email→internet'));
-        expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('internet landing→pricing'));
+        expect(consoleSpy).toHaveBeenCalledWith(
+            expect.stringContaining('internet landing→pricing'),
+        );
         expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('stack=1'));
     });
 });
@@ -964,7 +1020,7 @@ describe('mapDirectory', () => {
                     url: 'https://example.test/help',
                     description: 'Trusted support line',
                 },
-            ])
+            ]),
         ).toEqual([
             {
                 id: 'helpdesk',

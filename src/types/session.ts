@@ -1,4 +1,10 @@
-import type { SimulatorContactValue } from '@signalsafe/simulator-core';
+import type {
+    SimulatorContactValue,
+    SimulatorPhoneScreenId,
+    SimulatorEmailScreenId,
+    SimulatorMessagesScreenId,
+    SimulatorHomeScreenId,
+} from '@signalsafe/simulator-core';
 /**
  * Unified simulator session state and payload contract.
  * Full-device: entry_point, device defaults, contacts, and per-app slices.
@@ -20,18 +26,10 @@ import type {
 export type SimulatorChannel = 'contacts' | 'email' | 'sms' | 'browser' | 'phone' | 'home';
 
 /** Screen ids per app. Apps with secondary nav: phone, email. */
-export type PhoneScreenId =
-    | 'history'
-    | 'contacts'
-    | 'add_contact'
-    | 'dial'
-    | 'incoming_call'
-    | 'voicemail'
-    | 'directory';
-export type EmailScreenId = 'list' | 'detail' | 'compose' | 'outbox' | 'trash';
-export type MessagesScreenId = 'threads' | 'thread_detail' | 'new_thread';
-/** Page id (e.g. 'landing', 'login', 'result') or any id from payload pages. */
-export type HomeScreenId = 'home' | 'store' | 'settings';
+export type PhoneScreenId = SimulatorPhoneScreenId;
+export type EmailScreenId = SimulatorEmailScreenId;
+export type MessagesScreenId = SimulatorMessagesScreenId;
+export type HomeScreenId = SimulatorHomeScreenId;
 
 /** Default screen per app (list/root context for Cancel). */
 export const DEFAULT_PHONE_SCREEN: PhoneScreenId = 'history';
@@ -142,6 +140,8 @@ export interface SimulatorThreadListRow {
 
 /** SMS payload slice. */
 export interface SimulatorSmsPayload {
+    /** History renders immediately without scenario reveal timers. */
+    mode?: 'scenario' | 'history';
     avatarUrl?: string;
     readOnly?: boolean;
     loadingMessage?: string;

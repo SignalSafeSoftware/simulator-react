@@ -9,7 +9,9 @@ import PhoneVoicemailView from '../src/views/PhoneVoicemailView';
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) {
         return '';
     }
@@ -45,17 +47,17 @@ describe('simulator tiny component coverage', () => {
                             React.createElement(
                                 SimulatorListItem,
                                 { active: false, variant: 'default' },
-                                React.createElement('span', null, 'Row')
-                            )
-                        )
+                                React.createElement('span', null, 'Row'),
+                            ),
+                        ),
                     ),
                     React.createElement(SimulatorLocalNav, {
                         items: [],
                         activeId: 'none',
                         onSelect: vi.fn(),
                         'aria-label': 'Empty nav',
-                    })
-                )
+                    }),
+                ),
             );
         });
 
@@ -116,8 +118,8 @@ describe('simulator tiny component coverage', () => {
                             },
                             browserHasCycle: false,
                         },
-                    })
-                )
+                    }),
+                ),
             );
         });
 
@@ -145,7 +147,7 @@ describe('simulator tiny component coverage', () => {
                     contacts: null,
                     onBack: vi.fn(),
                     onAction,
-                })
+                }),
             );
         });
 

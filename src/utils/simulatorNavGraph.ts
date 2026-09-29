@@ -66,12 +66,16 @@ function getDefaultScreen(app: SimulatorApp, payload: SimulatorTemplatePayload):
 }
 
 /** Resolve link href to browser page id (first page whose url matches or contains href). */
-function resolveLinkTargetPageId(href: string | undefined, pages: Array<{ id?: string; url?: string }>): string | null {
+function resolveLinkTargetPageId(
+    href: string | undefined,
+    pages: Array<{ id?: string; url?: string }>,
+): string | null {
     if (href == null || href === '') return null;
     const normalized = href.trim().toLowerCase();
     for (const p of pages) {
         const u = (p.url ?? '').trim().toLowerCase();
-        if (u === normalized || u.endsWith(normalized) || normalized.endsWith(u)) return p.id ?? null;
+        if (u === normalized || u.endsWith(normalized) || normalized.endsWith(u))
+            return p.id ?? null;
     }
     return null;
 }
@@ -79,16 +83,16 @@ function resolveLinkTargetPageId(href: string | undefined, pages: Array<{ id?: s
 function getNodeLabel(
     app: SimulatorApp,
     screen: string,
-    payload: SimulatorTemplatePayload
+    payload: SimulatorTemplatePayload,
 ): string | undefined {
     return app === 'internet'
-        ? payload.browser?.pages?.find((page) => page.id === screen)?.title ?? screen
+        ? (payload.browser?.pages?.find((page) => page.id === screen)?.title ?? screen)
         : screen;
 }
 
 function buildReachableNodes(
     reachableScreens: ReturnType<typeof analyzeReachability>['reachableScreens'],
-    payload: SimulatorTemplatePayload
+    payload: SimulatorTemplatePayload,
 ): SimulatorNavGraphNode[] {
     const nodes: SimulatorNavGraphNode[] = [];
     for (const app of APPS) {
@@ -109,7 +113,7 @@ function addMainMenuEdges(
     reachableApps: readonly SimulatorApp[],
     reachableScreens: ReturnType<typeof analyzeReachability>['reachableScreens'],
     nodeIds: ReadonlySet<string>,
-    defaultScreen: (app: SimulatorApp) => string
+    defaultScreen: (app: SimulatorApp) => string,
 ): void {
     for (const fromApp of reachableApps) {
         for (const fromScreen of reachableScreens[fromApp] ?? []) {
@@ -131,19 +135,27 @@ function addPairedEdge(
     from: { app: SimulatorApp; screen: string },
     to: { app: SimulatorApp; screen: string },
     forwardAction: string,
-    backwardAction: string
+    backwardAction: string,
 ): void {
     if (!reachableScreens.includes(from.screen) || !reachableScreens.includes(to.screen)) return;
     edges.push(
-        { from: nodeId(from.app, from.screen), to: nodeId(to.app, to.screen), action: forwardAction },
-        { from: nodeId(to.app, to.screen), to: nodeId(from.app, from.screen), action: backwardAction }
+        {
+            from: nodeId(from.app, from.screen),
+            to: nodeId(to.app, to.screen),
+            action: forwardAction,
+        },
+        {
+            from: nodeId(to.app, to.screen),
+            to: nodeId(from.app, from.screen),
+            action: backwardAction,
+        },
     );
 }
 
 function addBrowserEdges(
     edges: SimulatorNavGraphEdge[],
     payload: SimulatorTemplatePayload,
-    reachableBrowserScreens: readonly string[]
+    reachableBrowserScreens: readonly string[],
 ): void {
     for (const page of payload.browser?.pages ?? []) {
         if (!reachableBrowserScreens.includes(page.id)) continue;
@@ -162,8 +174,15 @@ function addBrowserEdges(
         }
 
         const submitTargetPageId = page.submitTargetPageId ?? DEFAULT_BROWSER_SUBMIT_TARGET;
-        if (submitTargetPageId !== page.id && reachableBrowserScreens.includes(submitTargetPageId)) {
-            edges.push({ from: fromId, to: nodeId('internet', submitTargetPageId), action: 'form_submit' });
+        if (
+            submitTargetPageId !== page.id &&
+            reachableBrowserScreens.includes(submitTargetPageId)
+        ) {
+            edges.push({
+                from: fromId,
+                to: nodeId('internet', submitTargetPageId),
+                action: 'form_submit',
+            });
         }
     }
 }
@@ -172,7 +191,7 @@ function addTabEdges(
     edges: SimulatorNavGraphEdge[],
     app: 'phone' | 'home',
     screens: readonly string[],
-    reachableScreens: readonly string[]
+    reachableScreens: readonly string[],
 ): void {
     for (const fromScreen of screens) {
         if (!reachableScreens.includes(fromScreen)) continue;
@@ -188,7 +207,7 @@ function addContentLinkEdges(
     from: { app: 'email' | 'messages'; screen: string },
     links: Array<{ href?: string }> | undefined,
     browserPages: Array<{ id?: string; url?: string }>,
-    reachableBrowserScreens: readonly string[]
+    reachableBrowserScreens: readonly string[],
 ): void {
     if (!links?.length) return;
     for (const link of links) {
@@ -237,7 +256,7 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
         { app: 'email', screen: 'list' },
         { app: 'email', screen: 'detail' },
         'open_email',
-        'back'
+        'back',
     );
 
     // Messages: threads ↔ thread_detail, threads ↔ new_thread
@@ -247,7 +266,7 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
         { app: 'messages', screen: 'threads' },
         { app: 'messages', screen: 'thread_detail' },
         'open_thread',
-        'back'
+        'back',
     );
     addPairedEdge(
         edges,
@@ -255,7 +274,7 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
         { app: 'messages', screen: 'threads' },
         { app: 'messages', screen: 'new_thread' },
         'new_thread',
-        'back'
+        'back',
     );
 
     // Internet: button and form_submit edges
@@ -272,7 +291,13 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
     const emailDetail = payload.email?.selectedMessage ?? payload.email?.inbox?.[0];
     const emailLinks = (emailDetail as { links?: Array<{ href?: string }> } | undefined)?.links;
     if (reachableScreens.email.includes('detail')) {
-        addContentLinkEdges(edges, { app: 'email', screen: 'detail' }, emailLinks, browserPages, reachableScreens.internet);
+        addContentLinkEdges(
+            edges,
+            { app: 'email', screen: 'detail' },
+            emailLinks,
+            browserPages,
+            reachableScreens.internet,
+        );
     }
 
     const smsThread = payload.sms?.thread;
@@ -283,7 +308,7 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
             { app: 'messages', screen: 'thread_detail' },
             threadLinks,
             browserPages,
-            reachableScreens.internet
+            reachableScreens.internet,
         );
     }
 

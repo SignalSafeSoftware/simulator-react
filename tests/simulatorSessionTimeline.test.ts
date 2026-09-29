@@ -7,7 +7,9 @@ import SimulatorSessionTimeline, {
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) {
         return '';
     }
@@ -47,7 +49,7 @@ describe('SimulatorSessionTimeline', () => {
                 React.createElement(SimulatorSessionTimeline, {
                     entries,
                     defaultExpanded: true,
-                })
+                }),
             );
         });
 
@@ -65,7 +67,7 @@ describe('SimulatorSessionTimeline', () => {
                 React.createElement(SimulatorSessionTimeline, {
                     entries: [],
                     defaultExpanded: true,
-                })
+                }),
             );
         });
 
@@ -82,7 +84,7 @@ describe('SimulatorSessionTimeline', () => {
                 React.createElement(SimulatorSessionTimeline, {
                     entries: [sessionStartedEntry()],
                     defaultExpanded: true,
-                })
+                }),
             );
         });
 
@@ -107,7 +109,9 @@ describe('SimulatorSessionTimeline', () => {
                                 timestamp: '2026-01-01T10:02:03Z',
                                 app: 'internet',
                                 screen: 'landing',
-                                metadata: { href: 'https://very-long.example.test/path/to/a/page/that/keeps/going' },
+                                metadata: {
+                                    href: 'https://very-long.example.test/path/to/a/page/that/keeps/going',
+                                },
                             } as TimelineEntry,
                             {
                                 kind: 'search_performed',
@@ -118,7 +122,7 @@ describe('SimulatorSessionTimeline', () => {
                             } as TimelineEntry,
                         ],
                         defaultExpanded: false,
-                    })
+                    }),
                 );
             });
 
@@ -167,7 +171,7 @@ describe('SimulatorSessionTimeline', () => {
                         } as TimelineEntry,
                     ],
                     defaultExpanded: true,
-                })
+                }),
             );
         });
 
@@ -198,7 +202,7 @@ describe('SimulatorSessionTimeline', () => {
                             } as TimelineEntry,
                         ],
                         defaultExpanded: true,
-                    })
+                    }),
                 );
             });
 

@@ -45,6 +45,7 @@ export function ContactPhotoControls({
                     ) : (
                         (currentImage ??
                         fallback ?? (
+                            // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- A text glyph has no image resource.
                             <span role="img" aria-label={t('contact.noPhoto')}>
                                 ◯
                             </span>
@@ -74,7 +75,13 @@ export function ContactPhotoControls({
                     >
                         {actionIcons?.change ?? <PhotoActionIcon action="change" />}
                     </CapabilityButton>
-                    <CapabilityButton type="button" capability={capability} aria-label={t('contact.removePhoto')} title={t('contact.removePhoto')} onClick={onRemove}>
+                    <CapabilityButton
+                        type="button"
+                        capability={capability}
+                        aria-label={t('contact.removePhoto')}
+                        title={t('contact.removePhoto')}
+                        onClick={onRemove}
+                    >
                         {actionIcons?.remove ?? <PhotoActionIcon action="remove" />}
                     </CapabilityButton>
                     <CapabilityButton
@@ -89,19 +96,40 @@ export function ContactPhotoControls({
                 </div>
             </div>
             {error && <p role="alert">{error}</p>}
-            {status && <p><output>{status}</output></p>}
+            {status && (
+                <p>
+                    <output>{status}</output>
+                </p>
+            )}
         </section>
     );
 }
 
-
 function PhotoActionIcon({ action }: Readonly<{ action: 'change' | 'remove' | 'restore' }>) {
     return (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
             {action === 'restore' ? (
-                <><path d="M3 11a9 9 0 1 1 2.7 7" /><path d="M3 3v8h8" /></>
+                <>
+                    <path d="M3 11a9 9 0 1 1 2.7 7" />
+                    <path d="M3 3v8h8" />
+                </>
             ) : (
-                <><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21M17 5h6" />{action === 'change' && <path d="M20 2v6" />}</>
+                <>
+                    <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <path d="m21 15-5-5L5 21M17 5h6" />
+                    {action === 'change' && <path d="M20 2v6" />}
+                </>
             )}
         </svg>
     );

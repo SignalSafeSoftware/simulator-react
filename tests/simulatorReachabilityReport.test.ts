@@ -4,7 +4,9 @@ import SimulatorReachabilityReport from '../src/components/SimulatorReachability
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) {
         return '';
     }
@@ -37,14 +39,16 @@ describe('SimulatorReachabilityReport', () => {
                         browserPageIds: ['landing'],
                     },
                     unreachable: {
-                        screens: [{ app: { bad: true } as never, screen: { nested: 'pricing' } as never }],
+                        screens: [
+                            { app: { bad: true } as never, screen: { nested: 'pricing' } as never },
+                        ],
                         contacts: [],
                         inboxMessageIds: [],
                         browserPageIds: [],
                     },
                     browserHasCycle: false,
                 },
-            })
+            }),
         );
 
         const text = flattenText(renderer.toJSON());
@@ -90,7 +94,7 @@ describe('SimulatorReachabilityReport', () => {
                         },
                         browserHasCycle: true,
                     },
-                })
+                }),
             );
         });
 
@@ -148,11 +152,14 @@ describe('SimulatorReachabilityReport', () => {
                     },
                     browserHasCycle: false,
                 },
-            })
+            }),
         );
 
         const text = flattenText(renderer.toJSON());
-        expect(renderer.root.findByProps({ 'data-testid': 'simulator-reachability-report' }).props.className).toContain('custom-report');
+        expect(
+            renderer.root.findByProps({ 'data-testid': 'simulator-reachability-report' }).props
+                .className,
+        ).toContain('custom-report');
         expect(text).toContain('Reachability (3 unreachable)');
         expect(text).toContain('Entry app: messages');
         expect(text).toContain('messages screens: threads');

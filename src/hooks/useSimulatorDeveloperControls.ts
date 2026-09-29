@@ -2,7 +2,16 @@
  * Developer tools state, keyboard shortcuts, and clipboard export for SimulatorWithSession.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type MutableRefObject, type SetStateAction } from 'react';
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    type Dispatch,
+    type MutableRefObject,
+    type SetStateAction,
+} from 'react';
 import {
     reconcileVisibleDeveloperSections,
     resolveSimulatorDeveloperTools,
@@ -66,14 +75,17 @@ export function useSimulatorDeveloperControls({
     shortcutsHelpOpenRef.current = shortcutsHelpOpen;
 
     const payload = state.payload;
-    const resolvedDeveloperTools = useMemo(() => resolveSimulatorDeveloperTools(developerTools), [developerTools]);
+    const resolvedDeveloperTools = useMemo(
+        () => resolveSimulatorDeveloperTools(developerTools),
+        [developerTools],
+    );
     const [visibleDeveloperSections, setVisibleDeveloperSections] = useState(() =>
-        reconcileVisibleDeveloperSections(resolvedDeveloperTools.sections)
+        reconcileVisibleDeveloperSections(resolvedDeveloperTools.sections),
     );
 
     useEffect(() => {
         setVisibleDeveloperSections((prev) =>
-            reconcileVisibleDeveloperSections(resolvedDeveloperTools.sections, prev)
+            reconcileVisibleDeveloperSections(resolvedDeveloperTools.sections, prev),
         );
     }, [resolvedDeveloperTools.sections]);
 
@@ -83,11 +95,12 @@ export function useSimulatorDeveloperControls({
     const developerToolbarSections = useMemo(
         () =>
             (Object.keys(DEVELOPER_TOOLBAR_LABELS) as SimulatorDeveloperSectionKey[]).filter(
-                (key) => resolvedDeveloperTools.sections[key]
+                (key) => resolvedDeveloperTools.sections[key],
             ),
-        [resolvedDeveloperTools.sections]
+        [resolvedDeveloperTools.sections],
     );
-    const showDeveloperToolsToolbar = resolvedDeveloperTools.enabled && developerToolbarSections.length > 0;
+    const showDeveloperToolsToolbar =
+        resolvedDeveloperTools.enabled && developerToolbarSections.length > 0;
     const showParentDeveloperControls =
         showResolvedSnapshotExport || showResolvedNavGraph || enableResolvedKeyboardShortcuts;
 
@@ -105,7 +118,7 @@ export function useSimulatorDeveloperControls({
                     setSnapshotCopied(true);
                     setTimeout(() => setSnapshotCopied(false), SNAPSHOT_COPY_FEEDBACK_MS);
                 },
-                () => {}
+                () => {},
             );
         }
     }, [state]);
@@ -119,7 +132,7 @@ export function useSimulatorDeveloperControls({
                     setGraphCopied(true);
                     setTimeout(() => setGraphCopied(false), SNAPSHOT_COPY_FEEDBACK_MS);
                 },
-                () => {}
+                () => {},
             );
         }
     }, [state.payload]);
@@ -138,10 +151,11 @@ export function useSimulatorDeveloperControls({
                 e,
                 {
                     onBack: () => dispatch({ type: 'BACK' }),
-                    onSwitchApp: (app) => dispatch(switchChannelAction(viewStateToActiveChannel(app))),
+                    onSwitchApp: (app) =>
+                        dispatch(switchChannelAction(viewStateToActiveChannel(app))),
                     onFocusSearch: focusSimulatorSearch,
                 },
-                { activeApp: s.view.activeApp, activeScreen }
+                { activeApp: s.view.activeApp, activeScreen },
             );
             if (result.showHelp) setShortcutsHelpOpen(true);
             if (result.handled) {
@@ -169,7 +183,11 @@ export function useSimulatorDeveloperControls({
             defaultExpanded: resolvedDeveloperTools.defaultExpanded,
             sections: visibleDeveloperSections,
         };
-    }, [resolvedDeveloperTools.enabled, resolvedDeveloperTools.defaultExpanded, visibleDeveloperSections]);
+    }, [
+        resolvedDeveloperTools.enabled,
+        resolvedDeveloperTools.defaultExpanded,
+        visibleDeveloperSections,
+    ]);
 
     return {
         resolvedDeveloperTools,

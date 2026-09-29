@@ -15,9 +15,14 @@ describe('reusable screen placeholders', () => {
             createElement(MessagesNewThreadView, { onBack }),
         ]) {
             let renderer: TestRenderer.ReactTestRenderer;
-            await act(async () => { renderer = TestRenderer.create(view); });
+            await act(async () => {
+                renderer = TestRenderer.create(view);
+            });
             expect(renderer!.root.findByType('output').props.children).toContain('not configured');
-            for (const field of [...renderer!.root.findAllByType('input'), ...renderer!.root.findAllByType('textarea')]) {
+            for (const field of [
+                ...renderer!.root.findAllByType('input'),
+                ...renderer!.root.findAllByType('textarea'),
+            ]) {
                 expect(field.props.disabled).toBe(true);
             }
             const send = renderer!.root.findByProps({ 'aria-label': 'Send' });
@@ -28,7 +33,9 @@ describe('reusable screen placeholders', () => {
                 else send.props.onClick();
             });
             expect(onBack).not.toHaveBeenCalled();
-            await act(async () => { renderer!.unmount(); });
+            await act(async () => {
+                renderer!.unmount();
+            });
         }
     });
 
@@ -36,13 +43,26 @@ describe('reusable screen placeholders', () => {
         const onSend = vi.fn();
         const onBack = vi.fn();
         let renderer: TestRenderer.ReactTestRenderer;
-        await act(async () => { renderer = TestRenderer.create(createElement(MessagesNewThreadView, { onSend, onBack })); });
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Phone number' }).props.onChange({ target: { value: ' 5550100 ' } });
-            renderer!.root.findByProps({ 'aria-label': 'Message body' }).props.onChange({ target: { value: ' Synthetic message ' } });
+            renderer = TestRenderer.create(
+                createElement(MessagesNewThreadView, { onSend, onBack }),
+            );
         });
-        await act(async () => { renderer!.root.findByType('form').props.onSubmit({ preventDefault() {} }); });
-        expect(onSend).toHaveBeenCalledWith({ phoneNumber: '5550100', messageBody: ' Synthetic message ' });
+        await act(async () => {
+            renderer!.root
+                .findByProps({ 'aria-label': 'Phone number' })
+                .props.onChange({ target: { value: ' 5550100 ' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Message body' })
+                .props.onChange({ target: { value: ' Synthetic message ' } });
+        });
+        await act(async () => {
+            renderer!.root.findByType('form').props.onSubmit({ preventDefault() {} });
+        });
+        expect(onSend).toHaveBeenCalledWith({
+            phoneNumber: '5550100',
+            messageBody: ' Synthetic message ',
+        });
         expect(onBack).toHaveBeenCalledOnce();
         renderer!.unmount();
     });
@@ -107,7 +127,9 @@ describe('reusable screen placeholders', () => {
         });
         expect(renderer!.root.findAllByType('input')).toHaveLength(0);
         expect(
-            renderer!.root.findByProps({ children: 'Contact creation is not configured for this scenario.' }),
+            renderer!.root.findByProps({
+                children: 'Contact creation is not configured for this scenario.',
+            }),
         ).toBeDefined();
     });
 });

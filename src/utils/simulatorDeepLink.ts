@@ -9,7 +9,14 @@ import type { SimulatorSessionState, SimulatorViewState } from '../types/session
 import { DEFAULT_INTERNET_SCREEN } from '../types/session.js';
 
 const VALID_APPS = new Set<SimulatorApp>(['email', 'messages', 'internet', 'phone', 'home']);
-const PHONE_SCREENS = ['history', 'contacts', 'dial', 'incoming_call', 'voicemail', 'directory'] as const;
+const PHONE_SCREENS = [
+    'history',
+    'contacts',
+    'dial',
+    'incoming_call',
+    'voicemail',
+    'directory',
+] as const;
 const EMAIL_SCREENS = ['list', 'detail', 'compose', 'outbox', 'trash'] as const;
 const MESSAGES_SCREENS = ['threads', 'thread_detail', 'new_thread'] as const;
 const HOME_SCREENS = ['home', 'store', 'settings'] as const;
@@ -53,7 +60,7 @@ function isValidScreenForApp(app: SimulatorApp, screen: string): boolean {
 function buildEmailView(
     view: SimulatorViewState,
     payload: SimulatorSessionState['payload'],
-    link: SimulatorDeepLink
+    link: SimulatorDeepLink,
 ): SimulatorViewState['email'] {
     const screen = resolveEmailScreen(view, link);
 
@@ -64,7 +71,8 @@ function buildEmailView(
     }
 
     const nextSelectedMessageId = getEmailSelectedMessageId(view, screen, selectedMessageId);
-    const nextStack = screen === 'detail' ? [...view.email.stack, view.email.screen] : view.email.stack;
+    const nextStack =
+        screen === 'detail' ? [...view.email.stack, view.email.screen] : view.email.stack;
 
     return {
         ...view.email,
@@ -77,10 +85,12 @@ function buildEmailView(
 function buildMessagesView(
     view: SimulatorViewState,
     payload: SimulatorSessionState['payload'],
-    link: SimulatorDeepLink
+    link: SimulatorDeepLink,
 ): SimulatorViewState['messages'] {
     const screen =
-        link.screen === 'thread_detail' || link.screen === 'threads' ? link.screen : view.messages.screen;
+        link.screen === 'thread_detail' || link.screen === 'threads'
+            ? link.screen
+            : view.messages.screen;
     const visibleCount =
         screen === 'thread_detail' && payload.sms?.thread?.messages?.length != null
             ? Math.max(view.messages.visibleCount, payload.sms.thread.messages.length)
@@ -90,31 +100,35 @@ function buildMessagesView(
         ...view.messages,
         screen,
         visibleCount,
-        stack: screen === 'thread_detail' ? [...view.messages.stack, view.messages.screen] : view.messages.stack,
+        stack:
+            screen === 'thread_detail'
+                ? [...view.messages.stack, view.messages.screen]
+                : view.messages.stack,
     };
 }
 
 function resolveInternetTargetScreen(
     payload: SimulatorSessionState['payload'],
     currentScreen: string,
-    link: SimulatorDeepLink
+    link: SimulatorDeepLink,
 ): string {
     const requestedPageId =
-        link.pageId != null && link.pageId !== '' ? link.pageId : link.screen ?? currentScreen;
+        link.pageId != null && link.pageId !== '' ? link.pageId : (link.screen ?? currentScreen);
     const pages = payload.browser?.pages ?? [];
     const exists = pages.some((page) => page?.id === requestedPageId);
-    return exists ? requestedPageId : payload.browser?.defaultPageId ?? DEFAULT_INTERNET_SCREEN;
+    return exists ? requestedPageId : (payload.browser?.defaultPageId ?? DEFAULT_INTERNET_SCREEN);
 }
 
 function buildInternetView(
     view: SimulatorViewState,
     payload: SimulatorSessionState['payload'],
-    link: SimulatorDeepLink
+    link: SimulatorDeepLink,
 ): SimulatorViewState['internet'] {
     const screen = resolveInternetTargetScreen(payload, view.internet.screen, link);
-    const stack = screen === view.internet.screen
-        ? view.internet.stack
-        : [...view.internet.stack, view.internet.screen].slice(-20);
+    const stack =
+        screen === view.internet.screen
+            ? view.internet.stack
+            : [...view.internet.stack, view.internet.screen].slice(-20);
     return {
         ...view.internet,
         screen,
@@ -122,7 +136,10 @@ function buildInternetView(
     };
 }
 
-function buildPhoneView(view: SimulatorViewState, link: SimulatorDeepLink): SimulatorViewState['phone'] {
+function buildPhoneView(
+    view: SimulatorViewState,
+    link: SimulatorDeepLink,
+): SimulatorViewState['phone'] {
     const screen =
         link.screen != null && PHONE_SCREENS.includes(link.screen as (typeof PHONE_SCREENS)[number])
             ? (link.screen as (typeof PHONE_SCREENS)[number])
@@ -135,7 +152,10 @@ function buildPhoneView(view: SimulatorViewState, link: SimulatorDeepLink): Simu
     };
 }
 
-function buildHomeView(view: SimulatorViewState, link: SimulatorDeepLink): SimulatorViewState['home'] {
+function buildHomeView(
+    view: SimulatorViewState,
+    link: SimulatorDeepLink,
+): SimulatorViewState['home'] {
     const screen =
         link.screen != null && HOME_SCREENS.includes(link.screen as (typeof HOME_SCREENS)[number])
             ? (link.screen as (typeof HOME_SCREENS)[number])
@@ -176,7 +196,7 @@ export function parseSimulatorSearchParams(params: URLSearchParams): SimulatorDe
  */
 export function applyDeepLinkToState(
     state: SimulatorSessionState,
-    link: SimulatorDeepLink
+    link: SimulatorDeepLink,
 ): SimulatorSessionState {
     const { payload, view } = state;
     let nextView: SimulatorViewState = { ...view, activeApp: link.app };
@@ -220,7 +240,7 @@ export function getDeepLinkContactsSearch(link: SimulatorDeepLink | null): strin
 
 function resolveEmailScreen(
     view: SimulatorViewState,
-    link: SimulatorDeepLink
+    link: SimulatorDeepLink,
 ): SimulatorViewState['email']['screen'] {
     if (link.screen === 'detail' || (link.messageId != null && link.messageId !== '')) {
         return 'detail';
@@ -234,7 +254,7 @@ function resolveEmailScreen(
 function getEmailSelectedMessageId(
     view: SimulatorViewState,
     screen: SimulatorViewState['email']['screen'],
-    selectedMessageId: string | null
+    selectedMessageId: string | null,
 ): string | null {
     if (screen === 'detail') {
         return selectedMessageId;
@@ -248,7 +268,7 @@ function getEmailSelectedMessageId(
 function getNextPhoneStack(
     stack: SimulatorViewState['phone']['stack'],
     currentScreen: SimulatorViewState['phone']['screen'],
-    nextScreen: SimulatorViewState['phone']['screen']
+    nextScreen: SimulatorViewState['phone']['screen'],
 ): SimulatorViewState['phone']['stack'] {
     if (nextScreen === currentScreen) {
         return stack;

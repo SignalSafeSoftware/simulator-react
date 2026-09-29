@@ -96,7 +96,7 @@ describe('SimulatorWithSession', () => {
                         },
                     }) as never,
                     dispatch: vi.fn(),
-                })
+                }),
             );
         });
 
@@ -119,7 +119,7 @@ describe('SimulatorWithSession', () => {
                         },
                     }) as never,
                     dispatch: vi.fn(),
-                })
+                }),
             );
         });
 
@@ -145,7 +145,7 @@ describe('SimulatorWithSession', () => {
                             enabled: true,
                             sections: { shortcuts: true },
                         },
-                    })
+                    }),
                 );
             });
 
@@ -155,7 +155,9 @@ describe('SimulatorWithSession', () => {
             });
 
             expect(root.findByType('dialog').props.open).toBe(true);
-            expect(root.findByType('dialog').props['aria-label']).toBe('Simulator keyboard shortcuts');
+            expect(root.findByType('dialog').props['aria-label']).toBe(
+                'Simulator keyboard shortcuts',
+            );
         } finally {
             (globalThis as Record<string, unknown>).document = originalDocument;
         }
@@ -172,13 +174,13 @@ describe('SimulatorWithSession', () => {
                     state: createState({
                         payload: {
                             browser: {
-                                pages: [
-                                    { id: 'landing', submitTargetPageId: 'missing-target' },
-                                ],
+                                pages: [{ id: 'landing', submitTargetPageId: 'missing-target' }],
                                 defaultPageId: 'landing',
                             },
                             email: {
-                                inbox: [{ id: 'm1', subject: 'Inbox', from: 'sender@example.test' }],
+                                inbox: [
+                                    { id: 'm1', subject: 'Inbox', from: 'sender@example.test' },
+                                ],
                                 selectedMessageId: null,
                                 selectedMessage: null,
                             },
@@ -190,7 +192,7 @@ describe('SimulatorWithSession', () => {
                     }) as never,
                     dispatch,
                     onSimulatorEvent,
-                })
+                }),
             );
         });
 
@@ -204,12 +206,27 @@ describe('SimulatorWithSession', () => {
             renderContext.onSelectEmail('missing-message');
         });
 
-        expect(dispatch).toHaveBeenCalledWith({ type: 'SIMULATOR_ACTION', action: { type: 'submit_form' } });
-        expect(dispatch).not.toHaveBeenCalledWith({ type: 'BROWSER_SCREEN', screen: 'missing-target' });
-        expect(dispatch).not.toHaveBeenCalledWith({ type: 'SELECT_EMAIL', messageId: 'missing-message' });
-        expect(onSimulatorEvent).toHaveBeenCalledWith(expect.objectContaining({ kind: 'form_submitted' }));
+        expect(dispatch).toHaveBeenCalledWith({
+            type: 'SIMULATOR_ACTION',
+            action: { type: 'submit_form' },
+        });
+        expect(dispatch).not.toHaveBeenCalledWith({
+            type: 'BROWSER_SCREEN',
+            screen: 'missing-target',
+        });
+        expect(dispatch).not.toHaveBeenCalledWith({
+            type: 'SELECT_EMAIL',
+            messageId: 'missing-message',
+        });
+        expect(onSimulatorEvent).toHaveBeenCalledWith(
+            expect.objectContaining({ kind: 'form_submitted' }),
+        );
         expect(onSimulatorEvent).not.toHaveBeenCalledWith(
-            expect.objectContaining({ kind: 'screen_viewed', app: 'internet', screen: 'missing-target' })
+            expect.objectContaining({
+                kind: 'screen_viewed',
+                app: 'internet',
+                screen: 'missing-target',
+            }),
         );
     });
 });

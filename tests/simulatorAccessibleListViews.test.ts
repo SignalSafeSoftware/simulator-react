@@ -9,7 +9,9 @@ import SmsSimulatorView from '../src/views/SmsSimulatorView';
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) {
         return '';
     }
@@ -45,19 +47,23 @@ describe('simulator accessible list views', () => {
                     onSelectMessage,
                     onCompose,
                     onSearchSubmit,
-                })
+                }),
             );
         });
 
         const composeButton = renderer!.root.findByProps({ 'aria-label': 'Compose email' });
-        const rowButton = renderer!.root.findAllByType('button').find((node) => node.props.type === 'button' && node.props['aria-label'] == null);
+        const rowButton = renderer!.root
+            .findAllByType('button')
+            .find((node) => node.props.type === 'button' && node.props['aria-label'] == null);
         expect(rowButton?.props.type).toBe('button');
         expect(flattenText(renderer!.toJSON())).toContain('Sender Name');
         expect(flattenText(renderer!.toJSON())).toContain('Today');
 
         await act(async () => {
             composeButton.props.onClick();
-            renderer!.root.findByProps({ 'aria-label': 'Search' }).props.onChange({ target: { value: 'zzz' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search' })
+                .props.onChange({ target: { value: 'zzz' } });
             renderer!.root.findByProps({ 'aria-label': 'Search' }).props.onKeyDown({
                 key: 'Enter',
                 preventDefault: vi.fn(),
@@ -82,12 +88,18 @@ describe('simulator accessible list views', () => {
                     ],
                     selectedMessageId: null,
                     onSelectMessage,
-                })
+                }),
             );
         });
 
         await act(async () => {
-            renderer!.root.findAll((node) => typeof node.props.onClick === 'function' && node.props['aria-label'] == null)[0].props.onClick();
+            renderer!.root
+                .findAll(
+                    (node) =>
+                        typeof node.props.onClick === 'function' &&
+                        node.props['aria-label'] == null,
+                )[0]
+                .props.onClick();
         });
 
         expect(onSelectMessage).toHaveBeenCalledWith('m1');
@@ -115,15 +127,19 @@ describe('simulator accessible list views', () => {
                     searchQuery: 'alerts',
                     onSearchChange,
                     onSearchSubmit,
-                })
+                }),
             );
         });
 
-        const selectedRow = renderer!.root.findAllByType('button').find((node) => node.props.type === 'button' && node.props['aria-label'] == null);
+        const selectedRow = renderer!.root
+            .findAllByType('button')
+            .find((node) => node.props.type === 'button' && node.props['aria-label'] == null);
         expect(selectedRow?.props.className).toContain('simulator-surface--selected');
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Search' }).props.onChange({ target: { value: 'reset' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search' })
+                .props.onChange({ target: { value: 'reset' } });
             renderer!.root.findByProps({ 'aria-label': 'Search' }).props.onKeyDown({
                 key: 'Enter',
                 preventDefault: vi.fn(),
@@ -140,7 +156,7 @@ describe('simulator accessible list views', () => {
                     onSelectMessage,
                     folderLabel: 'Deleted mail',
                     folder: 'trash',
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('No emails in Trash.');
@@ -164,12 +180,14 @@ describe('simulator accessible list views', () => {
                     ],
                     selectedMessageId: null,
                     onSelectMessage,
-                })
+                }),
             );
         });
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Search' }).props.onChange({ target: { value: 'alerts@example.test' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search' })
+                .props.onChange({ target: { value: 'alerts@example.test' } });
             renderer!.root.findByProps({ 'aria-label': 'Search' }).props.onKeyDown({
                 key: 'Enter',
                 preventDefault: vi.fn(),
@@ -178,7 +196,9 @@ describe('simulator accessible list views', () => {
         expect(flattenText(renderer!.toJSON())).toContain('Security Team');
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Search' }).props.onChange({ target: { value: 'Security Team' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search' })
+                .props.onChange({ target: { value: 'Security Team' } });
         });
         expect(flattenText(renderer!.toJSON())).toContain('Security Team');
         expect(flattenText(renderer!.toJSON())).not.toContain('No results for');
@@ -189,7 +209,7 @@ describe('simulator accessible list views', () => {
                     inbox: [],
                     selectedMessageId: null,
                     onSelectMessage,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('No emails.');
@@ -212,12 +232,14 @@ describe('simulator accessible list views', () => {
                     ],
                     selectedMessageId: null,
                     onSelectMessage: vi.fn(),
-                })
+                }),
             );
         });
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Search' }).props.onChange({ target: { value: 'snippet' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search' })
+                .props.onChange({ target: { value: 'snippet' } });
         });
 
         expect(flattenText(renderer!.toJSON())).toContain('Only snippet text');
@@ -235,11 +257,13 @@ describe('simulator accessible list views', () => {
                     onBack: vi.fn(),
                     phoneLocalNavItems: [{ id: 'contacts', label: 'Contacts' }],
                     onOpenContact,
-                })
+                }),
             );
         });
 
-        const rowButton = renderer!.root.findAllByType('button').find((node) => node.props.className?.includes('simulator-border--top-none'));
+        const rowButton = renderer!.root
+            .findAllByType('button')
+            .find((node) => node.props.className?.includes('simulator-border--top-none'));
         expect(rowButton).toBeDefined();
 
         await act(async () => {
@@ -270,7 +294,7 @@ describe('simulator accessible list views', () => {
                     hasVoicemail: true,
                     onSelectIncoming: vi.fn(),
                     onSelectVoicemail: vi.fn(),
-                })
+                }),
             );
         });
 
@@ -281,8 +305,8 @@ describe('simulator accessible list views', () => {
                 (node) =>
                     node.type === 'div' &&
                     (node.props.className?.includes('simulator-surface--white') ||
-                        node.props.className?.includes('simulator-surface--light'))
-            ).length
+                        node.props.className?.includes('simulator-surface--light')),
+            ).length,
         ).toBeGreaterThan(0);
     });
 
@@ -302,7 +326,7 @@ describe('simulator accessible list views', () => {
                     visibleCount: 1,
                     onAction: vi.fn(),
                     onRevealNext: vi.fn(),
-                })
+                }),
             );
         });
 
@@ -333,24 +357,33 @@ describe('simulator accessible list views', () => {
                         attachment_type: '',
                     } as never,
                     onAction,
-                })
+                }),
             );
         });
 
-        expect(renderer!.root.findByProps({ 'aria-label': 'From' }).props.value).toBe('sender@example.test');
+        expect(renderer!.root.findByProps({ 'aria-label': 'From' }).props.value).toBe(
+            'sender@example.test',
+        );
         expect(renderer!.root.findByProps({ 'aria-label': 'To' }).props.value).toBe('');
         expect(renderer!.root.findByProps({ 'aria-label': 'Subject' }).props.value).toBe('');
         expect(renderer!.root.findByProps({ 'aria-label': 'Body' }).props.value).toBe('');
         expect(renderer!.root.findAllByProps({ 'aria-label': 'Back to inbox' })).toHaveLength(0);
 
         await act(async () => {
-            renderer!.root.findAllByType('button').find((node) => node.props['aria-label'] === 'https://example.test')!.props.onClick();
+            renderer!.root
+                .findAllByType('button')
+                .find((node) => node.props['aria-label'] === 'https://example.test')!
+                .props.onClick();
             renderer!.root.findByProps({ 'aria-label': 'Open attachment' }).props.onClick();
             renderer!.root.findByProps({ 'aria-label': 'Download attachment' }).props.onClick();
         });
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'click_link', href: 'https://example.test' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'click_link', href: 'https://example.test' }),
+        );
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'open_attachment' }));
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'download_attachment' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'download_attachment' }),
+        );
 
         await act(async () => {
             renderer!.update(
@@ -365,15 +398,19 @@ describe('simulator accessible list views', () => {
                     } as never,
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Forward' }).props.onClick();
-            renderer!.root.findByProps({ 'aria-label': 'Dispose' }).props.onClick();
+            expect(renderer!.root.findByProps({ 'aria-label': 'Forward' }).props.disabled).toBe(
+                true,
+            );
+            expect(renderer!.root.findByProps({ 'aria-label': 'Dispose' }).props.disabled).toBe(
+                true,
+            );
             renderer!.root.findByProps({ 'aria-label': 'Back' }).props.onClick();
         });
-        expect(onBack).toHaveBeenCalledTimes(3);
+        expect(onBack).toHaveBeenCalledTimes(1);
 
         await act(async () => {
             renderer!.update(
@@ -387,14 +424,19 @@ describe('simulator accessible list views', () => {
                         links: [{ text: 'Open portal' }, { title: 'Portal only' }],
                     } as never,
                     onAction,
-                })
+                }),
             );
         });
         expect(renderer!.root.findByProps({ 'aria-label': 'From' }).props.value).toBe('');
         await act(async () => {
-            renderer!.root.findAllByType('button').find((node) => node.props['aria-label'] === 'Open portal')!.props.onClick();
+            renderer!.root
+                .findAllByType('button')
+                .find((node) => node.props['aria-label'] === 'Open portal')!
+                .props.onClick();
         });
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'click_link', href: undefined }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'click_link', href: undefined }),
+        );
     });
 
     it('renders thread rows as buttons and covers compose and search handlers', async () => {
@@ -416,13 +458,15 @@ describe('simulator accessible list views', () => {
                     ],
                     onSelectThread,
                     onCompose,
-                })
+                }),
             );
         });
 
         await act(async () => {
             renderer!.root.findByProps({ 'aria-label': 'New thread' }).props.onClick();
-            renderer!.root.findByProps({ 'aria-label': 'Search threads' }).props.onChange({ target: { value: 'zzz' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search threads' })
+                .props.onChange({ target: { value: 'zzz' } });
             renderer!.root.findByProps({ 'aria-label': 'Search threads' }).props.onKeyDown({
                 key: 'Enter',
                 preventDefault: vi.fn(),
@@ -445,11 +489,14 @@ describe('simulator accessible list views', () => {
                     ],
                     onSelectThread,
                     onCompose,
-                })
+                }),
             );
         });
         await act(async () => {
-            renderer!.root.findAllByType('button').find((node) => node.props.type === 'button' && node.props['aria-label'] == null)!.props.onClick();
+            renderer!.root
+                .findAllByType('button')
+                .find((node) => node.props.type === 'button' && node.props['aria-label'] == null)!
+                .props.onClick();
         });
         expect(onSelectThread).toHaveBeenCalledWith('t1');
 
@@ -458,7 +505,7 @@ describe('simulator accessible list views', () => {
                 React.createElement(MessagesThreadListView, {
                     threads: [],
                     onSelectThread,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('No conversations.');
@@ -484,23 +531,29 @@ describe('simulator accessible list views', () => {
                         },
                     ],
                     onSelectThread,
-                })
+                }),
             );
         });
 
         expect(flattenText(renderer!.toJSON())).toContain('+15550000001');
         expect(flattenText(renderer!.toJSON())).toContain('Unknown');
-        const rowButtons = renderer!.root.findAllByType('button').filter((node) => node.props['aria-label'] == null);
+        const rowButtons = renderer!.root
+            .findAllByType('button')
+            .filter((node) => node.props['aria-label'] == null);
         expect(rowButtons[1].props.className).toContain('simulator-border--top-none');
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Search threads' }).props.onChange({ target: { value: '0001' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search threads' })
+                .props.onChange({ target: { value: '0001' } });
         });
         expect(flattenText(renderer!.toJSON())).toContain('+15550000001');
         expect(flattenText(renderer!.toJSON())).not.toContain('No sender preview');
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Search threads' }).props.onChange({ target: { value: 'preview' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search threads' })
+                .props.onChange({ target: { value: 'preview' } });
         });
         expect(flattenText(renderer!.toJSON())).toContain('No results for "preview".');
     });

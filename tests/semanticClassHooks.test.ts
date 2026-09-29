@@ -93,10 +93,7 @@ function findWithClass(
     root: TestRenderer.ReactTestInstance,
     token: string,
 ): TestRenderer.ReactTestInstance | undefined {
-    const nodes = root.findAll(
-        (node) => hasSemanticClass(node, token),
-        { deep: true },
-    );
+    const nodes = root.findAll((node) => hasSemanticClass(node, token), { deep: true });
     return nodes[0];
 }
 
@@ -200,9 +197,7 @@ describe('semantic simulator class hooks', () => {
         expect(findWithClass(renderer!.root, SIM_PHONE_INCOMING_CALL_HISTORY)).toBeTruthy();
 
         await act(async () => {
-            renderer!.update(
-                React.createElement(PhoneDialView, { onDial: vi.fn() }),
-            );
+            renderer!.update(React.createElement(PhoneDialView, { onDial: vi.fn() }));
         });
         expect(findWithClass(renderer!.root, SIM_PHONE_DIALER)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_PHONE_DIALER_CALL_BUTTON)).toBeTruthy();
@@ -297,7 +292,9 @@ describe('semantic simulator class hooks', () => {
         expect(findWithClass(renderer!.root, SIM_EMAIL_MESSAGE_ROW)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_EMAIL_STATUS_BADGE)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_SCREEN_HEADER_ROW)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_EMAIL_COMPOSE_ACTION)?.props['aria-label']).toBe('Compose email');
+        expect(findWithClass(renderer!.root, SIM_EMAIL_COMPOSE_ACTION)?.props['aria-label']).toBe(
+            'Compose email',
+        );
 
         await act(async () => {
             renderer!.update(
@@ -329,7 +326,9 @@ describe('semantic simulator class hooks', () => {
         expect(findWithClass(renderer!.root, SIM_MESSAGES_THREAD_LIST)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_MESSAGES_THREAD_ROW)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_SCREEN_HEADER_ROW)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_MESSAGES_COMPOSE_ACTION)?.props['aria-label']).toBe('New thread');
+        expect(
+            findWithClass(renderer!.root, SIM_MESSAGES_COMPOSE_ACTION)?.props['aria-label'],
+        ).toBe('New thread');
 
         await act(async () => {
             renderer!.update(
@@ -485,9 +484,7 @@ describe('semantic simulator class hooks', () => {
 
     it('renders dialer number and backspace semantic classes', async () => {
         await act(async () => {
-            renderer = TestRenderer.create(
-                React.createElement(PhoneDialView, { onDial: vi.fn() }),
-            );
+            renderer = TestRenderer.create(React.createElement(PhoneDialView, { onDial: vi.fn() }));
         });
         expect(findWithClass(renderer!.root, SIM_PHONE_DIALER_NUMBER)).toBeTruthy();
         expect(findWithClass(renderer!.root, SIM_PHONE_DIALER_BACKSPACE)).toBeTruthy();

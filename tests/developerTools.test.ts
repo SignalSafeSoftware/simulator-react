@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { reconcileVisibleDeveloperSections, resolveSimulatorDeveloperTools } from '../src/developerTools';
+import {
+    reconcileVisibleDeveloperSections,
+    resolveSimulatorDeveloperTools,
+} from '../src/developerTools';
 
 describe('resolveSimulatorDeveloperTools', () => {
     it('uses explicit sections when no preset is supplied', () => {
@@ -74,7 +77,7 @@ describe('resolveSimulatorDeveloperTools', () => {
             {
                 summary: false,
                 reachability: true,
-            }
+            },
         );
 
         expect(visible.summary).toBe(false);
@@ -103,7 +106,7 @@ describe('resolveSimulatorDeveloperTools', () => {
                 shortcuts: true,
                 runtimeIssues: false,
             },
-            null
+            null,
         );
         expect(visible.snapshotExport).toBe(true);
         expect(visible.shortcuts).toBe(true);
@@ -143,7 +146,7 @@ describe('resolveSimulatorDeveloperTools', () => {
                 summary: true,
                 reachability: false,
                 timeline: true,
-            }
+            },
         );
 
         expect(visible.summary).toBe(false);

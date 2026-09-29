@@ -74,7 +74,10 @@ export function renderSimulatorFeedback(
         return renderFeedback(props);
     }
     return (
-        <SimulatorAlert tone={props.tone ?? 'warning'} className={joinClasses('simulator-text--sm', props.className)}>
+        <SimulatorAlert
+            tone={props.tone ?? 'warning'}
+            className={joinClasses('simulator-text--sm', props.className)}
+        >
             {props.message}
         </SimulatorAlert>
     );
@@ -94,7 +97,10 @@ export function renderPhoneIncomingCallExtra(
     }
     return (
         <div className={SIM_PHONE_INCOMING_CALL_EXTRA} data-testid="phone-incoming-call-extra">
-            <div className={SIM_PHONE_INCOMING_CALL_AFTER_ACTIONS} data-testid="phone-incoming-call-after-actions">
+            <div
+                className={SIM_PHONE_INCOMING_CALL_AFTER_ACTIONS}
+                data-testid="phone-incoming-call-after-actions"
+            >
                 {content}
             </div>
         </div>

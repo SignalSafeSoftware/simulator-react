@@ -32,7 +32,9 @@ export default function UnsupportedScreenFallback({
             data-show-diagnostics={showDiagnostics ? 'true' : 'false'}
         >
             <p className={joinClasses(SIM_TEXT_MEDIUM, 'simulator-text--warning', simSpacing.mb1)}>
-                {showDiagnostics ? screenLocale.t('fallback.unsupported_screen_title') : screenLocale.t('fallback.learner_unsupported_screen_title')}
+                {showDiagnostics
+                    ? screenLocale.t('fallback.unsupported_screen_title')
+                    : screenLocale.t('fallback.learner_unsupported_screen_title')}
             </p>
             {showDiagnostics ? (
                 <>
@@ -40,7 +42,10 @@ export default function UnsupportedScreenFallback({
                         {screenLocale.t('screen.unsupportedScreenFallback.app')}
                         <code>{app}</code>
                         {screenLocale.t('screen.unsupportedScreenFallback.screen')}{' '}
-                        <code>{screen || screenLocale.t('fallback.unsupported_screen_empty_placeholder')}</code>
+                        <code>
+                            {screen ||
+                                screenLocale.t('fallback.unsupported_screen_empty_placeholder')}
+                        </code>
                     </p>
                     <p className={joinClasses(simSpacing.mt1, simSpacing.mb0, simTypo.secondary)}>
                         {screenLocale.t('fallback.unsupported_screen_hint')}

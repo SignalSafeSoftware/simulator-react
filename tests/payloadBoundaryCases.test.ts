@@ -9,13 +9,33 @@ import { validateSimulatorAction } from '../src/utils/simulatorActionTaxonomy';
 import { mapInternet, mapEmail } from '../src/adapters/fullDeviceToSession';
 
 const base: SimulatorTemplatePayload = {
-    templateId: null, templateKey: '', name: 'Boundary', channel: 'phone', topicTags: [], runId: null, attemptId: null,
-    entryPoint: null, device: null, email: null, sms: null, browser: null, phone: null, contacts: null, directory: null, home: null,
+    templateId: null,
+    templateKey: '',
+    name: 'Boundary',
+    channel: 'phone',
+    topicTags: [],
+    runId: null,
+    attemptId: null,
+    entryPoint: null,
+    device: null,
+    email: null,
+    sms: null,
+    browser: null,
+    phone: null,
+    contacts: null,
+    directory: null,
+    home: null,
 };
 describe('empty entry content diagnostics', () => {
     it.each([
-        ['email', 'list'], ['email', 'detail'], ['messages', 'threads'], ['messages', 'thread_detail'],
-        ['internet', 'landing'], ['home', 'home'], ['home', 'store'], ['phone', 'incoming_call'],
+        ['email', 'list'],
+        ['email', 'detail'],
+        ['messages', 'threads'],
+        ['messages', 'thread_detail'],
+        ['internet', 'landing'],
+        ['home', 'home'],
+        ['home', 'store'],
+        ['phone', 'incoming_call'],
     ] as const)('diagnoses missing %s/%s content without changing the source', (app, screen) => {
         const payload: SimulatorTemplatePayload = { ...base, entryPoint: { app, screen } };
         const before = structuredClone(payload);
@@ -29,9 +49,17 @@ describe('empty entry content diagnostics', () => {
         expect(buildSimulatorNavGraph(payload)).toBeDefined();
     });
     it('accepts empty optional home arrays and reports an incomplete caller', () => {
-        const home = lintSimulatorPayload({ ...base, entryPoint: { app: 'home', screen: 'home' }, home: { widgets: [], featuredApps: [], settingsSections: [] } });
+        const home = lintSimulatorPayload({
+            ...base,
+            entryPoint: { app: 'home', screen: 'home' },
+            home: { widgets: [], featuredApps: [], settingsSections: [] },
+        });
         expect(home.warnings.length).toBeGreaterThan(0);
-        const phone = runSimulatorRealismChecks({ ...base, entryPoint: { app: 'phone', screen: 'incoming_call' }, phone: { content: { transcript: '', choices: [] }, chosenIndex: null } });
+        const phone = runSimulatorRealismChecks({
+            ...base,
+            entryPoint: { app: 'phone', screen: 'incoming_call' },
+            phone: { content: { transcript: '', choices: [] }, chosenIndex: null },
+        });
         expect(phone.pass).toBe(false);
     });
 });
@@ -40,13 +68,20 @@ it('leaves an empty internet definition unconfigured', () => {
     expect(result).toBeNull();
 });
 it('retains optional page content and builds forms without fields', () => {
-    const browser = mapInternet({ pages: [{ id: 'one', url: 'https://example.test', title: 'Form', content: '' }], forms: [{ id: 'f', page_id: 'one', fields: [] }] });
+    const browser = mapInternet({
+        pages: [{ id: 'one', url: 'https://example.test', title: 'Form', content: '' }],
+        forms: [{ id: 'f', page_id: 'one', fields: [] }],
+    });
     expect(browser?.pages[0]?.content).toBeUndefined();
 });
 it('keeps detail snippets when supplied and accepts omitted ones', () => {
-    const withSnippet = mapEmail({ detail: { id: 'one', subject: 'Hello', from: 'ada', body: 'Body', snippet: 'Preview' } });
+    const withSnippet = mapEmail({
+        detail: { id: 'one', subject: 'Hello', from: 'ada', body: 'Body', snippet: 'Preview' },
+    });
     expect(withSnippet?.selectedMessage).toBeDefined();
-    const withoutSnippet = mapEmail({ detail: { id: 'one', subject: 'Hello', from: 'ada', body: 'Body' } });
+    const withoutSnippet = mapEmail({
+        detail: { id: 'one', subject: 'Hello', from: 'ada', body: 'Body' },
+    });
     expect(withoutSnippet?.selectedMessage).toBeDefined();
 });
 it('normalizes default and custom button tones and rejects unknown action names', () => {

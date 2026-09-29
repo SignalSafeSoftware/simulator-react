@@ -21,7 +21,7 @@ describe('simulatorWorldSections', () => {
                 browser: {
                     pages: [{ id: 'pricing' }],
                 },
-            }
+            },
         );
 
         expect(merged).toEqual({
@@ -47,8 +47,8 @@ describe('simulatorWorldSections', () => {
                     },
                     null as never,
                 ],
-                {}
-            )
+                {},
+            ),
         ).toEqual({
             email: {
                 inbox: [{ id: 'm1' }],
@@ -58,14 +58,11 @@ describe('simulatorWorldSections', () => {
 
     it('covers nullish first partial fallback before overlay merge', () => {
         expect(
-            applyPartials(
-                [undefined as never],
-                {
-                    home: {
-                        widgets: [{ id: 'w1' }],
-                    },
-                }
-            )
+            applyPartials([undefined as never], {
+                home: {
+                    widgets: [{ id: 'w1' }],
+                },
+            }),
         ).toEqual({
             home: {
                 widgets: [{ id: 'w1' }],

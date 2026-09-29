@@ -3,7 +3,11 @@
  * Single event shape: kind, app, screen, session context, action_key when relevant, metadata.
  */
 
-import type { SimulatorAction, SimulatorViewState, SimulatorTemplatePayload } from '../types/session.js';
+import type {
+    SimulatorAction,
+    SimulatorViewState,
+    SimulatorTemplatePayload,
+} from '../types/session.js';
 import type { SimulatorInteractionEvent, SimulatorEventKind } from '../types/simulatorEvents.js';
 
 function getCurrentScreen(view: SimulatorViewState, app: string): string {
@@ -24,10 +28,9 @@ function getCurrentScreen(view: SimulatorViewState, app: string): string {
 }
 
 /** Session context from payload (flat fields for compatibility). */
-function getSessionContext(payload: SimulatorTemplatePayload | null): Pick<
-    SimulatorInteractionEvent,
-    'template_id' | 'template_key' | 'run_id' | 'attempt_id'
-> {
+function getSessionContext(
+    payload: SimulatorTemplatePayload | null,
+): Pick<SimulatorInteractionEvent, 'template_id' | 'template_key' | 'run_id' | 'attempt_id'> {
     if (payload == null) return {};
     return {
         template_id: payload.templateId ?? undefined,
@@ -46,7 +49,7 @@ function stringifyOptionalValue(value: string | number | null | undefined): stri
 
 function buildIndexedActionKey(
     prefix: string,
-    value: number | null | undefined
+    value: number | null | undefined,
 ): string | undefined {
     if (value == null) {
         return undefined;
@@ -59,7 +62,7 @@ function baseEvent(
     kind: SimulatorEventKind,
     view: SimulatorViewState,
     payload: SimulatorTemplatePayload | null,
-    overrides: Partial<SimulatorInteractionEvent> = {}
+    overrides: Partial<SimulatorInteractionEvent> = {},
 ): SimulatorInteractionEvent {
     const app = view.activeApp;
     const screen = getCurrentScreen(view, app);
@@ -80,7 +83,7 @@ function baseEvent(
 export function actionToInteractionEvent(
     action: SimulatorAction,
     view: SimulatorViewState,
-    payload: SimulatorTemplatePayload | null
+    payload: SimulatorTemplatePayload | null,
 ): SimulatorInteractionEvent | null {
     const app = view.activeApp;
     const screen = getCurrentScreen(view, app);
@@ -181,7 +184,7 @@ export function actionToInteractionEvent(
 export function appOpenedEvent(
     newApp: string,
     view: SimulatorViewState,
-    payload: SimulatorTemplatePayload | null
+    payload: SimulatorTemplatePayload | null,
 ): SimulatorInteractionEvent {
     const screen = getCurrentScreen(view, newApp);
     return baseEvent('app_opened', view, payload, { app: newApp, screen });
@@ -194,7 +197,7 @@ export function screenViewedEvent(
     app: string,
     screen: string,
     view: SimulatorViewState,
-    payload: SimulatorTemplatePayload | null
+    payload: SimulatorTemplatePayload | null,
 ): SimulatorInteractionEvent {
     return baseEvent('screen_viewed', view, payload, { app, screen });
 }

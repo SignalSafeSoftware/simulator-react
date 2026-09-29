@@ -4,8 +4,10 @@ import type { ReactNode } from 'react';
 export interface PhoneHistoryDetailProps {
     caller: string;
     number?: string;
+    numberLabel?: string;
+    photo?: ReactNode;
     timestamp: string;
-    description: string;
+    description?: string;
     actions?: ReactNode;
     children?: ReactNode;
 }
@@ -13,6 +15,8 @@ export interface PhoneHistoryDetailProps {
 export default function PhoneHistoryDetail({
     caller,
     number,
+    numberLabel,
+    photo,
     timestamp,
     description,
     actions,
@@ -21,10 +25,18 @@ export default function PhoneHistoryDetail({
     const formatNumber = usePhoneNumberFormatter();
     return (
         <div className="simulator-history-detail">
-            <h3 className="simulator-history-detail__caller">{caller}</h3>
-            {number && <p className="simulator-history-detail__number">{formatNumber(number)}</p>}
-            <p className="simulator-history-detail__time">{timestamp}</p>
-            <p className="simulator-history-detail__metadata">{description}</p>
+            <div className="simulator-history-detail__body">
+                <h3 className="simulator-history-detail__caller">{caller}</h3>
+                {photo}
+                {number && (
+                    <p className="simulator-history-detail__number">
+                        {numberLabel && <span>{numberLabel} · </span>}
+                        {formatNumber(number)}
+                    </p>
+                )}
+                <p className="simulator-history-detail__time">{timestamp}</p>
+                {description && <p className="simulator-history-detail__metadata">{description}</p>}
+            </div>
             {actions && <div className="simulator-history-actions">{actions}</div>}
             {children && <div className="simulator-history-detail__summary">{children}</div>}
         </div>

@@ -29,12 +29,12 @@ describe('simulator view coverage', () => {
         const onAction = vi.fn();
         const onBack = vi.fn();
 
-        let renderer = TestRenderer.create(
+        const renderer = TestRenderer.create(
             React.createElement(BrowserSimulatorView, {
                 payload: null,
                 screen: 'landing',
                 onAction,
-            })
+            }),
         );
         expect(flattenText(renderer.toJSON())).toContain('No browser for this scenario.');
 
@@ -44,7 +44,7 @@ describe('simulator view coverage', () => {
                     payload: { pages: [], defaultPageId: 'landing' },
                     screen: 'landing',
                     onAction,
-                })
+                }),
             );
         });
         expect(flattenText(renderer.toJSON())).toContain('No pages for this site.');
@@ -63,7 +63,13 @@ describe('simulator view coverage', () => {
                                 content: 'Read this first',
                                 warningBanner: 'Warning',
                                 showMediaPlaceholder: true,
-                                buttons: [{ label: 'Continue', href: 'https://phish.example.test/next', targetPageId: 'next' }],
+                                buttons: [
+                                    {
+                                        label: 'Continue',
+                                        href: 'https://phish.example.test/next',
+                                        targetPageId: 'next',
+                                    },
+                                ],
                             },
                         ],
                     },
@@ -71,16 +77,23 @@ describe('simulator view coverage', () => {
                     stack: ['previous'],
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'open_page', pageId: 'landing' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'open_page', pageId: 'landing' }),
+        );
         const browserRoot = renderer.root;
         await act(async () => {
             browserRoot.findByProps({ children: 'Continue' }).props.onClick();
         });
         expect(onAction).toHaveBeenCalledWith(
-            expect.objectContaining({ type: 'click_link', href: 'https://phish.example.test/next', linkIndex: 0, pageId: 'next' })
+            expect.objectContaining({
+                type: 'click_link',
+                href: 'https://phish.example.test/next',
+                linkIndex: 0,
+                pageId: 'next',
+            }),
         );
 
         const callsAfterFirstOpen = onAction.mock.calls.length;
@@ -101,7 +114,7 @@ describe('simulator view coverage', () => {
                     },
                     screen: 'landing',
                     onAction,
-                })
+                }),
             );
         });
         expect(onAction.mock.calls).toHaveLength(callsAfterFirstOpen);
@@ -123,10 +136,12 @@ describe('simulator view coverage', () => {
                     },
                     screen: 'missing-page',
                     onAction,
-                })
+                }),
             );
         });
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'open_page', pageId: 'landing' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'open_page', pageId: 'landing' }),
+        );
 
         let pageRenderer: ReactTestRenderer | null = null;
         await act(async () => {
@@ -145,7 +160,7 @@ describe('simulator view coverage', () => {
                     },
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         await act(async () => {
@@ -168,13 +183,15 @@ describe('simulator view coverage', () => {
                         showMediaPlaceholder: true,
                     },
                     onAction,
-                })
+                }),
             );
         });
         await act(async () => {
             pageRenderer!.root.findByProps({ children: 'Installer' }).props.onClick();
         });
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'download_click', downloadTarget: '/installer.exe' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'download_click', downloadTarget: '/installer.exe' }),
+        );
 
         await act(async () => {
             pageRenderer!.update(
@@ -188,14 +205,19 @@ describe('simulator view coverage', () => {
                         buttons: [{ label: 'Open', href: '/open', targetPageId: 'odd-target' }],
                     },
                     onAction,
-                })
+                }),
             );
         });
         await act(async () => {
             pageRenderer!.root.findByProps({ children: 'Open' }).props.onClick();
         });
         expect(onAction).toHaveBeenCalledWith(
-            expect.objectContaining({ type: 'click_link', href: '/open', linkIndex: 0, pageId: 'odd-target' })
+            expect.objectContaining({
+                type: 'click_link',
+                href: '/open',
+                linkIndex: 0,
+                pageId: 'odd-target',
+            }),
         );
 
         await act(async () => {
@@ -208,7 +230,7 @@ describe('simulator view coverage', () => {
                         layout: 'result',
                     },
                     onAction,
-                })
+                }),
             );
         });
         expect(flattenText(pageRenderer!.toJSON())).toContain('Simulation complete.');
@@ -225,8 +247,17 @@ describe('simulator view coverage', () => {
             renderer = TestRenderer.create(
                 React.createElement(EmailSimulatorView, {
                     payload: {
-                        inbox: [{ id: 'm1', subject: 'Inbox subject', from: 'inbox@example.test', snippet: 'Inbox snippet' }],
-                        outbox: [{ id: 'm2', subject: 'Outbox subject', from: 'outbox@example.test' }],
+                        inbox: [
+                            {
+                                id: 'm1',
+                                subject: 'Inbox subject',
+                                from: 'inbox@example.test',
+                                snippet: 'Inbox snippet',
+                            },
+                        ],
+                        outbox: [
+                            { id: 'm2', subject: 'Outbox subject', from: 'outbox@example.test' },
+                        ],
                         trash: [{ id: 'm3', subject: 'Trash subject', from: 'trash@example.test' }],
                         selectedMessage: null,
                         selectedMessageId: null,
@@ -237,7 +268,7 @@ describe('simulator view coverage', () => {
                     onSelectMessage,
                     onBack,
                     onNavigate,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('Inbox snippet');
@@ -251,8 +282,17 @@ describe('simulator view coverage', () => {
             renderer!.update(
                 React.createElement(EmailSimulatorView, {
                     payload: {
-                        inbox: [{ id: 'm1', subject: 'Inbox subject', from: 'inbox@example.test', snippet: 'Inbox snippet' }],
-                        outbox: [{ id: 'm2', subject: 'Outbox subject', from: 'outbox@example.test' }],
+                        inbox: [
+                            {
+                                id: 'm1',
+                                subject: 'Inbox subject',
+                                from: 'inbox@example.test',
+                                snippet: 'Inbox snippet',
+                            },
+                        ],
+                        outbox: [
+                            { id: 'm2', subject: 'Outbox subject', from: 'outbox@example.test' },
+                        ],
                         trash: [{ id: 'm3', subject: 'Trash subject', from: 'trash@example.test' }],
                         selectedMessage: null,
                         selectedMessageId: null,
@@ -263,10 +303,12 @@ describe('simulator view coverage', () => {
                     onSelectMessage,
                     onBack,
                     onNavigate,
-                })
+                }),
             );
         });
-        expect(renderer!.root.findByProps({ 'aria-label': 'Body' }).props.value).toBe('Inbox snippet');
+        expect(renderer!.root.findByProps({ 'aria-label': 'Body' }).props.value).toBe(
+            'Inbox snippet',
+        );
 
         await act(async () => {
             renderer!.update(
@@ -291,7 +333,7 @@ describe('simulator view coverage', () => {
                     onSelectMessage,
                     onBack,
                     onNavigate,
-                })
+                }),
             );
         });
         await act(async () => {
@@ -302,7 +344,9 @@ describe('simulator view coverage', () => {
         });
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'click_link' }));
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'open_attachment' }));
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'download_attachment' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'download_attachment' }),
+        );
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'send_reply' }));
 
         await act(async () => {
@@ -315,7 +359,7 @@ describe('simulator view coverage', () => {
                     onSelectMessage,
                     onBack,
                     onNavigate,
-                })
+                }),
             );
         });
         expect(renderer!.root.findByProps({ 'aria-label': 'Send' }).props.disabled).toBe(true);
@@ -333,8 +377,22 @@ describe('simulator view coverage', () => {
             renderer!.update(
                 React.createElement(EmailSimulatorView, {
                     payload: {
-                        inbox: [{ id: 'm1', subject: 'Inbox subject', from: 'inbox@example.test', snippet: 'Inbox snippet' }],
-                        outbox: [{ id: 'm2', subject: 'Outbox subject', from: 'outbox@example.test', snippet: 'Outbox snippet' }],
+                        inbox: [
+                            {
+                                id: 'm1',
+                                subject: 'Inbox subject',
+                                from: 'inbox@example.test',
+                                snippet: 'Inbox snippet',
+                            },
+                        ],
+                        outbox: [
+                            {
+                                id: 'm2',
+                                subject: 'Outbox subject',
+                                from: 'outbox@example.test',
+                                snippet: 'Outbox snippet',
+                            },
+                        ],
                         trash: [],
                         selectedMessage: null,
                         selectedMessageId: null,
@@ -345,7 +403,7 @@ describe('simulator view coverage', () => {
                     onSelectMessage,
                     onBack,
                     onNavigate,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('Outbox snippet');
@@ -374,7 +432,7 @@ describe('simulator view coverage', () => {
                     onSelectMessage,
                     onBack,
                     onNavigate,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('No emails in Trash.');
@@ -383,7 +441,14 @@ describe('simulator view coverage', () => {
             renderer!.update(
                 React.createElement(EmailSimulatorView, {
                     payload: {
-                        inbox: [{ id: 'm1', subject: 'Inbox subject', from: 'inbox@example.test', snippet: 'Inbox snippet' }],
+                        inbox: [
+                            {
+                                id: 'm1',
+                                subject: 'Inbox subject',
+                                from: 'inbox@example.test',
+                                snippet: 'Inbox snippet',
+                            },
+                        ],
                         outbox: [],
                         trash: [],
                         selectedMessage: null,
@@ -395,7 +460,7 @@ describe('simulator view coverage', () => {
                     onSelectMessage,
                     onBack,
                     onNavigate,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('Inbox snippet');
@@ -410,7 +475,9 @@ describe('simulator view coverage', () => {
                 React.createElement(EmailSimulatorView, {
                     payload: {
                         inbox: [],
-                        outbox: [{ id: 'm2', subject: 'Outbox subject', from: 'outbox@example.test' }],
+                        outbox: [
+                            { id: 'm2', subject: 'Outbox subject', from: 'outbox@example.test' },
+                        ],
                         trash: [],
                         selectedMessage: null,
                         selectedMessageId: null,
@@ -421,7 +488,7 @@ describe('simulator view coverage', () => {
                     onSelectMessage,
                     onBack,
                     onNavigate,
-                })
+                }),
             );
         });
         expect(renderer!.root.findByProps({ 'aria-label': 'Body' }).props.value).toBe('');
@@ -436,27 +503,45 @@ describe('simulator view coverage', () => {
                 React.createElement(EmailComposeView, {
                     onSend,
                     onCancel,
-                })
+                }),
             );
         });
-        for (const [label, value] of [['Recipient', ' user@example.test '], ['Bcc', 'hidden@example.test'], ['Subject', ' Subject '], ['Body', ' Body ']]) {
-            await act(async () => { composeRenderer!.root.findByProps({ 'aria-label': label }).props.onChange({ target: { value } }); });
+        for (const [label, value] of [
+            ['Recipient', ' user@example.test '],
+            ['Bcc', 'hidden@example.test'],
+            ['Subject', ' Subject '],
+            ['Body', ' Body '],
+        ]) {
+            await act(async () => {
+                composeRenderer!.root
+                    .findByProps({ 'aria-label': label })
+                    .props.onChange({ target: { value } });
+            });
         }
-        await act(async () => { composeRenderer!.root.findByType('form').props.onSubmit({ preventDefault() {} }); });
-        expect(onSend).toHaveBeenCalledWith({ to: 'user@example.test', bcc: 'hidden@example.test', subject: 'Subject', body: ' Body ' });
+        await act(async () => {
+            composeRenderer!.root.findByType('form').props.onSubmit({ preventDefault() {} });
+        });
+        expect(onSend).toHaveBeenCalledWith({
+            to: 'user@example.test',
+            bcc: 'hidden@example.test',
+            subject: 'Subject',
+            body: ' Body ',
+        });
         expect(onCancel).toHaveBeenCalled();
 
         const onBack = vi.fn();
         let threadRenderer: ReactTestRenderer | null = null;
         await act(async () => {
             threadRenderer = TestRenderer.create(
-                React.createElement(MessagesNewThreadView, { onBack, onSend: vi.fn() })
+                React.createElement(MessagesNewThreadView, { onBack, onSend: vi.fn() }),
             );
         });
         const threadInputs = threadRenderer!.root.findAllByType('input');
         await act(async () => {
             threadInputs[0].props.onChange({ target: { value: '+15551230000' } });
-            threadRenderer!.root.findByProps({ 'aria-label': 'Message body' }).props.onChange({ target: { value: 'Hello' } });
+            threadRenderer!.root
+                .findByProps({ 'aria-label': 'Message body' })
+                .props.onChange({ target: { value: 'Hello' } });
         });
         await act(async () => {
             threadRenderer!.root.findByType('form').props.onSubmit({ preventDefault() {} });
@@ -482,7 +567,7 @@ describe('simulator view coverage', () => {
                     },
                     onAnswer,
                     onIgnore,
-                })
+                }),
             );
         });
         await act(async () => {
@@ -502,7 +587,7 @@ describe('simulator view coverage', () => {
                     } as never,
                     onAnswer,
                     onIgnore,
-                })
+                }),
             );
         });
         expect(flattenText(incomingRenderer!.toJSON())).toContain('Unknown calling (URGENT)');
@@ -515,13 +600,18 @@ describe('simulator view coverage', () => {
             directoryRenderer = TestRenderer.create(
                 React.createElement(DirectoryView, {
                     directory: [
-                        { id: 'helpdesk', label: 'IT Helpdesk', number: '+15550123456', description: 'Password resets.' },
+                        {
+                            id: 'helpdesk',
+                            label: 'IT Helpdesk',
+                            number: '+15550123456',
+                            description: 'Password resets.',
+                        },
                     ],
                     contacts: null,
                     onBack: vi.fn(),
                     onAction: vi.fn(),
                     initialSelectedDirectoryId: 'helpdesk',
-                })
+                }),
             );
         });
         const tree = directoryRenderer!.toJSON();
@@ -545,23 +635,37 @@ describe('simulator view coverage', () => {
                     onAction,
                     phoneLocalNavItems: [{ id: 'directory', label: 'Directory' }],
                     onPhoneNavSelect,
-                })
+                }),
             );
         });
-        expect(flattenText(directoryRenderer!.toJSON())).toContain('No directory for this scenario.');
+        expect(flattenText(directoryRenderer!.toJSON())).toContain(
+            'No directory for this scenario.',
+        );
 
         await act(async () => {
             directoryRenderer!.update(
                 React.createElement(DirectoryView, {
                     directory: [
-                        { id: 'helpdesk', label: 'Helpdesk', contact_id: 'contact-1', description: 'Trusted number' },
-                        { id: 'bank', label: 'Bank', number: '+1555010101', url: 'https://bank.example.test' },
+                        {
+                            id: 'helpdesk',
+                            label: 'Helpdesk',
+                            contact_id: 'contact-1',
+                            description: 'Trusted number',
+                        },
+                        {
+                            id: 'bank',
+                            label: 'Bank',
+                            number: '+1555010101',
+                            url: 'https://bank.example.test',
+                        },
                     ],
-                    contacts: [{ id: 'contact-1', displayName: 'Helpdesk', number: '+15550001111' }],
+                    contacts: [
+                        { id: 'contact-1', displayName: 'Helpdesk', number: '+15550001111' },
+                    ],
                     onBack: vi.fn(),
                     onAction,
                     onViewEntry,
-                })
+                }),
             );
         });
         await act(async () => {
@@ -571,28 +675,41 @@ describe('simulator view coverage', () => {
         await act(async () => {
             directoryRenderer!.root.findByProps({ children: 'Call' }).props.onClick();
         });
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'open_contact', contactId: 'contact-1' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'open_contact', contactId: 'contact-1' }),
+        );
 
         await act(async () => {
             directoryRenderer!.update(
                 React.createElement(DirectoryView, {
                     directory: [
-                        { id: 'bank', label: 'Bank', number: '+1555010101', url: 'https://bank.example.test' },
+                        {
+                            id: 'bank',
+                            label: 'Bank',
+                            number: '+1555010101',
+                            url: 'https://bank.example.test',
+                        },
                     ],
-                    contacts: [{ id: 'contact-1', displayName: 'Helpdesk', number: '+15550001111' }],
+                    contacts: [
+                        { id: 'contact-1', displayName: 'Helpdesk', number: '+15550001111' },
+                    ],
                     onBack: vi.fn(),
                     onAction,
                     onViewEntry,
-                })
+                }),
             );
         });
         await act(async () => {
-            directoryRenderer!.root.findAll((node) => typeof node.props.onClick === 'function')[0].props.onClick();
+            directoryRenderer!.root
+                .findAll((node) => typeof node.props.onClick === 'function')[0]
+                .props.onClick();
         });
         await act(async () => {
             directoryRenderer!.root.findByProps({ children: 'Call' }).props.onClick();
         });
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'dial_phone', dialedNumber: '+1555010101' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'dial_phone', dialedNumber: '+1555010101' }),
+        );
         expect(flattenText(directoryRenderer!.toJSON())).toContain('https://bank.example.test');
 
         const onNavigate = vi.fn();
@@ -611,7 +728,7 @@ describe('simulator view coverage', () => {
                     onNavigate,
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         expect(flattenText(homeRenderer!.toJSON())).toContain('News');
@@ -638,11 +755,13 @@ describe('simulator view coverage', () => {
                     onNavigate,
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         await act(async () => {
-            homeRenderer!.root.findByProps({ 'aria-label': 'Search store' }).props.onChange({ target: { value: 'zzz' } });
+            homeRenderer!.root
+                .findByProps({ 'aria-label': 'Search store' })
+                .props.onChange({ target: { value: 'zzz' } });
             homeRenderer!.root.findByProps({ 'aria-label': 'Search store' }).props.onKeyDown({
                 key: 'Enter',
                 preventDefault: vi.fn(),
@@ -662,11 +781,13 @@ describe('simulator view coverage', () => {
                     onNavigate,
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         await act(async () => {
-            homeRenderer!.root.findByProps({ 'aria-label': 'Download Security App' }).props.onClick();
+            homeRenderer!.root
+                .findByProps({ 'aria-label': 'Download Security App' })
+                .props.onClick();
         });
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'open_store' }));
 
@@ -683,7 +804,7 @@ describe('simulator view coverage', () => {
                     onNavigate,
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         expect(flattenText(homeRenderer!.toJSON())).toContain('No apps.');
@@ -701,12 +822,14 @@ describe('simulator view coverage', () => {
                     onNavigate,
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         expect(flattenText(homeRenderer!.toJSON())).toContain('General');
         await act(async () => {
-            homeRenderer!.root.findByProps({ 'aria-label': 'Search settings' }).props.onChange({ target: { value: 'missing' } });
+            homeRenderer!.root
+                .findByProps({ 'aria-label': 'Search settings' })
+                .props.onChange({ target: { value: 'missing' } });
         });
         expect(flattenText(homeRenderer!.toJSON())).toContain('No matching settings.');
         await act(async () => {
@@ -727,7 +850,7 @@ describe('simulator view coverage', () => {
                     onNavigate,
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         expect(flattenText(homeRenderer!.toJSON())).toContain('No content on home.');
@@ -745,10 +868,12 @@ describe('simulator view coverage', () => {
                     onNavigate,
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
-        expect(flattenText(homeRenderer!.toJSON())).toContain('No settings are configured for this scenario.');
+        expect(flattenText(homeRenderer!.toJSON())).toContain(
+            'No settings are configured for this scenario.',
+        );
     });
 
     it('covers populated directory local-nav rendering and missing-contact detail fallback', async () => {
@@ -768,7 +893,9 @@ describe('simulator view coverage', () => {
                             description: 'Trusted but not saved',
                         },
                     ],
-                    contacts: [{ id: 'contact-1', displayName: 'Helpdesk', number: '+15550001111' }],
+                    contacts: [
+                        { id: 'contact-1', displayName: 'Helpdesk', number: '+15550001111' },
+                    ],
                     onBack: vi.fn(),
                     onAction,
                     onViewEntry,
@@ -778,7 +905,7 @@ describe('simulator view coverage', () => {
                     ],
                     phoneActiveId: 'directory',
                     onPhoneNavSelect,
-                })
+                }),
             );
         });
 

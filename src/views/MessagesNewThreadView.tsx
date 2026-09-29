@@ -1,3 +1,4 @@
+import { useReportComposerState } from './composerState.js';
 import { useSimulatorCapabilities } from '../contract/capabilities.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 import { useMessageComposeOptions } from './messageComposeContract.js';
@@ -5,7 +6,7 @@ import { useMessageComposeOptions } from './messageComposeContract.js';
  * Messages app: New Thread page. Wireframe (Messages.png): header "New Thread",
  * Phone Number field, Message body textarea, Send (blue) and Cancel (grey) buttons.
  */
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { simLayout, simScreen, simSpacing } from '../simulatorStyles.js';
 import {
@@ -67,6 +68,17 @@ export default function MessagesNewThreadView({
         if (compose) compose.onChange({ ...compose.draft, messageBody: next });
     };
 
+    useReportComposerState(
+        Boolean(onSend && !unavailable && phoneNumber.trim() && messageBody.trim()),
+        pending,
+    );
+    const mounted = useRef(true);
+    useEffect(() => {
+        mounted.current = true;
+        return () => {
+            mounted.current = false;
+        };
+    }, []);
     const handleSend = async () => {
         if (!onSend || unavailable || sending.current || !phoneNumber.trim() || !messageBody.trim())
             return;
@@ -75,12 +87,14 @@ export default function MessagesNewThreadView({
         setError('');
         try {
             await onSend({ phoneNumber: phoneNumber.trim(), messageBody });
+            if (!mounted.current) return;
             setLocalNumber('');
             setLocalBody('');
             compose?.onChange({ phoneNumber: '', messageBody: '' });
             compose?.onAccepted?.();
             onBack();
         } catch (error_) {
+            if (!mounted.current) return;
             setError(error_ instanceof Error ? error_.message : t('messages.sendFailed'));
         } finally {
             sending.current = false;
@@ -99,11 +113,21 @@ export default function MessagesNewThreadView({
             <div className={joinClasses(simScreen.header, simSpacing.mb3, SIM_FLEX_SHRINK_0)}>
                 {t('messages.newThread')}
             </div>
-            {unavailable && <p><output>{unavailable}</output></p>}
-            {!unavailable && !pending && (!phoneNumber.trim() || !messageBody.trim()) && (
-                <p><output>{t('messages.enterRecipientAndBody')}</output></p>
+            {unavailable && (
+                <p>
+                    <output>{unavailable}</output>
+                </p>
             )}
-            {pending && <p><output>{t('messages.sending')}</output></p>}
+            {!unavailable && !pending && (!phoneNumber.trim() || !messageBody.trim()) && (
+                <p>
+                    <output>{t('messages.enterRecipientAndBody')}</output>
+                </p>
+            )}
+            {pending && (
+                <p>
+                    <output>{t('messages.sending')}</output>
+                </p>
+            )}
             {error && <p role="alert">{error}</p>}
             <div className={joinClasses(simSpacing.px3, simSpacing.pt3, SIM_FLEX_SHRINK_0)}>
                 <SimulatorField>

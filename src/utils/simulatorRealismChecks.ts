@@ -28,7 +28,7 @@ function blocker(
     blockers: SimulatorRealismIssue[],
     code: string,
     message: string,
-    path?: string
+    path?: string,
 ): void {
     blockers.push({ code, message, path });
 }
@@ -37,7 +37,7 @@ function suggest(
     suggestions: SimulatorRealismIssue[],
     code: string,
     message: string,
-    path?: string
+    path?: string,
 ): void {
     suggestions.push({ code, message, path });
 }
@@ -46,15 +46,17 @@ function checkEmailListEntry(
     payload: SimulatorTemplatePayload,
     app: string | null,
     screen: string | null,
-    blockers: SimulatorRealismIssue[]
+    blockers: SimulatorRealismIssue[],
 ): void {
     if (app !== 'email' || screen !== 'list') return;
     if ((payload.email?.inbox?.length ?? 0) > 0) return;
     blocker(
         blockers,
         'realism_email_list_empty',
-        englishLocale.t("copy.simulatorRealismChecks.entry.is.email.list.but.inbox.is.empty.list.view.looks.implausible"),
-        'email.inbox'
+        englishLocale.t(
+            'copy.simulatorRealismChecks.entry.is.email.list.but.inbox.is.empty.list.view.looks.implausible',
+        ),
+        'email.inbox',
     );
 }
 
@@ -62,10 +64,11 @@ function checkVerificationSources(
     payload: SimulatorTemplatePayload,
     app: string | null,
     blockers: SimulatorRealismIssue[],
-    suggestions: SimulatorRealismIssue[]
+    suggestions: SimulatorRealismIssue[],
 ): void {
     const detailLinks =
-        (payload.email?.selectedMessage as { links?: Array<{ href?: string }> } | undefined)?.links?.length ?? 0;
+        (payload.email?.selectedMessage as { links?: Array<{ href?: string }> } | undefined)?.links
+            ?.length ?? 0;
     const inboxHasLinks =
         payload.email?.inbox?.some((row) => (row as { links?: unknown }).links != null) ?? false;
     const emailHasLinks = detailLinks > 0 || inboxHasLinks;
@@ -77,8 +80,10 @@ function checkVerificationSources(
         blocker(
             blockers,
             'realism_verification_no_contacts',
-            englishLocale.t("copy.simulatorRealismChecks.email.has.links.and.browser.pages.but.no.contacts.or.directory.verification.flow.is.not.po"),
-            'contacts'
+            englishLocale.t(
+                'copy.simulatorRealismChecks.email.has.links.and.browser.pages.but.no.contacts.or.directory.verification.flow.is.not.po',
+            ),
+            'contacts',
         );
     }
 
@@ -88,7 +93,7 @@ function checkVerificationSources(
             suggestions,
             'realism_sms_verification_contacts',
             'SMS thread with browser pages: add contacts or directory so learners can verify sender.',
-            'contacts'
+            'contacts',
         );
     }
 }
@@ -96,7 +101,7 @@ function checkVerificationSources(
 function checkBrowserPages(
     payload: SimulatorTemplatePayload,
     blockers: SimulatorRealismIssue[],
-    suggestions: SimulatorRealismIssue[]
+    suggestions: SimulatorRealismIssue[],
 ): void {
     (payload.browser?.pages ?? []).forEach((page, index) => {
         if (page == null) return;
@@ -108,8 +113,10 @@ function checkBrowserPages(
             blocker(
                 blockers,
                 'realism_browser_page_no_url_or_title',
-                englishLocale.t("copy.simulatorRealismChecks.browser.page.has.no.url.or.title.address.bar.and.tab.would.look.empty"),
-                path
+                englishLocale.t(
+                    'copy.simulatorRealismChecks.browser.page.has.no.url.or.title.address.bar.and.tab.would.look.empty',
+                ),
+                path,
             );
             return;
         }
@@ -118,8 +125,10 @@ function checkBrowserPages(
             suggest(
                 suggestions,
                 'realism_browser_page_no_title',
-                englishLocale.t("copy.simulatorRealismChecks.browser.page.has.url.but.no.title.consider.adding.a.title.for.tab.header"),
-                path
+                englishLocale.t(
+                    'copy.simulatorRealismChecks.browser.page.has.url.but.no.title.consider.adding.a.title.for.tab.header',
+                ),
+                path,
             );
         }
     });
@@ -130,7 +139,7 @@ function checkPhoneEntry(
     app: string | null,
     screen: string | null,
     blockers: SimulatorRealismIssue[],
-    suggestions: SimulatorRealismIssue[]
+    suggestions: SimulatorRealismIssue[],
 ): void {
     if (app === 'phone' && screen === 'incoming_call') {
         const phoneContent = payload.phone?.content;
@@ -142,33 +151,44 @@ function checkPhoneEntry(
                 blocker(
                     blockers,
                     'realism_phone_incoming_bare',
-                    englishLocale.t("copy.simulatorRealismChecks.incoming.call.has.no.transcript.number.or.caller.name.screen.would.look.empty"),
-                    'phone.content'
+                    englishLocale.t(
+                        'copy.simulatorRealismChecks.incoming.call.has.no.transcript.number.or.caller.name.screen.would.look.empty',
+                    ),
+                    'phone.content',
                 );
             } else if (transcript === '' && number === '') {
                 suggest(
                     suggestions,
                     'realism_phone_incoming_transcript',
-                    englishLocale.t("copy.simulatorRealismChecks.incoming.call.has.caller.name.but.no.transcript.or.number.add.transcript.for.realism"),
-                    'phone.content'
+                    englishLocale.t(
+                        'copy.simulatorRealismChecks.incoming.call.has.caller.name.but.no.transcript.or.number.add.transcript.for.realism',
+                    ),
+                    'phone.content',
                 );
             }
         }
     }
 
-    if (app === 'phone' && screen === 'directory' && !payload.directory?.length && !payload.contacts?.length) {
+    if (
+        app === 'phone' &&
+        screen === 'directory' &&
+        !payload.directory?.length &&
+        !payload.contacts?.length
+    ) {
         blocker(
             blockers,
             'realism_phone_directory_empty',
-            englishLocale.t("copy.simulatorRealismChecks.entry.is.phone.directory.but.directory.and.contacts.are.empty"),
-            'directory'
+            englishLocale.t(
+                'copy.simulatorRealismChecks.entry.is.phone.directory.but.directory.and.contacts.are.empty',
+            ),
+            'directory',
         );
     }
 }
 
 function checkSenderMetadata(
     payload: SimulatorTemplatePayload,
-    suggestions: SimulatorRealismIssue[]
+    suggestions: SimulatorRealismIssue[],
 ): void {
     const syntheticSenderPattern = /^(test|sender|user|unknown|n\/?a)$/i;
     const detail = payload.email?.selectedMessage as { from_display_name?: string } | undefined;
@@ -182,7 +202,7 @@ function checkSenderMetadata(
             suggestions,
             'realism_sender_display_generic',
             `Sender display name "${display}" looks generic; consider a more believable name for examples.`,
-            'email'
+            'email',
         );
     }
 }
@@ -192,7 +212,9 @@ function checkSenderMetadata(
  * Does not replace lint or validation; use after validateSimulatorPayload.
  * Import from `@signalsafe/simulator-react/utils/simulatorRealismChecks` for tooling and tests.
  */
-export function runSimulatorRealismChecks(payload: SimulatorTemplatePayload): SimulatorRealismReport {
+export function runSimulatorRealismChecks(
+    payload: SimulatorTemplatePayload,
+): SimulatorRealismReport {
     const blockers: SimulatorRealismIssue[] = [];
     const suggestions: SimulatorRealismIssue[] = [];
     const ep = payload.entryPoint;
@@ -211,9 +233,7 @@ export function runSimulatorRealismChecks(payload: SimulatorTemplatePayload): Si
     };
 }
 
-function getEntryScreen(
-    entryPoint: SimulatorTemplatePayload['entryPoint']
-): string | null {
+function getEntryScreen(entryPoint: SimulatorTemplatePayload['entryPoint']): string | null {
     if (entryPoint?.screen == null) {
         return null;
     }

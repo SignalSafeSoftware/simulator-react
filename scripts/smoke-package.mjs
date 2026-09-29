@@ -1,8 +1,22 @@
 import { runSmokePackage } from './smoke-package-lib.mjs';
 
 runSmokePackage({
+    examples: ['demo-home-fixture.ts'],
     runtimeChecks: [
-        { exports: ['createSimulatorDatasource', 'createSimulatorDatasourceFromPayload', 'simulatorDatasourceToPayload', 'updateSimulatorDatasource', 'PhoneCallView', 'PhoneContactEditor', 'PhoneHistoryDetail', 'PhoneHistoryPagination', 'PhoneKeypad', 'SimulatorScreenTile'] },
+        {
+            exports: [
+                'createSimulatorDatasource',
+                'createSimulatorDatasourceFromPayload',
+                'simulatorDatasourceToPayload',
+                'updateSimulatorDatasource',
+                'PhoneCallView',
+                'PhoneContactEditor',
+                'PhoneHistoryDetail',
+                'PhoneHistoryPagination',
+                'PhoneKeypad',
+                'SimulatorScreenTile',
+            ],
+        },
         {
             subpath: './utils/validateSimulatorPayload',
             exports: ['validateSimulatorPayload'],

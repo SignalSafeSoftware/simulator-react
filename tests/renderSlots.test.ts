@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { renderSimulatorChoice, renderSimulatorFeedback, renderPhoneIncomingCallExtra } from '../src/ui/renderSlots';
+import {
+    renderSimulatorChoice,
+    renderSimulatorFeedback,
+    renderPhoneIncomingCallExtra,
+} from '../src/ui/renderSlots';
 import { getInitialSessionState } from '../src/state/simulatorSessionReducer';
 import { minimalPhoneWorld } from './support/fixtureWorlds';
 import {
@@ -13,7 +17,9 @@ import { collectBootstrapViolations } from './bootstrapClassDenylist';
 describe('renderSlots', () => {
     it('renderSimulatorChoice uses default simulator button when no slot is provided', () => {
         const onClick = vi.fn();
-        const renderer = TestRenderer.create(renderSimulatorChoice({ label: 'Send', tone: 'primary', onClick }));
+        const renderer = TestRenderer.create(
+            renderSimulatorChoice({ label: 'Send', tone: 'primary', onClick }),
+        );
         expect(collectBootstrapViolations(renderer.root)).toEqual([]);
         expect(
             renderer.root.findAll(
@@ -84,7 +90,9 @@ describe('renderSlots', () => {
             ),
         );
         const extra = renderer.root.findByProps({ 'data-testid': 'phone-incoming-call-extra' });
-        const afterActions = renderer.root.findByProps({ 'data-testid': 'phone-incoming-call-after-actions' });
+        const afterActions = renderer.root.findByProps({
+            'data-testid': 'phone-incoming-call-after-actions',
+        });
         expect(extra.props.className).toContain(SIM_PHONE_INCOMING_CALL_EXTRA);
         expect(afterActions.props.className).toContain(SIM_PHONE_INCOMING_CALL_AFTER_ACTIONS);
         expect(afterActions.props.children).toBe('Previous calls');

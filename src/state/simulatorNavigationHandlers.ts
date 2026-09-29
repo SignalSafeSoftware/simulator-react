@@ -47,7 +47,11 @@ export function applySwitchApp(state: SimulatorViewState, app: SimulatorApp): Si
     return next;
 }
 
-function updatePhoneLocalNavigation(next: SimulatorViewState, state: SimulatorViewState, screen: string): void {
+function updatePhoneLocalNavigation(
+    next: SimulatorViewState,
+    state: SimulatorViewState,
+    screen: string,
+): void {
     if (!isPhoneScreen(screen) || screen === state.phone.screen) {
         return;
     }
@@ -58,7 +62,11 @@ function updatePhoneLocalNavigation(next: SimulatorViewState, state: SimulatorVi
     };
 }
 
-function updateEmailLocalNavigation(next: SimulatorViewState, state: SimulatorViewState, screen: string): void {
+function updateEmailLocalNavigation(
+    next: SimulatorViewState,
+    state: SimulatorViewState,
+    screen: string,
+): void {
     if (!isEmailScreen(screen) || screen === state.email.screen) {
         return;
     }
@@ -69,7 +77,11 @@ function updateEmailLocalNavigation(next: SimulatorViewState, state: SimulatorVi
     };
 }
 
-function updateMessagesLocalNavigation(next: SimulatorViewState, state: SimulatorViewState, screen: string): void {
+function updateMessagesLocalNavigation(
+    next: SimulatorViewState,
+    state: SimulatorViewState,
+    screen: string,
+): void {
     if (!isMessagesScreen(screen) || screen === state.messages.screen) {
         return;
     }
@@ -80,21 +92,33 @@ function updateMessagesLocalNavigation(next: SimulatorViewState, state: Simulato
     };
 }
 
-function updateInternetLocalNavigation(next: SimulatorViewState, state: SimulatorViewState, screen: string): void {
+function updateInternetLocalNavigation(
+    next: SimulatorViewState,
+    state: SimulatorViewState,
+    screen: string,
+): void {
     if (!isInternetScreen(screen) || screen === state.internet.screen) {
         return;
     }
     next.internet = { ...state.internet, screen };
 }
 
-function updateHomeLocalNavigation(next: SimulatorViewState, state: SimulatorViewState, screen: string): void {
+function updateHomeLocalNavigation(
+    next: SimulatorViewState,
+    state: SimulatorViewState,
+    screen: string,
+): void {
     if (!isHomeScreen(screen) || screen === state.home.screen) {
         return;
     }
     next.home = { ...state.home, screen };
 }
 
-export function applyNavLocal(state: SimulatorViewState, app: SimulatorApp, screen: string): SimulatorViewState {
+export function applyNavLocal(
+    state: SimulatorViewState,
+    app: SimulatorApp,
+    screen: string,
+): SimulatorViewState {
     const next = { ...state };
     const current = state.activeApp;
     if (app !== current) {
@@ -131,7 +155,11 @@ function phoneParentScreen(screen: PhoneScreenId): PhoneScreenId | null {
 function applyInternetBack(state: SimulatorViewState): SimulatorViewState['internet'] {
     const { stack, screen } = state.internet;
     if (stack.length > 0) {
-        return { ...state.internet, screen: stack.at(-1) ?? DEFAULT_INTERNET_SCREEN, stack: stack.slice(0, -1) };
+        return {
+            ...state.internet,
+            screen: stack.at(-1) ?? DEFAULT_INTERNET_SCREEN,
+            stack: stack.slice(0, -1),
+        };
     }
     if (screen !== DEFAULT_INTERNET_SCREEN) {
         return { ...state.internet, screen: DEFAULT_INTERNET_SCREEN };
@@ -148,24 +176,40 @@ export function applyBack(state: SimulatorViewState): SimulatorViewState {
             const parent = phoneParentScreen(screen);
             next.phone = { ...state.phone, screen: parent ?? screen, stack: [] };
             next.showPrimaryMenu = parent === null;
-            if (parent === null) { next.activeApp = 'home'; next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN }; }
+            if (parent === null) {
+                next.activeApp = 'home';
+                next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN };
+            }
             break;
         }
         case 'email': {
             const screen = state.email.screen;
             const isDetail = screen === 'detail' || screen === 'compose';
-            const folder = [...state.email.stack].reverse().find(
-                (item) => item === 'list' || item === 'outbox' || item === 'trash',
-            ) ?? DEFAULT_EMAIL_SCREEN;
-            next.email = { ...state.email, screen: isDetail ? folder : screen, stack: [], selectedMessageId: null };
+            const folder =
+                [...state.email.stack]
+                    .reverse()
+                    .find((item) => item === 'list' || item === 'outbox' || item === 'trash') ??
+                DEFAULT_EMAIL_SCREEN;
+            next.email = {
+                ...state.email,
+                screen: isDetail ? folder : screen,
+                stack: [],
+                selectedMessageId: null,
+            };
             next.showPrimaryMenu = !isDetail;
-            if (!isDetail) { next.activeApp = 'home'; next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN }; }
+            if (!isDetail) {
+                next.activeApp = 'home';
+                next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN };
+            }
             break;
         }
         case 'messages': {
             next.messages = { ...state.messages, screen: DEFAULT_MESSAGES_SCREEN, stack: [] };
             next.showPrimaryMenu = state.messages.screen === DEFAULT_MESSAGES_SCREEN;
-            if (next.showPrimaryMenu) { next.activeApp = 'home'; next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN }; }
+            if (next.showPrimaryMenu) {
+                next.activeApp = 'home';
+                next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN };
+            }
             break;
         }
         case 'internet':

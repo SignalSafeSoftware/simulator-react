@@ -55,7 +55,13 @@ export function classNameContainsBootstrapToken(className: unknown): string | nu
                 return denied;
             }
         }
-        if (token === 'card' || token === 'badge' || token === 'btn' || token === 'rounded' || token === 'small') {
+        if (
+            token === 'card' ||
+            token === 'badge' ||
+            token === 'btn' ||
+            token === 'rounded' ||
+            token === 'small'
+        ) {
             return token;
         }
     }

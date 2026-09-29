@@ -8,7 +8,14 @@
 import type { SimulatorTemplatePayload } from '../types/session.js';
 import type { SimulatorApp } from '../types/portableSimulator.js';
 
-const PHONE_SCREENS: string[] = ['history', 'contacts', 'dial', 'incoming_call', 'voicemail', 'directory'];
+const PHONE_SCREENS: string[] = [
+    'history',
+    'contacts',
+    'dial',
+    'incoming_call',
+    'voicemail',
+    'directory',
+];
 const HOME_SCREENS: string[] = ['home', 'store', 'settings'];
 
 export interface ReachabilityReport {
@@ -47,7 +54,10 @@ function getEntryApp(payload: SimulatorTemplatePayload): SimulatorApp | null {
     return null;
 }
 
-function getReachableApps(payload: SimulatorTemplatePayload, entryApp: SimulatorApp | null): SimulatorApp[] {
+function getReachableApps(
+    payload: SimulatorTemplatePayload,
+    entryApp: SimulatorApp | null,
+): SimulatorApp[] {
     const apps = new Set<SimulatorApp>();
     if (entryApp != null) apps.add(entryApp);
     const device = payload.device;
@@ -71,7 +81,7 @@ interface BrowserPageLike {
 
 function reachableBrowserPagesTyped(
     pages: BrowserPageLike[],
-    startPageId: string
+    startPageId: string,
 ): { pageIds: Set<string>; hasCycle: boolean } {
     const idToPage = new Map<string, BrowserPageLike>();
     pages.forEach((p) => {
@@ -103,7 +113,7 @@ function populateEmailReachability(
     payload: SimulatorTemplatePayload,
     reachableApps: SimulatorApp[],
     reachableScreens: Record<SimulatorApp, string[]>,
-    reachableEntities: ReachabilityReport['reachableEntities']
+    reachableEntities: ReachabilityReport['reachableEntities'],
 ): void {
     if (!reachableApps.includes('email') || payload.email == null) {
         return;
@@ -126,7 +136,7 @@ function populateEmailReachability(
 function populateMessagesReachability(
     payload: SimulatorTemplatePayload,
     reachableApps: SimulatorApp[],
-    reachableScreens: Record<SimulatorApp, string[]>
+    reachableScreens: Record<SimulatorApp, string[]>,
 ): void {
     if (!reachableApps.includes('messages') || payload.sms == null) {
         return;
@@ -144,7 +154,7 @@ function populateInternetReachability(
     entryApp: SimulatorApp | null,
     reachableApps: SimulatorApp[],
     reachableScreens: Record<SimulatorApp, string[]>,
-    reachableEntities: ReachabilityReport['reachableEntities']
+    reachableEntities: ReachabilityReport['reachableEntities'],
 ): boolean {
     if (!reachableApps.includes('internet') || payload.browser == null) {
         return false;
@@ -176,7 +186,7 @@ function populatePhoneReachability(
     payload: SimulatorTemplatePayload,
     reachableApps: SimulatorApp[],
     reachableScreens: Record<SimulatorApp, string[]>,
-    reachableEntities: ReachabilityReport['reachableEntities']
+    reachableEntities: ReachabilityReport['reachableEntities'],
 ): void {
     if (!reachableApps.includes('phone')) {
         return;
@@ -197,7 +207,7 @@ function populatePhoneReachability(
 
 function populateHomeReachability(
     reachableApps: SimulatorApp[],
-    reachableScreens: Record<SimulatorApp, string[]>
+    reachableScreens: Record<SimulatorApp, string[]>,
 ): void {
     if (reachableApps.includes('home')) {
         reachableScreens.home = [...HOME_SCREENS];
@@ -205,7 +215,9 @@ function populateHomeReachability(
 }
 
 function getAllBrowserIds(payload: SimulatorTemplatePayload): string[] {
-    return (payload.browser?.pages ?? []).map((page) => page?.id).filter((id): id is string => Boolean(id));
+    return (payload.browser?.pages ?? [])
+        .map((page) => page?.id)
+        .filter((id): id is string => Boolean(id));
 }
 
 function getAllContactIds(payload: SimulatorTemplatePayload): string[] {
@@ -215,14 +227,16 @@ function getAllContactIds(payload: SimulatorTemplatePayload): string[] {
 }
 
 function getAllInboxIds(payload: SimulatorTemplatePayload): string[] {
-    return (payload.email?.inbox ?? []).map((row) => row?.id).filter((id): id is string => Boolean(id));
+    return (payload.email?.inbox ?? [])
+        .map((row) => row?.id)
+        .filter((id): id is string => Boolean(id));
 }
 
 function appendReachableAppUnreachables(
     app: SimulatorApp,
     reachableScreens: Record<SimulatorApp, string[]>,
     allBrowserIds: string[],
-    unreachableScreens: Array<{ app: SimulatorApp; screen: string }>
+    unreachableScreens: Array<{ app: SimulatorApp; screen: string }>,
 ): void {
     const reachableSet = new Set(reachableScreens[app]);
     if (app === 'email') {
@@ -255,7 +269,7 @@ function appendReachableAppUnreachables(
 function hasDefinedContentForApp(
     app: SimulatorApp,
     payload: SimulatorTemplatePayload,
-    allBrowserIds: string[]
+    allBrowserIds: string[],
 ): boolean {
     if (app === 'email') {
         return payload.email != null;
@@ -314,7 +328,13 @@ export function analyzeReachability(payload: SimulatorTemplatePayload): Reachabi
 
     populateEmailReachability(payload, reachableApps, reachableScreens, reachableEntities);
     populateMessagesReachability(payload, reachableApps, reachableScreens);
-    browserHasCycle = populateInternetReachability(payload, entryApp, reachableApps, reachableScreens, reachableEntities);
+    browserHasCycle = populateInternetReachability(
+        payload,
+        entryApp,
+        reachableApps,
+        reachableScreens,
+        reachableEntities,
+    );
     populatePhoneReachability(payload, reachableApps, reachableScreens, reachableEntities);
     populateHomeReachability(reachableApps, reachableScreens);
 

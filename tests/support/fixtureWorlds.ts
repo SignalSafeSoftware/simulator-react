@@ -53,7 +53,12 @@ function basePayload(overrides: Partial<SimulatorTemplatePayload>): SimulatorTem
 export function minimalPhoneWorld(): SimulatorTemplatePayload {
     const entryPoint: SimulatorEntryPoint = { app: 'phone', screen: 'incoming_call' };
     const directory: SimulatorDirectoryEntry[] = [
-        { id: 'dir-1', label: 'IT Helpdesk', number: '+15550001111', description: 'Use to verify support calls.' },
+        {
+            id: 'dir-1',
+            label: 'IT Helpdesk',
+            number: '+15550001111',
+            description: 'Use to verify support calls.',
+        },
     ];
     const contacts: SimulatorSessionContact[] = [
         { id: 'c1', displayName: 'IT Helpdesk', number: '+15550001111' },
@@ -95,8 +100,19 @@ export function minimalPhoneWorld(): SimulatorTemplatePayload {
 export function verificationBusinessWorld(): SimulatorTemplatePayload {
     const entryPoint: SimulatorEntryPoint = { app: 'phone', screen: 'directory' };
     const directory: SimulatorDirectoryEntry[] = [
-        { id: 'd1', label: 'Security Team', number: '+15551110000', description: 'Verify any security-related requests.' },
-        { id: 'd2', label: 'HR', number: '+15551110222', url: 'https://hr.example.com', description: 'Benefits and policies.' },
+        {
+            id: 'd1',
+            label: 'Security Team',
+            number: '+15551110000',
+            description: 'Verify any security-related requests.',
+        },
+        {
+            id: 'd2',
+            label: 'HR',
+            number: '+15551110222',
+            url: 'https://hr.example.com',
+            description: 'Benefits and policies.',
+        },
     ];
     const contacts: SimulatorSessionContact[] = [
         { id: 'c1', displayName: 'Security Team', number: '+15551110000' },
@@ -174,10 +190,20 @@ export function fakeBankWorld(): SimulatorTemplatePayload {
         defaultPageId: 'landing',
     };
     const directory: SimulatorDirectoryEntry[] = [
-        { id: 'bank', label: 'Bank customer service', number: '+15551234567', description: 'Call to verify any account emails.' },
+        {
+            id: 'bank',
+            label: 'Bank customer service',
+            number: '+15551234567',
+            description: 'Call to verify any account emails.',
+        },
     ];
     const contacts: SimulatorSessionContact[] = [
-        { id: 'bank-official', displayName: 'Your Bank', number: '+15551234567', email: 'support@yourbank.com' },
+        {
+            id: 'bank-official',
+            displayName: 'Your Bank',
+            number: '+15551234567',
+            email: 'support@yourbank.com',
+        },
         { id: 'it-helpdesk', displayName: 'IT Helpdesk', number: '+15550123456' },
     ];
     const device: SimulatorSessionDevice = {
@@ -204,8 +230,19 @@ export function fakeBankWorld(): SimulatorTemplatePayload {
 export function employeeDeviceWorld(): SimulatorTemplatePayload {
     const entryPoint: SimulatorEntryPoint = { app: 'email', screen: 'list' };
     const inbox: SimulatorInboxRow[] = [
-        { id: 'e1', subject: 'Your delivery is on the way', from: 'alerts@delivery.example', snippet: 'Track your package...', unread: true },
-        { id: 'e2', subject: 'Team standup', from: 'team@company.com', snippet: 'Reminder: 10am tomorrow.' },
+        {
+            id: 'e1',
+            subject: 'Your delivery is on the way',
+            from: 'alerts@delivery.example',
+            snippet: 'Track your package...',
+            unread: true,
+        },
+        {
+            id: 'e2',
+            subject: 'Team standup',
+            from: 'team@company.com',
+            snippet: 'Reminder: 10am tomorrow.',
+        },
     ];
     const email: SimulatorEmailPayload = {
         inbox,
@@ -214,7 +251,10 @@ export function employeeDeviceWorld(): SimulatorTemplatePayload {
     };
     const smsThread: SmsThreadContent = {
         messages: [
-            { from: 'them', text: 'Your package will arrive today. Reply STOP to opt out.' } as SmsThreadMessage,
+            {
+                from: 'them',
+                text: 'Your package will arrive today. Reply STOP to opt out.',
+            } as SmsThreadMessage,
             { from: 'me', text: 'Who is this?' } as SmsThreadMessage,
         ],
         sender_display_name: 'Delivery Alerts',

@@ -1,6 +1,6 @@
 {
   "name": "@signalsafe/simulator-react",
-  "version": "0.16.3",
+  "version": "0.17.0",
   "type": "module",
   "description": "UI-kit agnostic React device simulator shell, session state, and utilities (no routing or API).",
   "license": "MIT",
@@ -73,18 +73,21 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && tsx ./scripts/fix-node-esm-relative-imports.ts dist",
-    "lint": "yarn typecheck",
+    "lint": "oxlint src tests --deny-warnings",
     "typecheck": "tsc --noEmit",
     "publish:dry-run": "npm publish --dry-run",
     "smoke:package": "node scripts/smoke-package.mjs",
     "prepublishOnly": "npm run build",
     "prepare": "npm run build",
     "test": "vitest run",
-    "test:coverage": "yarn test --coverage"
+    "test:coverage": "yarn test --coverage",
+    "format": "oxfmt src tests",
+    "format:check": "oxfmt --check src tests"
   },
   "dependencies": {
-    "@signalsafe/simulator-core": "0.3.2",
-    "@signalsafe/tree-spec": "^0.4.1"
+    "@signalsafe/simulator-core": "0.4.1",
+    "@signalsafe/tree-spec": "^0.4.1",
+    "lucide-react": "^1.31.0"
   },
   "peerDependencies": {
     "react": "^18.0.0",
@@ -95,12 +98,14 @@
     "@types/react-dom": "^18.2.22",
     "@types/react-test-renderer": "^18.3.0",
     "@vitest/coverage-v8": "^5.0.1",
+    "oxfmt": "0.61.0",
+    "oxlint": "1.76.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-test-renderer": "^18.3.1",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.1",
-    "vite": "^8.3.0"
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
   }
 }

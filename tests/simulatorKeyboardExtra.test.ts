@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { focusSimulatorSearch, handleSimulatorKeyboard, SIMULATOR_LIST_NAV_EVENT } from '../src/utils/simulatorKeyboardCommands';
+import {
+    focusSimulatorSearch,
+    handleSimulatorKeyboard,
+    SIMULATOR_LIST_NAV_EVENT,
+} from '../src/utils/simulatorKeyboardCommands';
 
 describe('simulator keyboard extra coverage', () => {
     it('returns help for question-mark and ignores unknown app-switch keys', () => {
@@ -19,7 +23,7 @@ describe('simulator keyboard extra coverage', () => {
                 preventDefault: vi.fn(),
             } as never,
             handlers,
-            { activeApp: 'email', activeScreen: 'list' }
+            { activeApp: 'email', activeScreen: 'list' },
         );
         expect(helpResult).toEqual({ handled: true, showHelp: true });
 
@@ -33,7 +37,7 @@ describe('simulator keyboard extra coverage', () => {
                 preventDefault: vi.fn(),
             } as never,
             handlers,
-            { activeApp: 'email', activeScreen: 'list' }
+            { activeApp: 'email', activeScreen: 'list' },
         );
         expect(ignoredResult).toEqual({ handled: false });
     });
@@ -76,12 +80,12 @@ describe('simulator keyboard extra coverage', () => {
                     onSwitchApp: vi.fn(),
                     onFocusSearch: vi.fn(),
                 },
-                { activeApp: 'email', activeScreen: 'list' }
+                { activeApp: 'email', activeScreen: 'list' },
             );
 
             expect(result).toEqual({ handled: true });
             expect(dispatchEvent).toHaveBeenCalledWith(
-                expect.objectContaining({ type: SIMULATOR_LIST_NAV_EVENT })
+                expect.objectContaining({ type: SIMULATOR_LIST_NAV_EVENT }),
             );
         } finally {
             (globalThis as { document?: Document }).document = originalDocument;
@@ -119,7 +123,7 @@ describe('simulator keyboard extra coverage', () => {
                 onSwitchApp: vi.fn(),
                 onFocusSearch,
             },
-            { activeApp: 'email', activeScreen: 'list' }
+            { activeApp: 'email', activeScreen: 'list' },
         );
 
         expect(result).toEqual({ handled: false });
@@ -144,7 +148,7 @@ describe('simulator keyboard extra coverage', () => {
                 onFocusSearch: vi.fn(),
                 onListNav,
             },
-            { activeApp: 'email', activeScreen: 'list' }
+            { activeApp: 'email', activeScreen: 'list' },
         );
 
         expect(result).toEqual({ handled: true });
@@ -168,7 +172,7 @@ describe('simulator keyboard extra coverage', () => {
                 onSwitchApp: vi.fn(),
                 onFocusSearch: vi.fn(),
             },
-            { activeApp: 'email', activeScreen: 'list' }
+            { activeApp: 'email', activeScreen: 'list' },
         );
 
         expect(result).toEqual({ handled: false });
@@ -192,7 +196,7 @@ describe('simulator keyboard extra coverage', () => {
                 onSwitchApp,
                 onFocusSearch: vi.fn(),
             },
-            { activeApp: 'email', activeScreen: 'list' }
+            { activeApp: 'email', activeScreen: 'list' },
         );
 
         expect(result).toEqual({ handled: false });
@@ -218,7 +222,7 @@ describe('simulator keyboard extra coverage', () => {
                     onSwitchApp: vi.fn(),
                     onFocusSearch: vi.fn(),
                 },
-                { activeApp: 'email', activeScreen: 'list' }
+                { activeApp: 'email', activeScreen: 'list' },
             );
 
             expect(result).toEqual({ handled: true });

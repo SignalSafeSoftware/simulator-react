@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { appToChannel } from '../src/adapters/fullDeviceToSession';
-import { channelToApp, getCurrentScreenForApp, viewStateToActiveChannel } from '../src/types/session';
+import {
+    channelToApp,
+    getCurrentScreenForApp,
+    viewStateToActiveChannel,
+} from '../src/types/session';
 
 describe('session mappings', () => {
     it('maps simulator apps to shell channels', () => {
@@ -44,7 +48,7 @@ describe('session mappings', () => {
                 internet: { screen: 'landing', stack: [] },
                 phone: { screen: 'history', stack: [], chosenIndex: null },
                 home: { screen: 'home' },
-            } as never)
+            } as never),
         ).toBe('detail');
     });
 
@@ -61,7 +65,7 @@ describe('session mappings', () => {
                 internet: { screen: 'landing', stack: [] },
                 phone: { screen: 'history', stack: [], chosenIndex: null },
                 home: { screen: 'home' },
-            } as never)
+            } as never),
         ).toBe('');
     });
 });

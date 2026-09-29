@@ -38,7 +38,7 @@ function getEntryAppFromPayload(payload: SimulatorSessionState['payload']): Simu
 function resolveInitialInternetScreen(
     payload: SimulatorSessionState['payload'],
     app: SimulatorApp,
-    entryScreen: string
+    entryScreen: string,
 ): string {
     if (app !== 'internet') return DEFAULT_INTERNET_SCREEN;
     const pages = payload.browser?.pages;
@@ -47,11 +47,14 @@ function resolveInitialInternetScreen(
     return pages.some((page) => page?.id === entryScreen) ? entryScreen : defaultId;
 }
 
-export function getInitialSessionState(payload: SimulatorSessionState['payload']): SimulatorSessionState {
+export function getInitialSessionState(
+    payload: SimulatorSessionState['payload'],
+): SimulatorSessionState {
     validateSimulatorPayload(payload);
     const app = getEntryAppFromPayload(payload);
     const rawEntryScreen = payload.entryPoint?.screen;
-    const entryScreen = rawEntryScreen == null ? getDefaultScreen(app) : parseEntryScreen(app, rawEntryScreen);
+    const entryScreen =
+        rawEntryScreen == null ? getDefaultScreen(app) : parseEntryScreen(app, rawEntryScreen);
 
     const view: SimulatorSessionState['view'] = {
         ...initialViewState,
@@ -63,12 +66,13 @@ export function getInitialSessionState(payload: SimulatorSessionState['payload']
             screen: app === 'email' && entryScreen === 'detail' ? 'detail' : 'list',
             selectedMessageId:
                 app === 'email' && entryScreen === 'detail'
-                    ? payload.email?.selectedMessageId ?? payload.email?.inbox?.[0]?.id ?? null
+                    ? (payload.email?.selectedMessageId ?? payload.email?.inbox?.[0]?.id ?? null)
                     : null,
         },
         messages: {
             ...createInitialMessagesState(),
-            screen: app === 'messages' && entryScreen === 'thread_detail' ? 'thread_detail' : 'threads',
+            screen:
+                app === 'messages' && entryScreen === 'thread_detail' ? 'thread_detail' : 'threads',
         },
         internet: {
             screen: resolveInitialInternetScreen(payload, app, entryScreen),

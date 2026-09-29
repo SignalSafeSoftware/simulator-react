@@ -44,7 +44,7 @@ describe('diffSimulatorPayloads', () => {
                 internet: {
                     pages: [{ id: 'pricing' }, { id: 'support' }],
                 },
-            }
+            },
         );
 
         expect(diffs).toContainEqual({
@@ -61,7 +61,7 @@ describe('diffSimulatorPayloads', () => {
             },
             {
                 directory: [{ id: 'alice' }, { id: 'bob' }],
-            }
+            },
         );
 
         expect(diffs).toContainEqual({
@@ -86,7 +86,7 @@ describe('diffSimulatorPayloads', () => {
                         internet: { screen: 'pricing' },
                     },
                 },
-            }
+            },
         );
 
         expect(diffs).toContainEqual({
@@ -159,12 +159,15 @@ describe('diffSimulatorPayloads', () => {
                     pages: [{ id: 'landing' }],
                     forms: [{ id: 'form-1' }],
                 },
-            }
+            },
         );
 
         expect(diffs).toEqual(
             expect.arrayContaining([
-                expect.objectContaining({ section: 'entry_point', change: 'Entry point: (none) → phone/' }),
+                expect.objectContaining({
+                    section: 'entry_point',
+                    change: 'Entry point: (none) → phone/',
+                }),
                 expect.objectContaining({
                     section: 'device',
                     change: 'Device secondary_defaults changed',
@@ -179,15 +182,22 @@ describe('diffSimulatorPayloads', () => {
                     detail: '+6 (c2, c3, c4, c5, c6…)',
                 }),
                 expect.objectContaining({ section: 'phone', change: 'Phone: incoming_call added' }),
-                expect.objectContaining({ section: 'phone', change: 'Phone history: 0 → 1 entries' }),
+                expect.objectContaining({
+                    section: 'phone',
+                    change: 'Phone history: 0 → 1 entries',
+                }),
                 expect.objectContaining({
                     section: 'email',
                     detail: '+m2, +m3, +m4, +m5, +m6, +m7, +m8, +m9…',
                 }),
                 expect.objectContaining({ section: 'internet', change: 'Browser forms: 0 → 1' }),
-            ])
+            ]),
         );
-        expect(diffs.find((item) => item.section === 'internet' && item.change.includes('Browser pages'))).toBeUndefined();
+        expect(
+            diffs.find(
+                (item) => item.section === 'internet' && item.change.includes('Browser pages'),
+            ),
+        ).toBeUndefined();
     });
 
     it('covers invalid ids, nullish json formatting, and browser page removal labels', () => {
@@ -217,12 +227,15 @@ describe('diffSimulatorPayloads', () => {
                         phone: null,
                     },
                 },
-            }
+            },
         );
 
         expect(diffs).toEqual(
             expect.arrayContaining([
-                expect.objectContaining({ section: 'entry_point', change: 'Entry point: (none) → internet/pricing' }),
+                expect.objectContaining({
+                    section: 'entry_point',
+                    change: 'Entry point: (none) → internet/pricing',
+                }),
                 expect.objectContaining({
                     section: 'device',
                     detail: 'phone: (none) → (none)',
@@ -232,7 +245,7 @@ describe('diffSimulatorPayloads', () => {
                     change: 'Browser pages: landing → (none)',
                     detail: '-landing',
                 }),
-            ])
+            ]),
         );
     });
 
@@ -247,7 +260,7 @@ describe('diffSimulatorPayloads', () => {
                 internet: {
                     pages: [{ id: 'landing' }],
                 },
-            }
+            },
         );
 
         expect(diffs).toContainEqual({

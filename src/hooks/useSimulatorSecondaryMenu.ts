@@ -24,11 +24,12 @@ export interface SimulatorSecondaryMenuConfig {
 export function useSimulatorSecondaryMenu(
     view: SimulatorSessionState['view'],
     dispatch: (action: SimulatorDispatchAction) => void,
-    phoneCapabilities: SimulatorCapabilities['phone']
+    phoneCapabilities: SimulatorCapabilities['phone'],
 ): SimulatorSecondaryMenuConfig | undefined {
     const locale = useSimulatorLocale();
     const activeApp = view.activeApp;
-    const showSecondaryMenu = !view.showPrimaryMenu && (activeApp === 'phone' || activeApp === 'email');
+    const showSecondaryMenu =
+        !view.showPrimaryMenu && (activeApp === 'phone' || activeApp === 'email');
 
     return useMemo(() => {
         if (!showSecondaryMenu) return undefined;
@@ -50,7 +51,11 @@ export function useSimulatorSecondaryMenu(
             };
         }
         return {
-            items: getEmailSecondaryItems(locale).map((item) => ({ id: item.id, label: item.label, icon: item.icon })),
+            items: getEmailSecondaryItems(locale).map((item) => ({
+                id: item.id,
+                label: item.label,
+                icon: item.icon,
+            })),
             activeId: getEmailSecondaryActiveId(view.email.screen, view.email.stack),
             onSelect: (id: string) => {
                 if (id !== 'back') {

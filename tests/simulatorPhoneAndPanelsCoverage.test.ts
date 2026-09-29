@@ -10,7 +10,9 @@ import SmsSimulatorView from '../src/views/SmsSimulatorView';
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) {
         return '';
     }
@@ -34,9 +36,13 @@ describe('phone and panel coverage', () => {
             dialRenderer = TestRenderer.create(React.createElement(PhoneDialView, { onDial }));
         });
         for (const label of ['Digit 1', 'Digit 2 ABC', 'Digit 3 DEF', 'Digit 0 +', 'Backspace']) {
-            await act(async () => { dialRenderer!.root.findByProps({ 'aria-label': label }).props.onClick(); });
+            await act(async () => {
+                dialRenderer!.root.findByProps({ 'aria-label': label }).props.onClick();
+            });
         }
-        await act(async () => { dialRenderer!.root.findByType('form').props.onSubmit({ preventDefault() {} }); });
+        await act(async () => {
+            dialRenderer!.root.findByType('form').props.onSubmit({ preventDefault() {} });
+        });
         expect(onDial).toHaveBeenCalledWith('123');
 
         const onSelectIncoming = vi.fn();
@@ -47,23 +53,52 @@ describe('phone and panel coverage', () => {
             historyRenderer = TestRenderer.create(
                 React.createElement(PhoneHistoryList, {
                     entries: [
-                        { id: 'call-1', number: '+15550000001', name: 'Alice', kind: 'incoming', timestamp: 'Today' },
-                        { id: 'call-2', number: '+15550000002', label: 'Missed call', timestamp: 'Yesterday' },
-                        { id: 'call-3', number: '+15550000003', kind: 'voicemail', timestamp: 'Earlier' },
+                        {
+                            id: 'call-1',
+                            number: '+15550000001',
+                            name: 'Alice',
+                            kind: 'incoming',
+                            timestamp: 'Today',
+                        },
+                        {
+                            id: 'call-2',
+                            number: '+15550000002',
+                            label: 'Missed call',
+                            timestamp: 'Yesterday',
+                        },
+                        {
+                            id: 'call-3',
+                            number: '+15550000003',
+                            kind: 'voicemail',
+                            timestamp: 'Earlier',
+                        },
                     ],
-                    incomingCallContent: { transcript: 'Incoming', choices: [], caller_name: 'Bob', phone_number: '+15550000004' },
+                    incomingCallContent: {
+                        transcript: 'Incoming',
+                        choices: [],
+                        caller_name: 'Bob',
+                        phone_number: '+15550000004',
+                    },
                     hasVoicemail: true,
                     onSelectIncoming,
                     onSelectVoicemail,
                     onSelectEntry,
-                })
+                }),
             );
         });
         await act(async () => {
             historyRenderer!.root.findByProps({ 'aria-label': 'Incoming call' }).props.onClick();
             historyRenderer!.root.findByProps({ 'aria-label': 'Voicemail' }).props.onClick();
-            historyRenderer!.root.findAll((node) => typeof node.props.onClick === 'function' && node.props['aria-label'] == null)[0].props.onClick();
-            historyRenderer!.root.findByProps({ 'aria-label': 'Search calls' }).props.onChange({ target: { value: 'zzz' } });
+            historyRenderer!.root
+                .findAll(
+                    (node) =>
+                        typeof node.props.onClick === 'function' &&
+                        node.props['aria-label'] == null,
+                )[0]
+                .props.onClick();
+            historyRenderer!.root
+                .findByProps({ 'aria-label': 'Search calls' })
+                .props.onChange({ target: { value: 'zzz' } });
             historyRenderer!.root.findByProps({ 'aria-label': 'Search calls' }).props.onKeyDown({
                 key: 'Enter',
                 preventDefault: vi.fn(),
@@ -83,7 +118,7 @@ describe('phone and panel coverage', () => {
                     onSelectIncoming,
                     onSelectVoicemail,
                     onSelectEntry,
-                })
+                }),
             );
         });
         expect(flattenText(historyRenderer!.toJSON())).toContain('Incoming');
@@ -100,7 +135,7 @@ describe('phone and panel coverage', () => {
                     hasVoicemail: false,
                     onSelectIncoming,
                     onSelectVoicemail,
-                })
+                }),
             );
         });
         expect(flattenText(historyRenderer!.toJSON())).toContain('No recent calls.');
@@ -118,7 +153,7 @@ describe('phone and panel coverage', () => {
                     screen: 'history',
                     onNavigate,
                     onAction,
-                })
+                }),
             );
         });
         expect(flattenText(phoneRenderer!.toJSON())).toContain('No phone for this scenario.');
@@ -131,16 +166,23 @@ describe('phone and panel coverage', () => {
                     screen: 'incoming_call',
                     onNavigate,
                     onAction,
-                })
+                }),
             );
         });
-        expect(flattenText(phoneRenderer!.toJSON())).toContain('No incoming call for this scenario.');
+        expect(flattenText(phoneRenderer!.toJSON())).toContain(
+            'No incoming call for this scenario.',
+        );
 
         await act(async () => {
             phoneRenderer!.update(
                 React.createElement(PhoneSimulatorView, {
                     payload: {
-                        content: { transcript: 'Incoming call', choices: [], caller_name: 'Bob', phone_number: '+15550000004' },
+                        content: {
+                            transcript: 'Incoming call',
+                            choices: [],
+                            caller_name: 'Bob',
+                            phone_number: '+15550000004',
+                        },
                         chosenIndex: null,
                         callHistory: [{ id: 'call-1', number: '+15550000001', kind: 'incoming' }],
                         voicemailTranscript: 'Leave a message',
@@ -154,7 +196,7 @@ describe('phone and panel coverage', () => {
                     onAction,
                     onDismissIncoming,
                     onBack,
-                })
+                }),
             );
         });
         await act(async () => {
@@ -169,9 +211,21 @@ describe('phone and panel coverage', () => {
             phoneRenderer!.update(
                 React.createElement(PhoneSimulatorView, {
                     payload: {
-                        content: { transcript: 'Incoming call', choices: [], caller_name: 'Bob', phone_number: '+15550000004' },
+                        content: {
+                            transcript: 'Incoming call',
+                            choices: [],
+                            caller_name: 'Bob',
+                            phone_number: '+15550000004',
+                        },
                         chosenIndex: null,
-                        callHistory: [{ id: 'call-1', number: '+15550000001', kind: 'incoming', timestamp: 'Today' }],
+                        callHistory: [
+                            {
+                                id: 'call-1',
+                                number: '+15550000001',
+                                kind: 'incoming',
+                                timestamp: 'Today',
+                            },
+                        ],
                         voicemailTranscript: 'Leave a message',
                         voicemailCallerName: 'Alice',
                         voicemailTimestamp: 'Now',
@@ -183,7 +237,7 @@ describe('phone and panel coverage', () => {
                     onAction,
                     onDismissIncoming,
                     onBack,
-                })
+                }),
             );
         });
         await act(async () => {
@@ -191,7 +245,9 @@ describe('phone and panel coverage', () => {
             phoneRenderer!.root.findAllByProps({ children: 'Call' })[0].props.onClick();
         });
         expect(onNavigate).toHaveBeenCalledWith('add_contact');
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'dial_phone', dialedNumber: '+15550000001' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'dial_phone', dialedNumber: '+15550000001' }),
+        );
 
         await act(async () => {
             phoneRenderer!.update(
@@ -207,10 +263,12 @@ describe('phone and panel coverage', () => {
                     onNavigate,
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
-        expect(flattenText(phoneRenderer!.toJSON())).toContain('Contact creation is not configured for this scenario.');
+        expect(flattenText(phoneRenderer!.toJSON())).toContain(
+            'Contact creation is not configured for this scenario.',
+        );
         expect(phoneRenderer!.root.findAllByType('input')).toHaveLength(0);
         await act(async () => {
             phoneRenderer!.root.findByProps({ children: 'Back to contacts' }).props.onClick();
@@ -233,7 +291,7 @@ describe('phone and panel coverage', () => {
                     onNavigate,
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         await act(async () => {
@@ -242,7 +300,9 @@ describe('phone and panel coverage', () => {
         await act(async () => {
             phoneRenderer!.root.findByType('form').props.onSubmit({ preventDefault() {} });
         });
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'dial_phone', dialedNumber: '2' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'dial_phone', dialedNumber: '2' }),
+        );
 
         await act(async () => {
             phoneRenderer!.update(
@@ -260,7 +320,7 @@ describe('phone and panel coverage', () => {
                     onNavigate,
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         expect(flattenText(phoneRenderer!.toJSON())).toContain('Leave a message');
@@ -279,7 +339,7 @@ describe('phone and panel coverage', () => {
                     onNavigate,
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         expect(flattenText(phoneRenderer!.toJSON())).toContain('No voicemail.');
@@ -288,11 +348,26 @@ describe('phone and panel coverage', () => {
             phoneRenderer!.update(
                 React.createElement(PhoneSimulatorView, {
                     payload: {
-                        content: { transcript: 'Incoming call', choices: [], caller_name: 'Bob', phone_number: '+15550000004' },
+                        content: {
+                            transcript: 'Incoming call',
+                            choices: [],
+                            caller_name: 'Bob',
+                            phone_number: '+15550000004',
+                        },
                         chosenIndex: null,
                         callHistory: [
-                            { id: 'call-1', number: '+15550000001', kind: 'incoming', timestamp: 'Today' },
-                            { id: 'call-2', number: '+15550000002', label: 'Outbound call', timestamp: 'Yesterday' },
+                            {
+                                id: 'call-1',
+                                number: '+15550000001',
+                                kind: 'incoming',
+                                timestamp: 'Today',
+                            },
+                            {
+                                id: 'call-2',
+                                number: '+15550000002',
+                                label: 'Outbound call',
+                                timestamp: 'Yesterday',
+                            },
                         ],
                         voicemailTranscript: 'Leave a message',
                     },
@@ -303,7 +378,7 @@ describe('phone and panel coverage', () => {
                     onAction,
                     onDismissIncoming,
                     onBack,
-                })
+                }),
             );
         });
         expect(flattenText(phoneRenderer!.toJSON())).toContain('Calls');
@@ -332,7 +407,7 @@ describe('phone and panel coverage', () => {
                     onNavigate,
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         expect(flattenText(phoneRenderer!.toJSON())).toContain('No contacts.');
@@ -352,7 +427,7 @@ describe('phone and panel coverage', () => {
                     visibleCount: 0,
                     onAction,
                     onRevealNext,
-                })
+                }),
             );
         });
         expect(flattenText(smsRenderer!.toJSON())).toContain('No messages for this scenario.');
@@ -363,14 +438,32 @@ describe('phone and panel coverage', () => {
                     payload: {
                         thread: {
                             messages: [
-                                { from: 'them', text: 'Hello', delay_seconds: 1, timestamp: '09:00' },
-                                { from: 'me', text: 'Attachment', attachment: { label: 'invoice.pdf', url: '/invoice.pdf' }, delay_seconds: 1 },
-                                { from: 'them', text: 'No url attachment', attachment: { label: 'note.txt' } },
+                                {
+                                    from: 'them',
+                                    text: 'Hello',
+                                    delay_seconds: 1,
+                                    timestamp: '09:00',
+                                },
+                                {
+                                    from: 'me',
+                                    text: 'Attachment',
+                                    attachment: { label: 'invoice.pdf', url: '/invoice.pdf' },
+                                    delay_seconds: 1,
+                                },
+                                {
+                                    from: 'them',
+                                    text: 'No url attachment',
+                                    attachment: { label: 'note.txt' },
+                                },
                             ],
                             sender_display_name: 'Security Team',
                             links: [
                                 { href: 'https://example.test', text: 'Open example' },
-                                { href: 'https://example.test/doc', text: 'Doc', title: 'Reference' },
+                                {
+                                    href: 'https://example.test/doc',
+                                    text: 'Doc',
+                                    title: 'Reference',
+                                },
                             ],
                         },
                         visibleMessageCount: 3,
@@ -380,7 +473,7 @@ describe('phone and panel coverage', () => {
                     onRevealNext,
                     onBack,
                     showReplyBox: true,
-                })
+                }),
             );
         });
         await act(async () => {
@@ -391,14 +484,22 @@ describe('phone and panel coverage', () => {
             smsRenderer!.root.findByProps({ 'aria-label': 'Open: invoice.pdf' }).props.onClick();
             smsRenderer!.root.findByProps({ 'aria-label': 'Link: Open example' }).props.onClick();
             smsRenderer!.root.findByProps({ 'aria-label': 'Link: Doc' }).props.onClick();
-            smsRenderer!.root.findByProps({ 'aria-label': 'Reply to message' }).props.onChange({ target: { value: ' Reply ' } });
+            smsRenderer!.root
+                .findByProps({ 'aria-label': 'Reply to message' })
+                .props.onChange({ target: { value: ' Reply ' } });
         });
         await act(async () => {
             smsRenderer!.root.findByType('form').props.onSubmit({ preventDefault() {} });
         });
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'click_link', href: '/invoice.pdf' }));
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'click_link', href: 'https://example.test' }));
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'send_reply', replyText: 'Reply' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'click_link', href: '/invoice.pdf' }),
+        );
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'click_link', href: 'https://example.test' }),
+        );
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'send_reply', replyText: 'Reply' }),
+        );
         expect(onBack).not.toHaveBeenCalled();
 
         await act(async () => {
@@ -412,7 +513,7 @@ describe('phone and panel coverage', () => {
                     onAction,
                     onRevealNext,
                     showReplyBox: false,
-                })
+                }),
             );
         });
         expect(flattenText(smsRenderer!.toJSON())).toContain('No messages in this thread.');
@@ -441,7 +542,7 @@ describe('phone and panel coverage', () => {
                     visibleCount: 0,
                     onAction,
                     onRevealNext,
-                })
+                }),
             );
         });
 
@@ -454,14 +555,22 @@ describe('phone and panel coverage', () => {
         expect(onRevealNext).toHaveBeenCalledTimes(1);
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Reply to message' }).props.onChange({ target: { value: ' Enter send ' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Reply to message' })
+                .props.onChange({ target: { value: ' Enter send ' } });
         });
         await act(async () => {
             renderer!.root.findByType('form').props.onSubmit({ preventDefault() {} });
-            renderer!.root.findByProps({ 'aria-label': 'Link: https://example.test/fallback' }).props.onClick();
+            renderer!.root
+                .findByProps({ 'aria-label': 'Link: https://example.test/fallback' })
+                .props.onClick();
         });
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'send_reply', replyText: 'Enter send' }));
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'click_link', href: 'https://example.test/fallback' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'send_reply', replyText: 'Enter send' }),
+        );
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'click_link', href: 'https://example.test/fallback' }),
+        );
     });
 
     it('covers author preview formatting branches and developer tools panel sections', async () => {
@@ -480,21 +589,26 @@ describe('phone and panel coverage', () => {
                         directoryCount: 1,
                         keyActions: [
                             React.createElement('strong', { key: 'primary-action' }, 'Review'),
-                            ['nested', React.createElement('em', { key: 'secondary-action' }, 'Open')],
+                            [
+                                'nested',
+                                React.createElement('em', { key: 'secondary-action' }, 'Open'),
+                            ],
                         ],
                         validationOk: true,
                         lintWarningCount: 0,
                         unreachableCount: 2,
                         browserHasCycle: true,
                     },
-                })
+                }),
             );
         });
         await act(async () => {
             reportRenderer!.root.findByProps({ children: 'Template summary' }).props.onClick();
         });
         const reportText = flattenText(reportRenderer!.toJSON());
-        expect(reportText).toContain('email/detail · 2 apps · 2 contacts · 1 inbox · 1 SMS · 2 pages · 1 directory');
+        expect(reportText).toContain(
+            'email/detail · 2 apps · 2 contacts · 1 inbox · 1 SMS · 2 pages · 1 directory',
+        );
         expect(reportText).toContain('Unreachable items');
         expect(reportText).toContain('Browser has navigation cycle.');
 
@@ -502,7 +616,16 @@ describe('phone and panel coverage', () => {
         await act(async () => {
             panelRenderer = TestRenderer.create(
                 React.createElement(SimulatorDeveloperToolsPanel, {
-                    developerTools: { enabled: true, defaultExpanded: true, sections: { summary: true, reachability: true, timeline: true, runtimeIssues: true } } as never,
+                    developerTools: {
+                        enabled: true,
+                        defaultExpanded: true,
+                        sections: {
+                            summary: true,
+                            reachability: true,
+                            timeline: true,
+                            runtimeIssues: true,
+                        },
+                    } as never,
                     payload: {
                         templateId: null,
                         templateKey: 'panel',
@@ -532,7 +655,14 @@ describe('phone and panel coverage', () => {
                         sms: null,
                         browser: {
                             defaultPageId: 'landing',
-                            pages: [{ id: 'landing', url: 'https://example.test', title: 'Landing', layout: 'landing' }],
+                            pages: [
+                                {
+                                    id: 'landing',
+                                    url: 'https://example.test',
+                                    title: 'Landing',
+                                    layout: 'landing',
+                                },
+                            ],
                         },
                         phone: null,
                         contacts: [{ id: 'c1', displayName: 'Helpdesk', number: '+15550000001' }],
@@ -540,11 +670,18 @@ describe('phone and panel coverage', () => {
                         home: null,
                     },
                     timelineEntries: [
-                        { kind: 'session_started', timestamp: '2026-01-01T10:00:00Z', app: 'email', screen: 'list' },
+                        {
+                            kind: 'session_started',
+                            timestamp: '2026-01-01T10:00:00Z',
+                            app: 'email',
+                            screen: 'list',
+                        },
                     ] as never,
-                    runtimeIssues: [{ severity: 'warning', message: 'Potential issue', node_id: 'start' }] as never,
+                    runtimeIssues: [
+                        { severity: 'warning', message: 'Potential issue', node_id: 'start' },
+                    ] as never,
                     className: 'developer-tools',
-                })
+                }),
             );
         });
         const panelText = flattenText(panelRenderer!.toJSON());
@@ -557,7 +694,7 @@ describe('phone and panel coverage', () => {
             panelRenderer!.update(
                 React.createElement(SimulatorDeveloperToolsPanel, {
                     developerTools: { enabled: false } as never,
-                })
+                }),
             );
         });
         expect(panelRenderer!.toJSON()).toBeNull();
@@ -572,15 +709,35 @@ describe('phone and panel coverage', () => {
             renderer = TestRenderer.create(
                 React.createElement(PhoneHistoryList, {
                     entries: [
-                        { id: 'v1', number: '+15550000001', label: 'Voicemail alert', timestamp: 'Monday' },
-                        { id: 'o1', number: '+15550000002', label: 'Out to support', timestamp: 'Tuesday' },
-                        { id: 'u1', number: '+15550000003', label: 'Something else', timestamp: 'Wednesday' },
+                        {
+                            id: 'v1',
+                            number: '+15550000001',
+                            label: 'Voicemail alert',
+                            timestamp: 'Monday',
+                        },
+                        {
+                            id: 'o1',
+                            number: '+15550000002',
+                            label: 'Out to support',
+                            timestamp: 'Tuesday',
+                        },
+                        {
+                            id: 'u1',
+                            number: '+15550000003',
+                            label: 'Something else',
+                            timestamp: 'Wednesday',
+                        },
                     ],
-                    incomingCallContent: { transcript: 'Incoming', choices: [], caller_name: 'Caller', phone_number: '+15550000009' },
+                    incomingCallContent: {
+                        transcript: 'Incoming',
+                        choices: [],
+                        caller_name: 'Caller',
+                        phone_number: '+15550000009',
+                    },
                     hasVoicemail: true,
                     onSelectIncoming,
                     onSelectVoicemail,
-                })
+                }),
             );
         });
 
@@ -589,7 +746,9 @@ describe('phone and panel coverage', () => {
         expect(flattenText(renderer!.toJSON())).toContain('Incoming');
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Search calls' }).props.onChange({ target: { value: 'Tuesday' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search calls' })
+                .props.onChange({ target: { value: 'Tuesday' } });
         });
         const filteredText = flattenText(renderer!.toJSON());
         expect(filteredText).toContain('Tuesday');
@@ -607,7 +766,12 @@ describe('phone and panel coverage', () => {
                 React.createElement(PhoneHistoryList, {
                     entries: [
                         { id: 'custom-1', kind: 'mystery' as never, timestamp: 'Soon' },
-                        { id: 'voice-1', number: '+15550000003', kind: 'voicemail', timestamp: 'Later' },
+                        {
+                            id: 'voice-1',
+                            number: '+15550000003',
+                            kind: 'voicemail',
+                            timestamp: 'Later',
+                        },
                     ],
                     incomingCallContent: {
                         transcript: 'Incoming',
@@ -618,7 +782,7 @@ describe('phone and panel coverage', () => {
                     hasVoicemail: true,
                     onSelectIncoming,
                     onSelectVoicemail,
-                })
+                }),
             );
         });
 
@@ -626,13 +790,17 @@ describe('phone and panel coverage', () => {
         expect(flattenText(renderer!.toJSON())).toContain('Call');
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Search calls' }).props.onChange({ target: { value: '0077' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search calls' })
+                .props.onChange({ target: { value: '0077' } });
         });
         expect(flattenText(renderer!.toJSON())).toContain('+15550000077');
         expect(flattenText(renderer!.toJSON())).not.toContain('Later');
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Search calls' }).props.onChange({ target: { value: 'voice' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search calls' })
+                .props.onChange({ target: { value: 'voice' } });
         });
         expect(flattenText(renderer!.toJSON())).toContain('Voicemail');
 
@@ -656,33 +824,44 @@ describe('phone and panel coverage', () => {
                         { id: 'call-1', number: '+15550000001', timestamp: 'Tomorrow' },
                         { id: 'call-2', kind: 'voicemail', name: 'Mailbox' },
                     ],
-                    incomingCallContent: { transcript: 'Incoming', choices: [], phone_number: '+15550009999' },
+                    incomingCallContent: {
+                        transcript: 'Incoming',
+                        choices: [],
+                        phone_number: '+15550009999',
+                    },
                     hasVoicemail: false,
                     onSelectIncoming,
                     onSelectVoicemail,
                     onSelectEntry,
-                })
+                }),
             );
         });
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Search calls' }).props.onChange({ target: { value: 'Tomorrow' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search calls' })
+                .props.onChange({ target: { value: 'Tomorrow' } });
         });
         expect(flattenText(renderer!.toJSON())).toContain('Tomorrow');
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Search calls' }).props.onChange({ target: { value: '9999' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search calls' })
+                .props.onChange({ target: { value: '9999' } });
         });
         expect(flattenText(renderer!.toJSON())).toContain('+15550009999');
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Search calls' }).props.onChange({ target: { value: 'Mailbox' } });
+            renderer!.root
+                .findByProps({ 'aria-label': 'Search calls' })
+                .props.onChange({ target: { value: 'Mailbox' } });
         });
         expect(flattenText(renderer!.toJSON())).toContain('Voicemail');
 
         await act(async () => {
             const clickables = renderer!.root.findAll(
-                (node) => typeof node.props.onClick === 'function' && node.props['aria-label'] == null
+                (node) =>
+                    typeof node.props.onClick === 'function' && node.props['aria-label'] == null,
             );
             clickables.at(-1)!.props.onClick();
         });
@@ -708,7 +887,7 @@ describe('phone and panel coverage', () => {
                     screen: 'voicemail',
                     onNavigate,
                     onAction: vi.fn(),
-                })
+                }),
             );
         });
 
@@ -735,7 +914,7 @@ describe('phone and panel coverage', () => {
                     visibleCount: 1,
                     onAction,
                     onRevealNext: vi.fn(),
-                })
+                }),
             );
         });
 
@@ -746,7 +925,7 @@ describe('phone and panel coverage', () => {
             renderer!.root.findByProps({ 'aria-label': 'Link: undefined' }).props.onClick();
         });
         expect(onAction).toHaveBeenCalledWith(
-            expect.objectContaining({ type: 'click_link', href: undefined, linkIndex: 0 })
+            expect.objectContaining({ type: 'click_link', href: undefined, linkIndex: 0 }),
         );
     });
 });

@@ -47,6 +47,12 @@ export const SimulatorActions = {
         type: 'download_click',
         downloadTarget,
     }),
-    switchChannel: (channel: SimulatorChannel): SimulatorAction => ({ type: 'switch_channel', channel }),
-    viewDirectoryEntry: (entryId: string): SimulatorAction => ({ type: 'view_directory_entry', entryId }),
+    switchChannel: (channel: SimulatorChannel): SimulatorAction => ({
+        type: 'switch_channel',
+        channel,
+    }),
+    viewDirectoryEntry: (entryId: string): SimulatorAction => ({
+        type: 'view_directory_entry',
+        entryId,
+    }),
 } as const;

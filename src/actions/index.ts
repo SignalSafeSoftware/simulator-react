@@ -8,4 +8,7 @@ export {
     isSimulatorActionType,
     validateSimulatorAction,
 } from '../utils/simulatorActionTaxonomy.js';
-export type { SimulatorActionType, SimulatorActionCategory } from '../utils/simulatorActionTaxonomy.js';
+export type {
+    SimulatorActionType,
+    SimulatorActionCategory,
+} from '../utils/simulatorActionTaxonomy.js';

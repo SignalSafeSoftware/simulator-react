@@ -6,7 +6,9 @@ import type { SimulatorSessionState } from '../types/session.js';
 
 export type SimulatorVerificationContext = { name?: string; number?: string } | null;
 
-function getMessagesVerificationContext(payload: SimulatorSessionState['payload']): SimulatorVerificationContext {
+function getMessagesVerificationContext(
+    payload: SimulatorSessionState['payload'],
+): SimulatorVerificationContext {
     const thread = payload.sms?.thread;
     if (thread == null) {
         return null;
@@ -17,7 +19,9 @@ function getMessagesVerificationContext(payload: SimulatorSessionState['payload'
     return null;
 }
 
-function getPhoneVerificationContext(payload: SimulatorSessionState['payload']): SimulatorVerificationContext {
+function getPhoneVerificationContext(
+    payload: SimulatorSessionState['payload'],
+): SimulatorVerificationContext {
     const content = payload.phone?.content;
     if (content == null) {
         return null;
@@ -28,7 +32,9 @@ function getPhoneVerificationContext(payload: SimulatorSessionState['payload']):
     };
 }
 
-function getEmailVerificationContext(payload: SimulatorSessionState['payload']): SimulatorVerificationContext {
+function getEmailVerificationContext(
+    payload: SimulatorSessionState['payload'],
+): SimulatorVerificationContext {
     if (payload.email?.selectedMessageId && payload.email.inbox?.length) {
         const selectedId = payload.email.selectedMessageId;
         const row = payload.email.inbox.find((item) => item.id === selectedId);
@@ -47,7 +53,7 @@ function getEmailVerificationContext(payload: SimulatorSessionState['payload']):
 
 export function getVerificationContextForApp(
     activeApp: SimulatorSessionState['view']['activeApp'],
-    payload: SimulatorSessionState['payload']
+    payload: SimulatorSessionState['payload'],
 ): SimulatorVerificationContext {
     switch (activeApp) {
         case 'messages':

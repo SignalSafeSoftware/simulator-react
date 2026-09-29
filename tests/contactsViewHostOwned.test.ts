@@ -2,7 +2,10 @@ import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import ContactsView from '../src/views/ContactsView';
-import { SIM_PHONE_CONTACT_DETAIL, SIM_PHONE_CONTACT_ROW } from '../src/ui/semanticSimulatorClasses';
+import {
+    SIM_PHONE_CONTACT_DETAIL,
+    SIM_PHONE_CONTACT_ROW,
+} from '../src/ui/semanticSimulatorClasses';
 import { TestRenderer, act } from './reactTestRenderer';
 
 const CONTACTS = [
@@ -15,9 +18,13 @@ const PHONE_NAV = {
     onPhoneNavSelect: vi.fn(),
 };
 
-function findWithClass(root: TestRenderer.ReactTestInstance, className: string): TestRenderer.ReactTestInstance | null {
+function findWithClass(
+    root: TestRenderer.ReactTestInstance,
+    className: string,
+): TestRenderer.ReactTestInstance | null {
     const nodes = root.findAll(
-        (node) => typeof node.props.className === 'string' && node.props.className.includes(className),
+        (node) =>
+            typeof node.props.className === 'string' && node.props.className.includes(className),
         { deep: true },
     );
     return nodes[0] ?? null;

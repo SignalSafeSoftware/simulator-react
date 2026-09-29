@@ -37,6 +37,9 @@ export interface EmailMessageDetailProps {
     hideActions?: boolean;
     folderLabel?: string;
     onBack?: () => void;
+    /** Host-owned effects; omitted capabilities remain disabled. */
+    onForward?: () => void;
+    onDispose?: () => void;
     /** When set, Back returns to the parent folder. */
     onNavigate?: (screen: EmailScreenId) => void;
 }
@@ -59,6 +62,8 @@ export default function EmailMessageDetail({
     message,
     onAction,
     onBack,
+    onForward,
+    onDispose,
     hideActions = false,
     folderLabel: suppliedFolderLabel,
 }: Readonly<EmailMessageDetailProps>) {
@@ -273,7 +278,9 @@ export default function EmailMessageDetail({
                     <SimulatorButton
                         tone="secondary"
                         className={simLayout.blockButton}
-                        onClick={onBack}
+                        onClick={onForward}
+                        disabled={!onForward}
+                        title={!onForward ? 'Forward is unavailable for this email.' : undefined}
                         aria-label={screenLocale.t('screen.emailMessageDetail.forward')}
                     >
                         {screenLocale.t('screen.emailMessageDetail.forward')}
@@ -281,7 +288,9 @@ export default function EmailMessageDetail({
                     <SimulatorButton
                         tone="secondary"
                         className={simLayout.blockButton}
-                        onClick={onBack}
+                        onClick={onDispose}
+                        disabled={!onDispose}
+                        title={!onDispose ? 'Delete is unavailable for this email.' : undefined}
                         aria-label={screenLocale.t('screen.emailMessageDetail.dispose')}
                     >
                         {screenLocale.t('screen.emailMessageDetail.dispose')}

@@ -196,7 +196,9 @@ function HomeSettingsScreen({
 
     let emptySettingsMessage: string | null = null;
     if (settingsSections.length === 0) {
-        emptySettingsMessage = screenLocale.t('screen.homeSimulatorView.no.settings.are.configured.for.this.scenario');
+        emptySettingsMessage = screenLocale.t(
+            'screen.homeSimulatorView.no.settings.are.configured.for.this.scenario',
+        );
     } else if (filteredSections.length === 0) {
         emptySettingsMessage = screenLocale.t('screen.homeSimulatorView.no.matching.settings');
     }

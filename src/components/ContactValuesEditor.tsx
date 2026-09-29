@@ -28,8 +28,16 @@ export function ContactValuesEditor({
     const contactPhoneDisplay = usePhoneNumberFormatter();
     const { t } = useSimulatorLocale();
     const [focusedValue, setFocusedValue] = useState<string | null>(null);
-    const titleKeys = { phone: 'contact.phones', email: 'contact.emails', address: 'contact.addresses' } as const;
-    const singularKeys = { phone: 'contact.phone', email: 'contact.email', address: 'contact.address' } as const;
+    const titleKeys = {
+        phone: 'contact.phones',
+        email: 'contact.emails',
+        address: 'contact.addresses',
+    } as const;
+    const singularKeys = {
+        phone: 'contact.phone',
+        email: 'contact.email',
+        address: 'contact.address',
+    } as const;
     const title = t(titleKeys[kind]);
     const singular = t(singularKeys[kind]);
     const labels =

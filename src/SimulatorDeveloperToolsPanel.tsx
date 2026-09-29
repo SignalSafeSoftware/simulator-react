@@ -9,7 +9,9 @@ import {
 } from './developerTools.js';
 import SimulatorAuthorPreviewReport from './components/SimulatorAuthorPreviewReport.js';
 import SimulatorReachabilityReport from './components/SimulatorReachabilityReport.js';
-import SimulatorSessionTimeline, { type TimelineEntry } from './components/SimulatorSessionTimeline.js';
+import SimulatorSessionTimeline, {
+    type TimelineEntry,
+} from './components/SimulatorSessionTimeline.js';
 import SimulatorRuntimeIssuesReport from './components/SimulatorRuntimeIssuesReport.js';
 
 export interface SimulatorDeveloperToolsPanelProps {
@@ -30,12 +32,16 @@ export default function SimulatorDeveloperToolsPanel({
 }: Readonly<SimulatorDeveloperToolsPanelProps>) {
     const resolved = resolveSimulatorDeveloperTools(developerTools);
     const previewReport = useMemo(
-        () => (resolved.sections.summary && payload != null ? buildSimulatorPreviewReport(payload) : null),
-        [resolved.sections.summary, payload]
+        () =>
+            resolved.sections.summary && payload != null
+                ? buildSimulatorPreviewReport(payload)
+                : null,
+        [resolved.sections.summary, payload],
     );
     const reachabilityReport = useMemo(
-        () => (resolved.sections.reachability && payload != null ? analyzeReachability(payload) : null),
-        [resolved.sections.reachability, payload]
+        () =>
+            resolved.sections.reachability && payload != null ? analyzeReachability(payload) : null,
+        [resolved.sections.reachability, payload],
     );
 
     if (!resolved.enabled) {

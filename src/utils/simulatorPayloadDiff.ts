@@ -44,10 +44,7 @@ function entryPointLabel(entryPoint: { app: string; screen: string } | null): st
     return entryPoint ? `${entryPoint.app}/${entryPoint.screen}` : '(none)';
 }
 
-function idsFromNamedSection(
-    payload: Record<string, unknown>,
-    section: string
-): string[] {
+function idsFromNamedSection(payload: Record<string, unknown>, section: string): string[] {
     return idsFromArray(payload[section]);
 }
 
@@ -76,7 +73,7 @@ function formatUnknownValue(value: unknown): string {
 function addEntryPointDiff(
     out: SimulatorDiffItem[],
     left: Record<string, unknown>,
-    right: Record<string, unknown>
+    right: Record<string, unknown>,
 ): void {
     const leftLabel = entryPointLabel(getEntryPoint(left));
     const rightLabel = entryPointLabel(getEntryPoint(right));
@@ -90,20 +87,27 @@ function addEntryPointDiff(
 function addDeviceDiff(
     out: SimulatorDiffItem[],
     left: Record<string, unknown>,
-    right: Record<string, unknown>
+    right: Record<string, unknown>,
 ): void {
     const leftDevice = isRecord(left.device) ? left.device : {};
     const rightDevice = isRecord(right.device) ? right.device : {};
     const leftMenu = idsFromArray(leftDevice.main_menu_items);
     const rightMenu = idsFromArray(rightDevice.main_menu_items);
-    const leftMenuKey = JSON.stringify([...leftMenu].sort((leftId, rightId) => leftId.localeCompare(rightId)));
-    const rightMenuKey = JSON.stringify([...rightMenu].sort((leftId, rightId) => leftId.localeCompare(rightId)));
+    const leftMenuKey = JSON.stringify(
+        [...leftMenu].sort((leftId, rightId) => leftId.localeCompare(rightId)),
+    );
+    const rightMenuKey = JSON.stringify(
+        [...rightMenu].sort((leftId, rightId) => leftId.localeCompare(rightId)),
+    );
 
     if (leftMenu.length !== rightMenu.length || leftMenuKey !== rightMenuKey) {
         out.push({
             section: 'device',
             change: `Device menu: ${leftMenu.length} → ${rightMenu.length} items`,
-            detail: leftMenu.length === rightMenu.length ? englishLocale.t("copy.simulatorPayloadDiff.order.or.ids.changed") : undefined,
+            detail:
+                leftMenu.length === rightMenu.length
+                    ? englishLocale.t('copy.simulatorPayloadDiff.order.or.ids.changed')
+                    : undefined,
         });
     }
 
@@ -119,7 +123,7 @@ function addDeviceDiff(
     apps.forEach((app) => {
         if (leftDefaults[app] !== rightDefaults[app]) {
             defaultChanges.push(
-                `${app}: ${formatUnknownValue(leftDefaults[app])} → ${formatUnknownValue(rightDefaults[app])}`
+                `${app}: ${formatUnknownValue(leftDefaults[app])} → ${formatUnknownValue(rightDefaults[app])}`,
             );
         }
     });
@@ -127,7 +131,7 @@ function addDeviceDiff(
     if (defaultChanges.length > 0) {
         out.push({
             section: 'device',
-            change: englishLocale.t("copy.simulatorPayloadDiff.device.secondary.defaults.changed"),
+            change: englishLocale.t('copy.simulatorPayloadDiff.device.secondary.defaults.changed'),
             detail: defaultChanges.join('; '),
         });
     }
@@ -139,7 +143,7 @@ function addCollectionDiff(
     label: string,
     leftIds: string[],
     rightIds: string[],
-    detailBuilder: (diff: { added: string[]; removed: string[] }) => string | undefined
+    detailBuilder: (diff: { added: string[]; removed: string[] }) => string | undefined,
 ): void {
     const diff = setDiff(leftIds, rightIds);
     if (diff.added.length === 0 && diff.removed.length === 0) return;
@@ -153,7 +157,7 @@ function addCollectionDiff(
 function addPhoneDiff(
     out: SimulatorDiffItem[],
     left: Record<string, unknown>,
-    right: Record<string, unknown>
+    right: Record<string, unknown>,
 ): void {
     const leftPhone = left.phone as Record<string, unknown> | undefined;
     const rightPhone = right.phone as Record<string, unknown> | undefined;
@@ -162,12 +166,18 @@ function addPhoneDiff(
     if (leftHasIncoming !== rightHasIncoming) {
         out.push({
             section: 'phone',
-            change: rightHasIncoming ? englishLocale.t("copy.simulatorPayloadDiff.phone.incoming.call.added") : englishLocale.t("copy.simulatorPayloadDiff.phone.incoming.call.removed"),
+            change: rightHasIncoming
+                ? englishLocale.t('copy.simulatorPayloadDiff.phone.incoming.call.added')
+                : englishLocale.t('copy.simulatorPayloadDiff.phone.incoming.call.removed'),
         });
     }
 
-    const leftHistoryLength = Array.isArray(leftPhone?.history) ? (leftPhone.history as unknown[]).length : 0;
-    const rightHistoryLength = Array.isArray(rightPhone?.history) ? (rightPhone.history as unknown[]).length : 0;
+    const leftHistoryLength = Array.isArray(leftPhone?.history)
+        ? (leftPhone.history as unknown[]).length
+        : 0;
+    const rightHistoryLength = Array.isArray(rightPhone?.history)
+        ? (rightPhone.history as unknown[]).length
+        : 0;
     if (leftHistoryLength !== rightHistoryLength) {
         out.push({
             section: 'phone',
@@ -179,28 +189,34 @@ function addPhoneDiff(
 function addEmailDiff(
     out: SimulatorDiffItem[],
     left: Record<string, unknown>,
-    right: Record<string, unknown>
+    right: Record<string, unknown>,
 ): void {
     const leftEmail = left.email as Record<string, unknown> | undefined;
     const rightEmail = right.email as Record<string, unknown> | undefined;
     const leftInbox = idsFromArray(leftEmail?.messages ?? []);
     const rightInbox = idsFromArray(rightEmail?.messages ?? []);
 
-    addCollectionDiff(out, 'email', englishLocale.t("copy.simulatorPayloadDiff.email.inbox"), leftInbox, rightInbox, (diff) => {
-        const details = [...diff.added.map((id) => `+${id}`), ...diff.removed.map((id) => `-${id}`)];
-        return details.slice(0, 8).join(', ') + (details.length > 8 ? '…' : '');
-    });
+    addCollectionDiff(
+        out,
+        'email',
+        englishLocale.t('copy.simulatorPayloadDiff.email.inbox'),
+        leftInbox,
+        rightInbox,
+        (diff) => {
+            const details = [
+                ...diff.added.map((id) => `+${id}`),
+                ...diff.removed.map((id) => `-${id}`),
+            ];
+            return details.slice(0, 8).join(', ') + (details.length > 8 ? '…' : '');
+        },
+    );
 
-    const leftDetailSubject = isRecord(leftEmail?.detail)
-        ? leftEmail.detail.subject
-        : undefined;
-    const rightDetailSubject = isRecord(rightEmail?.detail)
-        ? rightEmail.detail.subject
-        : undefined;
+    const leftDetailSubject = isRecord(leftEmail?.detail) ? leftEmail.detail.subject : undefined;
+    const rightDetailSubject = isRecord(rightEmail?.detail) ? rightEmail.detail.subject : undefined;
     if (String(leftDetailSubject) !== String(rightDetailSubject)) {
         out.push({
             section: 'email',
-            change: englishLocale.t("copy.simulatorPayloadDiff.email.detail.subject.changed"),
+            change: englishLocale.t('copy.simulatorPayloadDiff.email.detail.subject.changed'),
         });
     }
 }
@@ -208,12 +224,16 @@ function addEmailDiff(
 function addMessagesDiff(
     out: SimulatorDiffItem[],
     left: Record<string, unknown>,
-    right: Record<string, unknown>
+    right: Record<string, unknown>,
 ): void {
     const leftMessages = left.messages as Record<string, unknown> | undefined;
     const rightMessages = right.messages as Record<string, unknown> | undefined;
-    const leftThreads = Array.isArray(leftMessages?.threads) ? (leftMessages.threads as unknown[]).length : 0;
-    const rightThreads = Array.isArray(rightMessages?.threads) ? (rightMessages.threads as unknown[]).length : 0;
+    const leftThreads = Array.isArray(leftMessages?.threads)
+        ? (leftMessages.threads as unknown[]).length
+        : 0;
+    const rightThreads = Array.isArray(rightMessages?.threads)
+        ? (rightMessages.threads as unknown[]).length
+        : 0;
     if (leftThreads !== rightThreads) {
         out.push({
             section: 'messages',
@@ -244,26 +264,43 @@ function addMessagesDiff(
 function addInternetDiff(
     out: SimulatorDiffItem[],
     left: Record<string, unknown>,
-    right: Record<string, unknown>
+    right: Record<string, unknown>,
 ): void {
     const leftInternet = left.internet as Record<string, unknown> | undefined;
     const rightInternet = right.internet as Record<string, unknown> | undefined;
     const leftPages = idsFromArray(leftInternet?.pages ?? []);
     const rightPages = idsFromArray(rightInternet?.pages ?? []);
-    addCollectionDiff(out, 'internet', englishLocale.t("copy.simulatorPayloadDiff.browser.pages"), leftPages, rightPages, (diff) => {
-        const details = [...diff.added.map((id) => `+${id}`), ...diff.removed.map((id) => `-${id}`)].join(', ');
-        return details || undefined;
-    });
+    addCollectionDiff(
+        out,
+        'internet',
+        englishLocale.t('copy.simulatorPayloadDiff.browser.pages'),
+        leftPages,
+        rightPages,
+        (diff) => {
+            const details = [
+                ...diff.added.map((id) => `+${id}`),
+                ...diff.removed.map((id) => `-${id}`),
+            ].join(', ');
+            return details || undefined;
+        },
+    );
 
     if (out.length > 0) {
         const last = out.at(-1);
-        if (last?.section === 'internet' && last.change === `Browser pages: ${leftPages.length} → ${rightPages.length}`) {
+        if (
+            last?.section === 'internet' &&
+            last.change === `Browser pages: ${leftPages.length} → ${rightPages.length}`
+        ) {
             last.change = `Browser pages: ${leftPages.join(', ') || '(none)'} → ${rightPages.join(', ') || '(none)'}`;
         }
     }
 
-    const leftForms = Array.isArray(leftInternet?.forms) ? (leftInternet.forms as unknown[]).length : 0;
-    const rightForms = Array.isArray(rightInternet?.forms) ? (rightInternet.forms as unknown[]).length : 0;
+    const leftForms = Array.isArray(leftInternet?.forms)
+        ? (leftInternet.forms as unknown[]).length
+        : 0;
+    const rightForms = Array.isArray(rightInternet?.forms)
+        ? (rightInternet.forms as unknown[]).length
+        : 0;
     if (leftForms !== rightForms) {
         out.push({
             section: 'internet',
@@ -275,12 +312,16 @@ function addInternetDiff(
 function addHomeDiff(
     out: SimulatorDiffItem[],
     left: Record<string, unknown>,
-    right: Record<string, unknown>
+    right: Record<string, unknown>,
 ): void {
     const leftHome = left.home as Record<string, unknown> | undefined;
     const rightHome = right.home as Record<string, unknown> | undefined;
-    const leftWidgets = Array.isArray(leftHome?.widgets) ? (leftHome.widgets as unknown[]).length : 0;
-    const rightWidgets = Array.isArray(rightHome?.widgets) ? (rightHome.widgets as unknown[]).length : 0;
+    const leftWidgets = Array.isArray(leftHome?.widgets)
+        ? (leftHome.widgets as unknown[]).length
+        : 0;
+    const rightWidgets = Array.isArray(rightHome?.widgets)
+        ? (rightHome.widgets as unknown[]).length
+        : 0;
     const leftStoreApps =
         isRecord(leftHome?.store) && Array.isArray(leftHome.store.featured_apps)
             ? (leftHome.store.featured_apps as unknown[]).length
@@ -316,7 +357,7 @@ function addHomeDiff(
  */
 export function diffSimulatorPayloads(
     left: Record<string, unknown>,
-    right: Record<string, unknown>
+    right: Record<string, unknown>,
 ): SimulatorDiffItem[] {
     const out: SimulatorDiffItem[] = [];
     addEntryPointDiff(out, left, right);
@@ -334,11 +375,14 @@ export function diffSimulatorPayloads(
     const leftDirectory = idsFromNamedSection(left, 'directory');
     const rightDirectory = idsFromNamedSection(right, 'directory');
     addCollectionDiff(out, 'directory', 'Directory', leftDirectory, rightDirectory, (diff) =>
-        [...diff.added.map((id) => `+${id}`), ...diff.removed.map((id) => `-${id}`)].join(', ')
+        [...diff.added.map((id) => `+${id}`), ...diff.removed.map((id) => `-${id}`)].join(', '),
     );
     if (out.length > 0) {
         const last = out.at(-1);
-        if (last?.section === 'directory' && last.change === `Directory: ${leftDirectory.length} → ${rightDirectory.length}`) {
+        if (
+            last?.section === 'directory' &&
+            last.change === `Directory: ${leftDirectory.length} → ${rightDirectory.length}`
+        ) {
             last.change = `Directory: ${leftDirectory.length} → ${rightDirectory.length} entries`;
         }
     }

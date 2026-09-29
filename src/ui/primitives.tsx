@@ -133,7 +133,12 @@ export interface SimulatorCollapseProps {
     children: ReactNode;
 }
 
-export function SimulatorCollapse({ open, id, className, children }: Readonly<SimulatorCollapseProps>) {
+export function SimulatorCollapse({
+    open,
+    id,
+    className,
+    children,
+}: Readonly<SimulatorCollapseProps>) {
     if (!open) return null;
     return (
         <div id={id} className={className}>
@@ -154,7 +159,10 @@ export function SimulatorList({
     );
 }
 
-export interface SimulatorListItemProps extends Omit<React.LiHTMLAttributes<HTMLLIElement>, 'onClick'> {
+export interface SimulatorListItemProps extends Omit<
+    React.LiHTMLAttributes<HTMLLIElement>,
+    'onClick'
+> {
     action?: boolean;
     active?: boolean;
     onClick?: MouseEventHandler<HTMLButtonElement>;

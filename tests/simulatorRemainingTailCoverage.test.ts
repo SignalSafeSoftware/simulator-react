@@ -46,7 +46,9 @@ async function importFixNodeScript() {
     return import('../scripts/fix-node-esm-relative-imports.ts');
 }
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) {
         return '';
     }
@@ -77,7 +79,10 @@ describe('remaining tail coverage', () => {
         mkdirSync(indexDir, { recursive: true });
         writeFileSync(path.join(indexDir, 'index.js'), 'export const value = 1;\n');
         writeFileSync(path.join(dir, 'helper.js'), 'export const helper = 1;\n');
-        writeFileSync(path.join(dir, 'entry.js'), 'import { helper } from "./helper";\nimport "./utils";\nconsole.log(helper);\n');
+        writeFileSync(
+            path.join(dir, 'entry.js'),
+            'import { helper } from "./helper";\nimport "./utils";\nconsole.log(helper);\n',
+        );
         writeFileSync(path.join(nestedDir, 'types.d.ts'), 'export * from "../helper";\n');
 
         const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -92,7 +97,9 @@ describe('remaining tail coverage', () => {
         expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('updated 2 file(s)'));
 
         process.argv = ['node', 'fix-node-esm-relative-imports.ts'];
-        await expect(importFixNodeScript()).rejects.toThrow('Usage: tsx scripts/fix-node-esm-relative-imports.ts <dist-dir>');
+        await expect(importFixNodeScript()).rejects.toThrow(
+            'Usage: tsx scripts/fix-node-esm-relative-imports.ts <dist-dir>',
+        );
 
         process.argv = ['node', 'fix-node-esm-relative-imports.ts', 'does-not-exist'];
         await expect(importFixNodeScript()).rejects.toThrow('Target dist directory does not exist');
@@ -177,8 +184,8 @@ describe('remaining tail coverage', () => {
             handleSimulatorKeyboard(
                 altDown,
                 { onBack, onSwitchApp, onFocusSearch, onListNav },
-                { activeApp: 'email', activeScreen: 'list' }
-            )
+                { activeApp: 'email', activeScreen: 'list' },
+            ),
         ).toEqual({ handled: true });
         expect(onListNav).toHaveBeenCalledWith('next');
 
@@ -186,17 +193,19 @@ describe('remaining tail coverage', () => {
             handleSimulatorKeyboard(
                 altUp,
                 { onBack, onSwitchApp, onFocusSearch },
-                { activeApp: 'email', activeScreen: 'list' }
-            )
+                { activeApp: 'email', activeScreen: 'list' },
+            ),
         ).toEqual({ handled: true });
-        expect(dispatchEvent).toHaveBeenCalledWith(expect.objectContaining({ type: SIMULATOR_LIST_NAV_EVENT }));
+        expect(dispatchEvent).toHaveBeenCalledWith(
+            expect.objectContaining({ type: SIMULATOR_LIST_NAV_EVENT }),
+        );
 
         expect(
             handleSimulatorKeyboard(
                 blocked,
                 { onBack, onSwitchApp, onFocusSearch },
-                { activeApp: 'email', activeScreen: 'list' }
-            )
+                { activeApp: 'email', activeScreen: 'list' },
+            ),
         ).toEqual({ handled: false });
 
         const escapeEvent = {
@@ -211,8 +220,8 @@ describe('remaining tail coverage', () => {
             handleSimulatorKeyboard(
                 escapeEvent,
                 { onBack, onSwitchApp, onFocusSearch },
-                { activeApp: 'email', activeScreen: 'list' }
-            )
+                { activeApp: 'email', activeScreen: 'list' },
+            ),
         ).toEqual({ handled: true });
         expect(onBack).toHaveBeenCalledTimes(1);
 
@@ -228,8 +237,8 @@ describe('remaining tail coverage', () => {
             handleSimulatorKeyboard(
                 switchEvent,
                 { onBack, onSwitchApp, onFocusSearch },
-                { activeApp: 'email', activeScreen: 'list' }
-            )
+                { activeApp: 'email', activeScreen: 'list' },
+            ),
         ).toEqual({ handled: true });
         expect(onSwitchApp).toHaveBeenCalledWith('messages');
 
@@ -245,8 +254,8 @@ describe('remaining tail coverage', () => {
             handleSimulatorKeyboard(
                 searchEvent,
                 { onBack, onSwitchApp, onFocusSearch },
-                { activeApp: 'phone', activeScreen: 'contacts' }
-            )
+                { activeApp: 'phone', activeScreen: 'contacts' },
+            ),
         ).toEqual({ handled: true });
         expect(onFocusSearch).toHaveBeenCalledTimes(1);
 
@@ -262,8 +271,8 @@ describe('remaining tail coverage', () => {
             handleSimulatorKeyboard(
                 helpEvent,
                 { onBack, onSwitchApp, onFocusSearch },
-                { activeApp: 'email', activeScreen: 'list' }
-            )
+                { activeApp: 'email', activeScreen: 'list' },
+            ),
         ).toEqual({ handled: true, showHelp: true });
 
         focusSimulatorSearch();
@@ -283,8 +292,8 @@ describe('remaining tail coverage', () => {
                 React.createElement(
                     SimulatorErrorBoundary,
                     { fallbackTitle: 'Custom error', onRetry, showDiagnostics: true },
-                    React.createElement(Boom)
-                )
+                    React.createElement(Boom),
+                ),
             );
         });
 
@@ -307,21 +316,23 @@ describe('remaining tail coverage', () => {
                         { code: 'one', message: 'First warning', path: 'entry_point' },
                         { code: 'two', message: 'Second warning' },
                     ],
-                })
+                }),
             );
         });
         expect(flattenText(bannerRenderer!.toJSON())).toContain('Template suggestions (2)');
         await act(async () => {
             bannerRenderer!.root.findByType('button').props.onClick();
         });
-        expect(bannerRenderer!.root.findByProps({ 'data-testid': 'simulator-lint-banner' })).toBeTruthy();
+        expect(
+            bannerRenderer!.root.findByProps({ 'data-testid': 'simulator-lint-banner' }),
+        ).toBeTruthy();
 
         let emptyBanner: TestRenderer.ReactTestRenderer | null = null;
         await act(async () => {
             emptyBanner = TestRenderer.create(
                 React.createElement(SimulatorLintBanner, {
                     warnings: [],
-                })
+                }),
             );
         });
         expect(emptyBanner!.toJSON()).toBeNull();
@@ -334,10 +345,15 @@ describe('remaining tail coverage', () => {
                     { className: 'extra' },
                     React.createElement(
                         SimulatorListItem,
-                        { onClick: vi.fn(), active: true, variant: 'compact', className: 'row-extra' },
-                        React.createElement(SimulatorListUnreadDot)
-                    )
-                )
+                        {
+                            onClick: vi.fn(),
+                            active: true,
+                            variant: 'compact',
+                            className: 'row-extra',
+                        },
+                        React.createElement(SimulatorListUnreadDot),
+                    ),
+                ),
             );
         });
         expect(listRenderer!.root.findByType('ul').props.className).toContain('extra');
@@ -346,11 +362,15 @@ describe('remaining tail coverage', () => {
     });
 
     it('covers simulator action taxonomy helpers and remaining adapter branches', () => {
-        expect(getSimulatorActionCategory('open_store')).toBe(SIMULATOR_ACTION_CATEGORY.HOME_NAVIGATION);
+        expect(getSimulatorActionCategory('open_store')).toBe(
+            SIMULATOR_ACTION_CATEGORY.HOME_NAVIGATION,
+        );
         expect(isSimulatorActionType('open_email')).toBe(true);
         expect(isSimulatorActionType('not-real')).toBe(false);
         expect(validateSimulatorAction({ type: 7 })).toBe(false);
-        expect(validateSimulatorAction({ type: 'navigate_screen', app: 'email', screen: 'list' })).toBe(true);
+        expect(
+            validateSimulatorAction({ type: 'navigate_screen', app: 'email', screen: 'list' }),
+        ).toBe(true);
         expect(validateSimulatorAction({ type: 'open_app', app: 'internet' })).toBe(true);
         expect(validateSimulatorAction({ type: 'open_contact' })).toBe(false);
         expect(validateSimulatorAction({ type: 'open_thread', threadId: 't1' })).toBe(true);
@@ -371,7 +391,7 @@ describe('remaining tail coverage', () => {
             mapDevice({
                 main_menu_items: [{ id: 'email' }, { id: 'home', label: 'Home', app: 'home' }],
                 secondary_defaults: { email: 'list' },
-            } as never)
+            } as never),
         ).toEqual({
             mainMenuItems: [
                 { id: 'email', label: 'email', app: undefined },
@@ -385,17 +405,33 @@ describe('remaining tail coverage', () => {
                 null,
                 { display_name: 'Ada Lovelace', number: '555-0100', email: 'ada@example.test' },
                 { id: 'c2', display_name: 'Grace Hopper' },
-            ] as never)
+            ] as never),
         ).toEqual([
-            { id: 'c-0', displayName: 'Ada Lovelace', number: '555-0100', email: 'ada@example.test' },
+            {
+                id: 'c-0',
+                displayName: 'Ada Lovelace',
+                number: '555-0100',
+                email: 'ada@example.test',
+            },
             { id: 'c2', displayName: 'Grace Hopper', number: undefined, email: undefined },
         ]);
         expect(mapContacts(null as never)).toEqual([]);
 
         const mappedEmail = mapEmail({
             messages: [
-                { id: 'm1', subject: 'Inbox', from: 'inbox@example.test', folder_id: 'INBOX', unread: true },
-                { id: 'm2', subject: 'Outbox', from_addr: 'outbox@example.test', folder_id: 'OUTBOX' },
+                {
+                    id: 'm1',
+                    subject: 'Inbox',
+                    from: 'inbox@example.test',
+                    folder_id: 'INBOX',
+                    unread: true,
+                },
+                {
+                    id: 'm2',
+                    subject: 'Outbox',
+                    from_addr: 'outbox@example.test',
+                    folder_id: 'OUTBOX',
+                },
                 { id: 'm3', subject: 'Trash', from: 'trash@example.test', folder_id: 'TRASH' },
             ],
             detail: {
@@ -409,7 +445,10 @@ describe('remaining tail coverage', () => {
                 unread: true,
                 reply_to: 'reply@example.test',
                 return_path: 'return@example.test',
-                links: [{ href: 'https://example.test', text: 'Open', title: 'Title' }, { href: '', text: '' }],
+                links: [
+                    { href: 'https://example.test', text: 'Open', title: 'Title' },
+                    { href: '', text: '' },
+                ],
                 attachment_name: 'invoice.pdf',
                 attachment_type: 'pdf',
                 attachment_behavior: 'macro_prompt',
@@ -430,7 +469,7 @@ describe('remaining tail coverage', () => {
                     links: [{ href: '', text: '' }],
                     attachment_behavior: 'invalid',
                 },
-            } as never)
+            } as never),
         ).toEqual({
             inbox: [
                 {
@@ -464,24 +503,39 @@ describe('remaining tail coverage', () => {
             selectedMessageId: null,
         });
 
-        expect(mapMessages({ thread_detail: null } as never)).toBeNull();
+        expect(mapMessages({ thread_detail: null } as never)?.thread.messages).toEqual([]);
         const mappedMessages = mapMessages({
             thread_detail: {
-                messages: [{ from: 'other', text: 'Reply', timestamp: 'Now', attachment: { label: 'Doc' } }],
+                messages: [
+                    {
+                        from: 'other',
+                        text: 'Reply',
+                        timestamp: 'Now',
+                        attachment: { label: 'Doc' },
+                    },
+                ],
                 sender_display_name: 'Sender',
                 last_at: 'Later',
             },
             threads: [{ id: 't1', snippet: 'Preview', contact_number: '+1555', last_at: 'Now' }],
         } as never);
-        expect(mappedMessages?.thread.messages[0]).toEqual(expect.objectContaining({ from: 'them', text: 'Reply' }));
+        expect(mappedMessages?.thread.messages[0]).toEqual(
+            expect.objectContaining({ from: 'them', text: 'Reply' }),
+        );
         expect(mappedMessages?.threads?.[0]?.senderNumber).toBe('+1555');
         expect(
             mapMessages({
                 thread_detail: {
-                    messages: [{ from: 'me', text: 'Sent', attachment: { label: 'Receipt', url: '/receipt.pdf' } }],
+                    messages: [
+                        {
+                            from: 'me',
+                            text: 'Sent',
+                            attachment: { label: 'Receipt', url: '/receipt.pdf' },
+                        },
+                    ],
                 },
                 threads: [null, { id: 't2', snippet: 'Preview 2', unread: true }],
-            } as never)?.thread.messages[0]
+            } as never)?.thread.messages[0],
         ).toEqual({
             from: 'me',
             text: 'Sent',
@@ -492,8 +546,16 @@ describe('remaining tail coverage', () => {
 
         expect(mapPhone({ incoming_call: null } as never)).toBeNull();
         const mappedPhone = mapPhone({
-            incoming_call: { transcript: '', phone_number: '+1555', caller_title: 'urgent', avatar_url: 'https://example.test/avatar.png' },
-            history: [{ number: '+1555', direction: 'voicemail' }, { number: '+1666', direction: 'missed' }],
+            incoming_call: {
+                transcript: '',
+                phone_number: '+1555',
+                caller_title: 'urgent',
+                avatar_url: 'https://example.test/avatar.png',
+            },
+            history: [
+                { number: '+1555', direction: 'voicemail' },
+                { number: '+1666', direction: 'missed' },
+            ],
             voicemail_transcript: 'Legacy voicemail',
         } as never);
         expect(mappedPhone?.content.transcript).toBe('Incoming call.');
@@ -506,7 +568,7 @@ describe('remaining tail coverage', () => {
                 incoming_call: { transcript: 'Live call' },
                 history: [{ number: '+1777', direction: 'out' }, { number: '+1888' }],
                 voicemail: { transcript: '', caller_name: 'Caller', timestamp: 'Now' },
-            } as never)
+            } as never),
         ).toEqual({
             content: {
                 transcript: 'Live call',
@@ -518,8 +580,20 @@ describe('remaining tail coverage', () => {
             },
             chosenIndex: null,
             callHistory: [
-                { id: 'call-0', number: '+1777', name: undefined, kind: 'outgoing', timestamp: undefined },
-                { id: 'call-1', number: '+1888', name: undefined, kind: 'incoming', timestamp: undefined },
+                {
+                    id: 'call-0',
+                    number: '+1777',
+                    name: undefined,
+                    kind: 'outgoing',
+                    timestamp: undefined,
+                },
+                {
+                    id: 'call-1',
+                    number: '+1888',
+                    name: undefined,
+                    kind: 'incoming',
+                    timestamp: undefined,
+                },
             ],
             voicemailTranscript: undefined,
             voicemailCallerName: 'Caller',
@@ -547,11 +621,14 @@ describe('remaining tail coverage', () => {
         const mappedInternet = mapInternet({
             pages: [
                 { url: 'portal.example.test', title: '', layout: '', submit_target_page_id: '' },
-                { id: 'result', url: 'https://portal.example.test/result', title: 'Result', layout: 'result' },
+                {
+                    id: 'result',
+                    url: 'https://portal.example.test/result',
+                    title: 'Result',
+                    layout: 'result',
+                },
             ],
-            forms: [
-                { fields: [] },
-            ],
+            forms: [{ fields: [] }],
         } as never);
         expect(mappedInternet?.pages[0]).toEqual(
             expect.objectContaining({
@@ -559,7 +636,7 @@ describe('remaining tail coverage', () => {
                 url: 'https://portal.example.test/',
                 title: '',
                 layout: '',
-            })
+            }),
         );
         expect(mappedInternet?.pages[0]?.formFields).toEqual([
             { name: 'username', type: 'text', label: 'Username' },
@@ -569,8 +646,19 @@ describe('remaining tail coverage', () => {
         expect(
             mapInternet({
                 pages: [
-                    { id: 'login', url: 'https://portal.example.test', title: 'Login', layout: 'login', submit_target_page_id: 'done' },
-                    { id: 'done', url: 'https://portal.example.test/done', title: 'Done', layout: 'result' },
+                    {
+                        id: 'login',
+                        url: 'https://portal.example.test',
+                        title: 'Login',
+                        layout: 'login',
+                        submit_target_page_id: 'done',
+                    },
+                    {
+                        id: 'done',
+                        url: 'https://portal.example.test/done',
+                        title: 'Done',
+                        layout: 'result',
+                    },
                 ],
                 forms: [
                     {
@@ -582,7 +670,7 @@ describe('remaining tail coverage', () => {
                         ],
                     },
                 ],
-            } as never)
+            } as never),
         ).toEqual({
             pages: [
                 {
@@ -626,7 +714,7 @@ describe('remaining tail coverage', () => {
                 home: { widgets: [{}, { id: 'w2', type: 'tile', label: 'Widget' }] },
                 store: { featured_apps: [{}, { id: 'app-2', name: 'App' }] },
                 settings: { sections: [{}, { id: 's2', title: 'Security' }] },
-            } as never)
+            } as never),
         ).toEqual({
             widgets: [
                 { id: 'w-0', type: undefined, label: 'Widget' },

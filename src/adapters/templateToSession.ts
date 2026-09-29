@@ -6,11 +6,12 @@
  * is missing or has no entry_point, returns an empty payload so the shell does not crash.
  */
 
+import type { SimulatorTemplatePayload, SimulatorChannel } from '../types/session.js';
 import type {
-    SimulatorTemplatePayload,
-    SimulatorChannel,
-} from '../types/session.js';
-import type { SimulatorApp, SimulatorEntryPoint, SimulatorTemplateDetail } from '../types/portableSimulator.js';
+    SimulatorApp,
+    SimulatorEntryPoint,
+    SimulatorTemplateDetail,
+} from '../types/portableSimulator.js';
 import {
     appToChannel,
     mapDevice,
@@ -39,7 +40,13 @@ function normalizeTopicTags(detail: SimulatorTemplateDetail): Array<{ key: strin
 }
 
 function isSimulatorApp(value: unknown): value is SimulatorApp {
-    return value === 'phone' || value === 'email' || value === 'messages' || value === 'internet' || value === 'home';
+    return (
+        value === 'phone' ||
+        value === 'email' ||
+        value === 'messages' ||
+        value === 'internet' ||
+        value === 'home'
+    );
 }
 
 function normalizeEntryPoint(entryPoint: unknown): SimulatorEntryPoint | null {
@@ -64,7 +71,7 @@ function emptyPayload(
     channel: SimulatorChannel,
     topicTags: Array<{ key: string; name: string }>,
     runId: number | null,
-    attemptId: number | null
+    attemptId: number | null,
 ): SimulatorTemplatePayload {
     return {
         templateId,
@@ -110,7 +117,7 @@ function hasFullDevicePayload(detail: SimulatorTemplateDetail): boolean {
 /** Build payload from full-device simulator object (API shape from simulator_json or derived). */
 function buildFromFullDevice(
     detail: SimulatorTemplateDetail,
-    options: { runId?: number | null; attemptId?: number | null }
+    options: { runId?: number | null; attemptId?: number | null },
 ): SimulatorTemplatePayload {
     const sim = detail.simulator;
     if (sim == null || typeof sim !== 'object') {
@@ -121,7 +128,7 @@ function buildFromFullDevice(
             mapChannelFromLegacy(detail.channel),
             normalizeTopicTags(detail),
             options.runId ?? null,
-            options.attemptId ?? null
+            options.attemptId ?? null,
         );
     }
     const topicTags = normalizeTopicTags(detail);
@@ -134,7 +141,7 @@ function buildFromFullDevice(
         channel,
         topicTags,
         options.runId ?? null,
-        options.attemptId ?? null
+        options.attemptId ?? null,
     );
     return {
         ...base,
@@ -155,7 +162,7 @@ function buildFromFullDevice(
 
 function getPayloadChannel(
     legacyChannel: string,
-    entryPoint: SimulatorEntryPoint | null
+    entryPoint: SimulatorEntryPoint | null,
 ): SimulatorChannel {
     if (entryPoint != null) {
         return appToChannel(entryPoint.app);
@@ -171,7 +178,7 @@ function getPayloadChannel(
  */
 export function templateDetailToPayload(
     detail: SimulatorTemplateDetail,
-    options: { runId?: number | null; attemptId?: number | null } = {}
+    options: { runId?: number | null; attemptId?: number | null } = {},
 ): SimulatorTemplatePayload {
     if (hasFullDevicePayload(detail)) {
         return buildFromFullDevice(detail, options);
@@ -184,6 +191,6 @@ export function templateDetailToPayload(
         channel,
         normalizeTopicTags(detail),
         options.runId ?? null,
-        options.attemptId ?? null
+        options.attemptId ?? null,
     );
 }

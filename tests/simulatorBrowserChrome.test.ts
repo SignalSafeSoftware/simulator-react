@@ -4,7 +4,9 @@ import SimulatorBrowserChrome from '../src/components/SimulatorBrowserChrome';
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) {
         return '';
     }
@@ -37,8 +39,8 @@ describe('SimulatorBrowserChrome', () => {
                         onRefresh,
                         onHome,
                     },
-                    React.createElement('div', null, 'Page body')
-                )
+                    React.createElement('div', null, 'Page body'),
+                ),
             );
         });
 
@@ -70,12 +72,12 @@ describe('SimulatorBrowserChrome', () => {
                         { start: 8, end: 12 },
                         { start: 21, end: 26 },
                     ],
-                })
+                }),
             );
         });
 
         const highlighted = renderer!.root.findAll(
-            (node) => node.type === 'span' && node.props.style?.backgroundColor != null
+            (node) => node.type === 'span' && node.props.style?.backgroundColor != null,
         );
         expect(highlighted).toHaveLength(2);
         expect(flattenText(renderer!.toJSON())).toContain('Portal');
@@ -90,13 +92,16 @@ describe('SimulatorBrowserChrome', () => {
                 React.createElement(SimulatorBrowserChrome, {
                     title: 'Portal',
                     url: 'https://example.test',
-                    urlHighlightSegments: [{ start: 10, end: 10 }, { start: 50, end: 60 }],
-                })
+                    urlHighlightSegments: [
+                        { start: 10, end: 10 },
+                        { start: 50, end: 60 },
+                    ],
+                }),
             );
         });
 
         const highlighted = renderer!.root.findAll(
-            (node) => node.type === 'span' && node.props.style?.backgroundColor != null
+            (node) => node.type === 'span' && node.props.style?.backgroundColor != null,
         );
         expect(highlighted).toHaveLength(0);
         expect(flattenText(renderer!.toJSON())).toContain('https://example.test');

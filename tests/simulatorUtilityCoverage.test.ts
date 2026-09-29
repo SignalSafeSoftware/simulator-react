@@ -12,7 +12,10 @@ import {
 } from '../src/adapters/fullDeviceToSession';
 import { templateDetailToPayload } from '../src/adapters/templateToSession';
 import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../src/constants';
-import { applyPreviewFallback, PREVIEW_PLACEHOLDER_ID_PREFIX } from '../src/utils/previewFallbackWorld';
+import {
+    applyPreviewFallback,
+    PREVIEW_PLACEHOLDER_ID_PREFIX,
+} from '../src/utils/previewFallbackWorld';
 import { runSimulatorRealismChecks } from '../src/utils/simulatorRealismChecks';
 import { buildSimulatorNavGraph, simulatorNavGraphToJson } from '../src/utils/simulatorNavGraph';
 
@@ -37,7 +40,9 @@ describe('simulator utility coverage', () => {
             home: null,
         });
         expect(emailFallback.fallbackApplied).toBe(true);
-        expect(emailFallback.payload.email?.selectedMessageId).toContain(PREVIEW_PLACEHOLDER_ID_PREFIX);
+        expect(emailFallback.payload.email?.selectedMessageId).toContain(
+            PREVIEW_PLACEHOLDER_ID_PREFIX,
+        );
 
         const messagesFallback = applyPreviewFallback({
             templateId: null,
@@ -57,7 +62,9 @@ describe('simulator utility coverage', () => {
             directory: null,
             home: null,
         });
-        expect(messagesFallback.payload.sms?.thread?.messages?.[0]?.text).toContain('Preview placeholder');
+        expect(messagesFallback.payload.sms?.thread?.messages?.[0]?.text).toContain(
+            'Preview placeholder',
+        );
 
         const browserFallback = applyPreviewFallback({
             templateId: null,
@@ -71,7 +78,17 @@ describe('simulator utility coverage', () => {
             device: null,
             email: null,
             sms: null,
-            browser: { defaultPageId: 'landing', pages: [{ id: 'landing', url: 'https://example.test', title: 'Landing', layout: 'landing' }] },
+            browser: {
+                defaultPageId: 'landing',
+                pages: [
+                    {
+                        id: 'landing',
+                        url: 'https://example.test',
+                        title: 'Landing',
+                        layout: 'landing',
+                    },
+                ],
+            },
             phone: null,
             contacts: null,
             directory: null,
@@ -110,7 +127,10 @@ describe('simulator utility coverage', () => {
             entryPoint: { app: 'messages', screen: 'threads' },
             device: null,
             email: null,
-            sms: { thread: { messages: [{ from: 'them', text: 'Existing' }] }, visibleMessageCount: 1 },
+            sms: {
+                thread: { messages: [{ from: 'them', text: 'Existing' }] },
+                visibleMessageCount: 1,
+            },
             browser: null,
             phone: null,
             contacts: null,
@@ -118,7 +138,9 @@ describe('simulator utility coverage', () => {
             home: null,
         });
         expect(messagesThreadsFallback.fallbackApplied).toBe(true);
-        expect(messagesThreadsFallback.payload.sms?.thread?.messages?.[0]?.text).toContain('Preview placeholder');
+        expect(messagesThreadsFallback.payload.sms?.thread?.messages?.[0]?.text).toContain(
+            'Preview placeholder',
+        );
 
         const browserNullFallback = applyPreviewFallback({
             templateId: null,
@@ -138,7 +160,9 @@ describe('simulator utility coverage', () => {
             directory: null,
             home: null,
         });
-        expect(browserNullFallback.payload.browser?.defaultPageId).toContain(PREVIEW_PLACEHOLDER_ID_PREFIX);
+        expect(browserNullFallback.payload.browser?.defaultPageId).toContain(
+            PREVIEW_PLACEHOLDER_ID_PREFIX,
+        );
 
         const noPhoneFallback = applyPreviewFallback({
             templateId: null,
@@ -224,7 +248,14 @@ describe('simulator utility coverage', () => {
             sms: null,
             browser: {
                 defaultPageId: 'landing',
-                pages: [{ id: 'landing', url: 'https://example.test', title: 'Landing', layout: 'content' }],
+                pages: [
+                    {
+                        id: 'landing',
+                        url: 'https://example.test',
+                        title: 'Landing',
+                        layout: 'content',
+                    },
+                ],
             },
             phone: null,
             contacts: null,
@@ -366,7 +397,10 @@ describe('simulator utility coverage', () => {
                 selectedMessageId: null,
             },
             sms: null,
-            browser: { defaultPageId: 'landing', pages: [{ id: 'landing', url: '', title: '', layout: 'content' }] },
+            browser: {
+                defaultPageId: 'landing',
+                pages: [{ id: 'landing', url: '', title: '', layout: 'content' }],
+            },
             phone: null,
             contacts: [],
             directory: [],
@@ -378,9 +412,11 @@ describe('simulator utility coverage', () => {
                 'realism_email_list_empty',
                 'realism_verification_no_contacts',
                 'realism_browser_page_no_url_or_title',
-            ])
+            ]),
         );
-        expect(emailReport.suggestions.map((issue) => issue.code)).toContain('realism_sender_display_generic');
+        expect(emailReport.suggestions.map((issue) => issue.code)).toContain(
+            'realism_sender_display_generic',
+        );
 
         const phoneReport = runSimulatorRealismChecks({
             templateId: null,
@@ -395,12 +431,17 @@ describe('simulator utility coverage', () => {
             email: null,
             sms: null,
             browser: null,
-            phone: { content: { transcript: '', choices: [], phone_number: '', caller_name: '' }, chosenIndex: null },
+            phone: {
+                content: { transcript: '', choices: [], phone_number: '', caller_name: '' },
+                chosenIndex: null,
+            },
             contacts: [],
             directory: [],
             home: null,
         });
-        expect(phoneReport.blockers.map((issue) => issue.code)).toContain('realism_phone_incoming_bare');
+        expect(phoneReport.blockers.map((issue) => issue.code)).toContain(
+            'realism_phone_incoming_bare',
+        );
 
         const directoryReport = runSimulatorRealismChecks({
             templateId: null,
@@ -414,19 +455,31 @@ describe('simulator utility coverage', () => {
             device: null,
             email: null,
             sms: {
-                thread: { messages: [{ from: 'them', text: 'Visit this page' }], links: [{ href: 'https://sms.example.test' }] as never },
+                thread: {
+                    messages: [{ from: 'them', text: 'Visit this page' }],
+                    links: [{ href: 'https://sms.example.test' }] as never,
+                },
                 visibleMessageCount: 1,
             },
             browser: {
                 defaultPageId: 'landing',
-                pages: [{ id: 'landing', url: 'https://sms.example.test', title: 'SMS', layout: 'content' }],
+                pages: [
+                    {
+                        id: 'landing',
+                        url: 'https://sms.example.test',
+                        title: 'SMS',
+                        layout: 'content',
+                    },
+                ],
             },
             phone: null,
             contacts: [],
             directory: [],
             home: null,
         });
-        expect(directoryReport.blockers.map((issue) => issue.code)).toContain('realism_phone_directory_empty');
+        expect(directoryReport.blockers.map((issue) => issue.code)).toContain(
+            'realism_phone_directory_empty',
+        );
 
         const messagesReport = runSimulatorRealismChecks({
             templateId: null,
@@ -445,14 +498,23 @@ describe('simulator utility coverage', () => {
             },
             browser: {
                 defaultPageId: 'landing',
-                pages: [{ id: 'landing', url: 'https://sms.example.test', title: 'SMS', layout: 'content' }],
+                pages: [
+                    {
+                        id: 'landing',
+                        url: 'https://sms.example.test',
+                        title: 'SMS',
+                        layout: 'content',
+                    },
+                ],
             },
             phone: null,
             contacts: [],
             directory: [],
             home: null,
         });
-        expect(messagesReport.suggestions.map((issue) => issue.code)).toContain('realism_sms_verification_contacts');
+        expect(messagesReport.suggestions.map((issue) => issue.code)).toContain(
+            'realism_sms_verification_contacts',
+        );
 
         const browserSuggestionReport = runSimulatorRealismChecks({
             templateId: null,
@@ -468,7 +530,9 @@ describe('simulator utility coverage', () => {
             sms: null,
             browser: {
                 defaultPageId: 'landing',
-                pages: [{ id: 'landing', url: 'https://example.test', title: '', layout: 'content' }],
+                pages: [
+                    { id: 'landing', url: 'https://example.test', title: '', layout: 'content' },
+                ],
             },
             phone: null,
             contacts: [],
@@ -476,7 +540,9 @@ describe('simulator utility coverage', () => {
             home: null,
         });
         expect(browserSuggestionReport.pass).toBe(true);
-        expect(browserSuggestionReport.suggestions.map((issue) => issue.code)).toContain('realism_browser_page_no_title');
+        expect(browserSuggestionReport.suggestions.map((issue) => issue.code)).toContain(
+            'realism_browser_page_no_title',
+        );
 
         const phoneSuggestionReport = runSimulatorRealismChecks({
             templateId: null,
@@ -491,12 +557,17 @@ describe('simulator utility coverage', () => {
             email: null,
             sms: null,
             browser: null,
-            phone: { content: { transcript: '', choices: [], phone_number: '', caller_name: 'Caller' }, chosenIndex: null },
+            phone: {
+                content: { transcript: '', choices: [], phone_number: '', caller_name: 'Caller' },
+                chosenIndex: null,
+            },
             contacts: [],
             directory: [],
             home: null,
         });
-        expect(phoneSuggestionReport.suggestions.map((issue) => issue.code)).toContain('realism_phone_incoming_transcript');
+        expect(phoneSuggestionReport.suggestions.map((issue) => issue.code)).toContain(
+            'realism_phone_incoming_transcript',
+        );
     });
 
     it('passes realism checks for plausible payloads and covers quiet branch paths', () => {
@@ -538,7 +609,12 @@ describe('simulator utility coverage', () => {
                 pages: [
                     null as never,
                     { id: 'landing', url: '', title: 'Security portal', layout: 'content' },
-                    { id: 'details', url: 'https://secure.example.test/details', title: 'Details', layout: 'content' },
+                    {
+                        id: 'details',
+                        url: 'https://secure.example.test/details',
+                        title: 'Details',
+                        layout: 'content',
+                    },
                 ],
             },
             phone: { content: null as never, chosenIndex: null },
@@ -563,7 +639,17 @@ describe('simulator utility coverage', () => {
             device: null,
             email: { inbox: [], selectedMessage: null, selectedMessageId: null },
             sms: null,
-            browser: { defaultPageId: 'landing', pages: [{ id: 'landing', url: 'https://example.test', title: 'Example', layout: 'content' }] },
+            browser: {
+                defaultPageId: 'landing',
+                pages: [
+                    {
+                        id: 'landing',
+                        url: 'https://example.test',
+                        title: 'Example',
+                        layout: 'content',
+                    },
+                ],
+            },
             phone: { content: null as never, chosenIndex: null },
             contacts: [],
             directory: [],
@@ -587,7 +673,14 @@ describe('simulator utility coverage', () => {
             entryPoint: { app: 'email', screen: 'detail' },
             device: null,
             email: {
-                inbox: [{ id: 'e1', subject: 'Subject', from: 'sender@example.test', from_display_name: 'Unknown' }],
+                inbox: [
+                    {
+                        id: 'e1',
+                        subject: 'Subject',
+                        from: 'sender@example.test',
+                        from_display_name: 'Unknown',
+                    },
+                ],
                 selectedMessage: null,
                 selectedMessageId: 'e1',
             },
@@ -599,7 +692,9 @@ describe('simulator utility coverage', () => {
             home: null,
         });
 
-        expect(report.suggestions.map((issue) => issue.code)).toContain('realism_sender_display_generic');
+        expect(report.suggestions.map((issue) => issue.code)).toContain(
+            'realism_sender_display_generic',
+        );
     });
 
     it('does not suggest a sender warning for believable display names', () => {
@@ -631,7 +726,9 @@ describe('simulator utility coverage', () => {
             home: null,
         });
 
-        expect(report.suggestions.map((issue) => issue.code)).not.toContain('realism_sender_display_generic');
+        expect(report.suggestions.map((issue) => issue.code)).not.toContain(
+            'realism_sender_display_generic',
+        );
     });
 
     it('accepts incoming calls that include a transcript even without a caller name or number', () => {
@@ -649,7 +746,12 @@ describe('simulator utility coverage', () => {
             sms: null,
             browser: null,
             phone: {
-                content: { transcript: 'This is the help desk.', choices: [], phone_number: '', caller_name: '' },
+                content: {
+                    transcript: 'This is the help desk.',
+                    choices: [],
+                    phone_number: '',
+                    caller_name: '',
+                },
                 chosenIndex: null,
             },
             contacts: [],
@@ -681,7 +783,9 @@ describe('simulator utility coverage', () => {
             home: null,
         });
 
-        expect(report.blockers.map((issue) => issue.code)).not.toContain('realism_phone_directory_empty');
+        expect(report.blockers.map((issue) => issue.code)).not.toContain(
+            'realism_phone_directory_empty',
+        );
     });
 
     it('allows browser pages that have only a title and no url', () => {
@@ -726,7 +830,12 @@ describe('simulator utility coverage', () => {
             sms: null,
             browser: null,
             phone: {
-                content: { transcript: '', choices: [], phone_number: '+15550000001', caller_name: '' },
+                content: {
+                    transcript: '',
+                    choices: [],
+                    phone_number: '+15550000001',
+                    caller_name: '',
+                },
                 chosenIndex: null,
             },
             contacts: [],
@@ -750,7 +859,14 @@ describe('simulator utility coverage', () => {
             entryPoint: { app: 'email', screen: 'detail' },
             device: null,
             email: {
-                inbox: [{ id: 'e1', subject: 'Subject', from: 'sender@example.test', from_display_name: '   ' }],
+                inbox: [
+                    {
+                        id: 'e1',
+                        subject: 'Subject',
+                        from: 'sender@example.test',
+                        from_display_name: '   ',
+                    },
+                ],
                 selectedMessage: null,
                 selectedMessageId: 'e1',
             },
@@ -805,9 +921,26 @@ describe('simulator utility coverage', () => {
             browser: {
                 defaultPageId: 'landing',
                 pages: [
-                    { id: 'landing', url: 'https://site.example.test', title: 'Landing', layout: 'landing', buttons: [{ label: 'Go', targetPageId: 'login' }] },
-                    { id: 'login', url: 'https://site.example.test/login', title: 'Login', layout: 'login', submitTargetPageId: 'result' },
-                    { id: 'result', url: 'https://site.example.test/result', title: 'Result', layout: 'result' },
+                    {
+                        id: 'landing',
+                        url: 'https://site.example.test',
+                        title: 'Landing',
+                        layout: 'landing',
+                        buttons: [{ label: 'Go', targetPageId: 'login' }],
+                    },
+                    {
+                        id: 'login',
+                        url: 'https://site.example.test/login',
+                        title: 'Login',
+                        layout: 'login',
+                        submitTargetPageId: 'result',
+                    },
+                    {
+                        id: 'result',
+                        url: 'https://site.example.test/result',
+                        title: 'Result',
+                        layout: 'result',
+                    },
                 ],
             },
             phone: {
@@ -816,7 +949,11 @@ describe('simulator utility coverage', () => {
             },
             contacts: [{ id: 'c1', displayName: 'Helpdesk', number: '+15550001111' }],
             directory: [{ id: 'd1', label: 'Helpdesk', number: '+15550001111' }],
-            home: { widgets: [{ id: 'w1', label: 'Widget' }], featuredApps: [], settingsSections: [] },
+            home: {
+                widgets: [{ id: 'w1', label: 'Widget' }],
+                featuredApps: [],
+                settingsSections: [],
+            },
         };
 
         const graph = buildSimulatorNavGraph(payload);
@@ -834,13 +971,9 @@ describe('simulator utility coverage', () => {
         expect(mapDevice(null as never)).toBeNull();
         expect(
             mapDevice({
-                main_menu_items: [
-                    { id: 'email', label: 'Email' },
-                    { id: 'phone' },
-                    null,
-                ],
+                main_menu_items: [{ id: 'email', label: 'Email' }, { id: 'phone' }, null],
                 secondary_defaults: { phone: 'history' },
-            } as never)
+            } as never),
         ).toEqual({
             mainMenuItems: [
                 { id: 'email', label: 'Email', app: undefined },
@@ -849,10 +982,15 @@ describe('simulator utility coverage', () => {
             secondaryDefaults: { phone: 'history' },
         });
 
-        expect(mapDirectory([{ id: 'd1', label: 'Directory', number: '1' }, { id: 'bad' }])).toHaveLength(1);
-        expect(mapContacts([{ display_name: 'Ada', id: 'c1', number: '123', email: 'ada@example.test' }, null] as never)).toEqual([
-            { id: 'c1', displayName: 'Ada', number: '123', email: 'ada@example.test' },
-        ]);
+        expect(
+            mapDirectory([{ id: 'd1', label: 'Directory', number: '1' }, { id: 'bad' }]),
+        ).toHaveLength(1);
+        expect(
+            mapContacts([
+                { display_name: 'Ada', id: 'c1', number: '123', email: 'ada@example.test' },
+                null,
+            ] as never),
+        ).toEqual([{ id: 'c1', displayName: 'Ada', number: '123', email: 'ada@example.test' }]);
 
         const email = mapEmail({
             messages: [],
@@ -884,19 +1022,39 @@ describe('simulator utility coverage', () => {
 
         const messages = mapMessages({
             thread_detail: {
-                messages: [{ from: 'me', text: 'Sent', attachment: { label: 'File', url: '/file' } }],
+                messages: [
+                    { from: 'me', text: 'Sent', attachment: { label: 'File', url: '/file' } },
+                ],
                 sender_display_name: 'Security Team',
                 sender_number: '+1555',
                 unread: true,
             },
-            threads: [{ id: 't1', snippet: 'Preview', contact_name: 'Security Team', contact_number: '+1555', unread: true }],
+            threads: [
+                {
+                    id: 't1',
+                    snippet: 'Preview',
+                    contact_name: 'Security Team',
+                    contact_number: '+1555',
+                    unread: true,
+                },
+            ],
         } as never);
-        expect(messages?.thread.messages[0]).toEqual(expect.objectContaining({ from: 'me', text: 'Sent' }));
+        expect(messages?.thread.messages[0]).toEqual(
+            expect.objectContaining({ from: 'me', text: 'Sent' }),
+        );
         expect(messages?.threads?.[0]?.preview).toBe('Preview');
 
         const phone = mapPhone({
             incoming_call: { transcript: '', phone_number: '+1555', caller_name: 'Caller' },
-            history: [{ id: 'call-1', number: '+1555', name: 'Caller', direction: 'out', timestamp: 'Now' }],
+            history: [
+                {
+                    id: 'call-1',
+                    number: '+1555',
+                    name: 'Caller',
+                    direction: 'out',
+                    timestamp: 'Now',
+                },
+            ],
             voicemail: { transcript: 'Leave a message', caller_name: 'Caller', timestamp: 'Later' },
         } as never);
         expect(phone?.content?.transcript).toBe('Incoming call.');
@@ -905,9 +1063,13 @@ describe('simulator utility coverage', () => {
 
         const internet = mapInternet({
             pages: [{ id: 'landing', url: 'portal.example.test', title: '', layout: 'login' }],
-            forms: [{ page_id: 'landing', fields: [{ name: 'email', type: 'email', label: 'Email' }] }],
+            forms: [
+                { page_id: 'landing', fields: [{ name: 'email', type: 'email', label: 'Email' }] },
+            ],
         } as never);
-        expect(internet?.pages.some((page) => page.id === DEFAULT_BROWSER_SUBMIT_TARGET)).toBe(true);
+        expect(internet?.pages.some((page) => page.id === DEFAULT_BROWSER_SUBMIT_TARGET)).toBe(
+            true,
+        );
         expect(internet?.pages[0]?.url).toBe('https://portal.example.test/');
 
         const home = mapHome({
@@ -944,7 +1106,10 @@ describe('simulator utility coverage', () => {
             attemptId: null,
             entryPoint: null,
             device: {
-                mainMenuItems: [{ id: 'phone', label: 'Phone' }, { id: 'internet', label: 'Internet' }],
+                mainMenuItems: [
+                    { id: 'phone', label: 'Phone' },
+                    { id: 'internet', label: 'Internet' },
+                ],
                 secondaryDefaults: { phone: 'directory' },
             },
             email: null,
@@ -958,8 +1123,21 @@ describe('simulator utility coverage', () => {
             browser: {
                 defaultPageId: 'landing',
                 pages: [
-                    { id: 'landing', url: 'https://site.example.test', title: '', layout: 'content', submitTargetPageId: 'landing', buttons: [] },
-                    { id: 'pricing', url: 'https://site.example.test/pricing', title: 'Pricing', layout: 'content', buttons: [] },
+                    {
+                        id: 'landing',
+                        url: 'https://site.example.test',
+                        title: '',
+                        layout: 'content',
+                        submitTargetPageId: 'landing',
+                        buttons: [],
+                    },
+                    {
+                        id: 'pricing',
+                        url: 'https://site.example.test/pricing',
+                        title: 'Pricing',
+                        layout: 'content',
+                        buttons: [],
+                    },
                 ],
             },
             phone: {
@@ -976,7 +1154,7 @@ describe('simulator utility coverage', () => {
             expect.arrayContaining([
                 expect.objectContaining({ id: 'internet:landing', label: '' }),
                 expect.objectContaining({ id: 'phone:directory', label: 'directory' }),
-            ])
+            ]),
         );
         expect(fallbackGraph.edges.some((edge) => edge.action === 'form_submit')).toBe(false);
         expect(fallbackGraph.edges.some((edge) => edge.action === 'click_link')).toBe(false);
@@ -993,7 +1171,10 @@ describe('simulator utility coverage', () => {
             attemptId: null,
             entryPoint: null,
             device: {
-                mainMenuItems: [{ id: 'messages', label: 'Messages' }, { id: 'home', label: 'Home' }],
+                mainMenuItems: [
+                    { id: 'messages', label: 'Messages' },
+                    { id: 'home', label: 'Home' },
+                ],
                 secondaryDefaults: { home: 'settings' },
             },
             email: null,
@@ -1017,14 +1198,26 @@ describe('simulator utility coverage', () => {
             expect.arrayContaining([
                 expect.objectContaining({ id: 'messages:threads', label: 'threads' }),
                 expect.objectContaining({ id: 'home:settings', label: 'settings' }),
-            ])
+            ]),
         );
         expect(graph.edges).toEqual(
             expect.arrayContaining([
-                expect.objectContaining({ from: 'messages:threads', to: 'home:settings', action: 'main_menu' }),
-                expect.objectContaining({ from: 'messages:threads', to: 'messages:thread_detail', action: 'open_thread' }),
-                expect.objectContaining({ from: 'messages:threads', to: 'messages:new_thread', action: 'new_thread' }),
-            ])
+                expect.objectContaining({
+                    from: 'messages:threads',
+                    to: 'home:settings',
+                    action: 'main_menu',
+                }),
+                expect.objectContaining({
+                    from: 'messages:threads',
+                    to: 'messages:thread_detail',
+                    action: 'open_thread',
+                }),
+                expect.objectContaining({
+                    from: 'messages:threads',
+                    to: 'messages:new_thread',
+                    action: 'new_thread',
+                }),
+            ]),
         );
     });
 
@@ -1039,7 +1232,10 @@ describe('simulator utility coverage', () => {
             attemptId: null,
             entryPoint: null,
             device: {
-                mainMenuItems: [{ id: 'phone', label: 'Phone' }, { id: 'internet', label: 'Internet' }],
+                mainMenuItems: [
+                    { id: 'phone', label: 'Phone' },
+                    { id: 'internet', label: 'Internet' },
+                ],
                 secondaryDefaults: {},
             },
             email: {
@@ -1048,7 +1244,10 @@ describe('simulator utility coverage', () => {
                     subject: 'Inbox',
                     from: 'sender@example.test',
                     body: 'Open the real site',
-                    links: [{ href: 'https://known.example.test/login', text: 'Known' }, { href: 'https://unknown.example.test', text: 'Unknown' }],
+                    links: [
+                        { href: 'https://known.example.test/login', text: 'Known' },
+                        { href: 'https://unknown.example.test', text: 'Unknown' },
+                    ],
                 },
                 selectedMessageId: 'e1',
             },
@@ -1099,7 +1298,10 @@ describe('simulator utility coverage', () => {
             attemptId: null,
             entryPoint: { app: 'internet', screen: 'login' },
             device: {
-                mainMenuItems: [{ id: 'email', label: 'Email' }, { id: 'internet', label: 'Internet' }],
+                mainMenuItems: [
+                    { id: 'email', label: 'Email' },
+                    { id: 'internet', label: 'Internet' },
+                ],
                 secondaryDefaults: {},
             },
             email: {
@@ -1108,7 +1310,10 @@ describe('simulator utility coverage', () => {
                     subject: 'Inbox',
                     from: 'sender@example.test',
                     body: 'Open the real site',
-                    links: [{ href: 'https://known.example.test/login', text: 'Known' }, { href: 'https://unknown.example.test', text: 'Unknown' }],
+                    links: [
+                        { href: 'https://known.example.test/login', text: 'Known' },
+                        { href: 'https://unknown.example.test', text: 'Unknown' },
+                    ],
                 },
                 selectedMessageId: 'e1',
             },
@@ -1116,7 +1321,12 @@ describe('simulator utility coverage', () => {
             browser: {
                 defaultPageId: 'login',
                 pages: [
-                    { id: 'landing', url: 'https://known.example.test', title: 'Landing', layout: 'content' },
+                    {
+                        id: 'landing',
+                        url: 'https://known.example.test',
+                        title: 'Landing',
+                        layout: 'content',
+                    },
                     {
                         id: 'login',
                         url: 'https://known.example.test/login',
@@ -1125,7 +1335,12 @@ describe('simulator utility coverage', () => {
                         submitTargetPageId: 'result',
                         buttons: [{ label: 'Continue', targetPageId: 'result' }],
                     },
-                    { id: 'result', url: 'https://known.example.test/result', title: 'Result', layout: 'result' },
+                    {
+                        id: 'result',
+                        url: 'https://known.example.test/result',
+                        title: 'Result',
+                        layout: 'result',
+                    },
                 ],
             },
             phone: null,
@@ -1136,19 +1351,24 @@ describe('simulator utility coverage', () => {
 
         expect(browserGraph.edges).toEqual(
             expect.arrayContaining([
-                expect.objectContaining({ from: 'internet:login', to: 'internet:result', action: 'form_submit' }),
+                expect.objectContaining({
+                    from: 'internet:login',
+                    to: 'internet:result',
+                    action: 'form_submit',
+                }),
                 expect.objectContaining({
                     from: 'email:detail',
                     to: 'internet:login',
                     action: 'click_link',
                     label: 'https://known.example.test/login',
                 }),
-            ])
+            ]),
         );
         expect(
             browserGraph.edges.some(
-                (edge) => edge.action === 'click_link' && edge.label === 'https://unknown.example.test'
-            )
+                (edge) =>
+                    edge.action === 'click_link' && edge.label === 'https://unknown.example.test',
+            ),
         ).toBe(false);
     });
 
@@ -1163,7 +1383,10 @@ describe('simulator utility coverage', () => {
             attemptId: null,
             entryPoint: null,
             device: {
-                mainMenuItems: [{ id: 'email', label: 'Email' }, { id: 'internet', label: 'Internet' }],
+                mainMenuItems: [
+                    { id: 'email', label: 'Email' },
+                    { id: 'internet', label: 'Internet' },
+                ],
                 secondaryDefaults: {},
             },
             email: {
@@ -1188,7 +1411,11 @@ describe('simulator utility coverage', () => {
                         layout: 'content',
                         buttons: [{ label: 'Open login', targetPageId: 'login' }],
                     } as never,
-                    { id: 'login', url: 'https://site.example.test/login', layout: 'content' } as never,
+                    {
+                        id: 'login',
+                        url: 'https://site.example.test/login',
+                        layout: 'content',
+                    } as never,
                 ],
             },
             phone: null,
@@ -1202,7 +1429,7 @@ describe('simulator utility coverage', () => {
             expect.arrayContaining([
                 expect.objectContaining({ id: 'internet:landing', label: 'landing' }),
                 expect.objectContaining({ id: 'internet:login', label: 'login' }),
-            ])
+            ]),
         );
         expect(graph.edges).toEqual(
             expect.arrayContaining([
@@ -1212,7 +1439,7 @@ describe('simulator utility coverage', () => {
                     action: 'click_link',
                     label: 'site.example.test/login',
                 }),
-            ])
+            ]),
         );
         expect(simulatorNavGraphToJson(graph)).toContain('\n  "entry"');
     });
@@ -1228,7 +1455,10 @@ describe('simulator utility coverage', () => {
             attemptId: null,
             entryPoint: null,
             device: {
-                mainMenuItems: [{ id: 'internet', label: 'Internet' }, { id: 'email', label: 'Email' }],
+                mainMenuItems: [
+                    { id: 'internet', label: 'Internet' },
+                    { id: 'email', label: 'Email' },
+                ],
                 secondaryDefaults: {},
             },
             email: {
@@ -1237,7 +1467,10 @@ describe('simulator utility coverage', () => {
                     subject: 'Inbox',
                     from: 'sender@example.test',
                     body: 'Open it',
-                    links: [{ href: undefined, text: 'No href' }, { href: '   ', text: 'Blank href' }] as never,
+                    links: [
+                        { href: undefined, text: 'No href' },
+                        { href: '   ', text: 'Blank href' },
+                    ] as never,
                 },
                 selectedMessageId: 'e1',
             },
@@ -1264,7 +1497,7 @@ describe('simulator utility coverage', () => {
                     action: 'click_link',
                     label: '   ',
                 }),
-            ])
+            ]),
         );
 
         const smsGraph = buildSimulatorNavGraph({
@@ -1277,22 +1510,38 @@ describe('simulator utility coverage', () => {
             attemptId: null,
             entryPoint: { app: 'messages', screen: 'thread_detail' },
             device: {
-                mainMenuItems: [{ id: 'messages', label: 'Messages' }, { id: 'internet', label: 'Internet' }],
+                mainMenuItems: [
+                    { id: 'messages', label: 'Messages' },
+                    { id: 'internet', label: 'Internet' },
+                ],
                 secondaryDefaults: {},
             },
             email: null,
             sms: {
                 thread: {
                     messages: [{ from: 'them', text: 'Open target' }],
-                    links: [{ href: 'https://known.example.test/target' }, { href: undefined }] as never,
+                    links: [
+                        { href: 'https://known.example.test/target' },
+                        { href: undefined },
+                    ] as never,
                 },
                 visibleMessageCount: 1,
             },
             browser: {
                 defaultPageId: 'landing',
                 pages: [
-                    { id: 'landing', url: 'https://known.example.test', title: 'Landing', layout: 'content' },
-                    { id: 'target', url: 'https://known.example.test/target', title: 'Target', layout: 'content' },
+                    {
+                        id: 'landing',
+                        url: 'https://known.example.test',
+                        title: 'Landing',
+                        layout: 'content',
+                    },
+                    {
+                        id: 'target',
+                        url: 'https://known.example.test/target',
+                        title: 'Target',
+                        layout: 'content',
+                    },
                 ],
             },
             phone: null,
@@ -1379,17 +1628,28 @@ describe('simulator utility coverage', () => {
                         thread_detail: { messages: [{ from: 'them', text: 'Hello' }] },
                     },
                     internet: {
-                        pages: [{ id: 'landing', url: 'example.test', title: 'Landing', layout: 'content' }],
+                        pages: [
+                            {
+                                id: 'landing',
+                                url: 'example.test',
+                                title: 'Landing',
+                                layout: 'content',
+                            },
+                        ],
                     },
                     phone: {
                         incoming_call: { transcript: 'Incoming call.' },
                     },
                     contacts: [{ display_name: 'Ada' }],
                     directory: [{ id: 'dir-1', label: 'Directory' }],
-                    home: { home: { widgets: [] }, store: { featured_apps: [] }, settings: { sections: [] } },
+                    home: {
+                        home: { widgets: [] },
+                        store: { featured_apps: [] },
+                        settings: { sections: [] },
+                    },
                 },
             } as never,
-            { runId: 9, attemptId: 10 }
+            { runId: 9, attemptId: 10 },
         );
 
         expect(full.channel).toBe('browser');

@@ -20,6 +20,15 @@ const SECONDARY_STRIP = [
     { id: 'back', labelKey: 'nav.back', icon: '↩' },
 ] as const;
 
-export function getPhoneLocalNavItems(_phone: SimulatorCapabilities['phone'], locale = createTranslator(simulatorEnglish)): PhoneLocalNavItem[] {
+export function getPhoneLocalNavItems(
+    _phone: SimulatorCapabilities['phone'],
+    locale = createTranslator(simulatorEnglish),
+): PhoneLocalNavItem[] {
+    return getPhoneSecondaryItems(locale);
+}
+
+export function getPhoneSecondaryItems(
+    locale = createTranslator(simulatorEnglish),
+): PhoneLocalNavItem[] {
     return SECONDARY_STRIP.map(({ labelKey, ...item }) => ({ ...item, label: locale.t(labelKey) }));
 }

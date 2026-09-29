@@ -154,6 +154,7 @@ export default function MessagesThreadListView({
                         >
                             <span
                                 className={joinClasses(
+                                    'simulator-messages__thread-title',
                                     SIM_TEXT_MEDIUM,
                                     'simulator-text--truncate',
                                     row.unread && SIM_TEXT_BOLD,
@@ -166,6 +167,7 @@ export default function MessagesThreadListView({
                                 className={joinClasses(
                                     SIM_TEXT_SM,
                                     SIM_MUTED,
+                                    'simulator-messages__thread-preview',
                                     'simulator-text--break',
                                 )}
                                 style={{ lineHeight: 1.35 }}
@@ -179,6 +181,7 @@ export default function MessagesThreadListView({
                                     SIM_TEXT_SM,
                                     SIM_MUTED,
                                     SIM_FLEX_SHRINK_0,
+                                    'simulator-messages__thread-time',
                                     'simulator-flex--align-end',
                                 )}
                             >

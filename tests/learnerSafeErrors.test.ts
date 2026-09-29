@@ -8,7 +8,9 @@ import {
 } from '../src/constants';
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) return '';
     if (Array.isArray(node)) return node.map((child) => flattenText(child)).join('');
     return (node.children ?? [])
@@ -33,7 +35,9 @@ describe('learner-safe simulator errors', () => {
         expect(text).toContain(LEARNER_SIMULATOR_ERROR_MESSAGE);
         expect(text).not.toContain('internal reducer');
         expect(text).not.toContain('foo.ts');
-        expect(renderer!.root.findAllByProps({ 'data-testid': 'simulator-error-diagnostics-stack' })).toHaveLength(0);
+        expect(
+            renderer!.root.findAllByProps({ 'data-testid': 'simulator-error-diagnostics-stack' }),
+        ).toHaveLength(0);
         renderer?.unmount();
     });
 
@@ -51,7 +55,9 @@ describe('learner-safe simulator errors', () => {
 
         const text = flattenText(renderer!.toJSON());
         expect(text).toContain('internal reducer dispatch failed');
-        expect(renderer!.root.findByProps({ 'data-testid': 'simulator-error-diagnostics-stack' })).toBeTruthy();
+        expect(
+            renderer!.root.findByProps({ 'data-testid': 'simulator-error-diagnostics-stack' }),
+        ).toBeTruthy();
         renderer?.unmount();
     });
 

@@ -102,7 +102,15 @@ export function getDefaultScreen(app: SimulatorApp): string {
 }
 
 export function isPhoneScreen(s: string): s is PhoneScreenId {
-    return ['history', 'contacts', 'add_contact', 'dial', 'incoming_call', 'voicemail', 'directory'].includes(s);
+    return [
+        'history',
+        'contacts',
+        'add_contact',
+        'dial',
+        'incoming_call',
+        'voicemail',
+        'directory',
+    ].includes(s);
 }
 
 export function isEmailScreen(s: string): s is EmailScreenId {
@@ -130,7 +138,8 @@ export function parseEntryScreen(app: SimulatorApp, screen: string): string {
             if (['detail', 'list', 'compose', 'outbox', 'trash'].includes(lower)) return lower;
             return DEFAULT_EMAIL_SCREEN;
         case 'messages':
-            if (lower === 'thread_detail' || lower === 'threads' || lower === 'new_thread') return lower;
+            if (lower === 'thread_detail' || lower === 'threads' || lower === 'new_thread')
+                return lower;
             return DEFAULT_MESSAGES_SCREEN;
         case 'internet':
             return isInternetScreen(lower) ? lower : DEFAULT_INTERNET_SCREEN;

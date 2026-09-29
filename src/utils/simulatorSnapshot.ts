@@ -77,15 +77,8 @@ function copyTruthyStringFields(
     target: SerializedSimulatorAction,
     source: ActionRecord,
     keys: Array<
-        'app' |
-        'screen' |
-        'messageId' |
-        'threadId' |
-        'pageId' |
-        'contactId' |
-        'entryId' |
-        'channel'
-    >
+        'app' | 'screen' | 'messageId' | 'threadId' | 'pageId' | 'contactId' | 'entryId' | 'channel'
+    >,
 ): void {
     keys.forEach((key) => {
         const value = source[key];
@@ -98,7 +91,7 @@ function copyTruthyStringFields(
 function copyNullableStringField(
     target: SerializedSimulatorAction,
     source: ActionRecord,
-    key: 'query' | 'replyText' | 'dialedNumber' | 'downloadTarget'
+    key: 'query' | 'replyText' | 'dialedNumber' | 'downloadTarget',
 ): void {
     const value = source[key];
     if (typeof value === 'string') {
@@ -109,7 +102,7 @@ function copyNullableStringField(
 function copyNullableNumberField(
     target: SerializedSimulatorAction,
     source: ActionRecord,
-    key: 'choiceIndex' | 'linkIndex' | 'attachmentIndex'
+    key: 'choiceIndex' | 'linkIndex' | 'attachmentIndex',
 ): void {
     const value = source[key];
     if (typeof value === 'number') {
@@ -146,15 +139,13 @@ function serializeAction(a: SimulatorAction): SerializedSimulatorAction {
  */
 export function captureSimulatorSnapshot(
     state: SimulatorSessionState,
-    options?: { maxActions?: number }
+    options?: { maxActions?: number },
 ): SimulatorSnapshot {
     const { payload, view } = state;
     const maxActions = options?.maxActions ?? DEFAULT_MAX_ACTIONS;
     const meta = getScreenMetadata(view, payload);
 
-    const actionHistory = view.actionHistory
-        .slice(-maxActions)
-        .map(serializeAction);
+    const actionHistory = view.actionHistory.slice(-maxActions).map(serializeAction);
 
     const inboxCount = payload.email?.inbox?.length ?? 0;
     const threadMessageCount = payload.sms?.thread?.messages?.length ?? 0;

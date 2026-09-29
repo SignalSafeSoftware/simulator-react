@@ -4,7 +4,9 @@ import SimulatorAuthorPreviewReport from '../src/components/SimulatorAuthorPrevi
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) {
         return '';
     }
@@ -38,7 +40,7 @@ describe('SimulatorAuthorPreviewReport', () => {
                         unreachableCount: 0,
                         browserHasCycle: false,
                     },
-                })
+                }),
             );
         });
 
@@ -80,11 +82,13 @@ describe('SimulatorAuthorPreviewReport', () => {
                         unreachableCount: 1,
                         browserHasCycle: false,
                     } as never,
-                })
+                }),
             );
         });
 
-        expect(flattenText(renderer!.toJSON())).toContain('phone/history · 2 apps · 1 contact · 2 SMS · 1 directory');
+        expect(flattenText(renderer!.toJSON())).toContain(
+            'phone/history · 2 apps · 1 contact · 2 SMS · 1 directory',
+        );
 
         await act(async () => {
             renderer!.root.findByProps({ children: 'Template summary' }).props.onClick();
@@ -124,7 +128,7 @@ describe('SimulatorAuthorPreviewReport', () => {
                         unreachableCount: 0,
                         browserHasCycle: true,
                     },
-                })
+                }),
             );
         });
 
@@ -156,7 +160,7 @@ describe('SimulatorAuthorPreviewReport', () => {
                         unreachableCount: 0,
                         browserHasCycle: false,
                     } as never,
-                })
+                }),
             );
         });
 
@@ -188,7 +192,7 @@ describe('SimulatorAuthorPreviewReport', () => {
                         unreachableCount: 0,
                         browserHasCycle: false,
                     } as never,
-                })
+                }),
             );
         });
 
@@ -224,7 +228,7 @@ describe('SimulatorAuthorPreviewReport', () => {
                         unreachableCount: 0,
                         browserHasCycle: false,
                     } as never,
-                })
+                }),
             );
         });
 

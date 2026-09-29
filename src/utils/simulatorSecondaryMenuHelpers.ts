@@ -18,7 +18,9 @@ export function getEmailSecondaryItems(locale = createTranslator(simulatorEnglis
 export const EMAIL_SECONDARY_ITEMS = getEmailSecondaryItems();
 
 export function getBrowserSubmitTargetId(submitTargetPageId: string | null | undefined): string {
-    return submitTargetPageId == null || submitTargetPageId === '' ? DEFAULT_BROWSER_SUBMIT_TARGET : submitTargetPageId;
+    return submitTargetPageId == null || submitTargetPageId === ''
+        ? DEFAULT_BROWSER_SUBMIT_TARGET
+        : submitTargetPageId;
 }
 
 export function getPhoneSecondaryActiveId(screen: string): string {

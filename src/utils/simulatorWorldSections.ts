@@ -56,10 +56,7 @@ function deepMergeValue(baseVal: unknown, overlayVal: unknown): unknown {
     if (isRecord(baseVal) && isRecord(overlayVal)) {
         const result = { ...baseVal };
         for (const key of Object.keys(overlayVal)) {
-            result[key] = deepMergeValue(
-                (result as Record<string, unknown>)[key],
-                overlayVal[key]
-            );
+            result[key] = deepMergeValue((result as Record<string, unknown>)[key], overlayVal[key]);
         }
         return result;
     }
@@ -75,12 +72,10 @@ function deepMergeValue(baseVal: unknown, overlayVal: unknown): unknown {
  */
 export function deepMergeSections(
     base: SimulatorWorldPartial,
-    overlay: SimulatorWorldPartial
+    overlay: SimulatorWorldPartial,
 ): SimulatorWorldPartial {
     const result = deepClone(
-        Object.fromEntries(
-            Object.entries(base).filter(([k]) => SECTION_KEY_SET.has(k))
-        )
+        Object.fromEntries(Object.entries(base).filter(([k]) => SECTION_KEY_SET.has(k))),
     ) as SimulatorWorldPartial;
 
     for (const key of SIMULATOR_WORLD_SECTION_KEYS) {
@@ -101,7 +96,7 @@ export function deepMergeSections(
  */
 export function applyPartials(
     partials: SimulatorWorldPartial[],
-    overlay?: SimulatorWorldPartial
+    overlay?: SimulatorWorldPartial,
 ): SimulatorWorldPartial {
     if (partials.length === 0 && !overlay) return {};
     let merged: SimulatorWorldPartial = partials[0] ?? {};

@@ -21,7 +21,14 @@ interface DispatchActionForLog {
     threadId?: string;
     pageId?: string;
     index?: number;
-    action?: { type: string; app?: string; screen?: string; messageId?: string; threadId?: string; pageId?: string };
+    action?: {
+        type: string;
+        app?: string;
+        screen?: string;
+        messageId?: string;
+        threadId?: string;
+        pageId?: string;
+    };
 }
 
 const STORAGE_KEY = 'simulator_log_transitions';
@@ -36,9 +43,11 @@ function getEnabled(): boolean {
     if (getNodeEnv() !== undefined && getNodeEnv() !== 'development') {
         return false;
     }
-    const globalWindow = globalThis.window as (Window & {
-        __SIMULATOR_LOG_TRANSITIONS__?: boolean;
-    }) | undefined;
+    const globalWindow = globalThis.window as
+        | (Window & {
+              __SIMULATOR_LOG_TRANSITIONS__?: boolean;
+          })
+        | undefined;
     if (globalWindow == null) return false;
     try {
         if (globalWindow.__SIMULATOR_LOG_TRANSITIONS__ === true) {
@@ -59,7 +68,10 @@ function formatAppScreen(view: SimulatorViewState): string {
     return `${app}/${screen}`;
 }
 
-function getScreenForActiveApp(view: SimulatorViewState, app: SimulatorViewState['activeApp']): string {
+function getScreenForActiveApp(
+    view: SimulatorViewState,
+    app: SimulatorViewState['activeApp'],
+): string {
     switch (app) {
         case 'email':
             return view.email.screen;
@@ -79,7 +91,8 @@ function getScreenForActiveApp(view: SimulatorViewState, app: SimulatorViewState
 function formatAction(action: DispatchActionForLog): string {
     if (action.type === 'SIMULATOR_ACTION' && action.action) {
         const a = action.action;
-        if (a.type === 'navigate_screen') return `SIMULATOR_ACTION(navigate_screen ${a.app}/${a.screen})`;
+        if (a.type === 'navigate_screen')
+            return `SIMULATOR_ACTION(navigate_screen ${a.app}/${a.screen})`;
         if (a.type === 'open_email') return `SIMULATOR_ACTION(open_email ${a.messageId})`;
         if (a.type === 'open_thread') return `SIMULATOR_ACTION(open_thread ${a.threadId})`;
         if (a.type === 'open_page') return `SIMULATOR_ACTION(open_page ${a.pageId})`;
@@ -96,7 +109,7 @@ function formatAction(action: DispatchActionForLog): string {
 function appendEmailChange(
     parts: string[],
     prev: SimulatorViewState,
-    next: SimulatorViewState
+    next: SimulatorViewState,
 ): void {
     if (next.activeApp !== 'email' || prev.email.screen === next.email.screen) {
         return;
@@ -110,7 +123,7 @@ function appendEmailChange(
 function appendMessagesChange(
     parts: string[],
     prev: SimulatorViewState,
-    next: SimulatorViewState
+    next: SimulatorViewState,
 ): void {
     if (next.activeApp === 'messages' && prev.messages.screen !== next.messages.screen) {
         parts.push(`messages ${prev.messages.screen}→${next.messages.screen}`);
@@ -120,7 +133,7 @@ function appendMessagesChange(
 function appendInternetChange(
     parts: string[],
     prev: SimulatorViewState,
-    next: SimulatorViewState
+    next: SimulatorViewState,
 ): void {
     if (next.activeApp !== 'internet' || prev.internet.screen === next.internet.screen) {
         return;
@@ -134,7 +147,7 @@ function appendInternetChange(
 function appendPhoneChange(
     parts: string[],
     prev: SimulatorViewState,
-    next: SimulatorViewState
+    next: SimulatorViewState,
 ): void {
     if (next.activeApp === 'phone' && prev.phone.screen !== next.phone.screen) {
         parts.push(`phone ${prev.phone.screen}→${next.phone.screen}`);
@@ -147,7 +160,7 @@ function appendPhoneChange(
 function appendHomeChange(
     parts: string[],
     prev: SimulatorViewState,
-    next: SimulatorViewState
+    next: SimulatorViewState,
 ): void {
     if (next.activeApp === 'home' && prev.home.screen !== next.home.screen) {
         parts.push(`home ${prev.home.screen}→${next.home.screen}`);
@@ -157,7 +170,7 @@ function appendHomeChange(
 function appendGlobalViewChanges(
     parts: string[],
     prev: SimulatorViewState,
-    next: SimulatorViewState
+    next: SimulatorViewState,
 ): void {
     if (prev.contactsPanelOpen !== next.contactsPanelOpen) {
         parts.push(`contactsPanel=${next.contactsPanelOpen}`);
@@ -197,7 +210,7 @@ export function isSimulatorTransitionLoggingEnabled(): boolean {
 export function logSimulatorTransition(
     prev: SimulatorSessionState,
     action: DispatchActionForLog,
-    next: SimulatorSessionState
+    next: SimulatorSessionState,
 ): void {
     if (!getEnabled() || typeof console === 'undefined' || !console.log) return;
     const prevLoc = formatAppScreen(prev.view);

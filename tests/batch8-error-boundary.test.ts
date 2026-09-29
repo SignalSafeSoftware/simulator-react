@@ -3,7 +3,9 @@ import { describe, expect, it, vi } from 'vitest';
 import SimulatorErrorBoundary from '../src/SimulatorErrorBoundary';
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) return '';
     if (Array.isArray(node)) return node.map((child) => flattenText(child)).join('');
     return (node.children ?? [])
@@ -22,11 +24,7 @@ describe('SimulatorErrorBoundary', () => {
 
         await act(async () => {
             renderer = TestRenderer.create(
-                React.createElement(
-                    SimulatorErrorBoundary,
-                    { onRetry },
-                    React.createElement(Boom),
-                ),
+                React.createElement(SimulatorErrorBoundary, { onRetry }, React.createElement(Boom)),
             );
         });
 

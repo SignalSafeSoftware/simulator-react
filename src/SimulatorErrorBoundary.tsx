@@ -60,7 +60,15 @@ export default class SimulatorErrorBoundary extends Component<SimulatorErrorBoun
         const { children, fallbackTitle, onRetry, showDiagnostics = false } = this.props;
 
         if (error != null) {
-            return <ErrorFallback error={error} errorInfo={errorInfo} fallbackTitle={fallbackTitle} onRetry={onRetry} showDiagnostics={showDiagnostics} />;
+            return (
+                <ErrorFallback
+                    error={error}
+                    errorInfo={errorInfo}
+                    fallbackTitle={fallbackTitle}
+                    onRetry={onRetry}
+                    showDiagnostics={showDiagnostics}
+                />
+            );
         }
 
         return children;
@@ -76,15 +84,25 @@ function ErrorDismiss({ onRetry }: Readonly<{ onRetry: () => void }>) {
     );
 }
 
-function ErrorFallback({ error, errorInfo, fallbackTitle, onRetry, showDiagnostics }: Readonly<State & Omit<SimulatorErrorBoundaryProps, 'children'>>) {
+function ErrorFallback({
+    error,
+    errorInfo,
+    fallbackTitle,
+    onRetry,
+    showDiagnostics,
+}: Readonly<State & Omit<SimulatorErrorBoundaryProps, 'children'>>) {
     const locale = useSimulatorLocale();
     if (!error) {
         return null;
     }
     const title =
         fallbackTitle ??
-        (showDiagnostics ? locale.t('fallback.error') : locale.t('fallback.learner_simulator_error_title'));
-    const body = showDiagnostics ? error.message : locale.t('fallback.learner_simulator_error_message');
+        (showDiagnostics
+            ? locale.t('fallback.error')
+            : locale.t('fallback.learner_simulator_error_title'));
+    const body = showDiagnostics
+        ? error.message
+        : locale.t('fallback.learner_simulator_error_message');
 
     return (
         <div
@@ -93,9 +111,7 @@ function ErrorFallback({ error, errorInfo, fallbackTitle, onRetry, showDiagnosti
             data-testid="simulator-error-fallback"
             data-show-diagnostics={showDiagnostics ? 'true' : 'false'}
         >
-            <p className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_DANGER, simSpacing.mb1)}>
-                {title}
-            </p>
+            <p className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_DANGER, simSpacing.mb1)}>{title}</p>
             <p className={joinClasses(simSpacing.mb1, 'simulator-text--break')}>{body}</p>
             {showDiagnostics && errorInfo?.componentStack ? (
                 <pre

@@ -4,7 +4,9 @@ import SimulatorRuntimeIssuesReport from '../src/components/SimulatorRuntimeIssu
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) {
         return '';
     }
@@ -25,7 +27,7 @@ describe('SimulatorRuntimeIssuesReport', () => {
                 React.createElement(SimulatorRuntimeIssuesReport, {
                     issues: [],
                     defaultExpanded: true,
-                })
+                }),
             );
         });
 
@@ -42,10 +44,15 @@ describe('SimulatorRuntimeIssuesReport', () => {
                 React.createElement(SimulatorRuntimeIssuesReport, {
                     defaultExpanded: true,
                     issues: [
-                        { severity: 'error', message: 'Broken branch', node_id: 'start', choice_id: 'open' },
+                        {
+                            severity: 'error',
+                            message: 'Broken branch',
+                            node_id: 'start',
+                            choice_id: 'open',
+                        },
                         { severity: 'warning', message: 'Dangling node', node_id: 'review' },
                     ] as never,
-                })
+                }),
             );
         });
 
@@ -67,12 +74,14 @@ describe('SimulatorRuntimeIssuesReport', () => {
                         { severity: 'error', message: 'Choice without node', choice_id: 'open' },
                         { severity: 'error', message: 'No location fields' },
                     ] as never,
-                })
+                }),
             );
         });
 
         const root = renderer!.root;
-        expect(root.findByProps({ 'data-testid': 'simulator-runtime-issues-report' }).props.className).toContain('custom-runtime-report');
+        expect(
+            root.findByProps({ 'data-testid': 'simulator-runtime-issues-report' }).props.className,
+        ).toContain('custom-runtime-report');
         expect(flattenText(renderer!.toJSON())).toContain('Runtime issues— 2 issues, 2 errors');
 
         await act(async () => {

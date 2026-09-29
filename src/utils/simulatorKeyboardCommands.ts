@@ -24,15 +24,42 @@ export interface SimulatorKeyboardCommandHandlers {
 /** Human-readable command list for help (debug/admin). */
 export const SIMULATOR_KEYBOARD_COMMANDS = [
     { keys: 'Escape', description: 'Back' },
-    { keys: 'Alt + 1', description: englishLocale.t("copy.simulatorKeyboardCommands.switch.to.phone") },
-    { keys: 'Alt + 2', description: englishLocale.t("copy.simulatorKeyboardCommands.switch.to.email") },
-    { keys: 'Alt + 3', description: englishLocale.t("copy.simulatorKeyboardCommands.switch.to.internet") },
-    { keys: 'Alt + 4', description: englishLocale.t("copy.simulatorKeyboardCommands.switch.to.messages") },
-    { keys: 'Alt + 5', description: englishLocale.t("copy.simulatorKeyboardCommands.switch.to.home") },
-    { keys: '/', description: englishLocale.t("copy.simulatorKeyboardCommands.focus.search.contacts.only") },
-    { keys: 'Alt + ↓', description: englishLocale.t("copy.simulatorKeyboardCommands.next.item.list.views") },
-    { keys: 'Alt + ↑', description: englishLocale.t("copy.simulatorKeyboardCommands.previous.item.list.views") },
-    { keys: '?', description: englishLocale.t("copy.simulatorKeyboardCommands.show.this.shortcut.help") },
+    {
+        keys: 'Alt + 1',
+        description: englishLocale.t('copy.simulatorKeyboardCommands.switch.to.phone'),
+    },
+    {
+        keys: 'Alt + 2',
+        description: englishLocale.t('copy.simulatorKeyboardCommands.switch.to.email'),
+    },
+    {
+        keys: 'Alt + 3',
+        description: englishLocale.t('copy.simulatorKeyboardCommands.switch.to.internet'),
+    },
+    {
+        keys: 'Alt + 4',
+        description: englishLocale.t('copy.simulatorKeyboardCommands.switch.to.messages'),
+    },
+    {
+        keys: 'Alt + 5',
+        description: englishLocale.t('copy.simulatorKeyboardCommands.switch.to.home'),
+    },
+    {
+        keys: '/',
+        description: englishLocale.t('copy.simulatorKeyboardCommands.focus.search.contacts.only'),
+    },
+    {
+        keys: 'Alt + ↓',
+        description: englishLocale.t('copy.simulatorKeyboardCommands.next.item.list.views'),
+    },
+    {
+        keys: 'Alt + ↑',
+        description: englishLocale.t('copy.simulatorKeyboardCommands.previous.item.list.views'),
+    },
+    {
+        keys: '?',
+        description: englishLocale.t('copy.simulatorKeyboardCommands.show.this.shortcut.help'),
+    },
 ] as const;
 
 const LIST_NAV_EVENT = 'simulator-keyboard-list-nav';
@@ -58,7 +85,7 @@ function getChannelIndex(key: string): number {
 function handleAppSwitch(
     e: KeyboardEvent,
     key: string,
-    handlers: SimulatorKeyboardCommandHandlers
+    handlers: SimulatorKeyboardCommandHandlers,
 ): { handled: boolean } | null {
     if (!isAppSwitchKey(key, e.altKey === true)) {
         return null;
@@ -77,7 +104,7 @@ function handleSearchShortcut(
     e: KeyboardEvent,
     key: string,
     handlers: SimulatorKeyboardCommandHandlers,
-    context: { activeApp: SimulatorApp; activeScreen: string }
+    context: { activeApp: SimulatorApp; activeScreen: string },
 ): { handled: boolean } | null {
     if (key !== '/' || context.activeApp !== 'phone' || context.activeScreen !== 'contacts') {
         return null;
@@ -89,7 +116,7 @@ function handleSearchShortcut(
 
 function handleListNavShortcut(
     e: KeyboardEvent,
-    handlers: SimulatorKeyboardCommandHandlers
+    handlers: SimulatorKeyboardCommandHandlers,
 ): { handled: boolean } | null {
     let direction: 'next' | 'prev' | null = null;
     if (e.altKey === true && e.key === 'ArrowDown') {
@@ -133,7 +160,7 @@ export function handleSimulatorKeyboard(
         activeApp: SimulatorApp;
         /** Current screen id for active app (e.g. 'contacts', 'list', 'thread_detail'). */
         activeScreen: string;
-    }
+    },
 ): { handled: boolean; showHelp?: boolean } {
     if (isTypingTarget(e.target)) return { handled: false };
 

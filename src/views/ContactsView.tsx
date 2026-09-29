@@ -84,7 +84,11 @@ export interface ContactsViewProps {
     onPhoneContactOpen?: (contactId: string, contact: SimulatorSessionContact) => void;
 }
 
-function matchesPrimaryEmail(email: string | undefined, emailQuery: string, nameQuery: string): boolean {
+function matchesPrimaryEmail(
+    email: string | undefined,
+    emailQuery: string,
+    nameQuery: string,
+): boolean {
     if (!email) return false;
     if (emailQuery) return normalizeEmailForMatch(email).includes(emailQuery);
     return normalizeNameForMatch(email).includes(nameQuery);
@@ -138,7 +142,9 @@ export function contextMatchesContact(
     return false;
 }
 
-const CONTACTS_SEARCH_PLACEHOLDER = englishLocale.t("copy.ContactsView.search.by.name.number.or.email");
+const CONTACTS_SEARCH_PLACEHOLDER = englishLocale.t(
+    'copy.ContactsView.search.by.name.number.or.email',
+);
 
 /** Blue profile icon for phone-style contact rows (wireframe). */
 function ContactProfileIcon({ className }: Readonly<{ className?: string }>) {
@@ -192,7 +198,7 @@ export default function ContactsView({
         () => initialSelectedContactId ?? null,
     );
 
-    const list = contacts ?? [];
+    const list = useMemo(() => contacts ?? [], [contacts]);
     const filtered = useMemo(
         () => list.filter((c) => contactMatchesSearch(c, searchQuery)),
         [list, searchQuery],

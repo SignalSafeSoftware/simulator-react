@@ -53,7 +53,7 @@ Hosts supply a **`SimulatorTemplatePayload`**: TreeSpec wire plus simulator **wo
 ## Install
 
 ```bash
-npm install @signalsafe/simulator-react react react-dom
+npm install @signalsafe/simulator-react react@18 react-dom@18
 ```
 
 Use a modern **ESM** TypeScript setup. Style simulator UI via host CSS targeting `simulator-*` class hooks, or pass render slots for full UI-kit control (see [UI_KIT_AGNOSTIC_USAGE.md](./docs/UI_KIT_AGNOSTIC_USAGE.md)).
@@ -286,6 +286,39 @@ Node 22/24 (use Node 24.16+ locally). A separate CI job installs packed artifact
 with strict engine checks and tests runtime behavior on Node 19.0.0 and 19–24.
 
 The compatibility job builds this package and installs its declared dependencies
-from npm with strict engine checks. Release core 0.3.2 first, then React 0.16.3,
-then device 0.16.3; regenerate each downstream lockfile after its upstream release
-is available. No sibling source overrides are used in the runtime matrix.
+from npm with strict engine checks. Release core 0.4.1, then React 0.17.0,
+then device 0.17.0; publish theme 0.10.0 before validating the device gallery.
+Regenerate each downstream lockfile after its upstream releases are available.
+No sibling source overrides are used in the runtime matrix.
+
+## Local app migration (0.17.0, release candidate)
+
+- Export reusable Vault, Photos/editor/location, lock/settings, mutable Mailbox and HTML/React browser screens, page hooks and browser/file helpers.
+- Add `SimulatorAppsProvider` for host formatting, notes editing, map rendering, file/metadata and lock adapters. Default notes use a plain textarea; external maps require an explicit host renderer.
+- Add mailbox source slots and display adapters without importing host storage or import services.
+- Add optional `photo`, `numberLabel` and `description` to `PhoneHistoryDetail`; media and number labels render inside the card body. Existing supplied descriptions still render.
+- Require core 0.4.1; retain React 18 peers and add Lucide icons.
+
+This version is prepared locally; it is not a claim of registry publication. See
+[RELEASING.md](RELEASING.md) for the coordinated release order. PhoneMe validates
+normal packed artifacts; installed package files are never patched.
+
+### App ownership and adapters
+
+Pass a `DeviceStore` to each local app. The host owns revision notifications,
+paging, asset persistence, write conflicts, backup/reset and user-facing storage
+errors. Components await boolean writes and retain unsaved drafts on failure.
+`SimulatorAppsProvider` merges nested adapters; supply stable component identities
+for `Shell` and `NotesEditor` to avoid remounting edits. Host callbacks own network
+activity. The default photo view renders coordinates without loading a map.
+`SimulatorMailbox` accepts source render slots for host-owned imported/scenario
+mail; its default send changes simulated records only. Imported evidence is not
+rewritten by the package. HTML pages use a sanitized sandbox and validated,
+page/session-bound action messages; trusted React render callbacks run in the host.
+
+### Example verification
+
+`npm run smoke:package` compiles and executes the repository examples in an
+isolated consumer against the packed public API. The examples do not resolve
+sibling source trees or private source imports. The shared React 18 local-app
+workflow is in [simulator-device/examples/local-apps](https://github.com/SignalSafeSoftware/simulator-device/tree/main/examples/local-apps).

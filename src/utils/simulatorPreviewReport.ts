@@ -57,13 +57,16 @@ function getDefaultEntryScreen(entryApp: SimulatorApp, payload: SimulatorTemplat
     }
 }
 
-function getEntryPoint(payload: SimulatorTemplatePayload, entryApp: SimulatorApp): { app: string; screen: string } {
+function getEntryPoint(
+    payload: SimulatorTemplatePayload,
+    entryApp: SimulatorApp,
+): { app: string; screen: string } {
     const defaultScreen = getDefaultEntryScreen(entryApp, payload);
     const secondaryDefault = payload.device?.secondaryDefaults?.[entryApp];
     const entryScreen =
         payload.entryPoint?.app === entryApp && payload.entryPoint?.screen != null
             ? String(payload.entryPoint.screen)
-            : secondaryDefault ?? defaultScreen;
+            : (secondaryDefault ?? defaultScreen);
     return { app: entryApp, screen: entryScreen };
 }
 
@@ -78,17 +81,19 @@ function getUnreachableCount(report: ReturnType<typeof analyzeReachability>): nu
 
 function hasEmailAccess(
     payload: SimulatorTemplatePayload,
-    counts: { inboxCount: number }
+    counts: { inboxCount: number },
 ): boolean {
     return counts.inboxCount > 0 || payload.email?.selectedMessage != null;
 }
 
 function hasBrowserFormAction(payload: SimulatorTemplatePayload): boolean {
-    return payload.browser?.pages?.some(
-        (page) =>
-            (page?.formFields?.length ?? 0) > 0 ||
-            (page as { submitTargetPageId?: string }).submitTargetPageId != null
-    ) ?? false;
+    return (
+        payload.browser?.pages?.some(
+            (page) =>
+                (page?.formFields?.length ?? 0) > 0 ||
+                (page as { submitTargetPageId?: string }).submitTargetPageId != null,
+        ) ?? false
+    );
 }
 
 function hasEmailLinks(payload: SimulatorTemplatePayload): boolean {
@@ -103,7 +108,7 @@ function addEmailKeyActions(
     keyActions: string[],
     payload: SimulatorTemplatePayload,
     report: ReturnType<typeof analyzeReachability>,
-    counts: { inboxCount: number }
+    counts: { inboxCount: number },
 ): void {
     if (report.reachableApps.includes('email') && hasEmailAccess(payload, counts)) {
         keyActions.push('open_email');
@@ -113,7 +118,7 @@ function addEmailKeyActions(
 function addMessagesKeyActions(
     keyActions: string[],
     report: ReturnType<typeof analyzeReachability>,
-    counts: { threadMessageCount: number }
+    counts: { threadMessageCount: number },
 ): void {
     if (report.reachableApps.includes('messages') && counts.threadMessageCount > 0) {
         keyActions.push('open_thread');
@@ -124,7 +129,7 @@ function addBrowserKeyActions(
     keyActions: string[],
     payload: SimulatorTemplatePayload,
     report: ReturnType<typeof analyzeReachability>,
-    counts: { threadMessageCount: number; browserPagesCount: number }
+    counts: { threadMessageCount: number; browserPagesCount: number },
 ): void {
     if (report.reachableApps.includes('internet') && counts.browserPagesCount > 0) {
         keyActions.push('open_page');
@@ -142,7 +147,7 @@ function addPhoneKeyActions(
     keyActions: string[],
     payload: SimulatorTemplatePayload,
     report: ReturnType<typeof analyzeReachability>,
-    counts: { contactsCount: number; directoryCount: number }
+    counts: { contactsCount: number; directoryCount: number },
 ): void {
     if (!report.reachableApps.includes('phone')) {
         return;
@@ -162,7 +167,7 @@ function addPhoneKeyActions(
 function addVerificationKeyActions(
     keyActions: string[],
     report: ReturnType<typeof analyzeReachability>,
-    counts: { contactsCount: number }
+    counts: { contactsCount: number },
 ): void {
     if (
         counts.contactsCount > 0 &&
@@ -174,7 +179,7 @@ function addVerificationKeyActions(
 
 function addHomeKeyActions(
     keyActions: string[],
-    report: ReturnType<typeof analyzeReachability>
+    report: ReturnType<typeof analyzeReachability>,
 ): void {
     if (report.reachableApps.includes('home')) {
         keyActions.push('open_store', 'open_settings');
@@ -190,7 +195,7 @@ function collectKeyActions(
         threadMessageCount: number;
         browserPagesCount: number;
         directoryCount: number;
-    }
+    },
 ): string[] {
     const keyActions: string[] = [];
     addEmailKeyActions(keyActions, payload, report, counts);
@@ -206,7 +211,9 @@ function collectKeyActions(
  * Build a structured preview report from a simulator template payload.
  * Reuses reachability and lint; safe to call on any payload (catches validation errors).
  */
-export function buildSimulatorPreviewReport(payload: SimulatorTemplatePayload): SimulatorPreviewReport {
+export function buildSimulatorPreviewReport(
+    payload: SimulatorTemplatePayload,
+): SimulatorPreviewReport {
     const report = analyzeReachability(payload);
     const lint = lintSimulatorPayload(payload);
 

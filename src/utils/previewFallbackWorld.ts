@@ -22,7 +22,10 @@ export const PREVIEW_PLACEHOLDER_ID_PREFIX = '__preview_placeholder';
 
 const PLACEHOLDER_LABEL = '[Preview placeholder – add content in simulator_json]';
 
-function needsEmailFallback(entry: SimulatorEntryPoint | null, email: SimulatorEmailPayload | null): boolean {
+function needsEmailFallback(
+    entry: SimulatorEntryPoint | null,
+    email: SimulatorEmailPayload | null,
+): boolean {
     if (entry?.app !== 'email') return false;
     if (email == null) return true;
     if (entry.screen === 'detail') {
@@ -38,14 +41,16 @@ function buildEmailFallback(): SimulatorEmailPayload {
         id,
         subject: PLACEHOLDER_LABEL,
         from: 'preview@example',
-        snippet: englishLocale.t("copy.previewFallbackWorld.add.email.content.in.simulator.json"),
+        snippet: englishLocale.t('copy.previewFallbackWorld.add.email.content.in.simulator.json'),
     };
     return {
         inbox: [row],
         selectedMessage: {
             subject: PLACEHOLDER_LABEL,
             from: 'preview@example',
-            body: englishLocale.t("copy.previewFallbackWorld.add.email.content.in.simulator.json.to.replace.this.placeholder"),
+            body: englishLocale.t(
+                'copy.previewFallbackWorld.add.email.content.in.simulator.json.to.replace.this.placeholder',
+            ),
             from_display_name: undefined,
             to: undefined,
             cc: undefined,
@@ -62,7 +67,10 @@ function buildEmailFallback(): SimulatorEmailPayload {
     };
 }
 
-function needsMessagesFallback(entry: SimulatorEntryPoint | null, sms: SimulatorSmsPayload | null): boolean {
+function needsMessagesFallback(
+    entry: SimulatorEntryPoint | null,
+    sms: SimulatorSmsPayload | null,
+): boolean {
     if (entry?.app !== 'messages') return false;
     if (sms == null) return true;
     if (entry.screen === 'thread_detail') {
@@ -74,9 +82,7 @@ function needsMessagesFallback(entry: SimulatorEntryPoint | null, sms: Simulator
 function buildSmsFallback(): SimulatorSmsPayload {
     return {
         thread: {
-            messages: [
-                { from: 'them', text: PLACEHOLDER_LABEL, delay_seconds: 0 },
-            ],
+            messages: [{ from: 'them', text: PLACEHOLDER_LABEL, delay_seconds: 0 }],
             sender_display_name: undefined,
             sender_number: undefined,
             last_at: undefined,
@@ -86,7 +92,10 @@ function buildSmsFallback(): SimulatorSmsPayload {
     };
 }
 
-function needsBrowserFallback(entry: SimulatorEntryPoint | null, browser: SimulatorBrowserPayload | null): boolean {
+function needsBrowserFallback(
+    entry: SimulatorEntryPoint | null,
+    browser: SimulatorBrowserPayload | null,
+): boolean {
     if (entry?.app !== 'internet') return false;
     if (browser == null) return true;
     const pages = browser.pages ?? [];
@@ -96,13 +105,18 @@ function needsBrowserFallback(entry: SimulatorEntryPoint | null, browser: Simula
 }
 
 function buildBrowserFallback(entryScreen: string): SimulatorBrowserPayload {
-    const id = entryScreen && entryScreen !== 'landing' ? entryScreen : `${PREVIEW_PLACEHOLDER_ID_PREFIX}_landing`;
+    const id =
+        entryScreen && entryScreen !== 'landing'
+            ? entryScreen
+            : `${PREVIEW_PLACEHOLDER_ID_PREFIX}_landing`;
     const page: SimulatorBrowserPage = {
         id,
         url: 'https://example.com/',
         title: PLACEHOLDER_LABEL,
         layout: 'content',
-        content: englishLocale.t("copy.previewFallbackWorld.add.browser.pages.in.simulator.json.to.replace.this.placeholder"),
+        content: englishLocale.t(
+            'copy.previewFallbackWorld.add.browser.pages.in.simulator.json.to.replace.this.placeholder',
+        ),
     };
     return {
         pages: [page],
@@ -110,7 +124,10 @@ function buildBrowserFallback(entryScreen: string): SimulatorBrowserPayload {
     };
 }
 
-function needsPhoneFallback(entry: SimulatorEntryPoint | null, phone: SimulatorPhonePayload | null): boolean {
+function needsPhoneFallback(
+    entry: SimulatorEntryPoint | null,
+    phone: SimulatorPhonePayload | null,
+): boolean {
     if (entry?.app !== 'phone') return false;
     if (entry.screen === 'incoming_call' && phone?.content == null) return true;
     return false;
@@ -139,9 +156,10 @@ function buildPhoneFallback(): SimulatorPhonePayload {
  * Call only in preview mode, after validation. Does not modify payload when no fallback is needed.
  * Returns the payload (possibly with one or more slices filled) and whether any fallback was applied.
  */
-export function applyPreviewFallback(
-    payload: SimulatorTemplatePayload
-): { payload: SimulatorTemplatePayload; fallbackApplied: boolean } {
+export function applyPreviewFallback(payload: SimulatorTemplatePayload): {
+    payload: SimulatorTemplatePayload;
+    fallbackApplied: boolean;
+} {
     const entry = payload.entryPoint ?? null;
     let next = payload;
     let applied = false;

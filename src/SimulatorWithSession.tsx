@@ -1,3 +1,4 @@
+import { shouldHideSimulatorNavigation } from './utils/simulatorNavigationPolicy.js';
 import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
 import {
     resolveScreenOverride,
@@ -263,12 +264,7 @@ export default function SimulatorWithSession({
                         exitTo={exitLink ? undefined : exitTo}
                         exitLabel={exitLabel}
                         compact={compact}
-                        hideBottomNav={
-                            (activeApp === 'messages' &&
-                                (currentScreenForApp === 'thread_detail' ||
-                                    currentScreenForApp === 'new_thread')) ||
-                            (activeApp === 'email' && currentScreenForApp === 'detail')
-                        }
+                        hideBottomNav={shouldHideSimulatorNavigation(view, 'scenario')}
                         secondaryMenu={
                             secondaryMenu
                                 ? {

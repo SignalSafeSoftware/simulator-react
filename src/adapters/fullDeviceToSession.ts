@@ -67,14 +67,17 @@ export function mapDevice(device: SimulatorDevicePayload['device']): SimulatorSe
     if (device == null || !Array.isArray(device.main_menu_items)) {
         return null;
     }
-    const mainMenuItems = device.main_menu_items.filter(
-        (item): item is NonNullable<typeof item> => item != null && typeof item === 'object' && typeof item.id === 'string'
-    ).map((item) => ({
-        ...item,
-        id: stringOr(item.id),
-        label: stringOr((item as { label?: unknown }).label, stringOr(item.id)),
-        app: typeof item.app === 'string' ? item.app : undefined,
-    }));
+    const mainMenuItems = device.main_menu_items
+        .filter(
+            (item): item is NonNullable<typeof item> =>
+                item != null && typeof item === 'object' && typeof item.id === 'string',
+        )
+        .map((item) => ({
+            ...item,
+            id: stringOr(item.id),
+            label: stringOr((item as { label?: unknown }).label, stringOr(item.id)),
+            app: typeof item.app === 'string' ? item.app : undefined,
+        }));
     if (mainMenuItems.length === 0) {
         return null;
     }
@@ -118,12 +121,17 @@ export function mapDirectory(directory: unknown): SimulatorDirectoryEntry[] | nu
 }
 
 /** Map contacts array to session contacts (id, displayName, number, email). */
-export function mapContacts(contacts: SimulatorDevicePayload['contacts']): SimulatorSessionContact[] {
+export function mapContacts(
+    contacts: SimulatorDevicePayload['contacts'],
+): SimulatorSessionContact[] {
     if (contacts == null || !Array.isArray(contacts)) {
         return [];
     }
     return contacts
-        .filter((c): c is SimulatorContact => c != null && typeof c === 'object' && typeof c.display_name === 'string')
+        .filter(
+            (c): c is SimulatorContact =>
+                c != null && typeof c === 'object' && typeof c.display_name === 'string',
+        )
         .map((c, index) => ({
             id: typeof c.id === 'string' ? c.id : `c-${index}`,
             displayName: c.display_name,
@@ -156,7 +164,7 @@ function mapEmailLinks(raw: unknown): EmailTemplateContent['links'] {
 
 /** Convert email message detail to EmailTemplateContent (session shape). */
 function emailDetailToContent(detail: SimulatorEmailMessageDetail): EmailTemplateContent {
-    const d = detail as SimulatorEmailMessageDetail & { from_addr?: string; from_display_name?: string; to?: string; cc?: string; date_at?: string; unread?: boolean };
+    const d = detail;
     const fromAddr = stringOr(d.from, stringOr(d.from_addr));
     return {
         subject: stringOr(detail.subject),
@@ -178,8 +186,17 @@ function emailDetailToContent(detail: SimulatorEmailMessageDetail): EmailTemplat
 }
 
 function toInboxRow(
-    row: { id?: string; subject?: string; from?: string; from_addr?: string; from_display_name?: string; snippet?: string; date_at?: string; unread?: boolean },
-    rowFrom: (r: { from?: string; from_addr?: string }) => string
+    row: {
+        id?: string;
+        subject?: string;
+        from?: string;
+        from_addr?: string;
+        from_display_name?: string;
+        snippet?: string;
+        date_at?: string;
+        unread?: boolean;
+    },
+    rowFrom: (r: { from?: string; from_addr?: string }) => string,
 ): SimulatorInboxRow {
     return {
         id: stringOr(row.id),
@@ -194,14 +211,7 @@ function toInboxRow(
 }
 
 function getSelectedMessage(
-    detail: (SimulatorEmailMessageDetail & {
-        from_addr?: string;
-        from_display_name?: string;
-        to?: string;
-        cc?: string;
-        date_at?: string;
-        unread?: boolean;
-    }) | null
+    detail: SimulatorEmailMessageDetail | null,
 ): EmailTemplateContent | null {
     if (detail == null) {
         return null;
@@ -212,7 +222,7 @@ function getSelectedMessage(
 function getSelectedMessageId(
     detail: { id?: string } | null,
     allRows: SimulatorInboxRow[],
-    inbox: SimulatorInboxRow[]
+    inbox: SimulatorInboxRow[],
 ): string | null {
     if (detail != null) {
         return detail.id ?? null;
@@ -234,17 +244,27 @@ function getBrowserFieldType(fieldType: string | undefined): 'text' | 'password'
 export function mapEmail(email: SimulatorDevicePayload['email']): SimulatorEmailPayload | null {
     if (email == null) return null;
     const messages: SimulatorEmailMessageRow[] = email.messages ?? [];
-    const detail = email.detail as (SimulatorEmailMessageDetail & { from_addr?: string; from_display_name?: string; to?: string; cc?: string; date_at?: string; unread?: boolean }) | null;
-    const rowFrom = (row: { from?: string; from_addr?: string }) => stringOr(row.from, stringOr(row.from_addr));
+    const detail = email.detail ?? null;
+    const rowFrom = (row: { from?: string; from_addr?: string }) =>
+        stringOr(row.from, stringOr(row.from_addr));
     const withFolder = messages.map((row) => {
-        const r = row as { id?: string; subject?: string; from?: string; from_addr?: string; from_display_name?: string; snippet?: string; date_at?: string; unread?: boolean; folder_id?: string };
-        return { row: toInboxRow(r, rowFrom), folder_id: typeof r.folder_id === 'string' ? r.folder_id.toLowerCase() : 'inbox' };
+        const r = row;
+        return {
+            row: toInboxRow(r, rowFrom),
+            folder_id: typeof r.folder_id === 'string' ? r.folder_id.toLowerCase() : 'inbox',
+        };
     });
-    const inbox: SimulatorInboxRow[] = withFolder.filter((x) => x.folder_id === 'inbox').map((x) => x.row);
-    const outbox: SimulatorInboxRow[] = withFolder.filter((x) => x.folder_id === 'outbox').map((x) => x.row);
-    const trash: SimulatorInboxRow[] = withFolder.filter((x) => x.folder_id === 'trash').map((x) => x.row);
+    const inbox: SimulatorInboxRow[] = withFolder
+        .filter((x) => x.folder_id === 'inbox')
+        .map((x) => x.row);
+    const outbox: SimulatorInboxRow[] = withFolder
+        .filter((x) => x.folder_id === 'outbox')
+        .map((x) => x.row);
+    const trash: SimulatorInboxRow[] = withFolder
+        .filter((x) => x.folder_id === 'trash')
+        .map((x) => x.row);
     if (inbox.length === 0 && detail != null) {
-        const detailSnippet = (detail as { snippet?: string }).snippet;
+        const detailSnippet = detail.snippet;
         inbox.push({
             id: stringOr(detail.id, '0'),
             subject: stringOr(detail.subject),
@@ -268,24 +288,17 @@ export function mapEmail(email: SimulatorDevicePayload['email']): SimulatorEmail
 }
 
 /** Map messages (SMS) app section to session sms payload. */
-export function mapMessages(messages: SimulatorDevicePayload['messages']): SimulatorSmsPayload | null {
+export function mapMessages(
+    messages: SimulatorDevicePayload['messages'],
+): SimulatorSmsPayload | null {
     if (messages == null) return null;
-    const threadDetail = messages.thread_detail as {
-        messages?: Array<{ from?: string; text?: string; delay_seconds?: number; timestamp?: string; attachment?: { label?: string; url?: string } }>;
-        sender_display_name?: string;
-        sender_number?: string;
-        last_at?: string;
-        unread?: boolean;
-    } | null;
-    if (threadDetail == null || !Array.isArray(threadDetail.messages)) {
-        return null;
-    }
+    const threadDetail = messages.thread_detail;
     const rawThreads = messages.threads;
     const threads: SimulatorThreadListRow[] = Array.isArray(rawThreads)
         ? rawThreads
               .filter((t) => t != null && typeof t === 'object')
               .map((t) => {
-                  const r = t as unknown as Record<string, unknown>;
+                  const r = t;
                   return {
                       id: stringOr(r.id),
                       preview: stringOr(r.snippet),
@@ -300,23 +313,26 @@ export function mapMessages(messages: SimulatorDevicePayload['messages']): Simul
     const fromRole = (m: { from?: string }) => (m.from === 'me' ? 'me' : 'them');
     return {
         thread: {
-            messages: threadDetail.messages.map((m) => ({
+            messages: (threadDetail?.messages ?? []).map((m) => ({
+                ...(m.id === undefined ? {} : { id: m.id }),
                 from: fromRole(m),
                 text: stringOr(m.text),
                 delay_seconds: m.delay_seconds,
                 timestamp: optionalString(m.timestamp),
                 attachment:
-                    m.attachment != null && typeof m.attachment === 'object' && typeof m.attachment.label === 'string'
+                    m.attachment != null &&
+                    typeof m.attachment === 'object' &&
+                    typeof m.attachment.label === 'string'
                         ? {
                               label: m.attachment.label,
                               url: optionalString(m.attachment.url),
                           }
                         : undefined,
             })),
-            sender_display_name: optionalString(threadDetail.sender_display_name),
-            sender_number: optionalString(threadDetail.sender_number),
-            last_at: optionalString(threadDetail.last_at),
-            unread: threadDetail.unread === true,
+            sender_display_name: optionalString(threadDetail?.sender_display_name),
+            sender_number: optionalString(threadDetail?.sender_number),
+            last_at: optionalString(threadDetail?.last_at),
+            unread: threadDetail?.unread === true,
         },
         visibleMessageCount: 0,
         threads: threads.length > 0 ? threads : undefined,
@@ -337,7 +353,17 @@ export function mapPhone(phone: SimulatorDevicePayload['phone']): SimulatorPhone
     const incoming = phone.incoming_call;
     if (incoming == null) return null;
     const transcript = stringOr(incoming.transcript);
-    const rawHistory = (phone as { history?: Array<{ id?: string; number?: string; name?: string; direction?: string; timestamp?: string }> }).history;
+    const rawHistory = (
+        phone as {
+            history?: Array<{
+                id?: string;
+                number?: string;
+                name?: string;
+                direction?: string;
+                timestamp?: string;
+            }>;
+        }
+    ).history;
     const callHistory: SimulatorCallHistoryEntry[] = Array.isArray(rawHistory)
         ? rawHistory.map((h, i) => ({
               id: typeof h.id === 'string' ? h.id : `call-${i}`,
@@ -347,15 +373,18 @@ export function mapPhone(phone: SimulatorDevicePayload['phone']): SimulatorPhone
               timestamp: optionalString(h.timestamp),
           }))
         : [];
-    const voicemailSection = (phone as { voicemail?: { transcript?: string; caller_name?: string; timestamp?: string } }).voicemail;
+    const voicemailSection = (
+        phone as { voicemail?: { transcript?: string; caller_name?: string; timestamp?: string } }
+    ).voicemail;
     const voicemailTranscript =
-        voicemailSection?.transcript ?? (phone as { voicemail_transcript?: string }).voicemail_transcript;
+        voicemailSection?.transcript ??
+        (phone as { voicemail_transcript?: string }).voicemail_transcript;
     const voicemailStr = nullableString(voicemailTranscript);
     const voicemailCallerName = optionalString(voicemailSection?.caller_name);
     const voicemailTimestamp = optionalString(voicemailSection?.timestamp);
     return {
         content: {
-            transcript: transcript || englishLocale.t("copy.fullDeviceToSession.incoming.call"),
+            transcript: transcript || englishLocale.t('copy.fullDeviceToSession.incoming.call'),
             choices: [],
             phone_number: optionalString(incoming.phone_number),
             caller_name: optionalString(incoming.caller_name),
@@ -375,7 +404,9 @@ function normalizePageUrl(url: string | undefined): string {
     return u.startsWith('http') ? u : `https://${u}/`;
 }
 
-function mapFormFields(fields: Array<{ name?: string; type?: string; label?: string }> | undefined): NonNullable<SimulatorBrowserPage['formFields']> {
+function mapFormFields(
+    fields: Array<{ name?: string; type?: string; label?: string }> | undefined,
+): NonNullable<SimulatorBrowserPage['formFields']> {
     if (fields == null || fields.length === 0) {
         return [
             { name: 'username', type: 'text', label: 'Username' },
@@ -390,32 +421,44 @@ function mapFormFields(fields: Array<{ name?: string; type?: string; label?: str
 }
 
 /** Map internet app section to session internet (browser) payload (page-based). */
-export function mapInternet(internet: SimulatorDevicePayload['internet']): SimulatorBrowserPayload | null {
+export function mapInternet(
+    internet: SimulatorDevicePayload['internet'],
+): SimulatorBrowserPayload | null {
     if (internet == null) return null;
     const rawPages = internet.pages ?? [];
     const forms = internet.forms ?? [];
     if (rawPages.length === 0) return null;
 
-    const pages: SimulatorBrowserPage[] = rawPages.map((p: { id?: string; url?: string; title?: string; layout?: string; content?: string; submit_target_page_id?: string | null }) => {
-        const pageId = stringOr(p.id, 'page');
-        const form = forms.find((f: { page_id?: string }) => f.page_id === pageId) ?? forms[0];
-        const rawFields = form?.fields ?? [];
-        const formFields = mapFormFields(rawFields);
-        const submitTargetPageId =
-            typeof p.submit_target_page_id === 'string' && p.submit_target_page_id !== ''
-                ? p.submit_target_page_id
-                : undefined;
-        const content = typeof p.content === 'string' && p.content !== '' ? p.content : undefined;
-        return {
-            id: pageId,
-            url: normalizePageUrl(p.url),
-            title: stringOr(p.title, 'Page'),
-            layout: stringOr(p.layout, 'content'),
-            content,
-            formFields: formFields.length > 0 ? formFields : undefined,
-            submitTargetPageId: submitTargetPageId ?? undefined,
-        };
-    });
+    const pages: SimulatorBrowserPage[] = rawPages.map(
+        (p: {
+            id?: string;
+            url?: string;
+            title?: string;
+            layout?: string;
+            content?: string;
+            submit_target_page_id?: string | null;
+        }) => {
+            const pageId = stringOr(p.id, 'page');
+            const form = forms.find((f: { page_id?: string }) => f.page_id === pageId) ?? forms[0];
+            const rawFields = form?.fields ?? [];
+            const formFields = mapFormFields(rawFields);
+            const submitTargetPageId =
+                typeof p.submit_target_page_id === 'string' && p.submit_target_page_id !== ''
+                    ? p.submit_target_page_id
+                    : undefined;
+            const content =
+                typeof p.content === 'string' && p.content !== '' ? p.content : undefined;
+            return {
+                id: pageId,
+                url: normalizePageUrl(p.url),
+                title: stringOr(p.title, 'Page'),
+                layout: stringOr(p.layout, 'content'),
+                content,
+                formFields: formFields.length > 0 ? formFields : undefined,
+                submitTargetPageId: submitTargetPageId ?? undefined,
+            };
+        },
+    );
 
     const firstUrl = pages[0]?.url ?? 'https://page/';
     if (!pages.some((p) => p.id === DEFAULT_BROWSER_SUBMIT_TARGET)) {
@@ -424,7 +467,7 @@ export function mapInternet(internet: SimulatorDevicePayload['internet']): Simul
             url: firstUrl + DEFAULT_BROWSER_SUBMIT_TARGET,
             title: 'Result',
             layout: DEFAULT_BROWSER_SUBMIT_TARGET,
-            content: englishLocale.t("copy.fullDeviceToSession.simulation.complete"),
+            content: englishLocale.t('copy.fullDeviceToSession.simulation.complete'),
         });
     }
 
@@ -439,11 +482,13 @@ export function mapHome(home: SimulatorDevicePayload['home']): SimulatorHomePayl
     if (home == null || typeof home !== 'object') return null;
     const homeScreen = (home as { home?: { widgets?: unknown[] } }).home;
     const widgets: SimulatorHomeWidget[] = Array.isArray(homeScreen?.widgets)
-        ? (homeScreen.widgets as Array<{ id?: string; type?: string; label?: string }>).map((w, i) => ({
-              id: typeof w.id === 'string' ? w.id : `w-${i}`,
-              type: typeof w.type === 'string' ? w.type : undefined,
-              label: typeof w.label === 'string' ? w.label : 'Widget',
-          }))
+        ? (homeScreen.widgets as Array<{ id?: string; type?: string; label?: string }>).map(
+              (w, i) => ({
+                  id: typeof w.id === 'string' ? w.id : `w-${i}`,
+                  type: typeof w.type === 'string' ? w.type : undefined,
+                  label: typeof w.label === 'string' ? w.label : 'Widget',
+              }),
+          )
         : [];
     const store = (home as { store?: { featured_apps?: unknown[] } }).store;
     const featuredApps: SimulatorHomeStoreApp[] = Array.isArray(store?.featured_apps)

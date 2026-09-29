@@ -16,10 +16,14 @@ describe('validateSimulatorPayload', () => {
     });
 
     it('throws when payload is not an object', () => {
-        expect(() => validateSimulatorPayload('email')).toThrow('payload is missing or not an object');
+        expect(() => validateSimulatorPayload('email')).toThrow(
+            'payload is missing or not an object',
+        );
     });
 
     it('throws when channel is unsupported', () => {
-        expect(() => validateSimulatorPayload({ channel: 'pager' })).toThrow('channel must be one of');
+        expect(() => validateSimulatorPayload({ channel: 'pager' })).toThrow(
+            'channel must be one of',
+        );
     });
 });

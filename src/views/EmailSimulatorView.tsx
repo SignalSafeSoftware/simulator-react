@@ -22,8 +22,6 @@ import {
 } from '../ui/simulatorClasses.js';
 import { SIM_EMAIL } from '../ui/semanticSimulatorClasses.js';
 
-
-
 export interface EmailSimulatorViewProps {
     payload: SimulatorEmailPayload | null;
     screen: EmailScreenId;

@@ -7,9 +7,7 @@ import { englishLocale } from '../i18n/englishLocale.js';
  * Kept separate from validateSimulatorPayload (hard validation).
  */
 
-import type {
-    SimulatorTemplatePayload,
-} from '../types/session.js';
+import type { SimulatorTemplatePayload } from '../types/session.js';
 import { keyNamingSuggestion, type KeyFamily } from './simulatorKeyPatterns.js';
 
 export interface SimulatorLintWarning {
@@ -30,43 +28,66 @@ function getEntryScreen(ep: SimulatorTemplatePayload['entryPoint']): string | nu
     return String(ep.screen).toLowerCase();
 }
 
-function add(
-    warnings: SimulatorLintWarning[],
-    code: string,
-    message: string,
-    path?: string
-): void {
+function add(warnings: SimulatorLintWarning[], code: string, message: string, path?: string): void {
     warnings.push({ code, message, path });
 }
 
 function lintEmailEntry(
     payload: SimulatorTemplatePayload,
     screen: string | null,
-    warnings: SimulatorLintWarning[]
+    warnings: SimulatorLintWarning[],
 ): void {
     const hasInbox = (payload.email?.inbox?.length ?? 0) > 0;
     const hasDetail = payload.email?.selectedMessage != null;
     if (screen === 'detail' && !hasDetail && !hasInbox) {
-        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.email.detail.but.there.is.no.message.or.inbox"), 'entry_point');
+        add(
+            warnings,
+            'entry_app_empty',
+            englishLocale.t(
+                'copy.lintSimulatorPayload.entry.point.is.email.detail.but.there.is.no.message.or.inbox',
+            ),
+            'entry_point',
+        );
         return;
     }
     if (!hasInbox && !hasDetail) {
-        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.email.but.inbox.and.selected.message.are.empty"), 'entry_point');
+        add(
+            warnings,
+            'entry_app_empty',
+            englishLocale.t(
+                'copy.lintSimulatorPayload.entry.point.is.email.but.inbox.and.selected.message.are.empty',
+            ),
+            'entry_point',
+        );
     }
 }
 
 function lintMessagesEntry(
     payload: SimulatorTemplatePayload,
     screen: string | null,
-    warnings: SimulatorLintWarning[]
+    warnings: SimulatorLintWarning[],
 ): void {
     const hasThread = (payload.sms?.thread?.messages?.length ?? 0) > 0;
     if (screen === 'thread_detail' && !hasThread) {
-        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.messages.thread.detail.but.the.thread.has.no.messages"), 'entry_point');
+        add(
+            warnings,
+            'entry_app_empty',
+            englishLocale.t(
+                'copy.lintSimulatorPayload.entry.point.is.messages.thread.detail.but.the.thread.has.no.messages',
+            ),
+            'entry_point',
+        );
         return;
     }
     if (!hasThread) {
-        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.messages.but.the.sms.thread.is.empty"), 'entry_point');
+        add(
+            warnings,
+            'entry_app_empty',
+            englishLocale.t(
+                'copy.lintSimulatorPayload.entry.point.is.messages.but.the.sms.thread.is.empty',
+            ),
+            'entry_point',
+        );
     }
 }
 
@@ -74,12 +95,19 @@ function lintInternetEntry(
     payload: SimulatorTemplatePayload,
     screen: string | null,
     entryPoint: SimulatorTemplatePayload['entryPoint'],
-    warnings: SimulatorLintWarning[]
+    warnings: SimulatorLintWarning[],
 ): void {
     const pages = payload.browser?.pages ?? [];
     const pageIds = new Set(pages.map((p) => p?.id).filter(Boolean));
     if (pages.length === 0) {
-        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.internet.but.there.are.no.browser.pages"), 'entry_point');
+        add(
+            warnings,
+            'entry_app_empty',
+            englishLocale.t(
+                'copy.lintSimulatorPayload.entry.point.is.internet.but.there.are.no.browser.pages',
+            ),
+            'entry_point',
+        );
         return;
     }
     if (screen != null && screen !== 'landing' && !pageIds.has(screen)) {
@@ -87,7 +115,7 @@ function lintInternetEntry(
             warnings,
             'entry_point_unreachable',
             `Entry screen "${entryPoint?.screen}" is not in browser.pages; user will see default page.`,
-            'entry_point'
+            'entry_point',
         );
     }
 }
@@ -95,26 +123,35 @@ function lintInternetEntry(
 function lintPhoneEntry(
     payload: SimulatorTemplatePayload,
     screen: string | null,
-    warnings: SimulatorLintWarning[]
+    warnings: SimulatorLintWarning[],
 ): void {
     const hasPhone = payload.phone?.content != null;
     const needsPhoneContent =
-        screen === 'incoming_call' ||
-        screen === 'dial' ||
-        screen === 'contacts';
+        screen === 'incoming_call' || screen === 'dial' || screen === 'contacts';
     if (needsPhoneContent && !hasPhone && payload.phone == null) {
-        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.phone.but.phone.content.is.missing"), 'entry_point');
+        add(
+            warnings,
+            'entry_app_empty',
+            englishLocale.t(
+                'copy.lintSimulatorPayload.entry.point.is.phone.but.phone.content.is.missing',
+            ),
+            'entry_point',
+        );
     }
 }
 
-function lintHomeEntry(
-    payload: SimulatorTemplatePayload,
-    warnings: SimulatorLintWarning[]
-): void {
+function lintHomeEntry(payload: SimulatorTemplatePayload, warnings: SimulatorLintWarning[]): void {
     const widgets = payload.home?.widgets ?? [];
     const apps = payload.home?.featuredApps ?? [];
     if (widgets.length === 0 && apps.length === 0) {
-        add(warnings, 'entry_app_empty', englishLocale.t("copy.lintSimulatorPayload.entry.point.is.home.but.widgets.and.featured.apps.are.empty"), 'entry_point');
+        add(
+            warnings,
+            'entry_app_empty',
+            englishLocale.t(
+                'copy.lintSimulatorPayload.entry.point.is.home.but.widgets.and.featured.apps.are.empty',
+            ),
+            'entry_point',
+        );
     }
 }
 
@@ -123,7 +160,7 @@ function lintEntryAppContent(
     app: string | null,
     screen: string | null,
     entryPoint: SimulatorTemplatePayload['entryPoint'],
-    warnings: SimulatorLintWarning[]
+    warnings: SimulatorLintWarning[],
 ): void {
     switch (app) {
         case 'email':
@@ -148,7 +185,7 @@ function lintEntryAppContent(
 
 function lintBrowserActionTargets(
     browserPages: NonNullable<SimulatorTemplatePayload['browser']>['pages'] | undefined,
-    warnings: SimulatorLintWarning[]
+    warnings: SimulatorLintWarning[],
 ): void {
     const pages = browserPages ?? [];
     const browserPageIds = new Set(pages.map((p) => p?.id).filter(Boolean));
@@ -161,7 +198,7 @@ function lintBrowserActionTargets(
                     warnings,
                     'unreachable_action_target',
                     `Button targets page "${target}" which is not in browser.pages.`,
-                    `browser.pages[${i}]`
+                    `browser.pages[${i}]`,
                 );
             }
         });
@@ -170,7 +207,7 @@ function lintBrowserActionTargets(
 
 function lintBareBrowserPages(
     browserPages: NonNullable<SimulatorTemplatePayload['browser']>['pages'] | undefined,
-    warnings: SimulatorLintWarning[]
+    warnings: SimulatorLintWarning[],
 ): void {
     (browserPages ?? []).forEach((page, i) => {
         if (page == null) return;
@@ -181,8 +218,10 @@ function lintBareBrowserPages(
             add(
                 warnings,
                 'browser_page_bare',
-                englishLocale.t("copy.lintSimulatorPayload.browser.page.has.no.title.url.or.content"),
-                `browser.pages[${i}]`
+                englishLocale.t(
+                    'copy.lintSimulatorPayload.browser.page.has.no.title.url.or.content',
+                ),
+                `browser.pages[${i}]`,
             );
         }
     });
@@ -190,10 +229,10 @@ function lintBareBrowserPages(
 
 function lintMessagesSenderIdentity(
     payload: SimulatorTemplatePayload,
-    warnings: SimulatorLintWarning[]
+    warnings: SimulatorLintWarning[],
 ): void {
     const sms = payload.sms;
-    if (!(sms?.thread?.messages?.length)) {
+    if (!sms?.thread?.messages?.length) {
         return;
     }
     const thread = sms.thread;
@@ -205,7 +244,7 @@ function lintMessagesSenderIdentity(
             warnings,
             'messages_no_sender_identity',
             'SMS thread has messages but no sender_display_name or sender_number; "Check contact" may be unclear.',
-            'sms.thread'
+            'sms.thread',
         );
     }
 }
@@ -213,7 +252,7 @@ function lintMessagesSenderIdentity(
 function lintPhoneVerificationContacts(
     payload: SimulatorTemplatePayload,
     app: string | null,
-    warnings: SimulatorLintWarning[]
+    warnings: SimulatorLintWarning[],
 ): void {
     const phone = payload.phone;
     const contacts = payload.contacts ?? [];
@@ -223,8 +262,10 @@ function lintPhoneVerificationContacts(
         add(
             warnings,
             'phone_verification_without_contacts',
-            englishLocale.t("copy.lintSimulatorPayload.phone.scenario.has.choices.e.g.verification.but.no.contacts.list.learners.cannot.match.a.c"),
-            'phone'
+            englishLocale.t(
+                'copy.lintSimulatorPayload.phone.scenario.has.choices.e.g.verification.but.no.contacts.list.learners.cannot.match.a.c',
+            ),
+            'phone',
         );
     }
 }
@@ -234,7 +275,7 @@ function addDuplicateIdWarnings(
     ids: Array<string | null | undefined>,
     code: string,
     makeMessage: (id: string) => string,
-    path: string
+    path: string,
 ): void {
     const counts = new Map<string, number>();
     ids.forEach((id) => {
@@ -251,7 +292,7 @@ function addDuplicateIdWarnings(
 
 function lintDuplicateKeys(
     payload: SimulatorTemplatePayload,
-    warnings: SimulatorLintWarning[]
+    warnings: SimulatorLintWarning[],
 ): void {
     const browserPages = payload.browser?.pages ?? [];
     const contactList = payload.contacts ?? [];
@@ -262,27 +303,27 @@ function lintDuplicateKeys(
         browserPages.map((p) => p?.id),
         'duplicate_keys',
         (id) => `Duplicate browser page id: "${id}".`,
-        'browser.pages'
+        'browser.pages',
     );
     addDuplicateIdWarnings(
         warnings,
         contactList.map((contact) => contact?.id),
         'duplicate_keys',
         (id) => `Duplicate contact id: "${id}".`,
-        'contacts'
+        'contacts',
     );
     addDuplicateIdWarnings(
         warnings,
         inbox.map((row) => row?.id),
         'duplicate_keys',
         (id) => `Duplicate inbox message id: "${id}".`,
-        'email.inbox'
+        'email.inbox',
     );
 }
 
 function addKeyNamingWarnings(
     warnings: SimulatorLintWarning[],
-    payload: SimulatorTemplatePayload
+    payload: SimulatorTemplatePayload,
 ): void {
     const suggest = (value: string, family: KeyFamily, path: string): void => {
         const msg = keyNamingSuggestion(value, family);

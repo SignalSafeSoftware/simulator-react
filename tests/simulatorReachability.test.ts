@@ -63,7 +63,7 @@ describe('analyzeReachability', () => {
                 { app: 'home', screen: 'home' },
                 { app: 'home', screen: 'store' },
                 { app: 'home', screen: 'settings' },
-            ])
+            ]),
         );
     });
 
@@ -140,7 +140,9 @@ describe('analyzeReachability', () => {
             sms: { thread: { messages: [] } },
         } as never);
         expect(messagesReport.reachableScreens.messages).toEqual(['threads', 'new_thread']);
-        expect(messagesReport.unreachable.screens).toEqual([{ app: 'messages', screen: 'thread_detail' }]);
+        expect(messagesReport.unreachable.screens).toEqual([
+            { app: 'messages', screen: 'thread_detail' },
+        ]);
 
         const internetReport = analyzeReachability({
             channel: 'browser',
@@ -174,7 +176,7 @@ describe('analyzeReachability', () => {
                 device: { mainMenuItems: [{ id: 'phone' }] },
                 phone: {},
                 contacts: 'not-an-array' as never,
-            } as never)
+            } as never),
         ).toThrow('map is not a function');
 
         const unreachablePhoneReport = analyzeReachability({
@@ -192,7 +194,7 @@ describe('analyzeReachability', () => {
                 { app: 'phone', screen: 'incoming_call' },
                 { app: 'phone', screen: 'voicemail' },
                 { app: 'phone', screen: 'directory' },
-            ])
+            ]),
         );
     });
 
@@ -203,7 +205,10 @@ describe('analyzeReachability', () => {
             device: { mainMenuItems: [{ id: 'internet' }] },
             browser: {
                 defaultPageId: 'missing-default',
-                pages: [{ buttons: [{ targetPageId: 'other' }] } as never, { id: 'actual-page', buttons: [] }],
+                pages: [
+                    { buttons: [{ targetPageId: 'other' }] } as never,
+                    { id: 'actual-page', buttons: [] },
+                ],
             },
         } as never);
 

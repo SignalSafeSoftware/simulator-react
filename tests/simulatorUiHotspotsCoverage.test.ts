@@ -9,7 +9,9 @@ import ContactsView, {
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) {
         return '';
     }
@@ -27,11 +29,17 @@ describe('simulator UI hotspot coverage', () => {
         await act(async () => {
             renderer = TestRenderer.create(
                 React.createElement(ContactsView, {
-                    contacts: [{ id: 'it-helpdesk', displayName: 'IT Helpdesk', number: '+1-555-012-3456' }],
+                    contacts: [
+                        {
+                            id: 'it-helpdesk',
+                            displayName: 'IT Helpdesk',
+                            number: '+1-555-012-3456',
+                        },
+                    ],
                     onBack: vi.fn(),
                     initialSelectedContactId: 'it-helpdesk',
                     contactDetailTitleOnly: true,
-                })
+                }),
             );
         });
         const text = flattenText(renderer!.toJSON());
@@ -55,12 +63,18 @@ describe('simulator UI hotspot coverage', () => {
         expect(contactMatchesSearch(contact, '!!!')).toBe(false);
         expect(contactMatchesSearch(contact, 'missing')).toBe(false);
         expect(contactMatchesSearch(contact, '   ')).toBe(false);
-        expect(contactMatchesSearch({ ...contact, email: 'ADA@EXAMPLE.TEST' }, 'ADA@EXAMPLE.TEST')).toBe(true);
+        expect(
+            contactMatchesSearch({ ...contact, email: 'ADA@EXAMPLE.TEST' }, 'ADA@EXAMPLE.TEST'),
+        ).toBe(true);
 
         expect(contextMatchesContact(contact, { number: '+15550100' })).toBe(true);
         expect(contextMatchesContact(contact, { name: 'ada lovelace' })).toBe(true);
-        expect(contextMatchesContact(contact, { name: 'Grace Hopper', number: '+1999' })).toBe(false);
-        expect(contextMatchesContact({ ...contact, number: undefined }, { number: '+15550100' })).toBe(false);
+        expect(contextMatchesContact(contact, { name: 'Grace Hopper', number: '+1999' })).toBe(
+            false,
+        );
+        expect(
+            contextMatchesContact({ ...contact, number: undefined }, { number: '+15550100' }),
+        ).toBe(false);
 
         const onBack = vi.fn();
         const onOpenContact = vi.fn();
@@ -75,7 +89,7 @@ describe('simulator UI hotspot coverage', () => {
                 React.createElement(ContactsView, {
                     contacts: null,
                     onBack,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('No contacts.');
@@ -90,17 +104,26 @@ describe('simulator UI hotspot coverage', () => {
                     onBack,
                     onOpenContact,
                     onSearchSubmit,
-                    phoneLocalNavItems: [{ id: 'history', label: 'History' }, { id: 'contacts', label: 'Contacts' }],
+                    phoneLocalNavItems: [
+                        { id: 'history', label: 'History' },
+                        { id: 'contacts', label: 'Contacts' },
+                    ],
                     phoneActiveId: 'contacts',
                     onPhoneNavSelect,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('sender@example.test');
 
         await act(async () => {
-            renderer!.root.findAllByType('button').find((node) => node.props['aria-label'] === 'History')!.props.onClick();
-            renderer!.root.findAllByType('button').find((node) => node.props.className?.includes('simulator-border--top-none'))!.props.onClick();
+            renderer!.root
+                .findAllByType('button')
+                .find((node) => node.props['aria-label'] === 'History')!
+                .props.onClick();
+            renderer!.root
+                .findAllByType('button')
+                .find((node) => node.props.className?.includes('simulator-border--top-none'))!
+                .props.onClick();
         });
         expect(onPhoneNavSelect).toHaveBeenCalledWith('history');
         expect(onOpenContact).toHaveBeenCalledWith('c1');
@@ -121,7 +144,7 @@ describe('simulator UI hotspot coverage', () => {
                     verificationContext: { name: 'Unknown Sender', number: '+1999' },
                     onAddContact,
                     title: 'Verify contact',
-                })
+                }),
             );
         });
         const searchInput = renderer!.root.findByProps({ 'aria-label': 'Search contacts' });
@@ -133,7 +156,9 @@ describe('simulator UI hotspot coverage', () => {
         expect(onSearchChange).toHaveBeenCalledWith('Ada');
         expect(onSearchSubmit).toHaveBeenCalledWith('zzz');
         expect(onAddContact).toHaveBeenCalledTimes(1);
-        expect(flattenText(renderer!.toJSON())).toContain('No match in contacts for this number or name.');
+        expect(flattenText(renderer!.toJSON())).toContain(
+            'No match in contacts for this number or name.',
+        );
         expect(flattenText(renderer!.toJSON())).toContain('No results for "zzz".');
 
         await act(async () => {
@@ -144,13 +169,15 @@ describe('simulator UI hotspot coverage', () => {
                     ],
                     onBack,
                     verificationContext: { name: 'Saved Contact' },
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('Matches saved contact:');
 
         await act(async () => {
-            renderer!.root.findAll((node) => typeof node.props.onClick === 'function')[0].props.onClick();
+            renderer!.root
+                .findAll((node) => typeof node.props.onClick === 'function')[0]
+                .props.onClick();
         });
         expect(flattenText(renderer!.toJSON())).toContain('Email:');
 
@@ -163,16 +190,20 @@ describe('simulator UI hotspot coverage', () => {
                     ],
                     onBack,
                     verificationContext: { name: 'Numbered', number: '+15551230000' },
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('Matches saved contact:');
         expect(flattenText(renderer!.toJSON())).toContain('(+15551230000)');
 
         await act(async () => {
-            renderer!.root.findAll(
-                (node) => typeof node.props.onClick === 'function' && flattenText(node as never).includes('Numbered')
-            )[0].props.onClick();
+            renderer!.root
+                .findAll(
+                    (node) =>
+                        typeof node.props.onClick === 'function' &&
+                        flattenText(node as never).includes('Numbered'),
+                )[0]
+                .props.onClick();
         });
         expect(flattenText(renderer!.toJSON())).toContain('Numbered');
         expect(flattenText(renderer!.toJSON())).toContain('Number:');
@@ -201,11 +232,13 @@ describe('simulator UI hotspot coverage', () => {
                     },
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         expect(renderer!.root.findByType('img').props.src).toBe('https://example.test/logo.png');
-        const highlighted = renderer!.root.findAll((node) => node.type === 'span' && node.props.style?.backgroundColor != null);
+        const highlighted = renderer!.root.findAll(
+            (node) => node.type === 'span' && node.props.style?.backgroundColor != null,
+        );
         expect(highlighted.length).toBeGreaterThan(0);
         await act(async () => {
             renderer!.root.findByType('form').props.onSubmit({ preventDefault: vi.fn() });
@@ -213,7 +246,11 @@ describe('simulator UI hotspot coverage', () => {
         });
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'submit_form' }));
         expect(onAction).toHaveBeenCalledWith(
-            expect.objectContaining({ type: 'click_link', href: 'https://evil.example.test', pageId: 'result' })
+            expect.objectContaining({
+                type: 'click_link',
+                href: 'https://evil.example.test',
+                pageId: 'result',
+            }),
         );
 
         await act(async () => {
@@ -229,7 +266,7 @@ describe('simulator UI hotspot coverage', () => {
                         showMediaPlaceholder: true,
                     },
                     onAction,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('Suspicious page');
@@ -246,14 +283,16 @@ describe('simulator UI hotspot coverage', () => {
                         buttons: [{ label: 'Installer' }],
                     },
                     onAction,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('Web Page Title');
         await act(async () => {
             renderer!.root.findByProps({ children: 'Installer' }).props.onClick();
         });
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'download_click', downloadTarget: 'Installer' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'download_click', downloadTarget: 'Installer' }),
+        );
 
         await act(async () => {
             renderer!.update(
@@ -266,7 +305,7 @@ describe('simulator UI hotspot coverage', () => {
                         content: 'Plain content',
                     },
                     onAction,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('Plain content');
@@ -283,7 +322,7 @@ describe('simulator UI hotspot coverage', () => {
                         formFields: [{ name: 'password', label: 'Password', type: 'password' }],
                     },
                     onAction,
-                })
+                }),
             );
         });
         await act(async () => {
@@ -306,7 +345,7 @@ describe('simulator UI hotspot coverage', () => {
                         ],
                     },
                     onAction,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('Work email');
@@ -327,7 +366,7 @@ describe('simulator UI hotspot coverage', () => {
                         ],
                     },
                     onAction,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('Email');
@@ -344,15 +383,22 @@ describe('simulator UI hotspot coverage', () => {
                         content: 'File download',
                     },
                     onAction,
-                })
+                }),
             );
         });
         await act(async () => {
-            renderer!.root.findAllByType('button').find(
-                (node) => node.props.children === 'Download' && node.props.className?.includes('simulator-btn--neutral-outline')
-            )!.props.onClick();
+            renderer!.root
+                .findAllByType('button')
+                .find(
+                    (node) =>
+                        node.props.children === 'Download' &&
+                        node.props.className?.includes('simulator-btn--neutral-outline'),
+                )!
+                .props.onClick();
         });
-        expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'download_click', downloadTarget: 'download-page' }));
+        expect(onAction).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'download_click', downloadTarget: 'download-page' }),
+        );
 
         await act(async () => {
             renderer!.update(
@@ -365,7 +411,7 @@ describe('simulator UI hotspot coverage', () => {
                         content: 'Custom result message',
                     },
                     onAction,
-                })
+                }),
             );
         });
         expect(flattenText(renderer!.toJSON())).toContain('Custom result message');
@@ -384,7 +430,7 @@ describe('simulator UI hotspot coverage', () => {
                     },
                     onAction,
                     onBack,
-                })
+                }),
             );
         });
         await act(async () => {
@@ -392,7 +438,11 @@ describe('simulator UI hotspot coverage', () => {
         });
         expect(flattenText(renderer!.toJSON())).toContain('Fallback warning');
         expect(onAction).toHaveBeenCalledWith(
-            expect.objectContaining({ type: 'click_link', href: 'https://example.test/fallback', pageId: undefined })
+            expect.objectContaining({
+                type: 'click_link',
+                href: 'https://example.test/fallback',
+                pageId: undefined,
+            }),
         );
     });
 
@@ -425,7 +475,7 @@ describe('simulator UI hotspot coverage', () => {
                         },
                         browserHasCycle: false,
                     },
-                })
+                }),
             );
         });
         await act(async () => {
@@ -462,7 +512,7 @@ describe('simulator UI hotspot coverage', () => {
                         },
                         browserHasCycle: true,
                     },
-                })
+                }),
             );
         });
         const text = flattenText(renderer!.toJSON());

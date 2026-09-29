@@ -1,3 +1,5 @@
+import { useContext } from 'react';
+import { SimulatorTimelineContext } from '../components/HostListSlots.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 import { useSimulatorCapabilities } from '../contract/capabilities.js';
 import { useMessageComposeOptions } from './messageComposeContract.js';
@@ -127,6 +129,8 @@ const bubbleMe = joinClasses(
     'simulator-border--success',
 );
 
+const EMPTY_MESSAGES: NonNullable<SimulatorSmsPayload['thread']>['messages'] = [];
+
 export default function SmsSimulatorView({
     payload,
     visibleCount,
@@ -137,6 +141,7 @@ export default function SmsSimulatorView({
     renderChoice,
 }: Readonly<SmsSimulatorViewProps>) {
     const screenLocale = useSimulatorLocale();
+    const timeline = useContext(SimulatorTimelineContext);
 
     const formatNumber = usePhoneNumberFormatter();
     const capability = useSimulatorCapabilities().sendMessage;
@@ -148,10 +153,10 @@ export default function SmsSimulatorView({
         setLocalReply(messageBody);
         if (compose) compose.onChange({ ...compose.draft, messageBody });
     };
-    const messages = payload?.thread?.messages ?? [];
+    const messages = payload?.thread?.messages ?? EMPTY_MESSAGES;
 
     useEffect(() => {
-        if (messages.length === 0) return;
+        if (payload?.mode === 'history' || messages.length === 0) return;
         const timeouts: ReturnType<typeof setTimeout>[] = [];
         let cumulativeMs = 0;
         for (const msg of messages) {
@@ -161,7 +166,7 @@ export default function SmsSimulatorView({
             timeouts.push(setTimeout(() => onRevealNext(), cumulativeMs));
         }
         return () => timeouts.forEach((t) => clearTimeout(t));
-    }, [messages.length, onRevealNext]);
+    }, [messages, onRevealNext, payload?.mode]);
 
     if (payload == null) {
         return (
@@ -172,7 +177,7 @@ export default function SmsSimulatorView({
     }
 
     const content = payload.thread;
-    const visible = messages.slice(0, visibleCount);
+    const visible = payload.mode === 'history' ? messages : messages.slice(0, visibleCount);
     const senderName = content.sender_display_name;
     const senderNumber = content.sender_number;
     const contactLabel = senderName ?? (senderNumber ? formatNumber(senderNumber) : 'Unknown');
@@ -188,8 +193,13 @@ export default function SmsSimulatorView({
 
     return (
         <div className={joinClasses(simLayout.screenColumn, SIM_MESSAGES_THREAD_DETAIL)}>
-            {unavailable && <p><output>{unavailable}</output></p>}
-            <div className={simLayout.scrollBody}>
+            {unavailable && (
+                <p>
+                    <output>{unavailable}</output>
+                </p>
+            )}
+            <div className={simLayout.scrollBody} ref={timeline.scrollRef}>
+                {timeline.header}
                 <div
                     className={joinClasses(
                         simScreen.header,
@@ -213,13 +223,18 @@ export default function SmsSimulatorView({
                     </div>
                 </div>
 
-                {payload.loadingMessage && <p><output>{payload.loadingMessage}</output></p>}
+                {payload.loadingMessage && (
+                    <p>
+                        <output>{payload.loadingMessage}</output>
+                    </p>
+                )}
                 {visible.length === 0 && !payload.loadingMessage && (
                     <p className={simTypo.secondaryTight}>
                         {screenLocale.t('screen.smsSimulatorView.no.messages.in.this.thread')}
                     </p>
                 )}
                 <ul
+                    ref={timeline.contentRef}
                     className={joinClasses(
                         SIM_MESSAGES_MESSAGE_TIMELINE,
                         SIM_FLEX_COL,
@@ -232,8 +247,11 @@ export default function SmsSimulatorView({
                 >
                     {visible.map((msg, idx) => (
                         <li
+                            data-message-direction={msg.from}
                             title={msg.timestamp ?? undefined}
-                            key={`msg-${idx}-${msg.from}-${(msg.text ?? '').slice(0, 30)}`}
+                            key={
+                                msg.id ?? `msg-${idx}-${msg.from}-${(msg.text ?? '').slice(0, 30)}`
+                            }
                             className={joinClasses(
                                 SIM_FLEX_COL,
                                 'simulator-flex--align-stretch',
@@ -373,7 +391,9 @@ export default function SmsSimulatorView({
                     }}
                 >
                     {!unavailable && !replyText.trim() && (
-                        <p><output>{screenLocale.t('messages.enterBody')}</output></p>
+                        <p>
+                            <output>{screenLocale.t('messages.enterBody')}</output>
+                        </p>
                     )}
                     <SimulatorTextarea
                         rows={3}

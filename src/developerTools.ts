@@ -81,20 +81,24 @@ function isDeveloperPreset(value: unknown): value is SimulatorDeveloperPreset {
     return value === 'off' || value === 'preview' || value === 'qa' || value === 'developer';
 }
 
-function normalizeSections(sections?: SimulatorDeveloperSections): Required<SimulatorDeveloperSections> {
+function normalizeSections(
+    sections?: SimulatorDeveloperSections,
+): Required<SimulatorDeveloperSections> {
     return {
         ...EMPTY_DEVELOPER_SECTIONS,
         ...sections,
     };
 }
 
-function hasEnabledSections(sections: Required<SimulatorDeveloperSections> | null | undefined): boolean {
+function hasEnabledSections(
+    sections: Required<SimulatorDeveloperSections> | null | undefined,
+): boolean {
     return Object.values(sections ?? EMPTY_DEVELOPER_SECTIONS).some(Boolean);
 }
 
 export function reconcileVisibleDeveloperSections(
     available: Required<SimulatorDeveloperSections>,
-    previous?: Partial<Record<SimulatorDeveloperSectionKey, boolean>> | null
+    previous?: Partial<Record<SimulatorDeveloperSectionKey, boolean>> | null,
 ): Required<SimulatorDeveloperSections> {
     return {
         summary: available.summary && (previous?.summary ?? true),
@@ -107,7 +111,9 @@ export function reconcileVisibleDeveloperSections(
     };
 }
 
-export function resolveSimulatorDeveloperTools(tools?: SimulatorDeveloperTools): ResolvedSimulatorDeveloperTools {
+export function resolveSimulatorDeveloperTools(
+    tools?: SimulatorDeveloperTools,
+): ResolvedSimulatorDeveloperTools {
     const rawPreset = tools?.preset;
     const preset = isDeveloperPreset(rawPreset) ? rawPreset : 'off';
     const sections = normalizeSections({

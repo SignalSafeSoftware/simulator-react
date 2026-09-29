@@ -47,7 +47,7 @@ export default function BrowserSimulatorView({
         if (lastEmittedPageIdRef.current === pageId) return;
         lastEmittedPageIdRef.current = pageId;
         onActionRef.current(SimulatorActions.openPage(pageId));
-    }, [currentPage?.id]);
+    }, [currentPage]);
 
     if (payload == null) {
         return (

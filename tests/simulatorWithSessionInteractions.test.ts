@@ -24,7 +24,11 @@ const mockState = vi.hoisted(() => ({
     handleSimulatorKeyboard: vi.fn(
         (
             event: KeyboardEvent,
-            handlers: { onBack: () => void; onSwitchApp: (app: 'email' | 'messages' | 'internet' | 'phone' | 'home') => void; onFocusSearch: () => void }
+            handlers: {
+                onBack: () => void;
+                onSwitchApp: (app: 'email' | 'messages' | 'internet' | 'phone' | 'home') => void;
+                onFocusSearch: () => void;
+            },
         ) => {
             if (event.key === 'b') {
                 handlers.onBack();
@@ -42,7 +46,7 @@ const mockState = vi.hoisted(() => ({
                 return { handled: true, showHelp: true };
             }
             return { handled: false, showHelp: false };
-        }
+        },
     ),
 }));
 
@@ -137,8 +141,19 @@ function createState(overrides: Record<string, unknown> = {}) {
             browser: {
                 defaultPageId: 'landing',
                 pages: [
-                    { id: 'landing', url: 'https://example.test', title: 'Landing', layout: 'content', submitTargetPageId: 'result' },
-                    { id: 'result', url: 'https://example.test/result', title: 'Result', layout: 'result' },
+                    {
+                        id: 'landing',
+                        url: 'https://example.test',
+                        title: 'Landing',
+                        layout: 'content',
+                        submitTargetPageId: 'result',
+                    },
+                    {
+                        id: 'result',
+                        url: 'https://example.test/result',
+                        title: 'Result',
+                        layout: 'result',
+                    },
                 ],
             },
             email: {
@@ -155,7 +170,12 @@ function createState(overrides: Record<string, unknown> = {}) {
                 visibleMessageCount: 0,
             },
             phone: {
-                content: { transcript: 'Incoming call', choices: [], caller_name: 'Caller', phone_number: '+15550000003' },
+                content: {
+                    transcript: 'Incoming call',
+                    choices: [],
+                    caller_name: 'Caller',
+                    phone_number: '+15550000003',
+                },
                 chosenIndex: null,
             },
             directory: [{ id: 'd1', label: 'Directory', number: '+15550000004' }],
@@ -182,7 +202,9 @@ function flushPromises(): Promise<void> {
     return Promise.resolve();
 }
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) {
         return '';
     }
@@ -223,9 +245,9 @@ describe('SimulatorWithSession interactions', () => {
         Object.defineProperty(globalThis, 'navigator', {
             configurable: true,
             value: {
-            clipboard: {
-                writeText: mockState.writeText,
-            },
+                clipboard: {
+                    writeText: mockState.writeText,
+                },
             },
         });
     });
@@ -256,7 +278,7 @@ describe('SimulatorWithSession interactions', () => {
                     }),
                     dispatch,
                     onSimulatorEvent,
-                })
+                }),
             );
         });
 
@@ -269,17 +291,28 @@ describe('SimulatorWithSession interactions', () => {
             (mockState.latestShellProps!.onChannelChange as (channel: string) => void)('sms');
             (mockState.lastRenderContext!.onSmsRevealNext as () => void)();
             (mockState.lastRenderContext!.onSelectThread as (threadId: string) => void)('thread-1');
-            (mockState.lastRenderContext!.onOpenContactFromPhone as (contactId: string) => void)('c1');
+            (mockState.lastRenderContext!.onOpenContactFromPhone as (contactId: string) => void)(
+                'c1',
+            );
             (mockState.lastRenderContext!.onSelectEmail as (messageId: string) => void)('missing');
             (mockState.lastRenderContext!.onSelectEmail as (messageId: string) => void)('m1');
         });
 
         expect(dispatch).toHaveBeenCalledWith({ type: 'SWITCH_APP', app: 'messages' });
         expect(dispatch).toHaveBeenCalledWith({ type: 'SMS_REVEAL_NEXT' });
-        expect(dispatch).toHaveBeenCalledWith({ type: 'NAV_LOCAL', app: 'messages', screen: 'thread_detail' });
+        expect(dispatch).toHaveBeenCalledWith({
+            type: 'NAV_LOCAL',
+            app: 'messages',
+            screen: 'thread_detail',
+        });
         expect(dispatch).toHaveBeenCalledWith({ type: 'SELECT_EMAIL', messageId: 'm1' });
         expect(onSimulatorEvent.mock.calls.map(([event]) => event.kind)).toEqual(
-            expect.arrayContaining(['app_opened', 'thread_opened', 'contact_opened', 'email_opened'])
+            expect.arrayContaining([
+                'app_opened',
+                'thread_opened',
+                'contact_opened',
+                'email_opened',
+            ]),
         );
     });
 
@@ -315,10 +348,17 @@ describe('SimulatorWithSession interactions', () => {
                         },
                     },
                     developerToolsTimelineEntries: [
-                        { kind: 'session_started', timestamp: '2026-01-01T10:00:00Z', app: 'phone', screen: 'dial' },
+                        {
+                            kind: 'session_started',
+                            timestamp: '2026-01-01T10:00:00Z',
+                            app: 'phone',
+                            screen: 'dial',
+                        },
                     ] as never,
-                    developerToolsRuntimeIssues: [{ severity: 'warning', message: 'Issue', node_id: 'start' }] as never,
-                })
+                    developerToolsRuntimeIssues: [
+                        { severity: 'warning', message: 'Issue', node_id: 'start' },
+                    ] as never,
+                }),
             );
         });
 
@@ -334,7 +374,7 @@ describe('SimulatorWithSession interactions', () => {
         });
         expect(dispatch).toHaveBeenCalledWith({ type: 'BROWSER_SCREEN', screen: 'result' });
         expect(onSimulatorEvent.mock.calls.map(([event]) => event.kind)).toEqual(
-            expect.arrayContaining(['form_submitted', 'screen_viewed'])
+            expect.arrayContaining(['form_submitted', 'screen_viewed']),
         );
 
         const secondaryMenu = mockState.latestShellProps!.secondaryMenu as Record<string, unknown>;
@@ -342,7 +382,11 @@ describe('SimulatorWithSession interactions', () => {
             (secondaryMenu.onSelect as (id: string) => void)('contacts');
             (secondaryMenu.onSecondaryBack as () => void)();
         });
-        expect(dispatch).toHaveBeenCalledWith({ type: 'NAV_LOCAL', app: 'phone', screen: 'contacts' });
+        expect(dispatch).toHaveBeenCalledWith({
+            type: 'NAV_LOCAL',
+            app: 'phone',
+            screen: 'contacts',
+        });
         expect(dispatch).toHaveBeenCalledWith({ type: 'BACK' });
 
         const root = renderer!.root;
@@ -362,7 +406,9 @@ describe('SimulatorWithSession interactions', () => {
         expect(mockState.simulatorNavGraphToJson).toHaveBeenCalled();
         expect(mockState.writeText).toHaveBeenCalledWith('{"snapshot":true}');
         expect(mockState.writeText).toHaveBeenCalledWith('{"graph":true}');
-        expect(flattenText(renderer!.toJSON())).toContain('Nav graph: 1 nodes, 1 edges, entry email:list, browser has cycle');
+        expect(flattenText(renderer!.toJSON())).toContain(
+            'Nav graph: 1 nodes, 1 edges, entry email:list, browser has cycle',
+        );
         expect(root.findByType('dialog').props.open).toBe(true);
 
         const keyboardEvent = {
@@ -424,10 +470,14 @@ describe('SimulatorWithSession interactions', () => {
             TestRenderer.create(
                 React.createElement(SimulatorWithSession, {
                     state: createState({
-                        view: { activeApp: 'messages', contactsPanelOpen: true, messages: { screen: 'thread_detail', stack: [], visibleCount: 0 } },
+                        view: {
+                            activeApp: 'messages',
+                            contactsPanelOpen: true,
+                            messages: { screen: 'thread_detail', stack: [], visibleCount: 0 },
+                        },
                     }),
                     dispatch,
-                })
+                }),
             );
         });
         expect(mockState.latestContactsProps?.verificationContext).toEqual({
@@ -442,7 +492,7 @@ describe('SimulatorWithSession interactions', () => {
                         view: { activeApp: 'phone', contactsPanelOpen: true },
                     }),
                     dispatch,
-                })
+                }),
             );
         });
         expect(mockState.latestContactsProps?.verificationContext).toEqual({
@@ -461,7 +511,7 @@ describe('SimulatorWithSession interactions', () => {
                         },
                     }),
                     dispatch,
-                })
+                }),
             );
         });
         expect(mockState.latestContactsProps?.verificationContext).toEqual({
@@ -479,16 +529,23 @@ describe('SimulatorWithSession interactions', () => {
                         },
                     }),
                     dispatch,
-                })
+                }),
             );
         });
-        const emailSecondaryMenu = mockState.latestShellProps!.secondaryMenu as Record<string, unknown>;
+        const emailSecondaryMenu = mockState.latestShellProps!.secondaryMenu as Record<
+            string,
+            unknown
+        >;
         expect(emailSecondaryMenu.activeId).toBe('trash');
         await act(async () => {
             (emailSecondaryMenu.onSelect as (id: string) => void)('outbox');
             (emailSecondaryMenu.onSecondaryBack as () => void)();
         });
-        expect(dispatch).toHaveBeenCalledWith({ type: 'NAV_LOCAL', app: 'email', screen: 'outbox' });
+        expect(dispatch).toHaveBeenCalledWith({
+            type: 'NAV_LOCAL',
+            app: 'email',
+            screen: 'outbox',
+        });
         expect(dispatch).toHaveBeenCalledWith({ type: 'BACK' });
 
         expect(mockState.latestDeveloperPanelProps?.payload).toBeTruthy();
@@ -505,9 +562,16 @@ describe('SimulatorWithSession interactions', () => {
                 React.createElement(SimulatorWithSession, {
                     state: createState({
                         payload: {
-                            sms: { thread: { messages: [{ from: 'them', text: 'Hello' }] }, visibleMessageCount: 0 },
+                            sms: {
+                                thread: { messages: [{ from: 'them', text: 'Hello' }] },
+                                visibleMessageCount: 0,
+                            },
                             phone: { content: null },
-                            email: { inbox: [], selectedMessageId: 'missing', selectedMessage: { subject: 'Alert', from: '', body: 'Body' } },
+                            email: {
+                                inbox: [],
+                                selectedMessageId: 'missing',
+                                selectedMessage: { subject: 'Alert', from: '', body: 'Body' },
+                            },
                         },
                         view: {
                             activeApp: 'home',
@@ -520,7 +584,7 @@ describe('SimulatorWithSession interactions', () => {
                     exitLink,
                     compact: true,
                     developerTools: { enabled: false },
-                })
+                }),
             );
         });
 
@@ -542,7 +606,10 @@ describe('SimulatorWithSession interactions', () => {
                 React.createElement(SimulatorWithSession, {
                     state: createState({
                         payload: {
-                            sms: { thread: { messages: [{ text: 'Hello' }] }, visibleMessageCount: 0 },
+                            sms: {
+                                thread: { messages: [{ text: 'Hello' }] },
+                                visibleMessageCount: 0,
+                            },
                             phone: { content: null },
                             email: {
                                 inbox: [{ id: 'm1', subject: 'Alert', from: '' }],
@@ -571,7 +638,7 @@ describe('SimulatorWithSession interactions', () => {
                             runtimeIssues: false,
                         },
                     },
-                })
+                }),
             );
         });
         expect(mockState.latestContactsProps?.verificationContext).toBeNull();
@@ -582,7 +649,9 @@ describe('SimulatorWithSession interactions', () => {
         await act(async () => {
             toolbarButton.props.onClick();
         });
-        expect(renderer!.root.findByProps({ 'aria-label': 'Summary' }).props['aria-pressed']).toBe(false);
+        expect(renderer!.root.findByProps({ 'aria-label': 'Summary' }).props['aria-pressed']).toBe(
+            false,
+        );
 
         await act(async () => {
             renderer!.update(
@@ -599,11 +668,14 @@ describe('SimulatorWithSession interactions', () => {
                         },
                     }),
                     dispatch,
-                })
+                }),
             );
         });
         expect(mockState.latestContactsProps?.verificationContext).toBeNull();
-        expect((mockState.latestShellProps?.secondaryMenu as Record<string, unknown>).activeId).toBe('contacts');
+        expect(
+            (mockState.latestShellProps?.secondaryMenu as Record<string, unknown> | undefined)
+                ?.activeId,
+        ).toBe('contacts');
 
         await act(async () => {
             renderer!.update(
@@ -624,12 +696,15 @@ describe('SimulatorWithSession interactions', () => {
                         },
                     }),
                     dispatch,
-                })
+                }),
             );
         });
         expect(mockState.latestContactsProps?.verificationContext).toBeNull();
         expect(mockState.latestShellProps?.hideBottomNav).toBe(true);
-        expect((mockState.latestShellProps?.secondaryMenu as Record<string, unknown>).activeId).toBe('list');
+        expect(
+            (mockState.latestShellProps?.secondaryMenu as Record<string, unknown> | undefined)
+                ?.activeId,
+        ).toBe('list');
 
         await act(async () => {
             renderer!.update(
@@ -642,10 +717,13 @@ describe('SimulatorWithSession interactions', () => {
                         },
                     }),
                     dispatch,
-                })
+                }),
             );
         });
-        expect((mockState.latestShellProps?.secondaryMenu as Record<string, unknown>).activeId).toBe('outbox');
+        expect(
+            (mockState.latestShellProps?.secondaryMenu as Record<string, unknown> | undefined)
+                ?.activeId,
+        ).toBe('outbox');
         expect(mockState.latestShellProps?.hideBottomNav).toBe(false);
     });
 
@@ -669,7 +747,11 @@ describe('SimulatorWithSession interactions', () => {
                             email: {
                                 inbox: [],
                                 selectedMessageId: 'missing',
-                                selectedMessage: { subject: 'Alert', from: 'sender@example.test', body: 'Body' },
+                                selectedMessage: {
+                                    subject: 'Alert',
+                                    from: 'sender@example.test',
+                                    body: 'Body',
+                                },
                             },
                         },
                         view: {
@@ -694,14 +776,16 @@ describe('SimulatorWithSession interactions', () => {
                             runtimeIssues: false,
                         },
                     },
-                })
+                }),
             );
         });
 
         expect(mockState.latestContactsProps?.verificationContext).toEqual({
             name: 'sender@example.test',
         });
-        expect(flattenText(renderer!.toJSON())).toContain('Nav graph: 1 nodes, 0 edges, entry internet:landing');
+        expect(flattenText(renderer!.toJSON())).toContain(
+            'Nav graph: 1 nodes, 0 edges, entry internet:landing',
+        );
         expect(flattenText(renderer!.toJSON())).not.toContain('browser has cycle');
 
         await act(async () => {
@@ -727,7 +811,7 @@ describe('SimulatorWithSession interactions', () => {
                         },
                     }),
                     dispatch,
-                })
+                }),
             );
         });
         expect(mockState.latestContactsProps?.verificationContext).toBeNull();
@@ -743,10 +827,13 @@ describe('SimulatorWithSession interactions', () => {
                         },
                     }),
                     dispatch,
-                })
+                }),
             );
         });
-        expect((mockState.latestShellProps?.secondaryMenu as Record<string, unknown>).activeId).toBe('history');
+        expect(
+            (mockState.latestShellProps?.secondaryMenu as Record<string, unknown> | undefined)
+                ?.activeId,
+        ).toBe('history');
     });
 
     it('skips browser screen dispatch when submit targets are unresolved', async () => {
@@ -760,7 +847,14 @@ describe('SimulatorWithSession interactions', () => {
                         payload: {
                             browser: {
                                 defaultPageId: 'landing',
-                                pages: [{ id: 'landing', url: 'https://example.test', title: 'Landing', layout: 'content' }],
+                                pages: [
+                                    {
+                                        id: 'landing',
+                                        url: 'https://example.test',
+                                        title: 'Landing',
+                                        layout: 'content',
+                                    },
+                                ],
                             },
                         },
                         view: {
@@ -770,7 +864,7 @@ describe('SimulatorWithSession interactions', () => {
                     }),
                     dispatch,
                     onSimulatorEvent,
-                })
+                }),
             );
         });
 
@@ -782,6 +876,8 @@ describe('SimulatorWithSession interactions', () => {
         });
 
         expect(dispatch).not.toHaveBeenCalledWith({ type: 'BROWSER_SCREEN', screen: 'result' });
-        expect(onSimulatorEvent.mock.calls.map(([event]) => event.kind)).toContain('form_submitted');
+        expect(onSimulatorEvent.mock.calls.map(([event]) => event.kind)).toContain(
+            'form_submitted',
+        );
     });
 });

@@ -40,7 +40,7 @@ const PHONE_SCREEN_LABELS: Record<string, string> = {
     history: 'History',
     contacts: 'Contacts',
     dial: 'Dial',
-    incoming_call: englishLocale.t("copy.screenMetadata.incoming.call"),
+    incoming_call: englishLocale.t('copy.screenMetadata.incoming.call'),
     voicemail: 'Voicemail',
     directory: 'Directory',
 };
@@ -102,7 +102,7 @@ function getMessagesLabel(isDetail: boolean, isNewThread: boolean): string {
 
 function getMessagesSource(
     isDetail: boolean,
-    isNewThread: boolean
+    isNewThread: boolean,
 ): SimulatorScreenMetadata['source'] {
     if (isDetail) {
         return 'detail';
@@ -119,7 +119,7 @@ function getStackParent(stack: readonly string[]): string | null {
 
 function buildInternetMetadata(
     view: SimulatorViewState['internet'],
-    payload: SimulatorTemplatePayload
+    payload: SimulatorTemplatePayload,
 ): SimulatorScreenMetadata {
     const screen = view.screen;
     const pageTitle = getInternetPageTitle(payload, screen);
@@ -174,7 +174,7 @@ function getFallbackScreen(_view: SimulatorViewState, _app: SimulatorApp): strin
  */
 export function getScreenMetadata(
     view: SimulatorViewState,
-    payload: SimulatorTemplatePayload
+    payload: SimulatorTemplatePayload,
 ): SimulatorScreenMetadata {
     const app = view.activeApp;
 

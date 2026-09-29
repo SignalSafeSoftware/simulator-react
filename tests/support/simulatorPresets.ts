@@ -3,7 +3,11 @@
  * Not part of the `@signalsafe/simulator-react` published API.
  */
 
-import type { SimulatorTemplatePayload, SimulatorChannel, SimulatorWorldPartial } from '@signalsafe/simulator-react';
+import type {
+    SimulatorTemplatePayload,
+    SimulatorChannel,
+    SimulatorWorldPartial,
+} from '@signalsafe/simulator-react';
 import { applyPartials } from '@signalsafe/simulator-react';
 
 export const PRESET_EMPLOYEE_CORPORATE_DEVICE: SimulatorWorldPartial = {
@@ -25,12 +29,28 @@ export const PRESET_EMPLOYEE_CORPORATE_DEVICE: SimulatorWorldPartial = {
     },
     entryPoint: { app: 'email', screen: 'list' },
     contacts: [
-        { id: 'it-helpdesk', displayName: 'IT Helpdesk', number: '+15550001111', email: 'it@company.com' },
+        {
+            id: 'it-helpdesk',
+            displayName: 'IT Helpdesk',
+            number: '+15550001111',
+            email: 'it@company.com',
+        },
         { id: 'hr', displayName: 'HR', number: '+15550002222', email: 'hr@company.com' },
     ],
     directory: [
-        { id: 'd-it', label: 'IT Helpdesk', number: '+15550001111', description: 'Verify support requests and password resets.' },
-        { id: 'd-hr', label: 'HR', number: '+15550002222', url: 'https://hr.company.com', description: 'Benefits and policies.' },
+        {
+            id: 'd-it',
+            label: 'IT Helpdesk',
+            number: '+15550001111',
+            description: 'Verify support requests and password resets.',
+        },
+        {
+            id: 'd-hr',
+            label: 'HR',
+            number: '+15550002222',
+            url: 'https://hr.company.com',
+            description: 'Benefits and policies.',
+        },
     ],
 };
 
@@ -45,10 +65,20 @@ export const PRESET_FAKE_BANK_CONSUMER: SimulatorWorldPartial = {
     },
     entryPoint: { app: 'email', screen: 'list' },
     contacts: [
-        { id: 'bank-official', displayName: 'Your Bank', number: '+18005550100', email: 'support@yourbank.com' },
+        {
+            id: 'bank-official',
+            displayName: 'Your Bank',
+            number: '+18005550100',
+            email: 'support@yourbank.com',
+        },
     ],
     directory: [
-        { id: 'bank', label: 'Bank customer service', number: '+18005550100', description: 'Call to verify any account or security emails.' },
+        {
+            id: 'bank',
+            label: 'Bank customer service',
+            number: '+18005550100',
+            description: 'Call to verify any account or security emails.',
+        },
     ],
 };
 
@@ -61,16 +91,42 @@ export const PRESET_EXECUTIVE_IMPERSONATION: SimulatorWorldPartial = {
             { id: 'internet', label: 'Internet' },
             { id: 'home', label: 'Home' },
         ],
-        secondaryDefaults: { email: 'list', messages: 'threads', phone: 'history', internet: 'landing', home: 'home' },
+        secondaryDefaults: {
+            email: 'list',
+            messages: 'threads',
+            phone: 'history',
+            internet: 'landing',
+            home: 'home',
+        },
     },
     entryPoint: { app: 'email', screen: 'list' },
     contacts: [
-        { id: 'security', displayName: 'Security Team', number: '+15551110000', email: 'security@company.com' },
-        { id: 'exec-assistant', displayName: "CEO's Office", number: '+15551110111', email: 'exec@company.com' },
+        {
+            id: 'security',
+            displayName: 'Security Team',
+            number: '+15551110000',
+            email: 'security@company.com',
+        },
+        {
+            id: 'exec-assistant',
+            displayName: "CEO's Office",
+            number: '+15551110111',
+            email: 'exec@company.com',
+        },
     ],
     directory: [
-        { id: 'sec', label: 'Security Team', number: '+15551110000', description: 'Verify executive or wire-transfer requests.' },
-        { id: 'exec', label: "CEO's Office", number: '+15551110111', description: 'Official executive communications.' },
+        {
+            id: 'sec',
+            label: 'Security Team',
+            number: '+15551110000',
+            description: 'Verify executive or wire-transfer requests.',
+        },
+        {
+            id: 'exec',
+            label: "CEO's Office",
+            number: '+15551110111',
+            description: 'Official executive communications.',
+        },
     ],
 };
 
@@ -84,11 +140,14 @@ export const PRESET_HELPDESK_VERIFICATION: SimulatorWorldPartial = {
         secondaryDefaults: { phone: 'directory', email: 'list', internet: 'landing' },
     },
     entryPoint: { app: 'phone', screen: 'directory' },
-    contacts: [
-        { id: 'it-helpdesk', displayName: 'IT Helpdesk', number: '+15550123456' },
-    ],
+    contacts: [{ id: 'it-helpdesk', displayName: 'IT Helpdesk', number: '+15550123456' }],
     directory: [
-        { id: 'helpdesk', label: 'IT Helpdesk', number: '+15550123456', description: 'Use this number to verify any support or password-reset calls.' },
+        {
+            id: 'helpdesk',
+            label: 'IT Helpdesk',
+            number: '+15550123456',
+            description: 'Use this number to verify any support or password-reset calls.',
+        },
     ],
 };
 
@@ -100,15 +159,30 @@ export const PRESET_PACKAGE_DELIVERY_SCAM: SimulatorWorldPartial = {
             { id: 'phone', label: 'Phone' },
             { id: 'internet', label: 'Internet' },
         ],
-        secondaryDefaults: { email: 'list', messages: 'threads', phone: 'history', internet: 'landing' },
+        secondaryDefaults: {
+            email: 'list',
+            messages: 'threads',
+            phone: 'history',
+            internet: 'landing',
+        },
     },
     entryPoint: { app: 'email', screen: 'list' },
     contacts: [
-        { id: 'delivery-real', displayName: 'Delivery Co (official)', number: '+15558880000', email: 'support@delivery-real.com' },
+        {
+            id: 'delivery-real',
+            displayName: 'Delivery Co (official)',
+            number: '+15558880000',
+            email: 'support@delivery-real.com',
+        },
         { id: 'delivery-fake', displayName: 'Delivery Alerts', number: '+15558881234' },
     ],
     directory: [
-        { id: 'delivery', label: 'Delivery Co customer service', number: '+15558880000', description: 'Verify tracking or delivery messages.' },
+        {
+            id: 'delivery',
+            label: 'Delivery Co customer service',
+            number: '+15558880000',
+            description: 'Verify tracking or delivery messages.',
+        },
     ],
 };
 
@@ -147,9 +221,13 @@ const DEFAULT_META: SimulatorPresetMeta = {
 };
 
 export function buildPayloadFromPresets(
-    meta: Partial<SimulatorPresetMeta> & { templateKey: string; name: string; channel: SimulatorChannel },
+    meta: Partial<SimulatorPresetMeta> & {
+        templateKey: string;
+        name: string;
+        channel: SimulatorChannel;
+    },
     presetIds: SimulatorPresetId[] = [],
-    overlay?: SimulatorWorldPartial
+    overlay?: SimulatorWorldPartial,
 ): SimulatorTemplatePayload {
     const resolvedMeta = { ...DEFAULT_META, ...meta };
     const partials = presetIds.map((id) => getSimulatorPreset(id));

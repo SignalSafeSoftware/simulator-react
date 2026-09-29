@@ -9,13 +9,16 @@ import { applyNavLocal, applySwitchApp } from './simulatorNavigationHandlers.js'
 export function updateInternetHistory(
     activeApp: SimulatorViewState['activeApp'],
     internet: SimulatorViewState['internet'],
-    nextScreen: string
+    nextScreen: string,
 ): string[] {
     if (activeApp !== 'internet' || nextScreen === internet.screen) return internet.stack;
     return [...internet.stack, internet.screen].slice(-BROWSER_HISTORY_MAX);
 }
 
-export function applySelectEmail(state: SimulatorViewState, messageId: string | null): SimulatorViewState {
+export function applySelectEmail(
+    state: SimulatorViewState,
+    messageId: string | null,
+): SimulatorViewState {
     if (messageId != null) {
         return {
             ...state,
@@ -39,7 +42,10 @@ export function applySelectEmail(state: SimulatorViewState, messageId: string | 
     };
 }
 
-export function applyBrowserScreen(state: SimulatorViewState, targetScreen: string): SimulatorViewState {
+export function applyBrowserScreen(
+    state: SimulatorViewState,
+    targetScreen: string,
+): SimulatorViewState {
     return {
         ...state,
         internet: {
@@ -52,10 +58,11 @@ export function applyBrowserScreen(state: SimulatorViewState, targetScreen: stri
 
 function applyClickLinkAction(
     state: SimulatorViewState,
-    action: Extract<SimulatorAction, { type: 'click_link' }>
+    action: Extract<SimulatorAction, { type: 'click_link' }>,
 ): SimulatorViewState {
     if (action.href == null && action.pageId == null) return state;
-    const pageId = typeof action.pageId === 'string' && action.pageId.length > 0 ? action.pageId : 'landing';
+    const pageId =
+        typeof action.pageId === 'string' && action.pageId.length > 0 ? action.pageId : 'landing';
     const switched = applySwitchApp(state, 'internet');
     return {
         ...switched,
@@ -67,7 +74,10 @@ function applyClickLinkAction(
     };
 }
 
-export function applySimulatorAction(state: SimulatorViewState, action: SimulatorAction): SimulatorViewState {
+export function applySimulatorAction(
+    state: SimulatorViewState,
+    action: SimulatorAction,
+): SimulatorViewState {
     let next: SimulatorViewState = {
         ...state,
         actionHistory: [...state.actionHistory, action],

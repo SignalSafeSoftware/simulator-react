@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { isSimulatorDevicePayload } from '@signalsafe/simulator-core';
-import type { SimulatorDevicePayload, SimulatorTemplateDetail } from '../src/types/portableSimulator.js';
+import type {
+    SimulatorDevicePayload,
+    SimulatorTemplateDetail,
+} from '../src/types/portableSimulator.js';
 
 describe('portableSimulator payload re-exports', () => {
     it('uses simulator-core guards against re-exported payload types', () => {

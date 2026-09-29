@@ -25,7 +25,9 @@ vi.mock('../src/screenRegistry', () => ({
 
 import SimulatorWithSession from '../src/SimulatorWithSession';
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) return '';
     if (Array.isArray(node)) return node.map((child) => flattenText(child)).join('');
     return (node.children ?? [])
@@ -57,6 +59,8 @@ describe('SimulatorWithSession unsupported screen fallback', () => {
         const text = flattenText(renderer!.toJSON());
         expect(text).toContain(LEARNER_UNSUPPORTED_SCREEN_MESSAGE);
         expect(text).not.toContain('incoming_call');
-        expect(renderer!.root.findByProps({ 'data-testid': 'simulator-unsupported-screen' })).toBeTruthy();
+        expect(
+            renderer!.root.findByProps({ 'data-testid': 'simulator-unsupported-screen' }),
+        ).toBeTruthy();
     });
 });

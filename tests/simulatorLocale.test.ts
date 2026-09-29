@@ -73,10 +73,21 @@ it('explains an empty dial action and preserves a host unavailability reason', (
 it('uses catalog overrides for navigation and unsupported-screen defaults', async () => {
     const { default: Shell } = await import('../src/shell/PhoneSimulatorShell');
     const { default: Unsupported } = await import('../src/UnsupportedScreenFallback');
-    const html = renderToStaticMarkup(React.createElement(SimulatorLocaleProvider, {
-        messages: { 'nav.phone': 'Calls and contacts', 'nav.exit': 'Leave preview', 'fallback.learner_unsupported_screen_title': 'Unavailable view' },
-        children: React.createElement(Shell, { activeChannel: 'contacts', onChannelChange() {}, exitTo: '/exit', children: React.createElement(Unsupported, { app: 'phone', screen: 'missing' }) }),
-    }));
+    const html = renderToStaticMarkup(
+        React.createElement(SimulatorLocaleProvider, {
+            messages: {
+                'nav.phone': 'Calls and contacts',
+                'nav.exit': 'Leave preview',
+                'fallback.learner_unsupported_screen_title': 'Unavailable view',
+            },
+            children: React.createElement(Shell, {
+                activeChannel: 'contacts',
+                onChannelChange() {},
+                exitTo: '/exit',
+                children: React.createElement(Unsupported, { app: 'phone', screen: 'missing' }),
+            }),
+        }),
+    );
     expect(html).toContain('aria-label="Calls and contacts"');
     expect(html).toContain('Leave preview');
     expect(html).toContain('Unavailable view');

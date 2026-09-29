@@ -4,7 +4,9 @@ import UnsupportedScreenFallback from '../src/UnsupportedScreenFallback';
 import { LEARNER_UNSUPPORTED_SCREEN_MESSAGE } from '../src/constants';
 import { TestRenderer } from './reactTestRenderer';
 
-function flattenText(node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null): string {
+function flattenText(
+    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
+): string {
     if (node == null) {
         return '';
     }
@@ -29,7 +31,9 @@ describe('UnsupportedScreenFallback', () => {
         expect(text).toContain(LEARNER_UNSUPPORTED_SCREEN_MESSAGE);
         expect(text).not.toContain('App: phone');
         expect(text).not.toContain('Screen: mystery');
-        expect(filled.root.findByProps({ 'data-testid': 'simulator-unsupported-screen' }).props.role).toBe('alert');
+        expect(
+            filled.root.findByProps({ 'data-testid': 'simulator-unsupported-screen' }).props.role,
+        ).toBe('alert');
     });
 
     it('renders app and screen when showDiagnostics is true', () => {

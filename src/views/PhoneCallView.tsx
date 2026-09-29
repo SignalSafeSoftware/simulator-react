@@ -62,9 +62,7 @@ export default function PhoneCallView(props: Readonly<PhoneCallViewProps>) {
             </div>
             <h2 className="simulator-screen__header">{props.callerName}</h2>
             {props.number && <p className="simulator-call-number">{formatNumber(props.number)}</p>}
-            <output className="simulator-call-status">
-                {statusLabel}
-            </output>
+            <output className="simulator-call-status">{statusLabel}</output>
             {props.connectedAt !== null && (
                 <>
                     <div className="simulator-sent-digits" aria-live="polite">

@@ -1,6 +1,12 @@
 import type { ComponentType, ReactNode } from 'react';
 import type { SimulatorDispatchAction } from '../state/simulatorDispatchActions.js';
-import type { EmailScreenId, HomeScreenId, MessagesScreenId, PhoneScreenId, SimulatorSessionState } from '../types/session.js';
+import type {
+    EmailScreenId,
+    HomeScreenId,
+    MessagesScreenId,
+    PhoneScreenId,
+    SimulatorSessionState,
+} from '../types/session.js';
 import type { SimulatorNavigationLocation } from './navigation.js';
 
 /** Screen content only: the package retains its shell, menus and scrolling region. */
@@ -14,7 +20,9 @@ export interface SimulatorScreenOverrideProps {
     renderDefault: () => ReactNode;
 }
 
-type Screens<Screen extends string> = Partial<Record<Screen, ComponentType<SimulatorScreenOverrideProps>>>;
+type Screens<Screen extends string> = Partial<
+    Record<Screen, ComponentType<SimulatorScreenOverrideProps>>
+>;
 /** Stable React component types, not render callbacks. Omitted screens retain defaults. */
 export interface SimulatorScreenOverrides {
     phone?: Screens<PhoneScreenId>;
@@ -24,12 +32,20 @@ export interface SimulatorScreenOverrides {
     home?: Screens<HomeScreenId>;
 }
 
-export function resolveScreenOverride(overrides: SimulatorScreenOverrides | undefined, state: SimulatorSessionState): ComponentType<SimulatorScreenOverrideProps> | undefined {
+export function resolveScreenOverride(
+    overrides: SimulatorScreenOverrides | undefined,
+    state: SimulatorSessionState,
+): ComponentType<SimulatorScreenOverrideProps> | undefined {
     switch (state.view.activeApp) {
-        case 'phone': return overrides?.phone?.[state.view.phone.screen];
-        case 'email': return overrides?.email?.[state.view.email.screen];
-        case 'messages': return overrides?.messages?.[state.view.messages.screen];
-        case 'internet': return overrides?.internet?.[state.view.internet.screen];
-        case 'home': return overrides?.home?.[state.view.home.screen];
+        case 'phone':
+            return overrides?.phone?.[state.view.phone.screen];
+        case 'email':
+            return overrides?.email?.[state.view.email.screen];
+        case 'messages':
+            return overrides?.messages?.[state.view.messages.screen];
+        case 'internet':
+            return overrides?.internet?.[state.view.internet.screen];
+        case 'home':
+            return overrides?.home?.[state.view.home.screen];
     }
 }

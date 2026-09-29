@@ -21,7 +21,9 @@ import PhoneSimulatorView from '../views/PhoneSimulatorView.js';
 import HomeSimulatorView from '../views/HomeSimulatorView.js';
 import type { ThreadListRow } from '../views/MessagesThreadListView.js';
 
-function buildMessagesThreadList(payload: SimulatorRenderContext['state']['payload']): ThreadListRow[] {
+function buildMessagesThreadList(
+    payload: SimulatorRenderContext['state']['payload'],
+): ThreadListRow[] {
     const sms = payload.sms;
     if (sms?.threads != null && sms.threads.length > 0) {
         return sms.threads;
@@ -64,7 +66,10 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             onSelectMessage: ctx.onSelectEmail,
             onBack: ctx.onBack,
             onNavigate: (screen: EmailScreenId) =>
-                ctx.dispatch({ type: 'SIMULATOR_ACTION', action: SimulatorActions.navigateScreen('email', screen) }),
+                ctx.dispatch({
+                    type: 'SIMULATOR_ACTION',
+                    action: SimulatorActions.navigateScreen('email', screen),
+                }),
             navRenderedByShell:
                 !ctx.state.view.showPrimaryMenu && ctx.state.view.activeApp === 'email',
         }),
@@ -122,15 +127,19 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
         getProps: (ctx) => {
             const phoneScreen = ctx.state.view.phone.screen;
             const onPhoneNav = (id: string) =>
-                ctx.dispatch({ type: 'SIMULATOR_ACTION', action: SimulatorActions.navigateScreen('phone', id) });
+                ctx.dispatch({
+                    type: 'SIMULATOR_ACTION',
+                    action: SimulatorActions.navigateScreen('phone', id),
+                });
             const navRenderedByShell =
                 !ctx.state.view.showPrimaryMenu && ctx.state.view.activeApp === 'phone';
             const contactsSearchQuery = getContactsSearchQuery(
                 ctx.state.view.contactsSearchQuery,
-                ctx.initialContactsSearch
+                ctx.initialContactsSearch,
             );
             const payload = ctx.state.payload;
-            const isItHelpdeskWireframe = payload.templateKey === 'harness-phone-contact-it-helpdesk';
+            const isItHelpdeskWireframe =
+                payload.templateKey === 'harness-phone-contact-it-helpdesk';
             return {
                 contacts: payload.contacts,
                 title: (ctx.locale ?? defaultLocale).t('nav.contacts'),
@@ -140,11 +149,16 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
                 initialSearch: ctx.initialContactsSearch,
                 searchQuery: contactsSearchQuery,
                 onSearchChange: (query) => ctx.dispatch({ type: 'SET_CONTACTS_SEARCH', query }),
-                phoneLocalNavItems: navRenderedByShell ? undefined : getPhoneLocalNavItems(ctx.capabilities.phone, ctx.locale),
+                phoneLocalNavItems: navRenderedByShell
+                    ? undefined
+                    : getPhoneLocalNavItems(ctx.capabilities.phone, ctx.locale),
                 phoneActiveId: phoneScreen,
                 onPhoneNavSelect: navRenderedByShell ? undefined : onPhoneNav,
                 onAddContact: () =>
-                    ctx.dispatch({ type: 'SIMULATOR_ACTION', action: SimulatorActions.navigateScreen('phone', 'add_contact') }),
+                    ctx.dispatch({
+                        type: 'SIMULATOR_ACTION',
+                        action: SimulatorActions.navigateScreen('phone', 'add_contact'),
+                    }),
                 initialSelectedContactId: isItHelpdeskWireframe ? 'it-helpdesk' : null,
                 contactDetailTitleOnly: isItHelpdeskWireframe,
                 hostOwnsPhoneContactDetail: ctx.hostOwnsPhoneContactDetail,
@@ -168,7 +182,10 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
         getProps: (ctx) => {
             const phoneScreen = ctx.state.view.phone.screen;
             const onPhoneNav = (id: string) =>
-                ctx.dispatch({ type: 'SIMULATOR_ACTION', action: SimulatorActions.navigateScreen('phone', id) });
+                ctx.dispatch({
+                    type: 'SIMULATOR_ACTION',
+                    action: SimulatorActions.navigateScreen('phone', id),
+                });
             const navRenderedByShell =
                 !ctx.state.view.showPrimaryMenu && ctx.state.view.activeApp === 'phone';
             const payload = ctx.state.payload;
@@ -181,8 +198,11 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
                 contacts: payload.contacts,
                 onBack: ctx.onBack,
                 onAction: ctx.onAction,
-                onViewEntry: (entryId: string) => ctx.onAction(SimulatorActions.viewDirectoryEntry(entryId)),
-                phoneLocalNavItems: navRenderedByShell ? undefined : getPhoneLocalNavItems(ctx.capabilities.phone, ctx.locale),
+                onViewEntry: (entryId: string) =>
+                    ctx.onAction(SimulatorActions.viewDirectoryEntry(entryId)),
+                phoneLocalNavItems: navRenderedByShell
+                    ? undefined
+                    : getPhoneLocalNavItems(ctx.capabilities.phone, ctx.locale),
                 phoneActiveId: phoneScreen,
                 onPhoneNavSelect: navRenderedByShell ? undefined : onPhoneNav,
                 initialSelectedDirectoryId,
@@ -199,7 +219,10 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             phoneCapabilities: ctx.capabilities.phone,
             screen: ctx.state.view.phone.screen,
             onNavigate: (screenId: PhoneScreenId) =>
-                ctx.dispatch({ type: 'SIMULATOR_ACTION', action: SimulatorActions.navigateScreen('phone', screenId) }),
+                ctx.dispatch({
+                    type: 'SIMULATOR_ACTION',
+                    action: SimulatorActions.navigateScreen('phone', screenId),
+                }),
             onAction: ctx.onAction,
             onDismissIncoming: ctx.onBack,
             onBack: ctx.onBack,
@@ -219,7 +242,10 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             homeCapabilities: ctx.capabilities.home,
             screen: ctx.state.view.home.screen,
             onNavigate: (screenId: 'home' | 'store' | 'settings') =>
-                ctx.dispatch({ type: 'SIMULATOR_ACTION', action: SimulatorActions.navigateScreen('home', screenId) }),
+                ctx.dispatch({
+                    type: 'SIMULATOR_ACTION',
+                    action: SimulatorActions.navigateScreen('home', screenId),
+                }),
             onAction: ctx.onAction,
             onBack: ctx.onBack,
         }),
@@ -246,7 +272,7 @@ function getScreenForApp(app: SimulatorApp, ctx: SimulatorRenderContext): string
 
 function getContactsSearchQuery(
     contactsSearchQuery: string,
-    initialContactsSearch: string | undefined
+    initialContactsSearch: string | undefined,
 ): string {
     if (contactsSearchQuery === '') {
         return initialContactsSearch ?? '';
@@ -259,7 +285,9 @@ function getContactsSearchQuery(
  */
 export function resolveScreen(app: SimulatorApp, ctx: SimulatorRenderContext): ScreenEntry | null {
     const screen = getScreenForApp(app, ctx);
-    const exact = SCREEN_REGISTRY.find((e) => e.app === app && e.screen !== undefined && e.screen === screen);
+    const exact = SCREEN_REGISTRY.find(
+        (e) => e.app === app && e.screen !== undefined && e.screen === screen,
+    );
     if (exact != null) return exact;
     const fallback = SCREEN_REGISTRY.find((e) => e.app === app && e.screen === undefined);
     return fallback ?? null;

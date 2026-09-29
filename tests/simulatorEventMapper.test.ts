@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { actionToInteractionEvent, appOpenedEvent, screenViewedEvent } from '../src/utils/simulatorEventMapper';
+import {
+    actionToInteractionEvent,
+    appOpenedEvent,
+    screenViewedEvent,
+} from '../src/utils/simulatorEventMapper';
 import type { SimulatorTemplatePayload, SimulatorViewState } from '../src/types/session';
 
 function createViewState(): SimulatorViewState {
@@ -42,7 +46,7 @@ describe('simulatorEventMapper', () => {
         const event = actionToInteractionEvent(
             { type: 'report' },
             createViewState(),
-            createPayload()
+            createPayload(),
         );
 
         expect(event?.attempt_id).toBe('42');
@@ -56,17 +60,17 @@ describe('simulatorEventMapper', () => {
         const linkEvent = actionToInteractionEvent(
             { type: 'click_link', linkIndex: 3 },
             view,
-            payload
+            payload,
         );
         const attachmentEvent = actionToInteractionEvent(
             { type: 'open_attachment', attachmentIndex: 2 },
             view,
-            payload
+            payload,
         );
         const downloadEvent = actionToInteractionEvent(
             { type: 'download_attachment', attachmentIndex: 5 },
             view,
-            payload
+            payload,
         );
 
         expect(linkEvent?.action_key).toBe('link_3');
@@ -91,60 +95,76 @@ describe('simulatorEventMapper', () => {
             home: { screen: 'settings' },
         } as SimulatorViewState;
 
-        expect(actionToInteractionEvent({ type: 'open_email', messageId: 'm1' }, emailView, createPayload())).toEqual(
+        expect(
+            actionToInteractionEvent(
+                { type: 'open_email', messageId: 'm1' },
+                emailView,
+                createPayload(),
+            ),
+        ).toEqual(
             expect.objectContaining({
                 kind: 'email_opened',
                 app: 'email',
                 screen: 'detail',
                 action_key: 'm1',
-            })
+            }),
         );
         expect(actionToInteractionEvent({ type: 'open_voicemail' }, phoneView, null)).toEqual(
             expect.objectContaining({
                 kind: 'voicemail_opened',
                 app: 'phone',
                 screen: 'voicemail',
-            })
+            }),
         );
-        expect(actionToInteractionEvent({ type: 'open_settings' }, homeView, createPayload())).toEqual(
+        expect(
+            actionToInteractionEvent({ type: 'open_settings' }, homeView, createPayload()),
+        ).toEqual(
             expect.objectContaining({
                 kind: 'settings_opened',
                 app: 'home',
                 screen: 'settings',
-            })
+            }),
         );
 
         expect(
-            actionToInteractionEvent({ type: 'click_link', href: undefined, linkIndex: null } as never, createViewState(), null)
+            actionToInteractionEvent(
+                { type: 'click_link', href: undefined, linkIndex: null } as never,
+                createViewState(),
+                null,
+            ),
         ).toEqual(
             expect.objectContaining({
                 kind: 'link_clicked',
                 action_key: undefined,
                 metadata: { href: undefined, linkIndex: null, pageId: undefined },
-            })
+            }),
         );
         expect(
             actionToInteractionEvent(
                 { type: 'download_attachment', attachmentIndex: null } as never,
                 createViewState(),
-                createPayload()
-            )
+                createPayload(),
+            ),
         ).toEqual(
             expect.objectContaining({
                 kind: 'attachment_downloaded',
                 action_key: undefined,
                 metadata: { attachmentIndex: null },
-            })
+            }),
         );
         expect(
-            actionToInteractionEvent({ type: 'open_page', pageId: undefined } as never, createViewState(), createPayload())
+            actionToInteractionEvent(
+                { type: 'open_page', pageId: undefined } as never,
+                createViewState(),
+                createPayload(),
+            ),
         ).toEqual(
             expect.objectContaining({
                 kind: 'page_viewed',
                 screen: 'landing',
                 action_key: undefined,
                 metadata: { pageId: undefined },
-            })
+            }),
         );
     });
 
@@ -152,28 +172,30 @@ describe('simulatorEventMapper', () => {
         const payload = { ...createPayload(), attemptId: null };
         const view = createViewState();
 
-        expect(actionToInteractionEvent({ type: 'unsupported_action' } as never, view, payload)).toBeNull();
+        expect(
+            actionToInteractionEvent({ type: 'unsupported_action' } as never, view, payload),
+        ).toBeNull();
         expect(appOpenedEvent('phone', view, payload)).toEqual(
             expect.objectContaining({
                 kind: 'app_opened',
                 app: 'phone',
                 screen: 'history',
                 attempt_id: undefined,
-            })
+            }),
         );
         expect(appOpenedEvent('bogus', view, null) as never).toEqual(
             expect.objectContaining({
                 kind: 'app_opened',
                 app: 'bogus',
                 screen: '',
-            })
+            }),
         );
         expect(screenViewedEvent('email', 'compose', view, payload)).toEqual(
             expect.objectContaining({
                 kind: 'screen_viewed',
                 app: 'email',
                 screen: 'compose',
-            })
+            }),
         );
     });
 
@@ -184,12 +206,12 @@ describe('simulatorEventMapper', () => {
         const contactEvent = actionToInteractionEvent(
             { type: 'open_contact', contactId: 'contact-42' },
             view,
-            payload
+            payload,
         );
         const directoryEvent = actionToInteractionEvent(
             { type: 'view_directory_entry', entryId: 'dir-9' },
             view,
-            payload
+            payload,
         );
 
         expect(contactEvent).toEqual(
@@ -197,14 +219,14 @@ describe('simulatorEventMapper', () => {
                 kind: 'contact_opened',
                 action_key: 'contact-42',
                 metadata: { contactId: 'contact-42' },
-            })
+            }),
         );
         expect(directoryEvent).toEqual(
             expect.objectContaining({
                 kind: 'directory_entry_viewed',
                 action_key: 'dir-9',
                 metadata: { entryId: 'dir-9' },
-            })
+            }),
         );
     });
 
@@ -223,16 +245,20 @@ describe('simulatorEventMapper', () => {
                 template_key: undefined,
                 run_id: undefined,
                 attempt_id: '0',
-            })
+            }),
         );
 
         expect(
-            actionToInteractionEvent({ type: 'open_attachment', attachmentIndex: 0 }, createViewState(), payload)
+            actionToInteractionEvent(
+                { type: 'open_attachment', attachmentIndex: 0 },
+                createViewState(),
+                payload,
+            ),
         ).toEqual(
             expect.objectContaining({
                 kind: 'attachment_opened',
                 action_key: 'attachment_0',
-            })
+            }),
         );
     });
 });

@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { getInitialSessionState } from '../src/state/simulatorSessionReducer';
-import { applyDeepLinkToState, getDeepLinkContactsSearch, parseSimulatorSearchParams } from '../src/utils/simulatorDeepLink';
+import {
+    applyDeepLinkToState,
+    getDeepLinkContactsSearch,
+    parseSimulatorSearchParams,
+} from '../src/utils/simulatorDeepLink';
 import type { SimulatorSessionState } from '../src/types/session';
 
 function createPayload(): SimulatorSessionState['payload'] {
@@ -23,7 +27,12 @@ function createPayload(): SimulatorSessionState['payload'] {
             defaultPageId: 'landing',
             pages: [
                 { id: 'landing', url: 'https://example.test', title: 'Landing', layout: 'landing' },
-                { id: 'pricing', url: 'https://example.test/pricing', title: 'Pricing', layout: 'content' },
+                {
+                    id: 'pricing',
+                    url: 'https://example.test/pricing',
+                    title: 'Pricing',
+                    layout: 'content',
+                },
             ],
         },
     };
@@ -83,37 +92,47 @@ describe('simulatorDeepLink', () => {
     });
 
     it('returns search only for phone contacts deep-links', () => {
-        expect(getDeepLinkContactsSearch({
-            app: 'phone',
-            screen: 'contacts',
-            search: 'Ada',
-        })).toBe('Ada');
+        expect(
+            getDeepLinkContactsSearch({
+                app: 'phone',
+                screen: 'contacts',
+                search: 'Ada',
+            }),
+        ).toBe('Ada');
 
-        expect(getDeepLinkContactsSearch({
-            app: 'phone',
-            screen: 'dial',
-            search: 'Ada',
-        })).toBeUndefined();
+        expect(
+            getDeepLinkContactsSearch({
+                app: 'phone',
+                screen: 'dial',
+                search: 'Ada',
+            }),
+        ).toBeUndefined();
 
         expect(getDeepLinkContactsSearch(null)).toBeUndefined();
     });
 
     it('parses app-specific deep-link screens and preserves email selection for non-list screens', () => {
-        expect(parseSimulatorSearchParams(new URLSearchParams('app=PHONE&screen=contacts'))).toEqual({
+        expect(
+            parseSimulatorSearchParams(new URLSearchParams('app=PHONE&screen=contacts')),
+        ).toEqual({
             app: 'phone',
             screen: 'contacts',
             messageId: undefined,
             pageId: undefined,
             search: undefined,
         });
-        expect(parseSimulatorSearchParams(new URLSearchParams('app=email&screen=compose'))).toEqual({
-            app: 'email',
-            screen: 'compose',
-            messageId: undefined,
-            pageId: undefined,
-            search: undefined,
-        });
-        expect(parseSimulatorSearchParams(new URLSearchParams('app=messages&screen=new_thread'))).toEqual({
+        expect(parseSimulatorSearchParams(new URLSearchParams('app=email&screen=compose'))).toEqual(
+            {
+                app: 'email',
+                screen: 'compose',
+                messageId: undefined,
+                pageId: undefined,
+                search: undefined,
+            },
+        );
+        expect(
+            parseSimulatorSearchParams(new URLSearchParams('app=messages&screen=new_thread')),
+        ).toEqual({
             app: 'messages',
             screen: 'new_thread',
             messageId: undefined,
@@ -127,14 +146,18 @@ describe('simulatorDeepLink', () => {
             pageId: undefined,
             search: undefined,
         });
-        expect(parseSimulatorSearchParams(new URLSearchParams('app=internet&screen=custom-page'))).toEqual({
+        expect(
+            parseSimulatorSearchParams(new URLSearchParams('app=internet&screen=custom-page')),
+        ).toEqual({
             app: 'internet',
             screen: 'custom-page',
             messageId: undefined,
             pageId: undefined,
             search: undefined,
         });
-        expect(parseSimulatorSearchParams(new URLSearchParams('app=phone&screen=not-real'))).toBeNull();
+        expect(
+            parseSimulatorSearchParams(new URLSearchParams('app=phone&screen=not-real')),
+        ).toBeNull();
 
         const initial = getInitialSessionState(createPayload());
         const state = {

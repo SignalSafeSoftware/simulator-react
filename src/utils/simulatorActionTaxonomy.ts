@@ -67,7 +67,8 @@ export const SIMULATOR_ACTION_CATEGORY = {
     HOME_NAVIGATION: 'home_navigation',
 } as const;
 
-export type SimulatorActionCategory = (typeof SIMULATOR_ACTION_CATEGORY)[keyof typeof SIMULATOR_ACTION_CATEGORY];
+export type SimulatorActionCategory =
+    (typeof SIMULATOR_ACTION_CATEGORY)[keyof typeof SIMULATOR_ACTION_CATEGORY];
 
 export const SIMULATOR_ACTION_CATEGORIES: Record<SimulatorActionType, SimulatorActionCategory> = {
     navigate_screen: SIMULATOR_ACTION_CATEGORY.LOCAL_NAVIGATION,

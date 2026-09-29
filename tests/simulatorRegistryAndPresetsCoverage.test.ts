@@ -1,6 +1,14 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { employeeDeviceWorld, fakeBankWorld, FIXTURE_WORLD_CATALOG, getFixtureWorld, minimalPhoneWorld, verificationBusinessWorld, browserCredentialWorld } from '@workspace-simulator-test-support/fixtureWorlds';
+import {
+    employeeDeviceWorld,
+    fakeBankWorld,
+    FIXTURE_WORLD_CATALOG,
+    getFixtureWorld,
+    minimalPhoneWorld,
+    verificationBusinessWorld,
+    browserCredentialWorld,
+} from '@workspace-simulator-test-support/fixtureWorlds';
 import {
     buildPayloadFromPresets,
     getSimulatorPreset,
@@ -15,7 +23,7 @@ import { getInitialSessionState } from '../src/state/simulatorSessionReducer';
 import { renderActiveScreen, resolveScreen, SCREEN_REGISTRY } from '../src/screenRegistry/registry';
 import type { SimulatorRenderContext } from '../src/screenRegistry/types';
 
-import { TestRenderer, act } from './reactTestRenderer';
+import { TestRenderer } from './reactTestRenderer';
 
 function createRenderContext(overrides?: Partial<SimulatorRenderContext>): SimulatorRenderContext {
     const payload = employeeDeviceWorld();
@@ -83,9 +91,16 @@ describe('simulator fixture and preset coverage', () => {
                 entryPoint: { app: 'internet', screen: 'landing' },
                 browser: {
                     defaultPageId: 'landing',
-                    pages: [{ id: 'landing', title: 'Landing', url: 'https://example.test', layout: 'landing' }],
+                    pages: [
+                        {
+                            id: 'landing',
+                            title: 'Landing',
+                            url: 'https://example.test',
+                            layout: 'landing',
+                        },
+                    ],
                 },
-            }
+            },
         );
 
         expect(built.templateKey).toBe('composed-template');
@@ -104,9 +119,16 @@ describe('simulator fixture and preset coverage', () => {
                 entryPoint: { app: 'internet', screen: 'landing' },
                 browser: {
                     defaultPageId: 'landing',
-                    pages: [{ id: 'landing', title: 'Landing', url: 'https://example.test', layout: 'landing' }],
+                    pages: [
+                        {
+                            id: 'landing',
+                            title: 'Landing',
+                            url: 'https://example.test',
+                            layout: 'landing',
+                        },
+                    ],
                 },
-            }
+            },
         );
         expect(sparse.entryPoint).toEqual({ app: 'internet', screen: 'landing' });
         expect(sparse.browser?.defaultPageId).toBe('landing');
@@ -129,30 +151,46 @@ describe('simulator screen registry coverage', () => {
         ctx.state.view.messages.screen = 'threads';
         const messagesThreads = resolveScreen('messages', ctx);
         expect(messagesThreads?.screen).toBe('threads');
-        TestRenderer.create(React.createElement(React.Fragment, null, renderActiveScreen('messages', ctx)));
+        TestRenderer.create(
+            React.createElement(React.Fragment, null, renderActiveScreen('messages', ctx)),
+        );
 
         ctx.state.view.messages.screen = 'new_thread';
         const newThreadEntry = resolveScreen('messages', ctx);
         expect(newThreadEntry?.screen).toBe('new_thread');
-        TestRenderer.create(React.createElement(React.Fragment, null, renderActiveScreen('messages', ctx)));
+        TestRenderer.create(
+            React.createElement(React.Fragment, null, renderActiveScreen('messages', ctx)),
+        );
 
         ctx.state.view.messages.screen = 'thread_detail';
-        TestRenderer.create(React.createElement(React.Fragment, null, renderActiveScreen('messages', ctx)));
+        TestRenderer.create(
+            React.createElement(React.Fragment, null, renderActiveScreen('messages', ctx)),
+        );
 
         ctx.state.view.internet.screen = 'landing';
-        TestRenderer.create(React.createElement(React.Fragment, null, renderActiveScreen('internet', ctx)));
+        TestRenderer.create(
+            React.createElement(React.Fragment, null, renderActiveScreen('internet', ctx)),
+        );
 
         ctx.state.view.phone.screen = 'contacts';
-        TestRenderer.create(React.createElement(React.Fragment, null, renderActiveScreen('phone', ctx)));
+        TestRenderer.create(
+            React.createElement(React.Fragment, null, renderActiveScreen('phone', ctx)),
+        );
 
         ctx.state.view.phone.screen = 'directory';
-        TestRenderer.create(React.createElement(React.Fragment, null, renderActiveScreen('phone', ctx)));
+        TestRenderer.create(
+            React.createElement(React.Fragment, null, renderActiveScreen('phone', ctx)),
+        );
 
         ctx.state.view.phone.screen = 'history';
-        TestRenderer.create(React.createElement(React.Fragment, null, renderActiveScreen('phone', ctx)));
+        TestRenderer.create(
+            React.createElement(React.Fragment, null, renderActiveScreen('phone', ctx)),
+        );
 
         ctx.state.view.home.screen = 'home';
-        TestRenderer.create(React.createElement(React.Fragment, null, renderActiveScreen('home', ctx)));
+        TestRenderer.create(
+            React.createElement(React.Fragment, null, renderActiveScreen('home', ctx)),
+        );
 
         expect(SCREEN_REGISTRY.length).toBeGreaterThan(0);
     });
@@ -171,13 +209,20 @@ describe('simulator screen registry coverage', () => {
 
         ctx.state.payload.sms = {
             thread: {
-                messages: [{ text: 'A very long message that should be truncated by the registry preview builder because it exceeds the limit.' }],
+                messages: [
+                    {
+                        text: 'A very long message that should be truncated by the registry preview builder because it exceeds the limit.',
+                    },
+                ],
                 sender_display_name: 'Sender',
             },
             visibleMessageCount: 0,
         } as never;
         ctx.state.view.messages.screen = 'threads';
-        const threadProps = resolveScreen('messages', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const threadProps = resolveScreen('messages', ctx)!.getProps(ctx) as Record<
+            string,
+            unknown
+        >;
         expect((threadProps.threads as Array<Record<string, unknown>>)[0].preview).toContain('…');
 
         ctx.state.payload.sms = {
@@ -186,8 +231,13 @@ describe('simulator screen registry coverage', () => {
             },
             visibleMessageCount: 0,
         } as never;
-        const defaultPreviewProps = resolveScreen('messages', ctx)!.getProps(ctx) as Record<string, unknown>;
-        expect((defaultPreviewProps.threads as Array<Record<string, unknown>>)[0].preview).toBe('New message');
+        const defaultPreviewProps = resolveScreen('messages', ctx)!.getProps(ctx) as Record<
+            string,
+            unknown
+        >;
+        expect((defaultPreviewProps.threads as Array<Record<string, unknown>>)[0].preview).toBe(
+            'New message',
+        );
 
         ctx.state.view.activeApp = 'phone';
         ctx.state.view.showPrimaryMenu = true;
@@ -202,13 +252,19 @@ describe('simulator screen registry coverage', () => {
         ctx.state.view.showPrimaryMenu = false;
         ctx.state.view.activeApp = 'phone';
         ctx.state.view.contactsSearchQuery = 'stored-search';
-        const shellOwnedContactsProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const shellOwnedContactsProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<
+            string,
+            unknown
+        >;
         expect(shellOwnedContactsProps.searchQuery).toBe('stored-search');
         expect(shellOwnedContactsProps.phoneLocalNavItems).toBeUndefined();
         expect(shellOwnedContactsProps.onPhoneNavSelect).toBeUndefined();
 
         ctx.state.view.phone.screen = 'directory';
-        const directoryProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const directoryProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<
+            string,
+            unknown
+        >;
         expect(directoryProps.phoneLocalNavItems).toBeUndefined();
         expect(typeof directoryProps.onViewEntry).toBe('function');
 
@@ -232,7 +288,10 @@ describe('simulator screen registry coverage', () => {
         ctx.state.view.phone.screen = 'contacts';
         ctx.state.view.showPrimaryMenu = true;
         ctx.state.view.contactsSearchQuery = '';
-        const emptySearchProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const emptySearchProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<
+            string,
+            unknown
+        >;
         expect(emptySearchProps.searchQuery).toBe('');
     });
 
@@ -249,7 +308,10 @@ describe('simulator screen registry coverage', () => {
         (emailProps.onNavigate as (screen: string) => void)('trash');
 
         ctx.state.view.messages.screen = 'threads';
-        const messageProps = resolveScreen('messages', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const messageProps = resolveScreen('messages', ctx)!.getProps(ctx) as Record<
+            string,
+            unknown
+        >;
         (messageProps.onCompose as () => void)();
 
         ctx.state.view.activeApp = 'phone';
@@ -262,7 +324,10 @@ describe('simulator screen registry coverage', () => {
         (contactsProps.onPhoneNavSelect as (id: string) => void)('dial');
 
         ctx.state.view.phone.screen = 'directory';
-        const directoryProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const directoryProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<
+            string,
+            unknown
+        >;
         (directoryProps.onViewEntry as (id: string) => void)('d1');
         (directoryProps.onPhoneNavSelect as (id: string) => void)('history');
 
@@ -279,7 +344,11 @@ describe('simulator screen registry coverage', () => {
             type: 'SIMULATOR_ACTION',
             action: { type: 'navigate_screen', app: 'email', screen: 'trash' },
         });
-        expect(ctx.dispatch).toHaveBeenCalledWith({ type: 'NAV_LOCAL', app: 'messages', screen: 'new_thread' });
+        expect(ctx.dispatch).toHaveBeenCalledWith({
+            type: 'NAV_LOCAL',
+            app: 'messages',
+            screen: 'new_thread',
+        });
         expect(ctx.onAction).toHaveBeenCalledWith({ type: 'search_contacts', query: 'help' });
         expect(ctx.dispatch).toHaveBeenCalledWith({ type: 'SET_CONTACTS_SEARCH', query: 'desk' });
         expect(ctx.dispatch).toHaveBeenCalledWith({
@@ -314,9 +383,15 @@ describe('simulator screen registry coverage', () => {
     it('selects first directory id for harness-phone-directory-entry templates', () => {
         const ctx = createRenderContext();
         ctx.state.payload.templateKey = 'harness-phone-directory-entry';
-        (ctx.state.payload as { directory?: Array<{ id: string }> }).directory = [{ id: 'first-entry' }, { id: 'second' }];
+        (ctx.state.payload as { directory?: Array<{ id: string }> }).directory = [
+            { id: 'first-entry' },
+            { id: 'second' },
+        ];
         ctx.state.view.phone.screen = 'directory';
-        const directoryProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const directoryProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<
+            string,
+            unknown
+        >;
         expect(directoryProps.initialSelectedDirectoryId).toBe('first-entry');
     });
 
@@ -325,7 +400,10 @@ describe('simulator screen registry coverage', () => {
         ctx.state.payload.templateKey = 'harness-phone-directory-entry';
         (ctx.state.payload as { directory?: Array<{ id: string }> }).directory = [];
         ctx.state.view.phone.screen = 'directory';
-        const directoryProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const directoryProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<
+            string,
+            unknown
+        >;
         expect(directoryProps.initialSelectedDirectoryId).toBeNull();
     });
 
@@ -356,9 +434,16 @@ describe('simulator screen registry coverage', () => {
             visibleMessageCount: 0,
         } as never;
         ctx.state.view.messages.screen = 'threads';
-        const smsPayload = ctx.state.payload.sms as { threads: Array<{ id: string; preview: string }> };
-        const threadedProps = resolveScreen('messages', ctx)!.getProps(ctx) as Record<string, unknown>;
-        expect((threadedProps.threads as Array<Record<string, unknown>>)[0].preview).toBe('Preset preview');
+        const smsPayload = ctx.state.payload.sms as {
+            threads: Array<{ id: string; preview: string }>;
+        };
+        const threadedProps = resolveScreen('messages', ctx)!.getProps(ctx) as Record<
+            string,
+            unknown
+        >;
+        expect((threadedProps.threads as Array<Record<string, unknown>>)[0].preview).toBe(
+            'Preset preview',
+        );
         expect(threadedProps.threads).toBe(smsPayload.threads);
 
         ctx.state.payload.sms = null as never;

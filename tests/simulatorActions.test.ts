@@ -7,6 +7,9 @@ describe('SimulatorActions', () => {
         expect(SimulatorActions.report()).toEqual({ type: 'report' });
         expect(SimulatorActions.checkContact()).toEqual({ type: 'check_contact' });
         expect(SimulatorActions.checkContacts()).toEqual({ type: 'check_contacts' });
-        expect(SimulatorActions.switchChannel('browser')).toEqual({ type: 'switch_channel', channel: 'browser' });
+        expect(SimulatorActions.switchChannel('browser')).toEqual({
+            type: 'switch_channel',
+            channel: 'browser',
+        });
     });
 });

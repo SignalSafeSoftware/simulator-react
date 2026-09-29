@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { getInitialSessionState, simulatorSessionReducer } from '../src/state/simulatorSessionReducer';
+import {
+    getInitialSessionState,
+    simulatorSessionReducer,
+} from '../src/state/simulatorSessionReducer';
 import type { SimulatorSessionState } from '../src/types/session';
 
 function createPayload(): SimulatorSessionState['payload'] {
@@ -10,7 +13,12 @@ function createPayload(): SimulatorSessionState['payload'] {
             defaultPageId: 'landing',
             pages: [
                 { id: 'landing', url: 'https://example.test', title: 'Landing', layout: 'landing' },
-                { id: 'pricing', url: 'https://example.test/pricing', title: 'Pricing', layout: 'content' },
+                {
+                    id: 'pricing',
+                    url: 'https://example.test/pricing',
+                    title: 'Pricing',
+                    layout: 'content',
+                },
             ],
         },
     };

@@ -41,7 +41,11 @@ export type {
 } from './types/portableSimulator.js';
 
 /** Merge helpers for partial simulator payload slices (authoring overlays). */
-export { type SimulatorWorldPartial, deepMergeSections, applyPartials } from './utils/simulatorWorldSections.js';
+export {
+    type SimulatorWorldPartial,
+    deepMergeSections,
+    applyPartials,
+} from './utils/simulatorWorldSections.js';
 
 export {
     type SimulatorNavGraph,
@@ -61,8 +65,15 @@ export { applyPreviewFallback } from './utils/previewFallbackWorld.js';
 
 export { diffSimulatorPayloads, type SimulatorDiffItem } from './utils/simulatorPayloadDiff.js';
 
-export { actionToInteractionEvent, appOpenedEvent, screenViewedEvent } from './utils/simulatorEventMapper.js';
-export { getSimulatorCapabilities, type SimulatorCapabilities } from './utils/simulatorCapabilities.js';
+export {
+    actionToInteractionEvent,
+    appOpenedEvent,
+    screenViewedEvent,
+} from './utils/simulatorEventMapper.js';
+export {
+    getSimulatorCapabilities,
+    type SimulatorCapabilities,
+} from './utils/simulatorCapabilities.js';
 
 export {
     normalizeNameForMatch,
@@ -104,11 +115,19 @@ export type { SessionStartedEntry, TimelineEntry } from './components/SimulatorS
 export type { HostSimulatorEventHandler } from './contract/hostContractTypes.js';
 
 export { createSimulatorNavigationDispatch } from './contract/navigation.js';
-export type { SimulatorNavigationRequest, SimulatorNavigationEvent, SimulatorNavigationHandler, SimulatorNavigationOptions } from './contract/navigation.js';
+export type {
+    SimulatorNavigationRequest,
+    SimulatorNavigationEvent,
+    SimulatorNavigationHandler,
+    SimulatorNavigationOptions,
+} from './contract/navigation.js';
 export { default as PhoneHistoryList } from './views/PhoneHistoryList.js';
 export type { PhoneHistoryListProps } from './views/PhoneHistoryList.js';
 
-export type { SimulatorScreenOverrides, SimulatorScreenOverrideProps } from './contract/screenOverrides.js';
+export type {
+    SimulatorScreenOverrides,
+    SimulatorScreenOverrideProps,
+} from './contract/screenOverrides.js';
 
 export type { EmailComposeViewProps } from './views/EmailComposeView.js';
 export type { MessagesNewThreadViewProps } from './views/MessagesNewThreadView.js';
@@ -129,11 +148,17 @@ export { default as PhoneCallView, formatPhoneCallDuration } from './views/Phone
 export type { PhoneCallViewProps } from './views/PhoneCallView.js';
 export { default as PhoneContactEditor } from './views/PhoneContactEditor.js';
 export type { PhoneContactEditorProps } from './views/PhoneContactEditor.js';
-export { default as PhoneHistoryDetail, PhoneHistoryPagination } from './views/PhoneHistoryDetail.js';
+export {
+    default as PhoneHistoryDetail,
+    PhoneHistoryPagination,
+} from './views/PhoneHistoryDetail.js';
 export type { PhoneHistoryDetailProps } from './views/PhoneHistoryDetail.js';
 export { default as SimulatorScreenTile } from './views/SimulatorScreenTile.js';
 
-export { SimulatorListGroup, SimulatorListLoadingContext } from './components/SimulatorListGroup.js';
+export {
+    SimulatorListGroup,
+    SimulatorListLoadingContext,
+} from './components/SimulatorListGroup.js';
 export type { SimulatorListGroupProps } from './components/SimulatorListGroup.js';
 
 export * from './i18n/catalog.js';
@@ -154,3 +179,52 @@ export * from './contract/capabilities.js';
 export * from './components/ContactPhotoControls.js';
 
 export * from './views/phoneDialContract.js';
+
+export {
+    ComposerStateContext,
+    useComposerState,
+    type ComposerState,
+} from './views/composerState.js';
+
+export {
+    SimulatorListFooterContext,
+    SimulatorTimelineContext,
+} from './components/HostListSlots.js';
+
+export { getPhoneSecondaryItems } from './utils/phoneLocalNavItems.js';
+export {
+    getEmailSecondaryItems,
+    getPhoneSecondaryActiveId,
+    getEmailSecondaryActiveId,
+} from './utils/simulatorSecondaryMenuHelpers.js';
+export { shouldHideSimulatorNavigation } from './utils/simulatorNavigationPolicy.js';
+
+export { default as SimulatorVault } from './apps/Vault.js';
+
+export { default as SimulatorPhotos } from './apps/Photos.js';
+
+export { default as SimulatorPhotoEditor } from './apps/PhotoEditor.js';
+
+export { default as SimulatorPhotoLocation } from './apps/PhotoLocation.js';
+
+export { default as SimulatorMailbox } from './apps/Mailbox.js';
+
+export { default as SimulatorBrowserWorkbench } from './apps/MockBrowser.js';
+export { HtmlMockPage, ReactMockPage, type MockPage } from './apps/MockBrowser.js';
+export type { MailboxSource } from './apps/Mailbox.js';
+export {
+    LockScreen as SimulatorLockScreen,
+    LockSettings as SimulatorLockSettings,
+} from './apps/LockScreen.js';
+export { DevicePage as SimulatorAppPage } from './apps/DevicePage.js';
+export * from './apps/host.js';
+export * from './apps/SimulatorAppNavItem.js';
+export * from './apps/LoadMore.js';
+export * from './apps/useDevicePage.js';
+export * from './apps/useDeviceRecord.js';
+export * from './apps/useVisiblePage.js';
+export * from './apps/assets.js';
+export * from './apps/photoMetadata.js';
+export * from './apps/browserBridge.js';
+export * from './apps/browserDocument.js';
+export * from './apps/lock.js';

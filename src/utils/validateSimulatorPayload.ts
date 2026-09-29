@@ -23,13 +23,17 @@ const HINT = ' See docs/simulator/simulator-authoring.md for schema and allowed 
  */
 export function validateSimulatorPayload(payload: unknown): void {
     if (payload == null || typeof payload !== 'object') {
-        throw new Error(englishLocale.t("copy.validateSimulatorPayload.invalid.simulator.payload.payload.is.missing.or.not.an.object") + HINT);
+        throw new Error(
+            englishLocale.t(
+                'copy.validateSimulatorPayload.invalid.simulator.payload.payload.is.missing.or.not.an.object',
+            ) + HINT,
+        );
     }
     const p = payload as Record<string, unknown>;
     if (typeof p.channel !== 'string' || !VALID_CHANNELS.includes(p.channel as SimulatorChannel)) {
         throw new Error(
             `Invalid simulator payload: channel must be one of ${VALID_CHANNELS.join(', ')}. Got: ${String(p.channel)}.` +
-                HINT
+                HINT,
         );
     }
 }

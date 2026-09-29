@@ -12,7 +12,7 @@ export const DEVELOPER_TOOLBAR_LABELS: Record<SimulatorDeveloperSectionKey, stri
     navGraph: 'Graph',
     snapshotExport: 'Snapshot',
     shortcuts: 'Shortcuts',
-    runtimeIssues: englishLocale.t("copy.simulatorDeveloperToolbarConfig.runtime.issues"),
+    runtimeIssues: englishLocale.t('copy.simulatorDeveloperToolbarConfig.runtime.issues'),
 };
 
 export const DEVELOPER_TOOLBAR_ICONS: Record<SimulatorDeveloperSectionKey, string> = {

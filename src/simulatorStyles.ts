@@ -97,7 +97,11 @@ export const simTypo = {
     sectionHeading: 'simulator-heading simulator-heading--section',
     subheading: 'simulator-heading simulator-heading--sub',
     secondary: joinClasses('simulator-text--sm', SIM_MUTED),
-    secondaryTight: joinClasses('simulator-text--sm', SIM_MUTED, 'simulator-spacing--section-tight'),
+    secondaryTight: joinClasses(
+        'simulator-text--sm',
+        SIM_MUTED,
+        'simulator-spacing--section-tight',
+    ),
     bodySmall: joinClasses('simulator-text--sm', 'simulator-text--body'),
     emptyState: joinClasses(SIM_MUTED, 'simulator-text--sm', 'simulator-text--empty'),
     emptyStateNoResultsMessage: (query: string): string => `No results for "${query}".`,
@@ -108,12 +112,22 @@ export const simTypo = {
 
 /** Back bar (detail views). */
 export const simBackBar = {
-    container: joinClasses(SIM_FLEX, 'simulator-flex--align-center', simSpacing.gap2, simSpacing.sectionGap),
+    container: joinClasses(
+        SIM_FLEX,
+        'simulator-flex--align-center',
+        simSpacing.gap2,
+        simSpacing.sectionGap,
+    ),
     title: simTypo.backBarTitle,
 } as const;
 
 /** Action bar (flex row for Report, Check contact, links). */
-export const simActionsBar = joinClasses(SIM_FLEX_ROW, 'simulator-flex--wrap', simSpacing.gap2, 'simulator-flex--align-center');
+export const simActionsBar = joinClasses(
+    SIM_FLEX_ROW,
+    'simulator-flex--wrap',
+    simSpacing.gap2,
+    'simulator-flex--align-center',
+);
 
 /** Combined: actions bar with top spacing. */
 export const simActionsBarWithTop = `${simSpacing.actionsBarTop} ${simActionsBar}`;
@@ -144,8 +158,18 @@ export const simLocalNav = {
 
 /** Status/emphasis (error/warning fallbacks). */
 export const simStatus = {
-    errorBox: joinClasses(SIM_BORDER, 'simulator-border--danger', 'simulator-surface--light', 'simulator-text--sm'),
-    warningBox: joinClasses(SIM_BORDER, 'simulator-border--warning', 'simulator-surface--light', 'simulator-text--sm'),
+    errorBox: joinClasses(
+        SIM_BORDER,
+        'simulator-border--danger',
+        'simulator-surface--light',
+        'simulator-text--sm',
+    ),
+    warningBox: joinClasses(
+        SIM_BORDER,
+        'simulator-border--warning',
+        'simulator-surface--light',
+        'simulator-text--sm',
+    ),
 } as const;
 
 /** Common layout patterns for screen bodies and scroll regions. */
@@ -155,8 +179,19 @@ export const simLayout = {
     row: joinClasses(SIM_FLEX_ROW, 'simulator-flex--align-center'),
     rowBetween: joinClasses(SIM_FLEX_BETWEEN, 'simulator-flex--align-center'),
     stack: joinClasses(SIM_FLEX_COL, simSpacing.stackGap),
-    actionsRow: joinClasses(SIM_FLEX_ROW, simSpacing.gap2, 'simulator-flex--wrap', 'simulator-flex--align-center'),
-    footerActions: joinClasses('simulator-spacing--p-2', SIM_FLEX_SHRINK_0, 'simulator-spacing--mt-auto', SIM_FLEX_COL, simSpacing.gap2),
+    actionsRow: joinClasses(
+        SIM_FLEX_ROW,
+        simSpacing.gap2,
+        'simulator-flex--wrap',
+        'simulator-flex--align-center',
+    ),
+    footerActions: joinClasses(
+        'simulator-spacing--p-2',
+        SIM_FLEX_SHRINK_0,
+        'simulator-spacing--mt-auto',
+        SIM_FLEX_COL,
+        simSpacing.gap2,
+    ),
     headerRowBetween: joinClasses(
         SIM_FLEX_BETWEEN,
         'simulator-flex--align-center',
@@ -168,8 +203,20 @@ export const simLayout = {
         SIM_TEXT_BODY,
     ),
     fieldLabel: joinClasses(SIM_TEXT_SM, 'simulator-text--medium', SIM_TEXT_BODY),
-    blockFooterRow: joinClasses(SIM_FLEX_ROW, simSpacing.gap2, simSpacing.p2, SIM_FLEX_SHRINK_0, 'simulator-spacing--mt-auto', 'simulator-flex--wrap'),
-    blockButton: joinClasses(SIM_ROUNDED_NONE, 'simulator-btn--block', simSpacing.py2, SIM_FLEX_GROW_1),
+    blockFooterRow: joinClasses(
+        SIM_FLEX_ROW,
+        simSpacing.gap2,
+        simSpacing.p2,
+        SIM_FLEX_SHRINK_0,
+        'simulator-spacing--mt-auto',
+        'simulator-flex--wrap',
+    ),
+    blockButton: joinClasses(
+        SIM_ROUNDED_NONE,
+        'simulator-btn--block',
+        simSpacing.py2,
+        SIM_FLEX_GROW_1,
+    ),
 } as const;
 
 /** Device shell chrome (PhoneSimulatorShell). */
@@ -266,7 +313,17 @@ export const simAvatar = {
 
 /** Selectable inbox/thread row surfaces. */
 export const simRowSurface = {
-    selectable: joinClasses(SIM_FLEX, SIM_W_FULL, 'simulator-flex--align-start', simSpacing.gap2, 'simulator-spacing--py-3', 'simulator-spacing--px-2', SIM_BORDER_SECONDARY, SIM_ROUNDED_NONE, 'simulator-text--start'),
+    selectable: joinClasses(
+        SIM_FLEX,
+        SIM_W_FULL,
+        'simulator-flex--align-start',
+        simSpacing.gap2,
+        'simulator-spacing--py-3',
+        'simulator-spacing--px-2',
+        SIM_BORDER_SECONDARY,
+        SIM_ROUNDED_NONE,
+        'simulator-text--start',
+    ),
     selected: SIM_SURFACE_SELECTED,
     default: SIM_SURFACE_WHITE,
 } as const;

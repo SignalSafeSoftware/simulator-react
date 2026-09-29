@@ -4,9 +4,17 @@
  */
 
 import type { SimulatorSessionState, SimulatorViewState } from '../types/session.js';
-import { isSimulatorTransitionLoggingEnabled, logSimulatorTransition } from '../utils/simulatorTransitionLogger.js';
+import {
+    isSimulatorTransitionLoggingEnabled,
+    logSimulatorTransition,
+} from '../utils/simulatorTransitionLogger.js';
 import type { SimulatorDispatchAction } from './simulatorDispatchActions.js';
-import { applyBack, applyCancel, applyNavLocal, applySwitchApp } from './simulatorNavigationHandlers.js';
+import {
+    applyBack,
+    applyCancel,
+    applyNavLocal,
+    applySwitchApp,
+} from './simulatorNavigationHandlers.js';
 import {
     applyBrowserScreen,
     applySelectEmail,
@@ -18,7 +26,10 @@ export { switchChannelAction } from './simulatorDispatchActions.js';
 export { getInitialSessionState } from './simulatorSessionInitialState.js';
 export { initialViewState } from './simulatorViewStateHelpers.js';
 
-function viewReducer(state: SimulatorViewState, action: SimulatorDispatchAction): SimulatorViewState {
+function viewReducer(
+    state: SimulatorViewState,
+    action: SimulatorDispatchAction,
+): SimulatorViewState {
     switch (action.type) {
         case 'SWITCH_APP':
             return applySwitchApp(state, action.app);
@@ -44,7 +55,10 @@ function viewReducer(state: SimulatorViewState, action: SimulatorDispatchAction)
         case 'TOGGLE_CONTACTS_PANEL':
             return { ...state, contactsPanelOpen: !state.contactsPanelOpen };
         case 'SET_CONTACTS_SEARCH':
-            return { ...state, contactsSearchQuery: typeof action.query === 'string' ? action.query : '' };
+            return {
+                ...state,
+                contactsSearchQuery: typeof action.query === 'string' ? action.query : '',
+            };
         case 'SIMULATOR_ACTION':
             return applySimulatorAction(state, action.action);
         default:
@@ -54,7 +68,7 @@ function viewReducer(state: SimulatorViewState, action: SimulatorDispatchAction)
 
 export function simulatorSessionReducer(
     state: SimulatorSessionState,
-    action: SimulatorDispatchAction
+    action: SimulatorDispatchAction,
 ): SimulatorSessionState {
     return {
         ...state,
@@ -68,7 +82,7 @@ export function simulatorSessionReducer(
  */
 export function simulatorSessionReducerWithLogging(
     state: SimulatorSessionState,
-    action: SimulatorDispatchAction
+    action: SimulatorDispatchAction,
 ): SimulatorSessionState {
     const next = simulatorSessionReducer(state, action);
     if (isSimulatorTransitionLoggingEnabled()) {

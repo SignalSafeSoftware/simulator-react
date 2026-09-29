@@ -5,10 +5,17 @@
 import { useCallback, useMemo, type MutableRefObject, type ReactNode } from 'react';
 import { SimulatorActions } from '../actions/index.js';
 import type { HostSimulatorEventHandler } from '../contract/hostContractTypes.js';
-import { switchChannelAction, type SimulatorDispatchAction } from '../state/simulatorSessionReducer.js';
+import {
+    switchChannelAction,
+    type SimulatorDispatchAction,
+} from '../state/simulatorSessionReducer.js';
 import type { SimulatorSessionState, SimulatorChannel, SimulatorAction } from '../types/session.js';
 import { channelToApp } from '../types/session.js';
-import { actionToInteractionEvent, appOpenedEvent, screenViewedEvent } from '../utils/simulatorEventMapper.js';
+import {
+    actionToInteractionEvent,
+    appOpenedEvent,
+    screenViewedEvent,
+} from '../utils/simulatorEventMapper.js';
 import { getSimulatorCapabilities } from '../utils/simulatorCapabilities.js';
 import { getBrowserSubmitTargetId } from '../utils/simulatorSecondaryMenuHelpers.js';
 import type { SimulatorRenderContext } from '../screenRegistry/index.js';
@@ -59,7 +66,10 @@ export function useSimulatorSessionHandlers({
 }: UseSimulatorSessionHandlersOptions): UseSimulatorSessionHandlersResult {
     const payload = state.payload;
     const onBack = useCallback(() => dispatch({ type: 'BACK' }), [dispatch]);
-    const onToggleContactsPanel = useCallback(() => dispatch({ type: 'TOGGLE_CONTACTS_PANEL' }), [dispatch]);
+    const onToggleContactsPanel = useCallback(
+        () => dispatch({ type: 'TOGGLE_CONTACTS_PANEL' }),
+        [dispatch],
+    );
 
     const handleChannelChange = useCallback(
         (channel: string) => {
@@ -70,7 +80,7 @@ export function useSimulatorSessionHandlers({
                 onSimulatorEvent(appOpenedEvent(newApp, s.view, s.payload));
             }
         },
-        [dispatch, onSimulatorEvent, stateRef]
+        [dispatch, onSimulatorEvent, stateRef],
     );
 
     const handleAction = useCallback(
@@ -85,7 +95,9 @@ export function useSimulatorSessionHandlers({
                 if (targetExists) {
                     dispatch({ type: 'BROWSER_SCREEN', screen: targetId });
                     if (onSimulatorEvent) {
-                        onSimulatorEvent(screenViewedEvent('internet', targetId, state.view, state.payload));
+                        onSimulatorEvent(
+                            screenViewedEvent('internet', targetId, state.view, state.payload),
+                        );
                     }
                 }
             }
@@ -93,11 +105,13 @@ export function useSimulatorSessionHandlers({
                 const event = actionToInteractionEvent(action, state.view, state.payload);
                 if (event) onSimulatorEvent(event);
                 if (action.type === 'navigate_screen') {
-                    onSimulatorEvent(screenViewedEvent(action.app, action.screen, state.view, state.payload));
+                    onSimulatorEvent(
+                        screenViewedEvent(action.app, action.screen, state.view, state.payload),
+                    );
                 }
             }
         },
-        [dispatch, state.view, state.payload, onSimulatorEvent]
+        [dispatch, state.view, state.payload, onSimulatorEvent],
     );
 
     const handleSelectEmail = useCallback(
@@ -115,7 +129,7 @@ export function useSimulatorSessionHandlers({
                 if (event) onSimulatorEvent(event);
             }
         },
-        [dispatch, state.view, state.payload, onSimulatorEvent]
+        [dispatch, state.view, state.payload, onSimulatorEvent],
     );
 
     const handleSmsRevealNext = useCallback(() => {
@@ -132,7 +146,7 @@ export function useSimulatorSessionHandlers({
                 if (event) onSimulatorEvent(event);
             }
         },
-        [dispatch, state.view, state.payload, onSimulatorEvent]
+        [dispatch, state.view, state.payload, onSimulatorEvent],
     );
 
     const handleOpenContactFromPhone = useCallback(
@@ -144,7 +158,7 @@ export function useSimulatorSessionHandlers({
                 if (event) onSimulatorEvent(event);
             }
         },
-        [dispatch, state.view, state.payload, onSimulatorEvent]
+        [dispatch, state.view, state.payload, onSimulatorEvent],
     );
 
     const capabilities = useMemo(() => getSimulatorCapabilities(payload), [payload]);
@@ -183,7 +197,7 @@ export function useSimulatorSessionHandlers({
             renderIncomingCallExtra,
             hostOwnsPhoneContactDetail,
             onPhoneContactOpen,
-        ]
+        ],
     );
 
     return {
