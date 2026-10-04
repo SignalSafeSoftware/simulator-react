@@ -1,8 +1,8 @@
-import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
 /**
  * Shown when the screen registry cannot resolve (app, screen).
  * Default copy is learner-safe; pass `showDiagnostics` for author/admin detail.
  */
+import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
 import { simSpacing, simStatus, simTypo } from './simulatorStyles.js';
 import type { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { SIM_TEXT_MEDIUM, SIM_TEXT_WARNING, joinClasses } from './ui/styles/simulatorClasses.js';

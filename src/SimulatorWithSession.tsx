@@ -1,23 +1,25 @@
+/**
+ * Shared simulator core: given session state, renders shell + active app + contacts modal.
+ */
 import { shouldHideSimulatorNavigation } from './utils/navigation/simulatorNavigationPolicy.js';
 import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
 import {
     resolveScreenOverride,
     type SimulatorScreenOverrides,
 } from './contract/screenOverrides.js';
-/**
- * Shared simulator core: given session state, renders shell + active app + contacts modal.
- */
 import {
     createSimulatorNavigationDispatch,
     type SimulatorNavigationOptions,
 } from './contract/navigation.js';
-import type { ReactNode } from 'react';
-import { useCallback, useMemo, useRef } from 'react';
+import { type ReactNode, useCallback, useMemo, useRef } from 'react';
 import PhoneSimulatorShell from './shell/PhoneSimulatorShell.js';
 import SimulatorDeveloperToolsPanel from './developer-tools/SimulatorDeveloperToolsPanel.js';
 import { type SimulatorDispatchAction } from './state/simulatorDispatchActions.js';
-import type { SimulatorSessionState } from './types/session.js';
-import { viewStateToActiveChannel, getCurrentScreenForApp } from './types/session.js';
+import {
+    type SimulatorSessionState,
+    viewStateToActiveChannel,
+    getCurrentScreenForApp,
+} from './types/session.js';
 import type { HostSimulatorEventHandler } from './contract/hostContractTypes.js';
 import ContactsView from './views/contacts/ContactsView.js';
 import { renderActiveScreen } from './screenRegistry/registry.js';

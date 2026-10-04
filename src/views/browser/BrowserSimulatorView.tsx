@@ -1,8 +1,8 @@
-import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 /**
  * Internet app: page-based browser. Wireframe: "Internet" banner, then browser chrome + page content.
  * Resolves current page by screen (page id), emits open_page, delegates to BrowserPageRenderer.
  */
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { useEffect, useRef, type ReactNode } from 'react';
 import type { SimulatorAction, SimulatorBrowserPayload } from '../../types/session.js';
 import { SimulatorActions } from '../../actions/simulatorActions.js';

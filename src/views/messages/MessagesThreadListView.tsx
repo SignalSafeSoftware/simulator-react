@@ -1,3 +1,7 @@
+/**
+ * Messages app: thread list. Wireframe: list header with plus/add action, search, rows with
+ * profile icon, contact, snippet, date.
+ */
 import {
     SIM_BTN_SM,
     SIM_FLEX_COL,
@@ -19,14 +23,10 @@ import {
     SimulatorButtonTone,
     joinClasses,
 } from '../../ui/styles/simulatorClasses.js';
-import SimulatorAvatar from '../../ui/media/SimulatorAvatar.js';
+import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
-/**
- * Messages app: thread list. Wireframe: list header with plus/add action, search, rows with
- * profile icon, contact, snippet, date.
- */
 import { useState, useMemo } from 'react';
 import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';
 import { simLayout, simRowSurface, simSpacing } from '../../simulatorStyles.js';
@@ -88,7 +88,6 @@ export default function MessagesThreadListView({
                         index === 0 ? 'simulator-border--top' : 'simulator-border--top-none',
                         SIM_MESSAGES_THREAD_ROW,
                     )}
-                    style={{ cursor: 'pointer' }}
                 >
                     <SimulatorAvatar key={row.avatarUrl} avatarUrl={row.avatarUrl} />
                     <div className={joinClasses(SIM_FLEX_COL, SIM_MIN_W_0, SIM_FLEX_GROW_1)}>

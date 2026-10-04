@@ -27,7 +27,6 @@ export const simulatorEnglish = {
     'fallback.learner_simulator_error_message':
         'The simulation encountered a problem. Please continue or ask your trainer.',
     'fallback.learner_simulator_error_title': 'This part of the simulation could not be displayed.',
-    'fallback.shell_exit_label': 'Exit',
     'fallback.error': 'Simulator error',
     'messages.newMessage': 'New message',
 
@@ -86,7 +85,6 @@ export const simulatorEnglish = {
     'contact.removePhoto': 'Remove image',
     'contact.restorePhoto': 'Restore original image',
     'contact.selectedPhoto': 'Selected replacement',
-    'contact.currentPhoto': 'Current contact image',
     'contact.noPhoto': 'No contact image',
     'messages.newThread': 'New Thread',
     'messages.unconfigured': 'Message sending is not configured for this scenario.',
@@ -109,7 +107,6 @@ export const simulatorEnglish = {
     'email.body': 'Body',
     'action.send': 'Send',
     'action.cancel': 'Cancel',
-    'action.back': 'Back',
     'calls.search': 'Search calls',
     'calls.simulated': 'Simulated call · no audio',
     'calls.empty': 'No recent calls.',

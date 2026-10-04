@@ -14,8 +14,12 @@ import {
  */
 
 import { SimulatorApp, isSimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
-import type { SimulatorSessionState, SimulatorViewState } from '../../types/session.js';
-import { BROWSER_HISTORY_MAX, DEFAULT_INTERNET_SCREEN } from '../../types/session.js';
+import {
+    type SimulatorSessionState,
+    type SimulatorViewState,
+    BROWSER_HISTORY_MAX,
+    DEFAULT_INTERNET_SCREEN,
+} from '../../types/session.js';
 
 export interface SimulatorDeepLink {
     app: SimulatorApp;

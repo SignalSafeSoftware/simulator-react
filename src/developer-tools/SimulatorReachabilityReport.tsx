@@ -1,3 +1,7 @@
+/**
+ * Development/admin reachability report for simulator templates.
+ * Shows which screens and entities are reachable from the entry flow.
+ */
 import {
     SIM_BORDER_TOP,
     SIM_MUTED,
@@ -8,10 +12,6 @@ import {
     joinClasses,
 } from '../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
-/**
- * Development/admin reachability report for simulator templates.
- * Shows which screens and entities are reachable from the entry flow.
- */
 import { simSpacing } from '../simulatorStyles.js';
 import { type ReachabilityReport } from '../utils/navigation/simulatorReachability.js';
 import { CollapsibleReport } from './CollapsibleReport.js';

@@ -4,6 +4,21 @@ import {
     DEFAULT_INTERNET_SCREEN,
     MessageSender,
     SimulatorChannel,
+    type SimulatorInboxRow,
+    type SimulatorEmailPayload,
+    type SimulatorSmsPayload,
+    type SimulatorThreadListRow,
+    type SimulatorBrowserPayload,
+    type SimulatorBrowserPage,
+    type SimulatorPhonePayload,
+    type SimulatorCallHistoryEntry,
+    type SimulatorSessionDevice,
+    type SimulatorSessionContact,
+    type SimulatorDirectoryEntry,
+    type SimulatorHomePayload,
+    type SimulatorHomeWidget,
+    type SimulatorHomeStoreApp,
+    type SimulatorHomeSettingsSection,
 } from '../types/session.js';
 import { englishLocale } from '../i18n/englishLocale.js';
 /**
@@ -11,23 +26,6 @@ import { englishLocale } from '../i18n/englishLocale.js';
  * Small helpers per app/domain; strict types, no any.
  */
 
-import type {
-    SimulatorInboxRow,
-    SimulatorEmailPayload,
-    SimulatorSmsPayload,
-    SimulatorThreadListRow,
-    SimulatorBrowserPayload,
-    SimulatorBrowserPage,
-    SimulatorPhonePayload,
-    SimulatorCallHistoryEntry,
-    SimulatorSessionDevice,
-    SimulatorSessionContact,
-    SimulatorDirectoryEntry,
-    SimulatorHomePayload,
-    SimulatorHomeWidget,
-    SimulatorHomeStoreApp,
-    SimulatorHomeSettingsSection,
-} from '../types/session.js';
 import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../constants.js';
 import { FieldInputType, getFieldInputType } from '../utils/payload/browserFieldType.js';
 import { AttachmentBehavior, type EmailTemplateContent } from '../types/template.js';

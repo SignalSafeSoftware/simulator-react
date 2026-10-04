@@ -1,14 +1,6 @@
-import { SimulatorAlertTone, type SimulatorButtonTone } from './styles/simulatorClasses.js';
-import type {
-    ButtonHTMLAttributes,
-    InputHTMLAttributes,
-    LabelHTMLAttributes,
-    MouseEventHandler,
-    ReactNode,
-    TextareaHTMLAttributes,
-} from 'react';
-
 import {
+    SimulatorAlertTone,
+    type SimulatorButtonTone,
     SIM_CARD,
     SIM_CARD_BODY,
     SIM_CARD_HEADER,
@@ -27,6 +19,14 @@ import {
     simAlertToneClass,
     simBtnToneClass,
 } from './styles/simulatorClasses.js';
+import type {
+    ButtonHTMLAttributes,
+    InputHTMLAttributes,
+    LabelHTMLAttributes,
+    MouseEventHandler,
+    ReactNode,
+    TextareaHTMLAttributes,
+} from 'react';
 
 export function SimulatorButton({
     tone,

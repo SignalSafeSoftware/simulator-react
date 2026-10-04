@@ -24,6 +24,8 @@
 
 `BrowserWorkbench` renders simulated HTML/React documents; `BrowserSimulatorView` and `BrowserPageRenderer` render scenario data. Both paths are active. Browser-only helpers (FileReader, DOMParser, image decoding) stay out of the headless simulator-core model package. Runtime inputs use the canonical contracts in MIGRATION.md; old serialized formats are migrated by offline tooling.
 
+Export style: a module that holds one feature screen (apps, views, developer panels) uses a default export. Shared building blocks (`ui`, `apps/shared`, `contract`, `i18n`) and modules that export several symbols use named exports.
+
 Public modules are exposed by explicit owner subpaths. There is no root forwarding boundary. Internal barrel files, compatibility wrappers and imports through the package's own entry are prohibited. Import canonical device schemas/types from simulator-core, and local template-specific shapes from `types/template.ts`. Do not restore removed `actions/index.ts`, `screenRegistry/index.ts`, or `datasource/validateDeviceJson.ts` shims.
 
 Run `yarn check:modules`, lint, format, types, tests and build. The module check runs in CI and rejects internal re-exports, flat app/component files and unresolved relative source imports. Builds clean generated `dist` first so removed paths cannot survive in published artifacts. Preserve the public entry and declared utility subpaths when reorganizing source; verify the packed package in actual consumers.

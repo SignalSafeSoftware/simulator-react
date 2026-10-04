@@ -4,6 +4,9 @@ import {
     SimulatorMessagesScreenId,
     SimulatorPhoneScreenId,
     type SimulatorContactValue,
+    type BrowserFormField,
+    type SimulatorEntryPoint,
+    type SimulatorMainMenuItem,
 } from '@signalsafe/simulator-core/devicePayload';
 /**
  * Unified simulator session state and payload contract.
@@ -12,11 +15,6 @@ import {
  * Channel (sms, browser, etc.) is the nav/API contract; sms = messages app, browser = internet app.
  */
 
-import type {
-    BrowserFormField,
-    SimulatorEntryPoint,
-    SimulatorMainMenuItem,
-} from '@signalsafe/simulator-core/devicePayload';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { SimulatorActionType } from '../utils/telemetry/simulatorActionTaxonomy.js';
 import {

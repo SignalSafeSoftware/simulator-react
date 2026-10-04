@@ -1,12 +1,12 @@
-import { SimulatorEmailScreenId } from '@signalsafe/simulator-core/devicePayload';
-import { getEmailSecondaryItems } from '../../utils/navigation/simulatorSecondaryMenuHelpers.js';
-import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 /**
  * Email app view: inbox list, compose, or message detail.
  * Wireframe: top "Email" banner, rectangular bottom nav (Inbox, Outbox, Trash, Back).
  */
+import { SimulatorEmailScreenId } from '@signalsafe/simulator-core/devicePayload';
+import { getEmailSecondaryItems } from '../../utils/navigation/simulatorSecondaryMenuHelpers.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import type { EmailScreenId, SimulatorAction, SimulatorEmailPayload } from '../../types/session.js';
-import SimulatorLocalNav from '../../ui/navigation/SimulatorLocalNav.js';
+import { SimulatorLocalNav } from '../../ui/navigation/SimulatorLocalNav.js';
 import EmailInboxList from './EmailInboxList.js';
 import EmailMessageDetail from './EmailMessageDetail.js';
 import EmailComposeView from './EmailComposeView.js';

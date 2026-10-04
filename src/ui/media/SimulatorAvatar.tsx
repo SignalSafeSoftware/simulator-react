@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { UserRound } from 'lucide-react';
 
 /** Shared identity treatment for simulator lists, conversations, and calls. */
-export default function SimulatorAvatar({
+export function SimulatorAvatar({
     avatarUrl,
     className = '',
 }: Readonly<{ avatarUrl?: string; className?: string }>) {

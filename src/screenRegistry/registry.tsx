@@ -1,3 +1,7 @@
+/**
+ * Screen registry: declarative (app, screen) → component + getProps.
+ * Resolution: exact (app, screen) first, then (app) default. No reducer logic here.
+ */
 import {
     SimulatorMessagesScreenId,
     SimulatorPhoneScreenId,
@@ -5,19 +9,21 @@ import {
 import { SimulatorDispatchActionType } from '../state/simulatorDispatchActions.js';
 import { createTranslator, simulatorEnglish } from '../i18n/catalog.js';
 const defaultLocale = createTranslator(simulatorEnglish);
-/**
- * Screen registry: declarative (app, screen) → component + getProps.
- * Resolution: exact (app, screen) first, then (app) default. No reducer logic here.
- */
 import type { ComponentType, ReactNode } from 'react';
-import type { PhoneScreenId, EmailScreenId, HomeScreenId } from '../types/session.js';
-import { getCurrentScreenForApp } from '../types/session.js';
+import {
+    type PhoneScreenId,
+    type EmailScreenId,
+    type HomeScreenId,
+    getCurrentScreenForApp,
+} from '../types/session.js';
 import { SimulatorActions } from '../actions/simulatorActions.js';
 import { getPhoneLocalNavItems } from '../utils/navigation/phoneLocalNavItems.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { SimulatorRenderContext, ScreenEntry } from './types.js';
 import EmailSimulatorView from '../views/email/EmailSimulatorView.js';
-import MessagesThreadListView from '../views/messages/MessagesThreadListView.js';
+import MessagesThreadListView, {
+    type ThreadListRow,
+} from '../views/messages/MessagesThreadListView.js';
 import MessagesNewThreadView from '../views/messages/MessagesNewThreadView.js';
 import SmsSimulatorView from '../views/messages/SmsSimulatorView.js';
 import BrowserSimulatorView from '../views/browser/BrowserSimulatorView.js';
@@ -25,10 +31,10 @@ import ContactsView from '../views/contacts/ContactsView.js';
 import DirectoryView from '../views/contacts/DirectoryView.js';
 import PhoneSimulatorView from '../views/phone/PhoneSimulatorView.js';
 import HomeSimulatorView from '../views/home/HomeSimulatorView.js';
-import type { ThreadListRow } from '../views/messages/MessagesThreadListView.js';
 
 function buildMessagesThreadList(
     payload: SimulatorRenderContext['state']['payload'],
+    locale: Pick<typeof defaultLocale, 't'>,
 ): ThreadListRow[] {
     const sms = payload.sms;
     if (sms?.threads != null && sms.threads.length > 0) {
@@ -37,7 +43,7 @@ function buildMessagesThreadList(
     const thread = sms?.thread;
     if (thread == null) return [];
     const first = thread.messages?.find((m: { text?: string }) => m?.text);
-    const preview = getThreadPreview(first?.text);
+    const preview = getThreadPreview(first?.text, locale);
     return [
         {
             id: '0',
@@ -50,9 +56,12 @@ function buildMessagesThreadList(
     ];
 }
 
-function getThreadPreview(text: string | undefined): string {
+function getThreadPreview(
+    text: string | undefined,
+    locale: Pick<typeof defaultLocale, 't'>,
+): string {
     if (typeof text !== 'string') {
-        return defaultLocale.t('messages.newMessage');
+        return locale.t('messages.newMessage');
     }
     if (text.length > 60) {
         return `${text.slice(0, 60)}…`;
@@ -83,7 +92,7 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
         screen: SimulatorMessagesScreenId.Threads,
         component: MessagesThreadListView,
         getProps: (ctx) => ({
-            threads: buildMessagesThreadList(ctx.state.payload),
+            threads: buildMessagesThreadList(ctx.state.payload, ctx.locale ?? defaultLocale),
             onSelectThread: ctx.onSelectThread,
             onCompose: () =>
                 ctx.dispatch({

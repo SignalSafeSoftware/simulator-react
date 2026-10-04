@@ -1,12 +1,11 @@
-import { SimulatorChannel } from '../types/session.js';
-import SimulatorNavIcon from '../ui/navigation/SimulatorNavIcon.js';
-import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Device shell: frame, bottom nav, optional secondary menu, exit slot.
  * No react-router — pass `exitSlot` for client-side navigation (e.g. <Link>) or rely on `exitTo` as a plain anchor.
  */
-import type { CSSProperties, ReactNode } from 'react';
-import { memo } from 'react';
+import { SimulatorChannel } from '../types/session.js';
+import { SimulatorNavIcon } from '../ui/navigation/SimulatorNavIcon.js';
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
+import { type CSSProperties, type ReactNode, memo } from 'react';
 
 import { simShell } from '../simulatorStyles.js';
 import {
@@ -14,6 +13,7 @@ import {
     SIM_FLEX_COL,
     SIM_FLEX_CENTER,
     SIM_FLEX_GROW_1,
+    SIM_MIN_W_0,
     SIM_TEXT_SM,
 } from '../ui/styles/simulatorClasses.js';
 
@@ -60,6 +60,7 @@ function getNavTabClass(isLast: boolean, inactive: boolean): string {
     return joinClasses(
         simShell.navTab,
         SIM_FLEX_GROW_1,
+        SIM_MIN_W_0,
         'simulator-spacing--py-2',
         SIM_FLEX_COL,
         SIM_FLEX_CENTER,
@@ -138,7 +139,6 @@ function PhoneSimulatorShell({
                             aria-selected={isBack ? undefined : isActive}
                             aria-label={item.label}
                             className={getNavTabClass(isLast, isBack || !isActive)}
-                            style={{ minWidth: 0 }}
                             onClick={() =>
                                 isBack
                                     ? resolvedSecondaryMenu.onSecondaryBack()
@@ -174,7 +174,6 @@ function PhoneSimulatorShell({
                             aria-selected={isActive}
                             aria-label={screenLocale.t(ch.labelKey)}
                             className={getNavTabClass(isLast, !isActive)}
-                            style={{ minWidth: 0 }}
                             onClick={() => onChannelChange(ch.id)}
                         >
                             <span className={simShell.navTabLabel} aria-hidden>

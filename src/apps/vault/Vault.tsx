@@ -16,8 +16,8 @@ import {
     SECRET_TYPES,
     secretTypeSchema,
     secretSchema,
+    type Secret,
 } from '@signalsafe/simulator-core/apps/contracts';
-import type { Secret } from '@signalsafe/simulator-core/apps/contracts';
 import { DevicePage } from '../shared/DevicePage.js';
 import { AppSecondaryNav, type AppNavAction } from '../shared/AppSecondaryNav.js';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';

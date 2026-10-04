@@ -1,4 +1,13 @@
-import { MessageSender, SmsMode } from '../../types/session.js';
+/**
+ * Messages app: thread detail. Wireframe: profile + name, message bubbles,
+ * message box and Send/Cancel at bottom. Links and attachments preserved in bubbles.
+ */
+import {
+    MessageSender,
+    SmsMode,
+    type SimulatorAction,
+    type SimulatorSmsPayload,
+} from '../../types/session.js';
 import {
     SIM_BORDER,
     SIM_BORDER_TOP,
@@ -17,20 +26,14 @@ import {
     SimulatorButtonTone,
     joinClasses,
 } from '../../ui/styles/simulatorClasses.js';
-import SimulatorAvatar from '../../ui/media/SimulatorAvatar.js';
-import { useContext } from 'react';
+import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
+import { useContext, useEffect, useState, type ReactNode } from 'react';
 import { SimulatorTimelineContext } from '../../contract/hostListSlots.js';
 import { useReportComposerState } from '../../contract/composerState.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { SimulatorCapabilityState, useSimulatorCapabilities } from '../../contract/capabilities.js';
 import { useMessageComposeOptions } from '../../contract/messageComposeContract.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
-/**
- * Messages app: thread detail. Wireframe: profile + name, message bubbles,
- * message box and Send/Cancel at bottom. Links and attachments preserved in bubbles.
- */
-import { useEffect, useState, type ReactNode } from 'react';
-import type { SimulatorAction, SimulatorSmsPayload } from '../../types/session.js';
 import { SimulatorActions } from '../../actions/simulatorActions.js';
 import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../../simulatorStyles.js';
 import { SimulatorTextarea } from '../../ui/primitives.js';

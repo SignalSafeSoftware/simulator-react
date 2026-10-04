@@ -12,6 +12,11 @@ import {
     SIM_SURFACE_WHITE,
     joinClasses,
 } from '../ui/styles/simulatorClasses.js';
+import {
+    SIM_DEV_TOOLBAR_BAR,
+    SIM_DEV_TOOLBAR_BUTTON,
+    SIM_DEV_TOOLBAR_BUTTON_ACTIVE,
+} from '../ui/styles/semanticSimulatorClasses.js';
 import { DEVELOPER_TOOLBAR_ICONS, DEVELOPER_TOOLBAR_LABELS } from './toolbarConfig.js';
 
 export interface SimulatorDeveloperToolbarProps {
@@ -41,11 +46,8 @@ export default function SimulatorDeveloperToolbar({
                     simSpacing.gap2,
                     simSpacing.px1,
                     simSpacing.py1,
+                    SIM_DEV_TOOLBAR_BAR,
                 )}
-                style={{
-                    backgroundColor: '#2f7df6',
-                    borderBottom: '1px solid #b9cdef',
-                }}
             >
                 {sections.map((section) => {
                     const visible = visibleSections[section];
@@ -58,22 +60,13 @@ export default function SimulatorDeveloperToolbar({
                                 'simulator-inline-flex',
                                 SIM_FLEX_CENTER_MOD,
                                 SIM_ROUNDED_NONE,
+                                SIM_DEV_TOOLBAR_BUTTON,
+                                visible && SIM_DEV_TOOLBAR_BUTTON_ACTIVE,
                             )}
                             onClick={() => onToggleSection(section)}
                             aria-pressed={visible}
                             aria-label={DEVELOPER_TOOLBAR_LABELS[section]}
                             title={DEVELOPER_TOOLBAR_LABELS[section]}
-                            style={{
-                                width: 26,
-                                height: 26,
-                                fontSize: 14,
-                                lineHeight: 1,
-                                color: '#ffffff',
-                                backgroundColor: visible ? 'rgba(255,255,255,0.18)' : 'transparent',
-                                boxShadow: visible
-                                    ? 'inset 0 0 0 1px rgba(255,255,255,0.35)'
-                                    : 'none',
-                            }}
                         >
                             <span aria-hidden>{DEVELOPER_TOOLBAR_ICONS[section]}</span>
                         </button>

@@ -132,7 +132,6 @@ export const screenEnglish = {
     'screen.phoneSimulatorView.no.phone.for.this.scenario': 'No phone for this scenario.',
     'screen.phoneSimulatorView.no.incoming.call.for.this.scenario':
         'No incoming call for this scenario.',
-    'screen.phoneSimulatorView.incoming.call': 'Incoming Call',
     'screen.phoneSimulatorView.phone.tabs': 'Phone tabs',
     'screen.phoneSimulatorView.calls': 'Calls',
     'screen.phoneSimulatorView.contacts': 'Contacts',
@@ -219,8 +218,6 @@ export const screenEnglish = {
     'screen.phoneCallView.mute.microphone': 'Mute microphone',
     'screen.phoneCallView.decline.call': 'Decline call',
     'screen.phoneCallView.end.call': 'End call',
-    'screen.phoneCallView.end': 'End',
-    'screen.phoneCallView.answer': 'Answer',
     'screen.phoneHistoryList.unknown': 'Unknown',
     'screen.phoneIncomingScene.answer': 'ANSWER',
     'screen.phoneIncomingScene.ignore': 'IGNORE',

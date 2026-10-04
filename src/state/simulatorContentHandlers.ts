@@ -5,8 +5,11 @@ import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
  * Content and simulator-action handlers: email, browser, SIMULATOR_ACTION.
  */
 
-import type { SimulatorViewState, SimulatorAction } from '../types/session.js';
-import { BROWSER_HISTORY_MAX } from '../types/session.js';
+import {
+    type SimulatorViewState,
+    type SimulatorAction,
+    BROWSER_HISTORY_MAX,
+} from '../types/session.js';
 import { applyNavLocal, applySwitchApp } from './simulatorNavigationHandlers.js';
 
 function updateInternetHistory(

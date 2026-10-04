@@ -6,13 +6,13 @@ import {
 import {
     BROWSER_ACTION_TYPE,
     BROWSER_ACTION_VERSION,
+    browserActionSchema,
+    type BrowserAction,
 } from '@signalsafe/simulator-core/apps/browserProtocol';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { DevicePage } from '../shared/DevicePage.js';
 import { createSimulatorId } from '@signalsafe/simulator-core/apps/id';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { browserActionSchema } from '@signalsafe/simulator-core/apps/browserProtocol';
-import type { BrowserAction } from '@signalsafe/simulator-core/apps/browserProtocol';
 import { buildBrowserDocument } from './browserDocument.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 export interface MockPage {
@@ -115,12 +115,22 @@ export function ReactMockPage({
         </div>
     );
 }
-const sample: MockPage = {
-    id: 'search',
-    title: 'Local search',
-    url: 'https://example.test/search',
-    html: '<h1>Local search</h1><form data-simulator-action="search"><label>Search<input name="query" data-simulator-capture="true"></label><button type="submit">Search</button></form><p>This page stays inside the simulator.</p>',
-};
+type Translate = ReturnType<typeof useSimulatorLocale>['t'];
+
+function escapeHtml(value: string): string {
+    return value.replace(/[&<>"']/g, (character) => `&#${character.charCodeAt(0)};`);
+}
+
+function samplePage(t: Translate): MockPage {
+    const title = escapeHtml(t('app.browser.search.title'));
+    const label = escapeHtml(t('app.browser.search.label'));
+    return {
+        id: 'search',
+        title: t('app.browser.search.title'),
+        url: 'https://example.test/search',
+        html: `<h1>${title}</h1><form data-simulator-action="search"><label>${label}<input name="query" data-simulator-capture="true"></label><button type="submit">${label}</button></form><p>${escapeHtml(t('app.browser.search.stays'))}</p>`,
+    };
+}
 export default function BrowserWorkbench({
     templates,
     mode = 'html',
@@ -130,12 +140,13 @@ export default function BrowserWorkbench({
     templates: ReactNode;
     mode?: 'html' | 'react' | 'templates';
 }) {
+    const { t } = useSimulatorLocale();
+    const [sample] = useState(() => samplePage(t));
     const [page, setPage] = useState(sample);
     const [address, setAddress] = useState(sample.url);
     const [history, setHistory] = useState<MockPage[]>([sample]);
     const [position, setPosition] = useState(0);
     const [last, setLast] = useState('');
-    const { t } = useSimulatorLocale();
     function navigate(next: MockPage) {
         setHistory((previous) => [...previous.slice(0, position + 1), next].slice(-100));
         setPosition(Math.min(position + 1, 99));
@@ -150,12 +161,11 @@ export default function BrowserWorkbench({
         setAddress(target.url);
     }
     function search(query: string) {
-        const text = query.replace(/[&<>"']/g, (character) => `&#${character.charCodeAt(0)};`);
         navigate({
             id: createSimulatorId(),
-            title: 'Search result',
+            title: t('app.browser.result.title'),
             url: 'https://example.test/results',
-            html: `<h1>Search result</h1><p>You searched for: ${text}</p><p>No network request was made.</p>`,
+            html: `<h1>${escapeHtml(t('app.browser.result.title'))}</h1><p>${escapeHtml(t('app.browser.result.searched', { text: query }))}</p><p>${escapeHtml(t('app.browser.result.noNetwork'))}</p>`,
         });
     }
     function action(event: BrowserAction) {
@@ -180,9 +190,9 @@ export default function BrowserWorkbench({
             navigate(
                 existing ?? {
                     id: createSimulatorId(),
-                    title: 'Page unavailable',
+                    title: t('app.browser.unavailable.title'),
                     url: url.href,
-                    html: '<h1>Page unavailable</h1><p>This address has no page configured in the simulator.</p>',
+                    html: `<h1>${escapeHtml(t('app.browser.unavailable.title'))}</h1><p>${escapeHtml(t('app.browser.unavailable.body'))}</p>`,
                 },
             );
             setLast('');
@@ -242,18 +252,15 @@ export default function BrowserWorkbench({
                             onAction={action}
                             render={(emit) => (
                                 <>
-                                    <h3>React example</h3>
-                                    <p>
-                                        A trusted client component using the simulator&apos;s
-                                        default styles.
-                                    </p>
+                                    <h3>{t('app.browser.example.title')}</h3>
+                                    <p>{t('app.browser.example.body')}</p>
                                     <button
                                         className={simBtnToneClass(
                                             SimulatorButtonTone.NeutralOutline,
                                         )}
                                         onClick={() => emit('open-account')}
                                     >
-                                        My account
+                                        {t('app.browser.example.account')}
                                     </button>
                                 </>
                             )}

@@ -9,8 +9,7 @@ import {
 } from './configuration.js';
 import SimulatorAuthorPreviewReport from './SimulatorAuthorPreviewReport.js';
 import SimulatorReachabilityReport from './SimulatorReachabilityReport.js';
-import SimulatorSessionTimeline from './SimulatorSessionTimeline.js';
-import { type TimelineEntry } from './SimulatorSessionTimeline.js';
+import SimulatorSessionTimeline, { type TimelineEntry } from './SimulatorSessionTimeline.js';
 import SimulatorRuntimeIssuesReport from './SimulatorRuntimeIssuesReport.js';
 
 export interface SimulatorDeveloperToolsPanelProps {

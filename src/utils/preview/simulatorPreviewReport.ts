@@ -1,4 +1,4 @@
-import { DEFAULT_INTERNET_SCREEN } from '../../types/session.js';
+import { DEFAULT_INTERNET_SCREEN, type SimulatorTemplatePayload } from '../../types/session.js';
 import { SimulatorActionType } from '../telemetry/simulatorActionTaxonomy.js';
 import {
     SimulatorEmailScreenId,
@@ -15,7 +15,6 @@ import {
  * used internally by {@link SimulatorDeveloperToolsPanel} and the `utils/simulatorPreviewReport` package export for tests/tooling.
  */
 
-import type { SimulatorTemplatePayload } from '../../types/session.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { analyzeReachability } from '../navigation/simulatorReachability.js';
 import { lintSimulatorPayload } from '../payload/lintSimulatorPayload.js';

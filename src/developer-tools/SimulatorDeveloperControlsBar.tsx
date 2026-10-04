@@ -19,8 +19,10 @@ import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
  * Developer controls bar: snapshot/graph copy and keyboard shortcuts help.
  */
 
-import { type SimulatorNavGraph } from '../utils/navigation/simulatorNavGraph.js';
-import { simulatorNavGraphToJson } from '../utils/navigation/simulatorNavGraph.js';
+import {
+    type SimulatorNavGraph,
+    simulatorNavGraphToJson,
+} from '../utils/navigation/simulatorNavGraph.js';
 import { SIMULATOR_KEYBOARD_COMMANDS } from '../utils/navigation/simulatorKeyboardCommands.js';
 import { simBorder, simSpacing } from '../simulatorStyles.js';
 

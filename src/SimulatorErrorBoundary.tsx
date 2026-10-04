@@ -1,3 +1,10 @@
+/**
+ * Error boundary scoped to simulator content. Catches render/lifecycle errors
+ * in the simulator shell content so the rest of the page (chrome, nav) does not crash.
+ *
+ * Default UI is learner-safe (no exception message or component stack).
+ * Pass `showDiagnostics` for author/admin or local debugging surfaces.
+ */
 import {
     SIM_BTN_SM,
     SIM_MONO,
@@ -11,13 +18,6 @@ import {
     joinClasses,
 } from './ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
-/**
- * Error boundary scoped to simulator content. Catches render/lifecycle errors
- * in the simulator shell content so the rest of the page (chrome, nav) does not crash.
- *
- * Default UI is learner-safe (no exception message or component stack).
- * Pass `showDiagnostics` for author/admin or local debugging surfaces.
- */
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { simSpacing, simStatus } from './simulatorStyles.js';
 import { SimulatorButton } from './ui/primitives.js';

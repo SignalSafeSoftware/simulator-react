@@ -1,8 +1,8 @@
-import { SimulatorActionType } from '../utils/telemetry/simulatorActionTaxonomy.js';
 /**
  * Declarative action factories: build typed SimulatorAction from targets.
  * Use these in views so action shape is consistent and type-safe.
  */
+import { SimulatorActionType } from '../utils/telemetry/simulatorActionTaxonomy.js';
 import type { SimulatorAction, SimulatorChannel } from '../types/session.js';
 import type { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 
@@ -51,7 +51,7 @@ export const SimulatorActions = {
         type: SimulatorActionType.DownloadAttachment,
         attachmentIndex,
     }),
-    report: (): SimulatorAction => ({ type: 'report' }),
+    report: (): SimulatorAction => ({ type: SimulatorActionType.Report }),
     checkContact: (): SimulatorAction => ({ type: SimulatorActionType.CheckContact }),
     checkContacts: (): SimulatorAction => ({ type: SimulatorActionType.CheckContacts }),
     sendReply: (replyText?: string): SimulatorAction => ({

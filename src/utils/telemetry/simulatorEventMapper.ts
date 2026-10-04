@@ -1,4 +1,4 @@
-import { SimulatorEventKind } from '../../types/simulatorEvents.js';
+import { SimulatorEventKind, type SimulatorInteractionEvent } from '../../types/simulatorEvents.js';
 import { SimulatorActionType } from './simulatorActionTaxonomy.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 /**
@@ -11,7 +11,6 @@ import type {
     SimulatorViewState,
     SimulatorTemplatePayload,
 } from '../../types/session.js';
-import type { SimulatorInteractionEvent } from '../../types/simulatorEvents.js';
 
 function getCurrentScreen(view: SimulatorViewState, app: string): string {
     switch (app) {
@@ -153,7 +152,7 @@ export function actionToInteractionEvent(
             return baseEvent(SimulatorEventKind.StoreOpened, view, payload);
         case SimulatorActionType.OpenSettings:
             return baseEvent(SimulatorEventKind.SettingsOpened, view, payload);
-        case 'report':
+        case SimulatorActionType.Report:
             return baseEvent(SimulatorEventKind.ReportClicked, view, payload);
         case SimulatorActionType.DownloadClick:
             return baseEvent(SimulatorEventKind.DownloadClicked, view, payload, {

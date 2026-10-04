@@ -1,3 +1,6 @@
+/**
+ * Advisory template lint warnings for authors/admins.
+ */
 import {
     SIM_BTN_PLAIN,
     SIM_LIST_PLAIN,
@@ -9,9 +12,6 @@ import {
     simBtnToneClass,
 } from '../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
-/**
- * Advisory template lint warnings for authors/admins.
- */
 import { useId, useState } from 'react';
 
 import { type SimulatorLintWarning } from '../utils/payload/lintSimulatorPayload.js';

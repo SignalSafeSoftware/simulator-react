@@ -1,17 +1,21 @@
-import { SimulatorChannel } from '../types/session.js';
+import {
+    SimulatorChannel,
+    type SimulatorSessionState,
+    DEFAULT_INTERNET_SCREEN,
+    DEFAULT_HOME_SCREEN,
+} from '../types/session.js';
 import {
     SimulatorEmailScreenId,
     isEmailScreen,
     isMessagesScreen,
+    isHomeScreen,
+    isPhoneScreen,
 } from '@signalsafe/simulator-core/devicePayload';
-import { isHomeScreen, isPhoneScreen } from '@signalsafe/simulator-core/devicePayload';
 /**
  * Build initial session state from payload (entry_point when present).
  */
 
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
-import type { SimulatorSessionState } from '../types/session.js';
-import { DEFAULT_INTERNET_SCREEN, DEFAULT_HOME_SCREEN } from '../types/session.js';
 import { validateSimulatorPayload } from '../utils/payload/validateSimulatorPayload.js';
 import {
     createInitialEmailState,

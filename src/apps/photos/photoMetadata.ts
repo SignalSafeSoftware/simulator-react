@@ -1,5 +1,8 @@
-import { emptyMetadata, photoMetadataSchema } from '@signalsafe/simulator-core/apps/contracts';
-import type { PhotoMetadata } from '@signalsafe/simulator-core/apps/contracts';
+import {
+    emptyMetadata,
+    photoMetadataSchema,
+    type PhotoMetadata,
+} from '@signalsafe/simulator-core/apps/contracts';
 
 /** Bounded JPEG EXIF reader. Unsupported formats/tags remain unknown. */
 export function extractPhotoMetadata(buffer: ArrayBuffer): PhotoMetadata {

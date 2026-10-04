@@ -1,3 +1,7 @@
+/**
+ * Home app: dashboard (Store/Settings launcher), Store (app cards), Settings (sections + inputs).
+ * Wireframe: centered headers, search bar, rectangular buttons/cards. Store and Settings are subviews; Back returns to Home.
+ */
 import { SimulatorHomeScreenId } from '@signalsafe/simulator-core/devicePayload';
 import {
     SIM_AVATAR,
@@ -21,13 +25,9 @@ import {
 } from '../../ui/styles/simulatorClasses.js';
 import { UserRound } from 'lucide-react';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-/**
- * Home app: dashboard (Store/Settings launcher), Store (app cards), Settings (sections + inputs).
- * Wireframe: centered headers, search bar, rectangular buttons/cards. Store and Settings are subviews; Back returns to Home.
- */
 import { useState, type ReactNode } from 'react';
 import { SimulatorDetailBackBar } from '../../ui/layout/SimulatorDetail.js';
-import SimulatorSearchInput from '../../ui/lists/SimulatorSearchInput.js';
+import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';
 import type {
     HomeScreenId,
     SimulatorAction,

@@ -1,8 +1,8 @@
-import { createTranslator, simulatorEnglish } from '../../i18n/catalog.js';
 /**
  * Phone app secondary nav items per wireframe: History, Contacts, Dial, Back.
  * Back returns to primary menu; Directory is not in the strip (can be reached from Contacts if needed).
  */
+import { createTranslator, simulatorEnglish } from '../../i18n/catalog.js';
 import type { PhoneScreenId } from '../../types/session.js';
 import type { SimulatorCapabilities } from '../payload/simulatorCapabilities.js';
 

@@ -4,7 +4,7 @@ import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { type PhoneSimulatorContent } from '../../types/template.js';
 import type { SimulatorChoiceRenderProps } from '../../ui/renderSlots.js';
 import PhoneCallView from './PhoneCallView.js';
-import SimulatorAvatar from '../../ui/media/SimulatorAvatar.js';
+import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
 
 export interface PhoneIncomingSceneProps {
     content: PhoneSimulatorContent;

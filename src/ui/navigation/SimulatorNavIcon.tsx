@@ -40,7 +40,7 @@ const icons: Readonly<Record<string, LucideIcon>> = {
     '🖼': Images,
     '↗': CornerUpRight,
 };
-export default function SimulatorNavIcon({ icon }: Readonly<{ icon: string }>) {
+export function SimulatorNavIcon({ icon }: Readonly<{ icon: string }>) {
     const Icon = icons[icon];
     return Icon ? <Icon size={18} strokeWidth={1.75} aria-hidden="true" /> : <>{icon}</>;
 }

@@ -4,9 +4,8 @@ import {
     type SimulatorDispatchAction,
 } from '../state/simulatorDispatchActions.js';
 import { simulatorSessionReducer } from '../state/simulatorSessionReducer.js';
-import { type SimulatorSessionState } from '../types/session.js';
+import { type SimulatorSessionState, getCurrentScreenForApp } from '../types/session.js';
 import type { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
-import { getCurrentScreenForApp } from '../types/session.js';
 
 export interface SimulatorNavigationLocation {
     app: SimulatorApp;

@@ -1,3 +1,7 @@
+/**
+ * Official directory / trusted sources in the Phone app.
+ * When phoneLocalNavItems is provided, shows wireframe-style phone tabs above content.
+ */
 import { SIM_PAGE_CONTENT } from '../../ui/styles/semanticSimulatorClasses.js';
 import { SimulatorPhoneScreenId } from '@signalsafe/simulator-core/devicePayload';
 import {
@@ -13,10 +17,6 @@ import {
     joinClasses,
 } from '../../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-/**
- * Official directory / trusted sources in the Phone app.
- * When phoneLocalNavItems is provided, shows wireframe-style phone tabs above content.
- */
 import { useState } from 'react';
 import type {
     SimulatorAction,
@@ -24,7 +24,7 @@ import type {
     SimulatorSessionContact,
 } from '../../types/session.js';
 import { SimulatorActions } from '../../actions/simulatorActions.js';
-import SimulatorLocalNav from '../../ui/navigation/SimulatorLocalNav.js';
+import { SimulatorLocalNav } from '../../ui/navigation/SimulatorLocalNav.js';
 import { SimulatorDetailBackBar } from '../../ui/layout/SimulatorDetail.js';
 import { SimulatorList, SimulatorListItem } from '../../ui/lists/SimulatorList.js';
 import { simBorder, simLayout, simSpacing, simTypo } from '../../simulatorStyles.js';

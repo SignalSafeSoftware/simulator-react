@@ -1,3 +1,7 @@
+/**
+ * Session timeline view for dev/admin/QA: timestamp, app/screen, event type, target summary.
+ * Uses normalized SimulatorInteractionEvent; no TreeSpec scoring. Shown only in preview/compact mode.
+ */
 import {
     SIM_BORDER_BOTTOM,
     SIM_FLEX,
@@ -9,12 +13,7 @@ import {
     SIM_TEXT_SEMIBOLD,
     joinClasses,
 } from '../ui/styles/simulatorClasses.js';
-import { englishLocale } from '../i18n/englishLocale.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
-/**
- * Session timeline view for dev/admin/QA: timestamp, app/screen, event type, target summary.
- * Uses normalized SimulatorInteractionEvent; no TreeSpec scoring. Shown only in preview/compact mode.
- */
 import { simSpacing } from '../simulatorStyles.js';
 import { type SimulatorInteractionEvent } from '../types/simulatorEvents.js';
 import { CollapsibleReport } from './CollapsibleReport.js';
@@ -46,34 +45,32 @@ function formatTime(iso: string): string {
     }
 }
 
-function kindLabel(kind: string): string {
+function kindLabel(kind: string, t: ReturnType<typeof useSimulatorLocale>['t']): string {
     const labels: Record<string, string> = {
-        session_started: englishLocale.t('copy.SimulatorSessionTimeline.session.started'),
-        app_opened: englishLocale.t('copy.SimulatorSessionTimeline.app.opened'),
-        screen_viewed: englishLocale.t('copy.SimulatorSessionTimeline.screen.viewed'),
-        email_opened: englishLocale.t('copy.SimulatorSessionTimeline.email.opened'),
-        thread_opened: englishLocale.t('copy.SimulatorSessionTimeline.thread.opened'),
-        contact_opened: englishLocale.t('copy.SimulatorSessionTimeline.contact.opened'),
-        link_clicked: englishLocale.t('copy.SimulatorSessionTimeline.link.clicked'),
-        form_submitted: englishLocale.t('copy.SimulatorSessionTimeline.form.submitted'),
-        report_clicked: englishLocale.t('copy.SimulatorSessionTimeline.report.clicked'),
-        call_answered: englishLocale.t('copy.SimulatorSessionTimeline.call.answered'),
-        call_ignored: englishLocale.t('copy.SimulatorSessionTimeline.call.ignored'),
-        dial_started: englishLocale.t('copy.SimulatorSessionTimeline.dial.started'),
-        check_contact_clicked: englishLocale.t('copy.SimulatorSessionTimeline.check.contact'),
-        directory_entry_viewed: englishLocale.t('copy.SimulatorSessionTimeline.directory.viewed'),
-        page_viewed: englishLocale.t('copy.SimulatorSessionTimeline.page.viewed'),
-        voicemail_opened: englishLocale.t('copy.SimulatorSessionTimeline.voicemail.opened'),
-        open_store: englishLocale.t('copy.SimulatorSessionTimeline.store.opened'),
-        store_opened: englishLocale.t('copy.SimulatorSessionTimeline.store.opened'),
-        settings_opened: englishLocale.t('copy.SimulatorSessionTimeline.settings.opened'),
-        attachment_opened: englishLocale.t('copy.SimulatorSessionTimeline.attachment.opened'),
-        attachment_downloaded: englishLocale.t(
-            'copy.SimulatorSessionTimeline.attachment.downloaded',
-        ),
-        message_sent: englishLocale.t('copy.SimulatorSessionTimeline.message.sent'),
-        download_clicked: englishLocale.t('copy.SimulatorSessionTimeline.download.clicked'),
-        search_performed: 'Search',
+        session_started: t('copy.SimulatorSessionTimeline.session.started'),
+        app_opened: t('copy.SimulatorSessionTimeline.app.opened'),
+        screen_viewed: t('copy.SimulatorSessionTimeline.screen.viewed'),
+        email_opened: t('copy.SimulatorSessionTimeline.email.opened'),
+        thread_opened: t('copy.SimulatorSessionTimeline.thread.opened'),
+        contact_opened: t('copy.SimulatorSessionTimeline.contact.opened'),
+        link_clicked: t('copy.SimulatorSessionTimeline.link.clicked'),
+        form_submitted: t('copy.SimulatorSessionTimeline.form.submitted'),
+        report_clicked: t('copy.SimulatorSessionTimeline.report.clicked'),
+        call_answered: t('copy.SimulatorSessionTimeline.call.answered'),
+        call_ignored: t('copy.SimulatorSessionTimeline.call.ignored'),
+        dial_started: t('copy.SimulatorSessionTimeline.dial.started'),
+        check_contact_clicked: t('copy.SimulatorSessionTimeline.check.contact'),
+        directory_entry_viewed: t('copy.SimulatorSessionTimeline.directory.viewed'),
+        page_viewed: t('copy.SimulatorSessionTimeline.page.viewed'),
+        voicemail_opened: t('copy.SimulatorSessionTimeline.voicemail.opened'),
+        open_store: t('copy.SimulatorSessionTimeline.store.opened'),
+        store_opened: t('copy.SimulatorSessionTimeline.store.opened'),
+        settings_opened: t('copy.SimulatorSessionTimeline.settings.opened'),
+        attachment_opened: t('copy.SimulatorSessionTimeline.attachment.opened'),
+        attachment_downloaded: t('copy.SimulatorSessionTimeline.attachment.downloaded'),
+        message_sent: t('copy.SimulatorSessionTimeline.message.sent'),
+        download_clicked: t('copy.SimulatorSessionTimeline.download.clicked'),
+        search_performed: t('copy.SimulatorSessionTimeline.search.performed'),
     };
     return labels[kind] ?? kind.replaceAll('_', ' ');
 }
@@ -177,7 +174,9 @@ export default function SimulatorSessionTimeline({
                                 <span className={SIM_TEXT_BODY}>
                                     {entry.app}/{entry.screen}
                                 </span>
-                                <span className={SIM_TEXT_SEMIBOLD}>{kindLabel(entry.kind)}</span>
+                                <span className={SIM_TEXT_SEMIBOLD}>
+                                    {kindLabel(entry.kind, screenLocale.t)}
+                                </span>
                                 {target != null && (
                                     <span className={joinClasses(SIM_MUTED, SIM_TEXT_BREAK)}>
                                         {target}

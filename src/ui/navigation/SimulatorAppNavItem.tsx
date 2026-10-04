@@ -1,4 +1,4 @@
-import SimulatorNavIcon from './SimulatorNavIcon.js';
+import { SimulatorNavIcon } from './SimulatorNavIcon.js';
 const cls = {
     navButton: 'simulator-device-nav__button',
     navButtonActive: 'simulator-device-nav__button--active',

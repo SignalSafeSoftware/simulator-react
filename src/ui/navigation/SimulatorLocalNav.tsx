@@ -7,6 +7,7 @@ import {
     SIM_BORDER_NONE,
     SIM_BORDER_SECONDARY,
     SIM_FLEX_GROW_1,
+    SIM_MIN_W_0,
     SIM_TEXT_SM,
     joinClasses,
 } from '../styles/simulatorClasses.js';
@@ -24,7 +25,7 @@ export interface SimulatorLocalNavProps {
     'aria-label': string;
 }
 
-export default function SimulatorLocalNav({
+export function SimulatorLocalNav({
     items,
     activeId,
     onSelect,
@@ -50,13 +51,13 @@ export default function SimulatorLocalNav({
                         aria-label={item.label}
                         className={joinClasses(
                             SIM_FLEX_GROW_1,
+                            SIM_MIN_W_0,
                             simSpacing.py2,
                             SIM_BORDER_NONE,
                             SIM_TEXT_SM,
                             !isLast && joinClasses('simulator-border--end', SIM_BORDER_SECONDARY),
                             isActive ? simLocalNav.active : simLocalNav.inactive,
                         )}
-                        style={{ minWidth: 0 }}
                         onClick={() => onSelect(item.id)}
                     >
                         {item.label}

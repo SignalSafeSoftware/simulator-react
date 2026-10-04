@@ -8,15 +8,15 @@ import {
  * Initial view state builders and screen-id guards for the session reducer.
  */
 
-import { type SimulatorViewState } from '../types/session.js';
-import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import {
+    type SimulatorViewState,
     DEFAULT_PHONE_SCREEN,
     DEFAULT_EMAIL_SCREEN,
     DEFAULT_MESSAGES_SCREEN,
     DEFAULT_INTERNET_SCREEN,
     DEFAULT_HOME_SCREEN,
 } from '../types/session.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 
 function initialPhoneState(): SimulatorViewState['phone'] {
     return {

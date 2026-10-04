@@ -1,7 +1,6 @@
-import { SimulatorCapabilityState } from '../../contract/capabilities.js';
+import { SimulatorCapabilityState, type SimulatorCapability } from '../../contract/capabilities.js';
 import { SIM_ACTION_REASON } from '../styles/semanticSimulatorClasses.js';
 import { useId, type ButtonHTMLAttributes } from 'react';
-import type { SimulatorCapability } from '../../contract/capabilities.js';
 
 export function CapabilityButton({
     capability,

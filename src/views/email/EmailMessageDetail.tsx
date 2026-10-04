@@ -1,3 +1,7 @@
+/**
+ * Email message read/detail: wireframe layout (From, To, Subject, Body), links, attachments,
+ * and optional inline actions for standalone rendering; the device supplies a tertiary menu.
+ */
 import {
     SimulatorButtonTone,
     SIM_BTN_SM,
@@ -12,10 +16,6 @@ import {
     SIM_TEXT_SM,
 } from '../../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-/**
- * Email message read/detail: wireframe layout (From, To, Subject, Body), links, attachments,
- * and optional inline actions for standalone rendering; the device supplies a tertiary menu.
- */
 import type { EmailScreenId, SimulatorAction } from '../../types/session.js';
 import { SimulatorActions } from '../../actions/simulatorActions.js';
 import { SimulatorDetailBackBar } from '../../ui/layout/SimulatorDetail.js';
@@ -32,6 +32,7 @@ import {
 import {
     SIM_EMAIL_MESSAGE_DETAIL,
     SIM_EMAIL_MESSAGE_DETAIL_BODY,
+    SIM_EMAIL_MESSAGE_DETAIL_EXTRAS,
 } from '../../ui/styles/semanticSimulatorClasses.js';
 
 export interface EmailMessageDetailProps {
@@ -170,6 +171,7 @@ export default function EmailMessageDetail({
                             simSpacing.mt3,
                             simSpacing.pt3,
                             SIM_FLEX_SHRINK_0,
+                            SIM_EMAIL_MESSAGE_DETAIL_EXTRAS,
                         )}
                     >
                         <span className={joinClasses(simTypo.secondary, simSpacing.me1)}>
@@ -207,6 +209,7 @@ export default function EmailMessageDetail({
                             simSpacing.mt3,
                             simSpacing.pt3,
                             SIM_FLEX_SHRINK_0,
+                            SIM_EMAIL_MESSAGE_DETAIL_EXTRAS,
                         )}
                     >
                         <span className={joinClasses(simTypo.secondary, simSpacing.me2)}>

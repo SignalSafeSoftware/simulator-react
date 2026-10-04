@@ -1,3 +1,8 @@
+/**
+ * Contacts list, search, and detail inside the simulator.
+ * Used from Phone app (screen=contacts) and from the Check contact panel overlay.
+ * When phoneLocalNavItems is provided, shows wireframe-style phone tabs above content (Back still available).
+ */
 import { SimulatorPhoneScreenId } from '@signalsafe/simulator-core/devicePayload';
 import {
     SIM_BORDER,
@@ -19,22 +24,16 @@ import {
     SimulatorButtonTone,
     joinClasses,
 } from '../../ui/styles/simulatorClasses.js';
-import SimulatorAvatar from '../../ui/media/SimulatorAvatar.js';
-import { englishLocale } from '../../i18n/englishLocale.js';
+import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { PhoneNumberText } from '../../ui/contacts/PhoneNumberText.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
-/**
- * Contacts list, search, and detail inside the simulator.
- * Used from Phone app (screen=contacts) and from the Check contact panel overlay.
- * When phoneLocalNavItems is provided, shows wireframe-style phone tabs above content (Back still available).
- */
 import { useMemo, useState } from 'react';
 import { SimulatorList, SimulatorListItem } from '../../ui/lists/SimulatorList.js';
 import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../../ui/layout/SimulatorDetail.js';
 import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';
-import SimulatorLocalNav from '../../ui/navigation/SimulatorLocalNav.js';
+import { SimulatorLocalNav } from '../../ui/navigation/SimulatorLocalNav.js';
 import { simLayout, simRowSurface, simScreen, simSpacing, simTypo } from '../../simulatorStyles.js';
 import { SimulatorButton } from '../../ui/primitives.js';
 import {
@@ -148,10 +147,6 @@ export function contextMatchesContact(
     if (ctx.name && contact.displayName && namesMatch(contact.displayName, ctx.name)) return true;
     return false;
 }
-
-const CONTACTS_SEARCH_PLACEHOLDER = englishLocale.t(
-    'copy.ContactsView.search.by.name.number.or.email',
-);
 
 export default function ContactsView({
     contacts,
@@ -338,7 +333,9 @@ export default function ContactsView({
                             value={searchQuery}
                             onChange={setSearchQuery}
                             onSubmit={onSearchSubmit}
-                            placeholder={CONTACTS_SEARCH_PLACEHOLDER}
+                            placeholder={screenLocale.t(
+                                'copy.ContactsView.search.by.name.number.or.email',
+                            )}
                             ariaLabel={screenLocale.t('a11y.search.contacts')}
                             className={simSpacing.mb2}
                             dataSimulatorSearch
@@ -375,7 +372,6 @@ function renderPhoneContactList(
                         SIM_SURFACE_WHITE,
                         SIM_PHONE_CONTACT_ROW,
                     )}
-                    style={{ cursor: 'pointer' }}
                 >
                     <SimulatorAvatar className={SIM_PHONE_CONTACT_ROW_AVATAR} />
                     <div

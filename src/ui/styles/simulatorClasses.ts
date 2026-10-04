@@ -16,7 +16,6 @@ export const SIM_BTN_SM = 'simulator-btn--sm';
 export const SIM_BTN_BLOCK = 'simulator-btn--block';
 export const SIM_BTN_SCREEN_BACK = 'simulator-btn--screen-back';
 export const SIM_INPUT = 'simulator-input';
-export const SIM_INPUT_SM = 'simulator-input--sm';
 export const SIM_FIELD = 'simulator-field';
 export const SIM_FIELD_LABEL = 'simulator-field__label';
 
@@ -39,7 +38,6 @@ export const SIM_OVERFLOW_HIDDEN = 'simulator-overflow-hidden';
 export const SIM_W_FULL = 'simulator-w-full';
 
 export const SIM_MUTED = 'simulator-muted';
-export const SIM_HIDDEN = 'simulator-hidden';
 export const SIM_BADGE = 'simulator-badge';
 export const SIM_BORDER = 'simulator-border';
 export const SIM_BORDER_SECONDARY = 'simulator-border simulator-border--secondary';
@@ -49,8 +47,6 @@ export const SIM_BORDER_TOP = 'simulator-border simulator-border--top';
 export const SIM_ROUNDED_NONE = 'simulator-rounded--none';
 export const SIM_SURFACE_LIGHT = 'simulator-surface--light';
 export const SIM_SURFACE_WHITE = 'simulator-surface--white';
-export const SIM_SURFACE_MUTED = 'simulator-surface--muted';
-export const SIM_SURFACE_CARD = 'simulator-surface--card';
 export const SIM_SURFACE_AVATAR = 'simulator-surface--avatar';
 export const SIM_SURFACE_SELECTED = 'simulator-surface--selected';
 

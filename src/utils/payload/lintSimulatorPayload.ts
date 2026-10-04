@@ -1,4 +1,4 @@
-import { DEFAULT_INTERNET_SCREEN } from '../../types/session.js';
+import { DEFAULT_INTERNET_SCREEN, type SimulatorTemplatePayload } from '../../types/session.js';
 import {
     SimulatorEmailScreenId,
     SimulatorMessagesScreenId,
@@ -14,7 +14,6 @@ import { englishLocale } from '../../i18n/englishLocale.js';
  * Kept separate from validateSimulatorPayload (hard validation).
  */
 
-import type { SimulatorTemplatePayload } from '../../types/session.js';
 import { keyNamingSuggestion, type KeyFamily } from './simulatorKeyPatterns.js';
 
 export const SimulatorLintCode = Object.freeze({

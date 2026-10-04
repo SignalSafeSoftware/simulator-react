@@ -23,6 +23,7 @@ export const utilityEnglish = {
     'copy.SimulatorSessionTimeline.attachment.downloaded': 'Attachment downloaded',
     'copy.SimulatorSessionTimeline.message.sent': 'Message sent',
     'copy.SimulatorSessionTimeline.download.clicked': 'Download clicked',
+    'copy.SimulatorSessionTimeline.search.performed': 'Search',
     'copy.datasource.invalid.simulator.json.source.is.not.valid.json.text':
         'Invalid simulator JSON: source is not valid JSON text.',
     'copy.lintSimulatorPayload.entry.point.is.email.detail.but.there.is.no.message.or.inbox':

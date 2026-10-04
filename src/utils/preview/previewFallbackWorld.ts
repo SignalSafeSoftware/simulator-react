@@ -1,8 +1,20 @@
-import { BrowserLayout, DEFAULT_INTERNET_SCREEN, MessageSender } from '../../types/session.js';
+import {
+    BrowserLayout,
+    DEFAULT_INTERNET_SCREEN,
+    MessageSender,
+    type SimulatorTemplatePayload,
+    type SimulatorEmailPayload,
+    type SimulatorInboxRow,
+    type SimulatorSmsPayload,
+    type SimulatorBrowserPayload,
+    type SimulatorBrowserPage,
+    type SimulatorPhonePayload,
+} from '../../types/session.js';
 import {
     SimulatorEmailScreenId,
     SimulatorMessagesScreenId,
     SimulatorPhoneScreenId,
+    type SimulatorEntryPoint,
 } from '@signalsafe/simulator-core/devicePayload';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { englishLocale } from '../../i18n/englishLocale.js';
@@ -12,17 +24,6 @@ import { englishLocale } from '../../i18n/englishLocale.js';
  * Does not hide validation errors: call only after payload has passed validation.
  * Simulator-scoped; not used in run or production paths.
  */
-
-import type {
-    SimulatorTemplatePayload,
-    SimulatorEmailPayload,
-    SimulatorInboxRow,
-    SimulatorSmsPayload,
-    SimulatorBrowserPayload,
-    SimulatorBrowserPage,
-    SimulatorPhonePayload,
-} from '../../types/session.js';
-import type { SimulatorEntryPoint } from '@signalsafe/simulator-core/devicePayload';
 
 /** Placeholder id prefix so content can be recognized as fallback (e.g. for a badge or banner). */
 export const PREVIEW_PLACEHOLDER_ID_PREFIX = '__preview_placeholder';

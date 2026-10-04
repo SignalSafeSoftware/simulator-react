@@ -13,8 +13,12 @@ import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { useCallback, useMemo, type MutableRefObject, type ReactNode } from 'react';
 import { SimulatorActions } from '../actions/simulatorActions.js';
 import type { HostSimulatorEventHandler } from '../contract/hostContractTypes.js';
-import type { SimulatorSessionState, SimulatorChannel, SimulatorAction } from '../types/session.js';
-import { channelToApp } from '../types/session.js';
+import {
+    type SimulatorSessionState,
+    type SimulatorChannel,
+    type SimulatorAction,
+    channelToApp,
+} from '../types/session.js';
 import {
     actionToInteractionEvent,
     appOpenedEvent,

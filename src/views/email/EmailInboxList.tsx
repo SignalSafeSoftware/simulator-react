@@ -1,3 +1,7 @@
+/**
+ * Reusable email inbox list: wireframe rows (profile icon, sender, snippet, date, Read/Unread tag).
+ * Optional search bar and compose (pencil) button.
+ */
 import {
     SIM_BTN_SM,
     SIM_FLEX_COL,
@@ -21,13 +25,9 @@ import {
     joinClasses,
     simBadgeToneClass,
 } from '../../ui/styles/simulatorClasses.js';
-import SimulatorAvatar from '../../ui/media/SimulatorAvatar.js';
+import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
-/**
- * Reusable email inbox list: wireframe rows (profile icon, sender, snippet, date, Read/Unread tag).
- * Optional search bar and compose (pencil) button.
- */
 import { useState, useMemo, type ReactNode } from 'react';
 import type { SimulatorInboxRow } from '../../types/session.js';
 import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';

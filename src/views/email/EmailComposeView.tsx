@@ -6,8 +6,9 @@ import {
     SIM_FLEX_ROW,
 } from '../../ui/styles/simulatorClasses.js';
 import { useReportComposerState } from '../../contract/composerState.js';
+import { useComposerSubmit } from '../../hooks/useComposerSubmit.js';
 import { SimulatorCapabilityState, useSimulatorCapabilities } from '../../contract/capabilities.js';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { SimulatorPage } from '../../ui/layout/SimulatorPage.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import {
@@ -35,9 +36,6 @@ export default function EmailComposeView({
     const onDraftChange = props.onDraftChange ?? options?.onDraftChange;
     const [localDraft, setLocalDraft] = useState<EmailComposeDraft>(EMPTY_DRAFT);
     const draft = props.draft ?? options?.draft ?? localDraft;
-    const [pending, setPending] = useState(false);
-    const [error, setError] = useState('');
-    const sending = useRef(false);
     const { t } = useSimulatorLocale();
     let unavailable = onSend ? '' : t('email.unconfigured');
     if (capability && capability.state !== SimulatorCapabilityState.Enabled) {
@@ -48,38 +46,24 @@ export default function EmailComposeView({
         setLocalDraft(next);
         onDraftChange?.(next);
     };
-    useReportComposerState(Boolean(onSend && !unavailable && draft.to.trim()), pending);
-    const mounted = useRef(true);
-    useEffect(() => {
-        mounted.current = true;
-        return () => {
-            mounted.current = false;
-        };
-    }, []);
-    const submit = async () => {
-        if (unavailable || !onSend || sending.current || !draft.to.trim()) return;
-        sending.current = true;
-        setPending(true);
-        setError('');
-        try {
-            await onSend({
+    const canSend = Boolean(onSend && !unavailable && draft.to.trim());
+    const { pending, error, submit } = useComposerSubmit({
+        canSend,
+        send: () =>
+            onSend?.({
                 ...draft,
                 to: draft.to.trim(),
                 bcc: draft.bcc.trim(),
                 subject: draft.subject.trim(),
-            });
-            if (!mounted.current) return;
+            }),
+        onSent: () => {
             setLocalDraft(EMPTY_DRAFT);
             onDraftChange?.(EMPTY_DRAFT);
             onCancel();
-        } catch (error_) {
-            if (!mounted.current) return;
-            setError(error_ instanceof Error ? error_.message : t('email.sendFailed'));
-        } finally {
-            sending.current = false;
-            setPending(false);
-        }
-    };
+        },
+        failureMessage: t('email.sendFailed'),
+    });
+    useReportComposerState(canSend, pending);
     return (
         <SimulatorPage
             className={SIM_FLEX_COL}

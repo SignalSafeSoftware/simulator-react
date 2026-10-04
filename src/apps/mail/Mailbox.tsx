@@ -4,23 +4,23 @@ import {
     SimulatorButtonTone,
     simBtnToneClass,
 } from '../../ui/styles/simulatorClasses.js';
-import { UserRound } from 'lucide-react';
+import { UserRound, Search } from 'lucide-react';
 import { useDevicePage } from '../../hooks/device/useDevicePage.js';
 import { useDeviceRecord } from '../../hooks/device/useDeviceRecord.js';
 
 import { LoadMore } from '../../ui/lists/LoadMore.js';
 import { useVisiblePage } from '../../hooks/device/useVisiblePage.js';
-import { Search } from 'lucide-react';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
 import { useRef, useState, type ReactNode } from 'react';
 import { DevicePage } from '../shared/DevicePage.js';
 import { AppSecondaryNav, type AppNavAction } from '../shared/AppSecondaryNav.js';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
-import { mailFolderSchema, mailSchema } from '@signalsafe/simulator-core/apps/contracts';
-import type { Mail } from '@signalsafe/simulator-core/apps/contracts';
+import { mailFolderSchema, mailSchema, type Mail } from '@signalsafe/simulator-core/apps/contracts';
 import { mailTime, newMail, replyMail } from '@signalsafe/simulator-core/apps/mail';
-import { localEmailService } from '@signalsafe/simulator-core/apps/emailService';
-import type { SimulatorEmailService } from '@signalsafe/simulator-core/apps/emailService';
+import {
+    localEmailService,
+    type SimulatorEmailService,
+} from '@signalsafe/simulator-core/apps/emailService';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 export interface MailboxSource {

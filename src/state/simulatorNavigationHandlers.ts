@@ -16,15 +16,13 @@ import {
     type EmailScreenId,
     type MessagesScreenId,
     type HomeScreenId,
-} from '../types/session.js';
-import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
-import {
     DEFAULT_PHONE_SCREEN,
     DEFAULT_EMAIL_SCREEN,
     DEFAULT_MESSAGES_SCREEN,
     DEFAULT_INTERNET_SCREEN,
     DEFAULT_HOME_SCREEN,
 } from '../types/session.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { getDefaultScreen, isInternetScreen } from './simulatorViewStateHelpers.js';
 
 export function applySwitchApp(state: SimulatorViewState, app: SimulatorApp): SimulatorViewState {

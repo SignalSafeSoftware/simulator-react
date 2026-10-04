@@ -3,8 +3,8 @@ import {
     photoAssetSchema,
     MAX_ASSET_BYTES,
     MAX_PHOTO_BYTES,
+    type Asset,
 } from '@signalsafe/simulator-core/apps/contracts';
-import type { Asset } from '@signalsafe/simulator-core/apps/contracts';
 export async function readAsset(file: File, imageOnly = false): Promise<Asset> {
     const limit = imageOnly ? MAX_PHOTO_BYTES : MAX_ASSET_BYTES;
     if (!file.size) throw new Error(`“${file.name}” is empty. Choose a file containing data.`);

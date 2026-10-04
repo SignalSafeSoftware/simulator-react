@@ -4,10 +4,8 @@ import { Mic, MicOff, Phone, PhoneOff, UserRound } from 'lucide-react';
 import type { SimulatorChoiceRenderProps } from '../../ui/renderSlots.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
-import { useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
-import PhoneKeypad from './PhoneKeypad.js';
-import type { PhoneKeypadDigit } from './PhoneKeypad.js';
+import { useEffect, useState, type ReactNode } from 'react';
+import PhoneKeypad, { type PhoneKeypadDigit } from './PhoneKeypad.js';
 
 export function formatPhoneCallDuration(seconds: number): string {
     const safe = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;

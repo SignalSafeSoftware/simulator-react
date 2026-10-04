@@ -24,8 +24,11 @@ import {
     type SimulatorDeveloperTools,
 } from './configuration.js';
 import { SNAPSHOT_COPY_FEEDBACK_MS } from '../constants.js';
-import { type SimulatorSessionState } from '../types/session.js';
-import { getCurrentScreenForApp, viewStateToActiveChannel } from '../types/session.js';
+import {
+    type SimulatorSessionState,
+    getCurrentScreenForApp,
+    viewStateToActiveChannel,
+} from '../types/session.js';
 import {
     buildSimulatorNavGraph,
     simulatorNavGraphToJson,

@@ -1,8 +1,8 @@
-import { SIM_PAGE_CONTENT } from '../../ui/styles/semanticSimulatorClasses.js';
-import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 /**
  * Phone Voicemail screen: optional caller/timestamp header + transcript + Back.
  */
+import { SIM_PAGE_CONTENT } from '../../ui/styles/semanticSimulatorClasses.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../../ui/layout/SimulatorDetail.js';
 import { simSpacing, simTypo } from '../../simulatorStyles.js';
 import {

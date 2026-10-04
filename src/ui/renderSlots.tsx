@@ -1,4 +1,9 @@
-import { SimulatorAlertTone, type SimulatorButtonTone } from './styles/simulatorClasses.js';
+import {
+    SimulatorAlertTone,
+    type SimulatorButtonTone,
+    SIM_TEXT_SM,
+    joinClasses,
+} from './styles/simulatorClasses.js';
 import type { ReactNode } from 'react';
 
 import { type SimulatorDispatchAction } from '../state/simulatorDispatchActions.js';
@@ -9,7 +14,6 @@ import type {
 } from '../types/session.js';
 import { type PhoneSimulatorContent } from '../types/template.js';
 import { SimulatorAlert, SimulatorButton } from './primitives.js';
-import { SIM_TEXT_SM, joinClasses } from './styles/simulatorClasses.js';
 import {
     SIM_PHONE_INCOMING_CALL_AFTER_ACTIONS,
     SIM_PHONE_INCOMING_CALL_EXTRA,

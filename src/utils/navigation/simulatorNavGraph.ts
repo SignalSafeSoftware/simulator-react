@@ -1,11 +1,10 @@
-import { DEFAULT_INTERNET_SCREEN } from '../../types/session.js';
+import { DEFAULT_INTERNET_SCREEN, type SimulatorTemplatePayload } from '../../types/session.js';
 import { SimulatorActionType } from '../telemetry/simulatorActionTaxonomy.js';
 /**
  * Navigation graph for simulator templates: apps, screens, and declarative action transitions.
  * Used for export and debug only; no TreeSpec branching. Semantics are simulator navigation only.
  */
 
-import type { SimulatorTemplatePayload } from '../../types/session.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { simulatorBrowserEdges } from './simulatorBrowserEdges.js';
 import {

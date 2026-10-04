@@ -24,7 +24,7 @@ export interface SimulatorKeyboardCommandHandlers {
     /** Focus the contacts search input when on phone/contacts. No-op if not applicable. */
     onFocusSearch: () => void;
     /** Optional: move focus to next/previous item in list views. Dispatches custom event if not provided. */
-    onListNav?: (direction: 'next' | 'prev') => void;
+    onListNav?: (direction: ListNavDirection) => void;
 }
 
 /** Human-readable command list for help (debug/admin). */
@@ -70,8 +70,14 @@ export const SIMULATOR_KEYBOARD_COMMANDS = [
 
 export const LIST_NAV_EVENT = 'simulator-keyboard-list-nav';
 
+export const ListNavDirection = Object.freeze({
+    Next: 'next',
+    Prev: 'prev',
+} as const);
+export type ListNavDirection = (typeof ListNavDirection)[keyof typeof ListNavDirection];
+
 /** Dispatch a custom event for list nav so list views can optionally handle next/prev focus. */
-function dispatchListNav(direction: 'next' | 'prev'): void {
+function dispatchListNav(direction: ListNavDirection): void {
     if (typeof document === 'undefined') return;
     document.dispatchEvent(new CustomEvent(LIST_NAV_EVENT, { detail: { direction } }));
 }
@@ -128,11 +134,11 @@ function handleListNavShortcut(
     e: KeyboardEvent,
     handlers: SimulatorKeyboardCommandHandlers,
 ): { handled: boolean } | null {
-    let direction: 'next' | 'prev' | null = null;
+    let direction: ListNavDirection | null = null;
     if (e.altKey === true && e.key === 'ArrowDown') {
-        direction = 'next';
+        direction = ListNavDirection.Next;
     } else if (e.altKey === true && e.key === 'ArrowUp') {
-        direction = 'prev';
+        direction = ListNavDirection.Prev;
     }
     if (direction == null) {
         return null;

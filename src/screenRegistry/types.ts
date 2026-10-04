@@ -1,13 +1,13 @@
+/**
+ * Typed screen registry: app + screen → renderer component + getProps.
+ * Keeps rendering concerns separate from reducer/session state.
+ */
 import type {
     SimulatorMessagesScreenId,
     SimulatorPhoneScreenId,
 } from '@signalsafe/simulator-core/devicePayload';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
-/**
- * Typed screen registry: app + screen → renderer component + getProps.
- * Keeps rendering concerns separate from reducer/session state.
- */
 import type { ComponentType, ReactNode } from 'react';
 import type { SimulatorSessionState } from '../types/session.js';
 import { type SimulatorDispatchAction } from '../state/simulatorDispatchActions.js';

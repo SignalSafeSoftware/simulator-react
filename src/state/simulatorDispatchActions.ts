@@ -3,8 +3,7 @@
  */
 
 import type { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
-import type { SimulatorAction, SimulatorChannel } from '../types/session.js';
-import { channelToApp } from '../types/session.js';
+import { type SimulatorAction, type SimulatorChannel, channelToApp } from '../types/session.js';
 
 /** Session dispatch discriminants; values are stable for host integrations. */
 export const SimulatorDispatchActionType = Object.freeze({

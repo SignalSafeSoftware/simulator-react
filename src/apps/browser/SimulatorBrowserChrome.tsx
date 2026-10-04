@@ -1,3 +1,7 @@
+/**
+ * Wireframe-style browser chrome: page title above, then nav bar (back, forward, refresh, home)
+ * and address/search bar (simulator UI chrome, not app routing).
+ */
 import {
     SIM_BORDER_BOTTOM,
     SIM_BTN_PLAIN,
@@ -17,10 +21,6 @@ import {
 } from '../../ui/styles/simulatorClasses.js';
 import { ArrowLeft, ArrowRight, Home, RotateCw } from 'lucide-react';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-/**
- * Wireframe-style browser chrome: page title above, then nav bar (back, forward, refresh, home)
- * and address/search bar (simulator UI chrome, not app routing).
- */
 import { type ReactNode } from 'react';
 import { withStableKeys } from '../../utils/lists/stableKeys.js';
 

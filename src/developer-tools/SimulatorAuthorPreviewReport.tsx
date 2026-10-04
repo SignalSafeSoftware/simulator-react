@@ -1,3 +1,7 @@
+/**
+ * Structured author preview report: entry point, apps, counts, key actions, validation/lint.
+ * Shown in admin/workspace preview only; compact and readable.
+ */
 import {
     SIM_BORDER_TOP,
     SIM_MUTED,
@@ -8,10 +12,6 @@ import {
     joinClasses,
 } from '../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
-/**
- * Structured author preview report: entry point, apps, counts, key actions, validation/lint.
- * Shown in admin/workspace preview only; compact and readable.
- */
 import { Fragment, isValidElement } from 'react';
 import { simSpacing } from '../simulatorStyles.js';
 import { type SimulatorPreviewReport } from '../utils/preview/simulatorPreviewReport.js';

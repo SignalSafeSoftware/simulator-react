@@ -37,10 +37,8 @@ import { SIM_SCREEN_HEADER } from './ui/styles/semanticSimulatorClasses.js';
 /** Spacing: section gaps, block padding, action bar. */
 export const simSpacing = {
     sectionGap: 'simulator-spacing--section',
-    sectionGapTight: 'simulator-spacing--section-tight',
     blockPadding: 'simulator-spacing--block',
     blockPaddingCompact: 'simulator-spacing--block-compact',
-    actionsBarTop: 'simulator-spacing--actions-top',
     dividerTop: 'simulator-spacing--divider-top',
     gap2: 'simulator-spacing--gap',
     stackGap: 'simulator-spacing--stack-gap',
@@ -83,14 +81,12 @@ export const simScreen = {
 /** Borders and containers. Wireframe: rectangular for list rows, tiles, and blocks. */
 export const simBorder = {
     block: joinClasses(SIM_BORDER, SIM_BORDER_SECONDARY, 'simulator-surface--light'),
-    card: joinClasses(SIM_BORDER, SIM_BORDER_SECONDARY, 'simulator-surface--card'),
     list: joinClasses(SIM_LIST_FLUSH, SIM_BORDER_SECONDARY),
     tile: joinClasses(SIM_BORDER, SIM_BORDER_SECONDARY),
 } as const;
 
 /** Typography: aligned with wireframe labels and hierarchy. */
 export const simTypo = {
-    sectionHeading: 'simulator-heading simulator-heading--section',
     subheading: 'simulator-heading simulator-heading--sub',
     secondary: joinClasses('simulator-text--sm', SIM_MUTED),
     secondaryTight: joinClasses(
@@ -101,8 +97,6 @@ export const simTypo = {
     bodySmall: joinClasses('simulator-text--sm', 'simulator-text--body'),
     emptyState: joinClasses(SIM_MUTED, 'simulator-text--sm', 'simulator-text--empty'),
     backBarTitle: joinClasses('simulator-text--medium', SIM_MUTED, 'simulator-text--sm'),
-    rowPrimary: joinClasses('simulator-text--semibold', 'simulator-text--body'),
-    rowPrimaryEmphasis: joinClasses('simulator-text--bold', 'simulator-text--body'),
 } as const;
 
 /** Back bar (detail views). */
@@ -208,15 +202,6 @@ export const simLayout = {
 
 /** Device shell chrome (PhoneSimulatorShell). */
 export const simShell = {
-    header: joinClasses(
-        SIM_FLEX,
-        'simulator-flex--align-center',
-        simSpacing.px2,
-        simSpacing.py2,
-        SIM_SURFACE_WHITE,
-        SIM_BORDER_BOTTOM,
-        SIM_TEXT_SM,
-    ),
     headerBetween: joinClasses(
         SIM_FLEX,
         SIM_FLEX_BETWEEN,
@@ -252,13 +237,6 @@ export const simShell = {
         'simulator-spacing--pb-3',
         'simulator-spacing--pt-1',
         'simulator-surface--body-tertiary',
-    ),
-    frame: joinClasses(
-        SIM_FLEX_COL,
-        SIM_OVERFLOW_HIDDEN,
-        SIM_SURFACE_WHITE,
-        'simulator-border simulator-border--dark',
-        SIM_SHELL_FRAME,
     ),
     frameCentered: joinClasses(
         SIM_FLEX_COL,
@@ -296,6 +274,7 @@ export const simShell = {
 /** Selectable inbox/thread row surfaces. */
 export const simRowSurface = {
     selectable: joinClasses(
+        'simulator-row--selectable',
         SIM_FLEX,
         SIM_W_FULL,
         'simulator-flex--align-start',

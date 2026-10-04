@@ -1,3 +1,7 @@
+/**
+ * Phone app: secondary nav (History, Contacts, Dial, Back) + content. Defaults to History.
+ * Wireframe-style segmented local nav; Back from voicemail or secondary Back returns to primary menu.
+ */
 import { SimulatorPhoneScreenId } from '@signalsafe/simulator-core/devicePayload';
 import {
     SIM_AVATAR,
@@ -20,10 +24,6 @@ import {
 } from '../../ui/styles/simulatorClasses.js';
 import { UserRound } from 'lucide-react';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-/**
- * Phone app: secondary nav (History, Contacts, Dial, Back) + content. Defaults to History.
- * Wireframe-style segmented local nav; Back from voicemail or secondary Back returns to primary menu.
- */
 import type { ReactNode } from 'react';
 import { type SimulatorDispatchAction } from '../../state/simulatorDispatchActions.js';
 import type {
@@ -40,7 +40,7 @@ import {
     type SimulatorPhoneIncomingCallExtraRenderProps,
 } from '../../ui/renderSlots.js';
 import { SimulatorActions } from '../../actions/simulatorActions.js';
-import SimulatorLocalNav from '../../ui/navigation/SimulatorLocalNav.js';
+import { SimulatorLocalNav } from '../../ui/navigation/SimulatorLocalNav.js';
 import PhoneHistoryList from './PhoneHistoryList.js';
 import PhoneDialView from './PhoneDialView.js';
 import PhoneVoicemailView from './PhoneVoicemailView.js';

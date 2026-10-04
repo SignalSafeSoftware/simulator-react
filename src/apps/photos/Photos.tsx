@@ -15,8 +15,7 @@ import { createSimulatorId } from '@signalsafe/simulator-core/apps/id';
 import { useEffect, useRef, useState } from 'react';
 import { DevicePage } from '../shared/DevicePage.js';
 import { AppSecondaryNav, type AppNavAction } from '../shared/AppSecondaryNav.js';
-import { photoSchema } from '@signalsafe/simulator-core/apps/contracts';
-import type { Photo } from '@signalsafe/simulator-core/apps/contracts';
+import { photoSchema, type Photo } from '@signalsafe/simulator-core/apps/contracts';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
 export default function Photos({ store, onBack }: { store: DeviceStore; onBack: () => void }) {
     const {

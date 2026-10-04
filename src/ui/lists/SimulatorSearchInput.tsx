@@ -1,7 +1,7 @@
-import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 /**
  * Search input for simulator list screens.
  */
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { SimulatorInput } from '../primitives.js';
 import { simInput } from '../../simulatorStyles.js';
 import { joinClasses } from '../styles/simulatorClasses.js';
@@ -47,4 +47,3 @@ function SimulatorSearchInput({
 }
 
 export { SimulatorSearchInput };
-export default SimulatorSearchInput;

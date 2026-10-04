@@ -3,7 +3,7 @@ import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../src/ui/layout/SimulatorDetail.js';
 import { SimulatorList, SimulatorListItem } from '../src/ui/lists/SimulatorList.js';
-import SimulatorLocalNav from '../src/ui/navigation/SimulatorLocalNav.js';
+import { SimulatorLocalNav } from '../src/ui/navigation/SimulatorLocalNav.js';
 import SimulatorReachabilityReport from '../src/developer-tools/SimulatorReachabilityReport.js';
 import DirectoryView from '../src/views/contacts/DirectoryView';
 import PhoneVoicemailView from '../src/views/phone/PhoneVoicemailView';

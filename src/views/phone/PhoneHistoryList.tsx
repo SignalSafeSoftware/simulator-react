@@ -1,12 +1,12 @@
-import SimulatorAvatar from '../../ui/media/SimulatorAvatar.js';
-import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
-import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
 /**
  * Phone History tab: list of recent calls by kind (incoming, outgoing, missed, voicemail)
  * + optional scenario incoming-call row + optional Voicemail summary row.
  * All row kinds share the same avatar, identity, and status layout.
  */
+import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
+import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
+import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
 import { Fragment, useState, useMemo, type ReactNode } from 'react';
 import { CallHistoryEntryKind, type SimulatorCallHistoryEntry } from '../../types/session.js';
 import { type PhoneSimulatorContent } from '../../types/template.js';

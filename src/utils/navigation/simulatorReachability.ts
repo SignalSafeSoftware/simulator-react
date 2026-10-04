@@ -1,4 +1,9 @@
-import { DEFAULT_INTERNET_SCREEN, SimulatorChannel } from '../../types/session.js';
+import {
+    DEFAULT_INTERNET_SCREEN,
+    SimulatorChannel,
+    type SimulatorTemplatePayload,
+    type SimulatorBrowserPage,
+} from '../../types/session.js';
 import {
     SimulatorEmailScreenId,
     SimulatorHomeScreenId,
@@ -13,7 +18,6 @@ import { simulatorBrowserEdges } from './simulatorBrowserEdges.js';
  * Does not modify runtime behavior; analysis only.
  */
 
-import type { SimulatorTemplatePayload, SimulatorBrowserPage } from '../../types/session.js';
 import { SimulatorApp, isSimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 
 const PHONE_SCREENS = Object.values(SimulatorPhoneScreenId);

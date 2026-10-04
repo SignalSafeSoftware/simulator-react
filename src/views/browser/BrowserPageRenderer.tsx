@@ -1,4 +1,12 @@
-import { BrowserLayout } from '../../types/session.js';
+/**
+ * Renders a single browser page by layout family. Wireframe: landing, login/form, content/download/result.
+ * Uses SimulatorBrowserChrome (title above bar, back/forward/refresh/home, address bar).
+ */
+import {
+    BrowserLayout,
+    type SimulatorAction,
+    type SimulatorBrowserPage,
+} from '../../types/session.js';
 import {
     SIM_BORDER_NONE,
     SIM_BTN_PLAIN,
@@ -22,14 +30,9 @@ import { normalizeBrowserLayout } from '../../utils/navigation/simulatorBrowserE
 import { getFieldInputType } from '../../utils/payload/browserFieldType.js';
 import { joinKeyParts, withStableKeys } from '../../utils/lists/stableKeys.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-/**
- * Renders a single browser page by layout family. Wireframe: landing, login/form, content/download/result.
- * Uses SimulatorBrowserChrome (title above bar, back/forward/refresh/home, address bar).
- */
 import type { ReactNode } from 'react';
 
 import SimulatorBrowserChrome from '../../apps/browser/SimulatorBrowserChrome.js';
-import type { SimulatorAction, SimulatorBrowserPage } from '../../types/session.js';
 import { SimulatorActions } from '../../actions/simulatorActions.js';
 import { simBorder, simLayout, simSpacing, simTypo } from '../../simulatorStyles.js';
 import {

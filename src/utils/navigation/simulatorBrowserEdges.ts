@@ -1,5 +1,4 @@
-import { BrowserLayout } from '../../types/session.js';
-import type { SimulatorBrowserPage } from '../../types/session.js';
+import { BrowserLayout, type SimulatorBrowserPage } from '../../types/session.js';
 import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../../constants.js';
 
 export interface SimulatorBrowserEdge {

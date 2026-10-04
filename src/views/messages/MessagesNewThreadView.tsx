@@ -1,3 +1,7 @@
+/**
+ * Messages app: New Thread page. Wireframe (Messages.png): header "New Thread",
+ * Phone Number field, Message body textarea, Send (blue) and Cancel (grey) buttons.
+ */
 import {
     SIM_BTN_BLOCK,
     SIM_FLEX_GROW_1,
@@ -10,14 +14,11 @@ import {
     joinClasses,
 } from '../../ui/styles/simulatorClasses.js';
 import { useReportComposerState } from '../../contract/composerState.js';
+import { useComposerSubmit } from '../../hooks/useComposerSubmit.js';
 import { SimulatorCapabilityState, useSimulatorCapabilities } from '../../contract/capabilities.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { useMessageComposeOptions } from '../../contract/messageComposeContract.js';
-/**
- * Messages app: New Thread page. Wireframe (Messages.png): header "New Thread",
- * Phone Number field, Message body textarea, Send (blue) and Cancel (grey) buttons.
- */
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { simLayout, simScreen, simSpacing } from '../../simulatorStyles.js';
 import {
@@ -55,9 +56,6 @@ export default function MessagesNewThreadView({
     if (capability && capability.state !== SimulatorCapabilityState.Enabled) {
         unavailable = capability.reason;
     }
-    const [pending, setPending] = useState(false);
-    const [error, setError] = useState('');
-    const sending = useRef(false);
     const [localNumber, setLocalNumber] = useState('');
     const [localBody, setLocalBody] = useState('');
     const phoneNumber = compose?.draft.phoneNumber ?? localNumber;
@@ -71,39 +69,24 @@ export default function MessagesNewThreadView({
         if (compose) compose.onChange({ ...compose.draft, messageBody: next });
     };
 
-    useReportComposerState(
-        Boolean(onSend && !unavailable && phoneNumber.trim() && messageBody.trim()),
+    const canSend = Boolean(onSend && !unavailable && phoneNumber.trim() && messageBody.trim());
+    const {
         pending,
-    );
-    const mounted = useRef(true);
-    useEffect(() => {
-        mounted.current = true;
-        return () => {
-            mounted.current = false;
-        };
-    }, []);
-    const handleSend = async () => {
-        if (!onSend || unavailable || sending.current || !phoneNumber.trim() || !messageBody.trim())
-            return;
-        sending.current = true;
-        setPending(true);
-        setError('');
-        try {
-            await onSend({ phoneNumber: phoneNumber.trim(), messageBody });
-            if (!mounted.current) return;
+        error,
+        submit: handleSend,
+    } = useComposerSubmit({
+        canSend,
+        send: () => onSend?.({ phoneNumber: phoneNumber.trim(), messageBody }),
+        onSent: () => {
             setLocalNumber('');
             setLocalBody('');
             compose?.onChange({ phoneNumber: '', messageBody: '' });
             compose?.onAccepted?.();
             onBack();
-        } catch (error_) {
-            if (!mounted.current) return;
-            setError(error_ instanceof Error ? error_.message : t('messages.sendFailed'));
-        } finally {
-            sending.current = false;
-            setPending(false);
-        }
-    };
+        },
+        failureMessage: t('messages.sendFailed'),
+    });
+    useReportComposerState(canSend, pending);
 
     return (
         <form
