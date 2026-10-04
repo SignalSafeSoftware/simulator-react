@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { shouldHideSimulatorNavigation } from '../src/utils/simulatorNavigationPolicy.js';
+import { shouldHideSimulatorNavigation } from '../src/utils/navigation/simulatorNavigationPolicy.js';
 import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 import type { SimulatorTemplatePayload } from '../src/types/session.js';
 

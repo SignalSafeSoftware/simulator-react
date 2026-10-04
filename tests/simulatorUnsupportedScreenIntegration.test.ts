@@ -17,7 +17,7 @@ vi.mock('../src/developer-tools/SimulatorDeveloperToolsPanel.js', () => ({
     default: () => null,
 }));
 
-vi.mock('../src/views/ContactsView.js', () => ({
+vi.mock('../src/views/contacts/ContactsView.js', () => ({
     default: () => null,
 }));
 

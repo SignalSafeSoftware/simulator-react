@@ -3,22 +3,22 @@ import { simulatorSessionReducerWithLogging } from '@signalsafe/simulator-react/
 import { getInitialSessionState } from '@signalsafe/simulator-react/state/simulatorSessionInitialState';
 import { switchChannelAction } from '@signalsafe/simulator-react/state/simulatorDispatchActions';
 import { templateDetailToPayload } from '@signalsafe/simulator-react/adapters/templateToSession';
-import { lintSimulatorPayload } from '@signalsafe/simulator-react/utils/lintSimulatorPayload';
-import { analyzeReachability } from '@signalsafe/simulator-react/utils/simulatorReachability';
-import { applyPreviewFallback } from '@signalsafe/simulator-react/utils/previewFallbackWorld';
+import { lintSimulatorPayload } from '@signalsafe/simulator-react/utils/payload/lintSimulatorPayload';
+import { analyzeReachability } from '@signalsafe/simulator-react/utils/navigation/simulatorReachability';
+import { applyPreviewFallback } from '@signalsafe/simulator-react/utils/preview/previewFallbackWorld';
 import { resolveScreen } from '@signalsafe/simulator-react/screenRegistry/registry';
 import { renderActiveScreen } from '@signalsafe/simulator-react/screenRegistry/registry';
-import { diffSimulatorPayloads } from '@signalsafe/simulator-react/utils/simulatorPayloadDiff';
-import { getSimulatorCapabilities } from '@signalsafe/simulator-react/utils/simulatorCapabilities';
-import { actionToInteractionEvent } from '@signalsafe/simulator-react/utils/simulatorEventMapper';
-import { normalizeNameForMatch } from '@signalsafe/simulator-react/utils/contactNormalization';
-import { buildSimulatorNavGraph } from '@signalsafe/simulator-react/utils/simulatorNavGraph';
+import { diffSimulatorPayloads } from '@signalsafe/simulator-react/utils/payload/simulatorPayloadDiff';
+import { getSimulatorCapabilities } from '@signalsafe/simulator-react/utils/payload/simulatorCapabilities';
+import { actionToInteractionEvent } from '@signalsafe/simulator-react/utils/telemetry/simulatorEventMapper';
+import { normalizeNameForMatch } from '@signalsafe/simulator-react/utils/payload/contactNormalization';
+import { buildSimulatorNavGraph } from '@signalsafe/simulator-react/utils/navigation/simulatorNavGraph';
 import SimulatorWithSession from '@signalsafe/simulator-react/SimulatorWithSession';
 import PhoneSimulatorShell from '@signalsafe/simulator-react/shell/PhoneSimulatorShell';
 import SimulatorErrorBoundary from '@signalsafe/simulator-react/SimulatorErrorBoundary';
 import SimulatorDeveloperToolsPanel from '@signalsafe/simulator-react/developer-tools/SimulatorDeveloperToolsPanel';
 import SimulatorLintBanner from '@signalsafe/simulator-react/developer-tools/SimulatorLintBanner';
-import PhoneIncomingScene from '@signalsafe/simulator-react/views/PhoneIncomingScene';
+import PhoneIncomingScene from '@signalsafe/simulator-react/views/phone/PhoneIncomingScene';
 const publicValues = {
     simulatorSessionReducer,
     simulatorSessionReducerWithLogging,
@@ -84,22 +84,22 @@ describe('Batch 8 owner module exports', () => {
 
 describe('Batch 8 subpath exports', () => {
     it('loads validateSimulatorPayload subpath', async () => {
-        const mod = await import('../src/utils/validateSimulatorPayload.js');
+        const mod = await import('../src/utils/payload/validateSimulatorPayload.js');
         expect(typeof mod.validateSimulatorPayload).toBe('function');
     });
 
     it('loads simulatorPreviewReport subpath', async () => {
-        const mod = await import('../src/utils/simulatorPreviewReport.js');
+        const mod = await import('../src/utils/preview/simulatorPreviewReport.js');
         expect(typeof mod.buildSimulatorPreviewReport).toBe('function');
     });
 
     it('loads simulatorRealismChecks subpath', async () => {
-        const mod = await import('../src/utils/simulatorRealismChecks.js');
+        const mod = await import('../src/utils/payload/simulatorRealismChecks.js');
         expect(typeof mod.runSimulatorRealismChecks).toBe('function');
     });
 
     it('loads previewFallbackWorld subpath', async () => {
-        const mod = await import('../src/utils/previewFallbackWorld.js');
+        const mod = await import('../src/utils/preview/previewFallbackWorld.js');
         expect(typeof mod.applyPreviewFallback).toBe('function');
         expect(typeof mod.PREVIEW_PLACEHOLDER_ID_PREFIX).toBe('string');
     });

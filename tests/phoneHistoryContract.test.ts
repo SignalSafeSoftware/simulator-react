@@ -2,9 +2,9 @@ import { createElement } from 'react';
 import type { ReactTestRenderer, ReactTestInstance } from 'react-test-renderer';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TestRenderer, act } from './reactTestRenderer';
-import PhoneDialView from '../src/views/PhoneDialView';
-import PhoneHistoryList from '../src/views/PhoneHistoryList.js';
-import type { PhoneHistoryListProps } from '../src/views/PhoneHistoryList.js';
+import PhoneDialView from '../src/views/phone/PhoneDialView';
+import PhoneHistoryList from '../src/views/phone/PhoneHistoryList.js';
+import type { PhoneHistoryListProps } from '../src/views/phone/PhoneHistoryList.js';
 
 const entries = [
     { id: 'alex', name: 'Alex', number: '555001', kind: 'outgoing' as const },

@@ -10,5 +10,3 @@ yarn-error.log*
 pnpm-debug.log*
 *.tgz
 
-# Versioned local integration artifacts; verified before builds.
-!vendor/npm/signalsafe-simulator-core-0.5.0-cleanup.3.tgz

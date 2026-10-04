@@ -11,9 +11,9 @@ import { getInitialSessionState } from '../src/state/simulatorSessionInitialStat
 import {
     applyDeepLinkToState,
     parseSimulatorSearchParams,
-} from '../src/utils/simulatorDeepLink.js';
-import { analyzeReachability } from '../src/utils/simulatorReachability.js';
-import { buildSimulatorNavGraph } from '../src/utils/simulatorNavGraph.js';
+} from '../src/utils/navigation/simulatorDeepLink.js';
+import { analyzeReachability } from '../src/utils/navigation/simulatorReachability.js';
+import { buildSimulatorNavGraph } from '../src/utils/navigation/simulatorNavGraph.js';
 import type { SimulatorBrowserPage } from '../src/types/session.js';
 
 const entry = (app: SimulatorApp, screen: string): SimulatorDevicePayload => ({

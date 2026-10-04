@@ -1,3 +1,4 @@
+import { SimulatorActionType } from '../utils/telemetry/simulatorActionTaxonomy.js';
 /**
  * Declarative action factories: build typed SimulatorAction from targets.
  * Use these in views so action shape is consistent and type-safe.
@@ -7,52 +8,73 @@ import type { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 
 export const SimulatorActions = {
     navigateScreen: (app: SimulatorApp, screen: string): SimulatorAction => ({
-        type: 'navigate_screen',
+        type: SimulatorActionType.NavigateScreen,
         app,
         screen,
     }),
-    openApp: (app: SimulatorApp): SimulatorAction => ({ type: 'open_app', app }),
-    openContact: (contactId: string): SimulatorAction => ({ type: 'open_contact', contactId }),
-    openThread: (threadId: string): SimulatorAction => ({ type: 'open_thread', threadId }),
-    openEmail: (messageId: string): SimulatorAction => ({ type: 'open_email', messageId }),
-    openPage: (pageId: string): SimulatorAction => ({ type: 'open_page', pageId }),
+    openApp: (app: SimulatorApp): SimulatorAction => ({ type: SimulatorActionType.OpenApp, app }),
+    openContact: (contactId: string): SimulatorAction => ({
+        type: SimulatorActionType.OpenContact,
+        contactId,
+    }),
+    openThread: (threadId: string): SimulatorAction => ({
+        type: SimulatorActionType.OpenThread,
+        threadId,
+    }),
+    openEmail: (messageId: string): SimulatorAction => ({
+        type: SimulatorActionType.OpenEmail,
+        messageId,
+    }),
+    openPage: (pageId: string): SimulatorAction => ({ type: SimulatorActionType.OpenPage, pageId }),
     submitForm: (submitMetadata?: Record<string, boolean>): SimulatorAction => ({
-        type: 'submit_form',
+        type: SimulatorActionType.SubmitForm,
         submitMetadata,
     }),
-    answerCall: (choiceIndex?: number): SimulatorAction => ({ type: 'answer_call', choiceIndex }),
-    ignoreCall: (): SimulatorAction => ({ type: 'ignore_call' }),
-    searchContacts: (query?: string): SimulatorAction => ({ type: 'search_contacts', query }),
+    answerCall: (choiceIndex?: number): SimulatorAction => ({
+        type: SimulatorActionType.AnswerCall,
+        choiceIndex,
+    }),
+    ignoreCall: (): SimulatorAction => ({ type: SimulatorActionType.IgnoreCall }),
+    searchContacts: (query?: string): SimulatorAction => ({
+        type: SimulatorActionType.SearchContacts,
+        query,
+    }),
     clickLink: (opts: { href?: string; linkIndex?: number; pageId?: string }): SimulatorAction => ({
-        type: 'click_link',
+        type: SimulatorActionType.ClickLink,
         ...opts,
     }),
     openAttachment: (attachmentIndex?: number): SimulatorAction => ({
-        type: 'open_attachment',
+        type: SimulatorActionType.OpenAttachment,
         attachmentIndex,
     }),
     downloadAttachment: (attachmentIndex?: number): SimulatorAction => ({
-        type: 'download_attachment',
+        type: SimulatorActionType.DownloadAttachment,
         attachmentIndex,
     }),
     report: (): SimulatorAction => ({ type: 'report' }),
-    checkContact: (): SimulatorAction => ({ type: 'check_contact' }),
-    checkContacts: (): SimulatorAction => ({ type: 'check_contacts' }),
-    sendReply: (replyText?: string): SimulatorAction => ({ type: 'send_reply', replyText }),
-    dialPhone: (dialedNumber?: string): SimulatorAction => ({ type: 'dial_phone', dialedNumber }),
-    openVoicemail: (): SimulatorAction => ({ type: 'open_voicemail' }),
-    openStore: (): SimulatorAction => ({ type: 'open_store' }),
-    openSettings: (): SimulatorAction => ({ type: 'open_settings' }),
+    checkContact: (): SimulatorAction => ({ type: SimulatorActionType.CheckContact }),
+    checkContacts: (): SimulatorAction => ({ type: SimulatorActionType.CheckContacts }),
+    sendReply: (replyText?: string): SimulatorAction => ({
+        type: SimulatorActionType.SendReply,
+        replyText,
+    }),
+    dialPhone: (dialedNumber?: string): SimulatorAction => ({
+        type: SimulatorActionType.DialPhone,
+        dialedNumber,
+    }),
+    openVoicemail: (): SimulatorAction => ({ type: SimulatorActionType.OpenVoicemail }),
+    openStore: (): SimulatorAction => ({ type: SimulatorActionType.OpenStore }),
+    openSettings: (): SimulatorAction => ({ type: SimulatorActionType.OpenSettings }),
     downloadClick: (downloadTarget?: string): SimulatorAction => ({
-        type: 'download_click',
+        type: SimulatorActionType.DownloadClick,
         downloadTarget,
     }),
     switchChannel: (channel: SimulatorChannel): SimulatorAction => ({
-        type: 'switch_channel',
+        type: SimulatorActionType.SwitchChannel,
         channel,
     }),
     viewDirectoryEntry: (entryId: string): SimulatorAction => ({
-        type: 'view_directory_entry',
+        type: SimulatorActionType.ViewDirectoryEntry,
         entryId,
     }),
 } as const;

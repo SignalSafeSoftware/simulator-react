@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyPartials, deepMergeSections } from '../src/utils/simulatorWorldSections';
+import { applyPartials, deepMergeSections } from '../src/utils/payload/simulatorWorldSections';
 
 describe('simulatorWorldSections', () => {
     it('deep-merges section objects while filtering unknown keys', () => {

@@ -1,13 +1,15 @@
 import {
-    SimulatorButtonTone,
-    joinClasses,
+    SIM_BTN_SM,
     SIM_MONO,
     SIM_MUTED,
     SIM_OVERFLOW_AUTO,
+    SIM_TEXT_BREAK,
     SIM_TEXT_DANGER,
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
-} from './ui/simulatorClasses.js';
+    SimulatorButtonTone,
+    joinClasses,
+} from './ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
 /**
  * Error boundary scoped to simulator content. Catches render/lifecycle errors
@@ -19,7 +21,7 @@ import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { simSpacing, simStatus } from './simulatorStyles.js';
 import { SimulatorButton } from './ui/primitives.js';
-import { SIM_ERROR, SIM_ERROR_DIAGNOSTICS } from './ui/semanticSimulatorClasses.js';
+import { SIM_ERROR, SIM_ERROR_DIAGNOSTICS } from './ui/styles/semanticSimulatorClasses.js';
 
 export interface SimulatorErrorBoundaryProps {
     children: ReactNode;
@@ -81,7 +83,7 @@ function ErrorDismiss({ onRetry }: Readonly<{ onRetry: () => void }>) {
     return (
         <SimulatorButton
             tone={SimulatorButtonTone.NeutralOutline}
-            className="simulator-btn--sm"
+            className={SIM_BTN_SM}
             onClick={onRetry}
         >
             {locale.t('screen.simulatorErrorBoundary.dismiss')}
@@ -117,7 +119,7 @@ function ErrorFallback({
             data-show-diagnostics={showDiagnostics ? 'true' : 'false'}
         >
             <p className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_DANGER, simSpacing.mb1)}>{title}</p>
-            <p className={joinClasses(simSpacing.mb1, 'simulator-text--break')}>{body}</p>
+            <p className={joinClasses(simSpacing.mb1, SIM_TEXT_BREAK)}>{body}</p>
             {showDiagnostics && errorInfo?.componentStack ? (
                 <pre
                     className={joinClasses(

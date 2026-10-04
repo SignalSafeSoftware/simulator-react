@@ -1,4 +1,4 @@
-import { applyPreviewFallback } from '@signalsafe/simulator-react/utils/previewFallbackWorld';
+import { applyPreviewFallback } from '@signalsafe/simulator-react/utils/preview/previewFallbackWorld';
 import { resolveScreen } from '@signalsafe/simulator-react/screenRegistry/registry';
 import { describe, expect, it } from 'vitest';
 

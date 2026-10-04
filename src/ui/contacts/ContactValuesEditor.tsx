@@ -8,8 +8,14 @@ export interface EditableContactValue {
     number?: string | null;
 }
 type Value = EditableContactValue;
+export const ContactValueKind = Object.freeze({
+    Phone: 'phone',
+    Email: 'email',
+    Address: 'address',
+} as const);
+export type ContactValueKind = (typeof ContactValueKind)[keyof typeof ContactValueKind];
 export interface ContactValuesEditorProps {
-    kind: 'phone' | 'email' | 'address';
+    kind: ContactValueKind;
     values: readonly Value[];
     preferredId: string | null;
     createId: () => string;
@@ -41,7 +47,7 @@ export function ContactValuesEditor({
     const title = t(titleKeys[kind]);
     const singular = t(singularKeys[kind]);
     const labels =
-        kind === 'phone'
+        kind === ContactValueKind.Phone
             ? [t('contact.mobile'), t('contact.home'), t('contact.work')]
             : [t('contact.home'), t('contact.work')];
     const update = (id: string, patch: Partial<Value>) =>
@@ -51,7 +57,7 @@ export function ContactValuesEditor({
                     ? {
                           ...value,
                           ...patch,
-                          ...(patch.value !== undefined && kind === 'phone'
+                          ...(patch.value !== undefined && kind === ContactValueKind.Phone
                               ? { number: null }
                               : {}),
                       }
@@ -102,7 +108,7 @@ export function ContactValuesEditor({
                             required
                             maxLength={4000}
                             value={
-                                kind === 'phone' && focusedValue !== value.id
+                                kind === ContactValueKind.Phone && focusedValue !== value.id
                                     ? contactPhoneDisplay(value.value)
                                     : value.value
                             }

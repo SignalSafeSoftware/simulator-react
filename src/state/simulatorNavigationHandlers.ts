@@ -1,8 +1,10 @@
 import {
-    isPhoneScreen,
+    SimulatorEmailScreenId,
+    SimulatorPhoneScreenId,
     isEmailScreen,
-    isMessagesScreen,
     isHomeScreen,
+    isMessagesScreen,
+    isPhoneScreen,
 } from '@signalsafe/simulator-core/devicePayload';
 /**
  * Navigation handlers: SWITCH_APP, NAV_LOCAL, BACK, CANCEL.
@@ -46,7 +48,9 @@ export function applySwitchApp(state: SimulatorViewState, app: SimulatorApp): Si
     return next;
 }
 
-function pushScreen<K extends 'phone' | 'email' | 'messages'>(
+function pushScreen<
+    K extends typeof SimulatorApp.Phone | typeof SimulatorApp.Email | typeof SimulatorApp.Messages,
+>(
     next: SimulatorViewState,
     state: SimulatorViewState,
     key: K,
@@ -97,13 +101,13 @@ export function applyNavLocal(
     }
     switch (app) {
         case SimulatorApp.Phone:
-            pushScreen(next, state, 'phone', screen, isPhoneScreen);
+            pushScreen(next, state, SimulatorApp.Phone, screen, isPhoneScreen);
             break;
         case SimulatorApp.Email:
-            pushScreen(next, state, 'email', screen, isEmailScreen);
+            pushScreen(next, state, SimulatorApp.Email, screen, isEmailScreen);
             break;
         case SimulatorApp.Messages:
-            pushScreen(next, state, 'messages', screen, isMessagesScreen);
+            pushScreen(next, state, SimulatorApp.Messages, screen, isMessagesScreen);
             break;
         case SimulatorApp.Internet:
             updateInternetLocalNavigation(next, state, screen);
@@ -118,8 +122,13 @@ export function applyNavLocal(
 }
 
 function phoneParentScreen(screen: PhoneScreenId): PhoneScreenId | null {
-    if (screen === 'add_contact' || screen === 'directory') return 'contacts';
-    if (screen === 'incoming_call' || screen === 'voicemail') return 'history';
+    if (screen === SimulatorPhoneScreenId.AddContact || screen === SimulatorPhoneScreenId.Directory)
+        return SimulatorPhoneScreenId.Contacts;
+    if (
+        screen === SimulatorPhoneScreenId.IncomingCall ||
+        screen === SimulatorPhoneScreenId.Voicemail
+    )
+        return SimulatorPhoneScreenId.History;
     return null;
 }
 
@@ -155,12 +164,18 @@ export function applyBack(state: SimulatorViewState): SimulatorViewState {
         }
         case SimulatorApp.Email: {
             const screen = state.email.screen;
-            const isDetail = screen === 'detail' || screen === 'compose';
+            const isDetail =
+                screen === SimulatorEmailScreenId.Detail ||
+                screen === SimulatorEmailScreenId.Compose;
             const folder =
                 [...state.email.stack]
                     .reverse()
-                    .find((item) => item === 'list' || item === 'outbox' || item === 'trash') ??
-                DEFAULT_EMAIL_SCREEN;
+                    .find(
+                        (item) =>
+                            item === SimulatorEmailScreenId.List ||
+                            item === SimulatorEmailScreenId.Outbox ||
+                            item === SimulatorEmailScreenId.Trash,
+                    ) ?? DEFAULT_EMAIL_SCREEN;
             next.email = {
                 ...state.email,
                 screen: isDetail ? folder : screen,

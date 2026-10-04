@@ -5,7 +5,7 @@ const mockLogging = vi.hoisted(() => ({
     logSimulatorTransition: vi.fn(),
 }));
 
-vi.mock('../src/utils/simulatorTransitionLogger.js', () => ({
+vi.mock('../src/utils/telemetry/simulatorTransitionLogger.js', () => ({
     isSimulatorTransitionLoggingEnabled: () => mockLogging.enabled,
     logSimulatorTransition: mockLogging.logSimulatorTransition,
 }));

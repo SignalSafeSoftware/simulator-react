@@ -5,15 +5,15 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 import { minimalPhoneWorld } from './support/fixtureWorlds';
 import { TestRenderer, act } from './reactTestRenderer';
-import ContactsView from '../src/views/ContactsView';
-import EmailInboxList from '../src/views/EmailInboxList';
-import EmailMessageDetail from '../src/views/EmailMessageDetail';
-import MessagesThreadListView from '../src/views/MessagesThreadListView';
-import HomeSimulatorView from '../src/views/HomeSimulatorView';
-import PhoneDialView from '../src/views/PhoneDialView';
-import PhoneHistoryList from '../src/views/PhoneHistoryList';
-import PhoneSimulatorView from '../src/views/PhoneSimulatorView';
-import SmsSimulatorView from '../src/views/SmsSimulatorView';
+import ContactsView from '../src/views/contacts/ContactsView';
+import EmailInboxList from '../src/views/email/EmailInboxList';
+import EmailMessageDetail from '../src/views/email/EmailMessageDetail';
+import MessagesThreadListView from '../src/views/messages/MessagesThreadListView';
+import HomeSimulatorView from '../src/views/home/HomeSimulatorView';
+import PhoneDialView from '../src/views/phone/PhoneDialView';
+import PhoneHistoryList from '../src/views/phone/PhoneHistoryList';
+import PhoneSimulatorView from '../src/views/phone/PhoneSimulatorView';
+import SmsSimulatorView from '../src/views/messages/SmsSimulatorView';
 import {
     SIM_CHANNEL,
     SIM_CHANNEL_EMAIL,
@@ -59,9 +59,9 @@ import {
     SIM_SCREEN_HEADER_ROW,
     SIM_HOME_SETTINGS_BACK_BAR,
     SIM_HOME_SETTINGS_HEADER,
-} from '../src/ui/semanticSimulatorClasses.js';
-import { SIM_BTN_SCREEN_BACK } from '../src/ui/simulatorClasses.js';
-import PhoneIncomingScene from '../src/views/PhoneIncomingScene';
+} from '../src/ui/styles/semanticSimulatorClasses.js';
+import { SIM_BTN_SCREEN_BACK } from '../src/ui/styles/simulatorClasses.js';
+import PhoneIncomingScene from '../src/views/phone/PhoneIncomingScene';
 import { SimulatorDetailBackBar } from '../src/ui/layout/SimulatorDetail.js';
 import SimulatorErrorBoundary from '../src/SimulatorErrorBoundary';
 import UnsupportedScreenFallback from '../src/UnsupportedScreenFallback';

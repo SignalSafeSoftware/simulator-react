@@ -3,11 +3,11 @@ import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import SimulatorDeveloperToolsPanel from '../src/developer-tools/SimulatorDeveloperToolsPanel.js';
 import SimulatorAuthorPreviewReport from '../src/developer-tools/SimulatorAuthorPreviewReport.js';
-import PhoneDialView from '../src/views/PhoneDialView';
-import PhoneHistoryList from '../src/views/PhoneHistoryList';
-import PhoneSimulatorView from '../src/views/PhoneSimulatorView';
-import PhoneVoicemailView from '../src/views/PhoneVoicemailView';
-import SmsSimulatorView from '../src/views/SmsSimulatorView';
+import PhoneDialView from '../src/views/phone/PhoneDialView';
+import PhoneHistoryList from '../src/views/phone/PhoneHistoryList';
+import PhoneSimulatorView from '../src/views/phone/PhoneSimulatorView';
+import PhoneVoicemailView from '../src/views/phone/PhoneVoicemailView';
+import SmsSimulatorView from '../src/views/messages/SmsSimulatorView';
 
 import { TestRenderer, act } from './reactTestRenderer';
 

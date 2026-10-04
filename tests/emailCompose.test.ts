@@ -3,7 +3,7 @@ import { createElement } from 'react';
 import TestRenderer from 'react-test-renderer';
 import { act } from 'react-test-renderer';
 import { expect, it, vi } from 'vitest';
-import EmailComposeView from '../src/views/EmailComposeView.js';
+import EmailComposeView from '../src/views/email/EmailComposeView.js';
 
 it('keeps controlled Bcc and body on failure and clears only after success', async () => {
     const draft = {

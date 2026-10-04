@@ -1,3 +1,4 @@
+import { SimulatorChannel } from '../types/session.js';
 import SimulatorNavIcon from '../ui/navigation/SimulatorNavIcon.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
@@ -14,7 +15,7 @@ import {
     SIM_FLEX_CENTER,
     SIM_FLEX_GROW_1,
     SIM_TEXT_SM,
-} from '../ui/simulatorClasses.js';
+} from '../ui/styles/simulatorClasses.js';
 
 export interface SecondaryMenuItem {
     id: string;
@@ -44,11 +45,11 @@ export interface PhoneSimulatorShellProps {
 }
 
 const PRIMARY_CHANNELS = [
-    { id: 'contacts', labelKey: 'nav.phone', icon: '📞' },
-    { id: 'email', labelKey: 'nav.email', icon: '📧' },
-    { id: 'browser', labelKey: 'nav.internet', icon: '🌐' },
-    { id: 'sms', labelKey: 'nav.messages', icon: '💬' },
-    { id: 'home', labelKey: 'nav.home', icon: '🏠' },
+    { id: SimulatorChannel.Contacts, labelKey: 'nav.phone', icon: '📞' },
+    { id: SimulatorChannel.Email, labelKey: 'nav.email', icon: '📧' },
+    { id: SimulatorChannel.Browser, labelKey: 'nav.internet', icon: '🌐' },
+    { id: SimulatorChannel.Sms, labelKey: 'nav.messages', icon: '💬' },
+    { id: SimulatorChannel.Home, labelKey: 'nav.home', icon: '🏠' },
 ] as const;
 
 function getHeaderClass(hasTitle: boolean): string {

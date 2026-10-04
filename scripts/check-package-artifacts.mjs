@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 
-const root = fileURLToPath(new URL('../', import.meta.url));
+const root = fileURLToPath(new URL('..', import.meta.url));
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const groups = [pkg.dependencies, pkg.devDependencies, pkg.resolutions];
 const local = new Set(groups.flatMap(group => Object.values(group ?? {}).filter(range => range.startsWith('file:'))));

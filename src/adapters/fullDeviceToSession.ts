@@ -1,3 +1,10 @@
+import {
+    BrowserLayout,
+    CallHistoryEntryKind,
+    DEFAULT_INTERNET_SCREEN,
+    MessageSender,
+    SimulatorChannel,
+} from '../types/session.js';
 import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Maps full-device payload (simulator) sections to unified session slice types.
@@ -5,7 +12,6 @@ import { englishLocale } from '../i18n/englishLocale.js';
  */
 
 import type {
-    SimulatorChannel,
     SimulatorInboxRow,
     SimulatorEmailPayload,
     SimulatorSmsPayload,
@@ -14,7 +20,6 @@ import type {
     SimulatorBrowserPage,
     SimulatorPhonePayload,
     SimulatorCallHistoryEntry,
-    CallHistoryEntryKind,
     SimulatorSessionDevice,
     SimulatorSessionContact,
     SimulatorDirectoryEntry,
@@ -24,8 +29,8 @@ import type {
     SimulatorHomeSettingsSection,
 } from '../types/session.js';
 import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../constants.js';
-import { getFieldInputType } from '../utils/browserFieldType.js';
-import { type AttachmentBehavior, type EmailTemplateContent } from '../types/template.js';
+import { FieldInputType, getFieldInputType } from '../utils/payload/browserFieldType.js';
+import { AttachmentBehavior, type EmailTemplateContent } from '../types/template.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type {
     SimulatorContact,
@@ -50,15 +55,15 @@ function nullableString(value: unknown): string | null {
 export function appToChannel(app: SimulatorApp): SimulatorChannel {
     switch (app) {
         case SimulatorApp.Messages:
-            return 'sms';
+            return SimulatorChannel.Sms;
         case SimulatorApp.Internet:
-            return 'browser';
+            return SimulatorChannel.Browser;
         case SimulatorApp.Phone:
         case SimulatorApp.Email:
         case SimulatorApp.Home:
             return app;
         default:
-            return 'email';
+            return SimulatorChannel.Email;
     }
 }
 
@@ -142,7 +147,12 @@ export function mapContacts(
 }
 
 function mapAttachmentBehavior(raw: string | undefined): AttachmentBehavior | undefined {
-    if (raw === 'download' || raw === 'open' || raw === 'macro_prompt') return raw;
+    if (
+        raw === AttachmentBehavior.Download ||
+        raw === AttachmentBehavior.Open ||
+        raw === AttachmentBehavior.MacroPrompt
+    )
+        return raw;
     return undefined;
 }
 
@@ -280,7 +290,8 @@ export function mapMessages(
               }))
         : [];
 
-    const fromRole = (m: { from?: string }) => (m.from === 'me' ? 'me' : 'them');
+    const fromRole = (m: { from?: string }) =>
+        m.from === MessageSender.Me ? MessageSender.Me : MessageSender.Them;
     return {
         thread: {
             messages: (threadDetail?.messages ?? []).map((m) => ({
@@ -312,9 +323,9 @@ export function mapMessages(
 /** Map device history entry direction to CallHistoryEntryKind. */
 function mapHistoryKind(direction: string | undefined): CallHistoryEntryKind {
     const d = (direction ?? '').toLowerCase();
-    if (d === 'missed' || d === 'voicemail') return d;
-    if (d === 'out') return 'outgoing';
-    return 'incoming';
+    if (d === CallHistoryEntryKind.Missed || d === CallHistoryEntryKind.Voicemail) return d;
+    if (d === 'out') return CallHistoryEntryKind.Outgoing;
+    return CallHistoryEntryKind.Incoming;
 }
 
 /** Map phone app section to session phone payload (incoming_call, history, voicemail). */
@@ -374,8 +385,8 @@ function mapFormFields(
 ): NonNullable<SimulatorBrowserPage['formFields']> {
     if (fields == null || fields.length === 0) {
         return [
-            { name: 'username', type: 'text', label: 'Username' },
-            { name: 'password', type: 'password', label: 'Password' },
+            { name: 'username', type: FieldInputType.Text, label: 'Username' },
+            { name: 'password', type: FieldInputType.Password, label: 'Password' },
         ];
     }
     return fields.map((f) => ({
@@ -408,7 +419,7 @@ export function mapInternet(
             id: pageId,
             url: normalizePageUrl(p.url),
             title: stringOr(p.title, 'Page'),
-            layout: stringOr(p.layout, 'content'),
+            layout: stringOr(p.layout, BrowserLayout.Content),
             content,
             buttons: p.buttons?.map((button) => {
                 if (Object.hasOwn(button, 'targetPageId')) {
@@ -443,7 +454,7 @@ export function mapInternet(
 
     return {
         pages,
-        defaultPageId: pages[0]?.id ?? 'landing',
+        defaultPageId: pages[0]?.id ?? DEFAULT_INTERNET_SCREEN,
     };
 }
 

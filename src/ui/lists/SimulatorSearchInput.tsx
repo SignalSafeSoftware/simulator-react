@@ -4,7 +4,7 @@ import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
  */
 import { SimulatorInput } from '../primitives.js';
 import { simInput } from '../../simulatorStyles.js';
-import { joinClasses } from '../simulatorClasses.js';
+import { joinClasses } from '../styles/simulatorClasses.js';
 
 export interface SimulatorSearchInputProps {
     value: string;

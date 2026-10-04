@@ -1,8 +1,10 @@
 import { utilityEnglish } from './utilityEnglish.js';
 import { screenEnglish } from './screenEnglish.js';
+import { appsEnglish } from './appsEnglish.js';
 /** English is the shipped language. Hosts own additional catalogs and locale choice. */
 export const simulatorEnglish = {
     ...utilityEnglish,
+    ...appsEnglish,
     'a11y.back.to.list': 'Back to list',
     'a11y.back': 'Back',
     'a11y.search.contacts': 'Search contacts',

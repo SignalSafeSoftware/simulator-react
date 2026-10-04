@@ -1,0 +1,44 @@
+import { englishLocale } from '../../i18n/englishLocale.js';
+/**
+ * Simulator key naming patterns (advisory). Used by lint to suggest conventions
+ * without rejecting existing data. See docs/simulator/simulator-authoring.md (§ Key and identifier naming).
+ */
+
+/** Max length for template key (backend SlugField). */
+const TEMPLATE_KEY_MAX_LENGTH = 64;
+
+/** Max length for entity ids (contact, page, directory, message) — advisory. */
+const ENTITY_ID_MAX_LENGTH = 128;
+
+export type KeyFamily = 'template' | 'contact' | 'page' | 'directory' | 'message' | 'thread';
+
+/**
+ * Advisory checks for key naming. Returns a short message if the key could be improved; null if fine or skipped.
+ * Does not reject existing identifiers.
+ */
+export function keyNamingSuggestion(key: string, family: KeyFamily): string | null {
+    if (key.length === 0)
+        return englishLocale.t('copy.simulatorKeyPatterns.key.should.be.non.empty');
+    if (key.length > ENTITY_ID_MAX_LENGTH)
+        return `Key is longer than ${ENTITY_ID_MAX_LENGTH} chars; consider shortening.`;
+    if (family === 'template' && key.length > TEMPLATE_KEY_MAX_LENGTH) {
+        return `Template key exceeds ${TEMPLATE_KEY_MAX_LENGTH} chars (backend limit).`;
+    }
+    if (/\s/.test(key))
+        return englishLocale.t(
+            'copy.simulatorKeyPatterns.key.contains.spaces.prefer.lowercase.hyphen.separated.e.g.my.key',
+        );
+    if (/(?:^-|-$)/.test(key))
+        return englishLocale.t(
+            'copy.simulatorKeyPatterns.key.has.leading.or.trailing.hyphen.remove',
+        );
+    if (/[A-Z]/.test(key))
+        return englishLocale.t(
+            'copy.simulatorKeyPatterns.key.contains.uppercase.prefer.lowercase.e.g.my.key',
+        );
+    if (/_[a-z]/.test(key) || key.includes('__'))
+        return englishLocale.t(
+            'copy.simulatorKeyPatterns.key.contains.underscores.prefer.hyphens.for.new.keys',
+        );
+    return null;
+}

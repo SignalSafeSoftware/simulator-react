@@ -1,6 +1,13 @@
 import { type TreeSpecIssue } from '@signalsafe/tree-spec';
 
-export type SimulatorDeveloperPreset = 'off' | 'preview' | 'qa' | 'developer';
+export const SimulatorDeveloperPreset = Object.freeze({
+    Off: 'off',
+    Preview: 'preview',
+    Qa: 'qa',
+    Developer: 'developer',
+} as const);
+export type SimulatorDeveloperPreset =
+    (typeof SimulatorDeveloperPreset)[keyof typeof SimulatorDeveloperPreset];
 
 export type SimulatorDeveloperSectionKey =
     | 'summary'
@@ -78,7 +85,7 @@ const PRESET_SECTIONS: Record<SimulatorDeveloperPreset, Required<SimulatorDevelo
 };
 
 function isDeveloperPreset(value: unknown): value is SimulatorDeveloperPreset {
-    return value === 'off' || value === 'preview' || value === 'qa' || value === 'developer';
+    return Object.values<unknown>(SimulatorDeveloperPreset).includes(value);
 }
 
 function normalizeSections(
@@ -115,7 +122,7 @@ export function resolveSimulatorDeveloperTools(
     tools?: SimulatorDeveloperTools,
 ): ResolvedSimulatorDeveloperTools {
     const rawPreset = tools?.preset;
-    const preset = isDeveloperPreset(rawPreset) ? rawPreset : 'off';
+    const preset = isDeveloperPreset(rawPreset) ? rawPreset : SimulatorDeveloperPreset.Off;
     const sections = normalizeSections({
         ...PRESET_SECTIONS[preset],
         ...tools?.sections,

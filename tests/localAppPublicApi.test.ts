@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, create } from 'react-test-renderer';
 import { expect, it, vi } from 'vitest';
-import PhoneHistoryDetail from '../src/views/PhoneHistoryDetail.js';
+import PhoneHistoryDetail from '../src/views/phone/PhoneHistoryDetail.js';
 import {
     SimulatorAppsProvider,
     useSimulatorAppsHost,

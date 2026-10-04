@@ -65,7 +65,7 @@ vi.mock('../src/developer-tools/SimulatorDeveloperToolsPanel.js', () => ({
     },
 }));
 
-vi.mock('../src/views/ContactsView.js', () => ({
+vi.mock('../src/views/contacts/ContactsView.js', () => ({
     default: (props: Record<string, unknown>) => {
         mockState.latestContactsProps = props;
         return null;
@@ -89,18 +89,18 @@ vi.mock('../src/UnsupportedScreenFallback.js', () => ({
         React.createElement('div', { 'data-testid': 'unsupported-screen' }, `${app}:${screen}`),
 }));
 
-vi.mock('../src/utils/screenMetadata.js', () => ({
+vi.mock('../src/utils/navigation/screenMetadata.js', () => ({
     getScreenMetadata: () => ({ app: 'email', screen: 'list', label: 'Inbox' }),
 }));
 
-vi.mock('../src/utils/simulatorCapabilities.js', () => ({
+vi.mock('../src/utils/payload/simulatorCapabilities.js', () => ({
     getSimulatorCapabilities: () => ({
         phone: { dial: true, voicemail: true, directory: true },
         home: { store: true, settings: true },
     }),
 }));
 
-vi.mock('../src/utils/phoneLocalNavItems.js', () => ({
+vi.mock('../src/utils/navigation/phoneLocalNavItems.js', () => ({
     getPhoneLocalNavItems: () => [
         { id: 'history', label: 'History', icon: 'H' },
         { id: 'contacts', label: 'Contacts', icon: 'C' },
@@ -109,17 +109,17 @@ vi.mock('../src/utils/phoneLocalNavItems.js', () => ({
     ],
 }));
 
-vi.mock('../src/utils/simulatorSnapshot.js', () => ({
+vi.mock('../src/utils/telemetry/simulatorSnapshot.js', () => ({
     captureSimulatorSnapshot: mockState.captureSimulatorSnapshot,
     snapshotToJson: mockState.snapshotToJson,
 }));
 
-vi.mock('../src/utils/simulatorNavGraph.js', () => ({
+vi.mock('../src/utils/navigation/simulatorNavGraph.js', () => ({
     buildSimulatorNavGraph: mockState.buildSimulatorNavGraph,
     simulatorNavGraphToJson: mockState.simulatorNavGraphToJson,
 }));
 
-vi.mock('../src/utils/simulatorKeyboardCommands.js', () => ({
+vi.mock('../src/utils/navigation/simulatorKeyboardCommands.js', () => ({
     handleSimulatorKeyboard: mockState.handleSimulatorKeyboard,
     focusSimulatorSearch: () => mockState.focusSimulatorSearch(),
     SIMULATOR_KEYBOARD_COMMANDS: [{ keys: '?', description: 'Show shortcuts' }],

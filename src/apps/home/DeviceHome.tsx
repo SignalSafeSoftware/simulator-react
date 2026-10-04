@@ -1,8 +1,13 @@
 import type { ReactNode } from 'react';
 import { Vault as VaultIcon, Images, Settings, LockKeyhole } from 'lucide-react';
-import SimulatorScreenTile from '../../views/SimulatorScreenTile.js';
-import { SIM_SCREEN_HEADER } from '../../ui/semanticSimulatorClasses.js';
-import { SimulatorButtonTone, simBtnToneClass, joinClasses } from '../../ui/simulatorClasses.js';
+import SimulatorScreenTile from '../../views/shared/SimulatorScreenTile.js';
+import { SIM_SCREEN_HEADER } from '../../ui/styles/semanticSimulatorClasses.js';
+import {
+    SimulatorButtonTone,
+    simBtnToneClass,
+    joinClasses,
+} from '../../ui/styles/simulatorClasses.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 
 const TILE_ICON_SIZE = 48;
 const TILE_ICON_STROKE_WIDTH = 1.5;
@@ -25,13 +30,14 @@ export default function DeviceHome({
     onOpenPhotos,
     onLock,
 }: Readonly<DeviceHomeProps>) {
+    const { t } = useSimulatorLocale();
     return (
         <section className="simulator-home-screen">
-            <h2 className={joinClasses(SIM_SCREEN_HEADER, 'home-banner')}>Home</h2>
+            <h2 className={joinClasses(SIM_SCREEN_HEADER, 'home-banner')}>{t('app.home.title')}</h2>
             {homeHeader}
             <div className="prototype-home">
                 <SimulatorScreenTile
-                    label="Settings"
+                    label={t('app.home.settings')}
                     onClick={onOpenSettings}
                     icon={
                         <Settings
@@ -42,7 +48,7 @@ export default function DeviceHome({
                     }
                 />
                 <SimulatorScreenTile
-                    label="Vault"
+                    label={t('app.home.vault')}
                     onClick={onOpenVault}
                     icon={
                         <VaultIcon
@@ -53,7 +59,7 @@ export default function DeviceHome({
                     }
                 />
                 <SimulatorScreenTile
-                    label="Photos"
+                    label={t('app.home.photos')}
                     onClick={onOpenPhotos}
                     icon={
                         <Images
@@ -69,7 +75,7 @@ export default function DeviceHome({
                     className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
                     onClick={onLock}
                 >
-                    <LockKeyhole size={18} aria-hidden="true" /> Lock device
+                    <LockKeyhole size={18} aria-hidden="true" /> {t('app.home.lock')}
                 </button>
             )}
         </section>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect, it, vi } from 'vitest';
-import EmailMessageDetail from '../src/views/EmailMessageDetail.js';
+import EmailMessageDetail from '../src/views/email/EmailMessageDetail.js';
 import { TestRenderer, act } from './reactTestRenderer.js';
 
 it('dispatches supported email effects once without navigating', async () => {

@@ -1,11 +1,11 @@
 import type { ReactTestRenderer } from 'react-test-renderer';
-import { contactMatchesSearch } from '../src/views/ContactsView.js';
+import { contactMatchesSearch } from '../src/views/contacts/ContactsView.js';
 import { createElement } from 'react';
 import TestRenderer from 'react-test-renderer';
 import { act } from 'react-test-renderer';
 import { expect, it, vi } from 'vitest';
-import ContactsView from '../src/views/ContactsView.js';
-import PhoneHistoryList from '../src/views/PhoneHistoryList.js';
+import ContactsView from '../src/views/contacts/ContactsView.js';
+import PhoneHistoryList from '../src/views/phone/PhoneHistoryList.js';
 import { PhoneNumberFormatContext } from '../src/contract/phonePresentation.js';
 
 it('formats contact labels without changing the contact passed to navigation', async () => {

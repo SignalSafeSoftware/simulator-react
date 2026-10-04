@@ -1,6 +1,6 @@
 {
   "name": "@signalsafe/simulator-react",
-  "version": "0.19.0-cleanup.13",
+  "version": "0.19.0",
   "type": "module",
   "description": "UI-kit agnostic React device simulator shell, session state, and utilities (no routing or API).",
   "license": "MIT",
@@ -319,150 +319,150 @@
       "import": "./dist/ui/renderSlots.js",
       "default": "./dist/ui/renderSlots.js"
     },
-    "./ui/semanticSimulatorClasses": {
-      "types": "./dist/ui/semanticSimulatorClasses.d.ts",
-      "import": "./dist/ui/semanticSimulatorClasses.js",
-      "default": "./dist/ui/semanticSimulatorClasses.js"
+    "./ui/styles/semanticSimulatorClasses": {
+      "types": "./dist/ui/styles/semanticSimulatorClasses.d.ts",
+      "import": "./dist/ui/styles/semanticSimulatorClasses.js",
+      "default": "./dist/ui/styles/semanticSimulatorClasses.js"
     },
-    "./ui/simulatorClasses": {
-      "types": "./dist/ui/simulatorClasses.d.ts",
-      "import": "./dist/ui/simulatorClasses.js",
-      "default": "./dist/ui/simulatorClasses.js"
+    "./ui/styles/simulatorClasses": {
+      "types": "./dist/ui/styles/simulatorClasses.d.ts",
+      "import": "./dist/ui/styles/simulatorClasses.js",
+      "default": "./dist/ui/styles/simulatorClasses.js"
     },
-    "./utils/contactNormalization": {
-      "types": "./dist/utils/contactNormalization.d.ts",
-      "import": "./dist/utils/contactNormalization.js",
-      "default": "./dist/utils/contactNormalization.js"
+    "./utils/payload/contactNormalization": {
+      "types": "./dist/utils/payload/contactNormalization.d.ts",
+      "import": "./dist/utils/payload/contactNormalization.js",
+      "default": "./dist/utils/payload/contactNormalization.js"
     },
-    "./utils/lintSimulatorPayload": {
-      "types": "./dist/utils/lintSimulatorPayload.d.ts",
-      "import": "./dist/utils/lintSimulatorPayload.js",
-      "default": "./dist/utils/lintSimulatorPayload.js"
+    "./utils/payload/lintSimulatorPayload": {
+      "types": "./dist/utils/payload/lintSimulatorPayload.d.ts",
+      "import": "./dist/utils/payload/lintSimulatorPayload.js",
+      "default": "./dist/utils/payload/lintSimulatorPayload.js"
     },
-    "./utils/phoneLocalNavItems": {
-      "types": "./dist/utils/phoneLocalNavItems.d.ts",
-      "import": "./dist/utils/phoneLocalNavItems.js",
-      "default": "./dist/utils/phoneLocalNavItems.js"
+    "./utils/navigation/phoneLocalNavItems": {
+      "types": "./dist/utils/navigation/phoneLocalNavItems.d.ts",
+      "import": "./dist/utils/navigation/phoneLocalNavItems.js",
+      "default": "./dist/utils/navigation/phoneLocalNavItems.js"
     },
-    "./utils/previewFallbackWorld": {
-      "types": "./dist/utils/previewFallbackWorld.d.ts",
-      "import": "./dist/utils/previewFallbackWorld.js",
-      "default": "./dist/utils/previewFallbackWorld.js"
+    "./utils/preview/previewFallbackWorld": {
+      "types": "./dist/utils/preview/previewFallbackWorld.d.ts",
+      "import": "./dist/utils/preview/previewFallbackWorld.js",
+      "default": "./dist/utils/preview/previewFallbackWorld.js"
     },
-    "./utils/simulatorActionTaxonomy": {
-      "types": "./dist/utils/simulatorActionTaxonomy.d.ts",
-      "import": "./dist/utils/simulatorActionTaxonomy.js",
-      "default": "./dist/utils/simulatorActionTaxonomy.js"
+    "./utils/telemetry/simulatorActionTaxonomy": {
+      "types": "./dist/utils/telemetry/simulatorActionTaxonomy.d.ts",
+      "import": "./dist/utils/telemetry/simulatorActionTaxonomy.js",
+      "default": "./dist/utils/telemetry/simulatorActionTaxonomy.js"
     },
-    "./utils/simulatorCapabilities": {
-      "types": "./dist/utils/simulatorCapabilities.d.ts",
-      "import": "./dist/utils/simulatorCapabilities.js",
-      "default": "./dist/utils/simulatorCapabilities.js"
+    "./utils/payload/simulatorCapabilities": {
+      "types": "./dist/utils/payload/simulatorCapabilities.d.ts",
+      "import": "./dist/utils/payload/simulatorCapabilities.js",
+      "default": "./dist/utils/payload/simulatorCapabilities.js"
     },
-    "./utils/simulatorDeepLink": {
-      "types": "./dist/utils/simulatorDeepLink.d.ts",
-      "import": "./dist/utils/simulatorDeepLink.js",
-      "default": "./dist/utils/simulatorDeepLink.js"
+    "./utils/navigation/simulatorDeepLink": {
+      "types": "./dist/utils/navigation/simulatorDeepLink.d.ts",
+      "import": "./dist/utils/navigation/simulatorDeepLink.js",
+      "default": "./dist/utils/navigation/simulatorDeepLink.js"
     },
-    "./utils/simulatorEventMapper": {
-      "types": "./dist/utils/simulatorEventMapper.d.ts",
-      "import": "./dist/utils/simulatorEventMapper.js",
-      "default": "./dist/utils/simulatorEventMapper.js"
+    "./utils/telemetry/simulatorEventMapper": {
+      "types": "./dist/utils/telemetry/simulatorEventMapper.d.ts",
+      "import": "./dist/utils/telemetry/simulatorEventMapper.js",
+      "default": "./dist/utils/telemetry/simulatorEventMapper.js"
     },
-    "./utils/simulatorNavGraph": {
-      "types": "./dist/utils/simulatorNavGraph.d.ts",
-      "import": "./dist/utils/simulatorNavGraph.js",
-      "default": "./dist/utils/simulatorNavGraph.js"
+    "./utils/navigation/simulatorNavGraph": {
+      "types": "./dist/utils/navigation/simulatorNavGraph.d.ts",
+      "import": "./dist/utils/navigation/simulatorNavGraph.js",
+      "default": "./dist/utils/navigation/simulatorNavGraph.js"
     },
-    "./utils/simulatorNavigationPolicy": {
-      "types": "./dist/utils/simulatorNavigationPolicy.d.ts",
-      "import": "./dist/utils/simulatorNavigationPolicy.js",
-      "default": "./dist/utils/simulatorNavigationPolicy.js"
+    "./utils/navigation/simulatorNavigationPolicy": {
+      "types": "./dist/utils/navigation/simulatorNavigationPolicy.d.ts",
+      "import": "./dist/utils/navigation/simulatorNavigationPolicy.js",
+      "default": "./dist/utils/navigation/simulatorNavigationPolicy.js"
     },
-    "./utils/simulatorPayloadDiff": {
-      "types": "./dist/utils/simulatorPayloadDiff.d.ts",
-      "import": "./dist/utils/simulatorPayloadDiff.js",
-      "default": "./dist/utils/simulatorPayloadDiff.js"
+    "./utils/payload/simulatorPayloadDiff": {
+      "types": "./dist/utils/payload/simulatorPayloadDiff.d.ts",
+      "import": "./dist/utils/payload/simulatorPayloadDiff.js",
+      "default": "./dist/utils/payload/simulatorPayloadDiff.js"
     },
-    "./utils/simulatorPreviewReport": {
-      "types": "./dist/utils/simulatorPreviewReport.d.ts",
-      "import": "./dist/utils/simulatorPreviewReport.js",
-      "default": "./dist/utils/simulatorPreviewReport.js"
+    "./utils/preview/simulatorPreviewReport": {
+      "types": "./dist/utils/preview/simulatorPreviewReport.d.ts",
+      "import": "./dist/utils/preview/simulatorPreviewReport.js",
+      "default": "./dist/utils/preview/simulatorPreviewReport.js"
     },
-    "./utils/simulatorReachability": {
-      "types": "./dist/utils/simulatorReachability.d.ts",
-      "import": "./dist/utils/simulatorReachability.js",
-      "default": "./dist/utils/simulatorReachability.js"
+    "./utils/navigation/simulatorReachability": {
+      "types": "./dist/utils/navigation/simulatorReachability.d.ts",
+      "import": "./dist/utils/navigation/simulatorReachability.js",
+      "default": "./dist/utils/navigation/simulatorReachability.js"
     },
-    "./utils/simulatorRealismChecks": {
-      "types": "./dist/utils/simulatorRealismChecks.d.ts",
-      "import": "./dist/utils/simulatorRealismChecks.js",
-      "default": "./dist/utils/simulatorRealismChecks.js"
+    "./utils/payload/simulatorRealismChecks": {
+      "types": "./dist/utils/payload/simulatorRealismChecks.d.ts",
+      "import": "./dist/utils/payload/simulatorRealismChecks.js",
+      "default": "./dist/utils/payload/simulatorRealismChecks.js"
     },
-    "./utils/simulatorSecondaryMenuHelpers": {
-      "types": "./dist/utils/simulatorSecondaryMenuHelpers.d.ts",
-      "import": "./dist/utils/simulatorSecondaryMenuHelpers.js",
-      "default": "./dist/utils/simulatorSecondaryMenuHelpers.js"
+    "./utils/navigation/simulatorSecondaryMenuHelpers": {
+      "types": "./dist/utils/navigation/simulatorSecondaryMenuHelpers.d.ts",
+      "import": "./dist/utils/navigation/simulatorSecondaryMenuHelpers.js",
+      "default": "./dist/utils/navigation/simulatorSecondaryMenuHelpers.js"
     },
-    "./utils/simulatorWorldSections": {
-      "types": "./dist/utils/simulatorWorldSections.d.ts",
-      "import": "./dist/utils/simulatorWorldSections.js",
-      "default": "./dist/utils/simulatorWorldSections.js"
+    "./utils/payload/simulatorWorldSections": {
+      "types": "./dist/utils/payload/simulatorWorldSections.d.ts",
+      "import": "./dist/utils/payload/simulatorWorldSections.js",
+      "default": "./dist/utils/payload/simulatorWorldSections.js"
     },
-    "./utils/validateSimulatorPayload": {
-      "types": "./dist/utils/validateSimulatorPayload.d.ts",
-      "import": "./dist/utils/validateSimulatorPayload.js",
-      "default": "./dist/utils/validateSimulatorPayload.js"
+    "./utils/payload/validateSimulatorPayload": {
+      "types": "./dist/utils/payload/validateSimulatorPayload.d.ts",
+      "import": "./dist/utils/payload/validateSimulatorPayload.js",
+      "default": "./dist/utils/payload/validateSimulatorPayload.js"
     },
-    "./views/ContactsView": {
-      "types": "./dist/views/ContactsView.d.ts",
-      "import": "./dist/views/ContactsView.js",
-      "default": "./dist/views/ContactsView.js"
+    "./views/contacts/ContactsView": {
+      "types": "./dist/views/contacts/ContactsView.d.ts",
+      "import": "./dist/views/contacts/ContactsView.js",
+      "default": "./dist/views/contacts/ContactsView.js"
     },
-    "./views/EmailComposeView": {
-      "types": "./dist/views/EmailComposeView.d.ts",
-      "import": "./dist/views/EmailComposeView.js",
-      "default": "./dist/views/EmailComposeView.js"
+    "./views/email/EmailComposeView": {
+      "types": "./dist/views/email/EmailComposeView.d.ts",
+      "import": "./dist/views/email/EmailComposeView.js",
+      "default": "./dist/views/email/EmailComposeView.js"
     },
-    "./views/MessagesNewThreadView": {
-      "types": "./dist/views/MessagesNewThreadView.d.ts",
-      "import": "./dist/views/MessagesNewThreadView.js",
-      "default": "./dist/views/MessagesNewThreadView.js"
+    "./views/messages/MessagesNewThreadView": {
+      "types": "./dist/views/messages/MessagesNewThreadView.d.ts",
+      "import": "./dist/views/messages/MessagesNewThreadView.js",
+      "default": "./dist/views/messages/MessagesNewThreadView.js"
     },
-    "./views/PhoneCallView": {
-      "types": "./dist/views/PhoneCallView.d.ts",
-      "import": "./dist/views/PhoneCallView.js",
-      "default": "./dist/views/PhoneCallView.js"
+    "./views/phone/PhoneCallView": {
+      "types": "./dist/views/phone/PhoneCallView.d.ts",
+      "import": "./dist/views/phone/PhoneCallView.js",
+      "default": "./dist/views/phone/PhoneCallView.js"
     },
-    "./views/PhoneContactEditor": {
-      "types": "./dist/views/PhoneContactEditor.d.ts",
-      "import": "./dist/views/PhoneContactEditor.js",
-      "default": "./dist/views/PhoneContactEditor.js"
+    "./views/contacts/PhoneContactEditor": {
+      "types": "./dist/views/contacts/PhoneContactEditor.d.ts",
+      "import": "./dist/views/contacts/PhoneContactEditor.js",
+      "default": "./dist/views/contacts/PhoneContactEditor.js"
     },
-    "./views/PhoneHistoryDetail": {
-      "types": "./dist/views/PhoneHistoryDetail.d.ts",
-      "import": "./dist/views/PhoneHistoryDetail.js",
-      "default": "./dist/views/PhoneHistoryDetail.js"
+    "./views/phone/PhoneHistoryDetail": {
+      "types": "./dist/views/phone/PhoneHistoryDetail.d.ts",
+      "import": "./dist/views/phone/PhoneHistoryDetail.js",
+      "default": "./dist/views/phone/PhoneHistoryDetail.js"
     },
-    "./views/PhoneHistoryList": {
-      "types": "./dist/views/PhoneHistoryList.d.ts",
-      "import": "./dist/views/PhoneHistoryList.js",
-      "default": "./dist/views/PhoneHistoryList.js"
+    "./views/phone/PhoneHistoryList": {
+      "types": "./dist/views/phone/PhoneHistoryList.d.ts",
+      "import": "./dist/views/phone/PhoneHistoryList.js",
+      "default": "./dist/views/phone/PhoneHistoryList.js"
     },
-    "./views/PhoneIncomingScene": {
-      "types": "./dist/views/PhoneIncomingScene.d.ts",
-      "import": "./dist/views/PhoneIncomingScene.js",
-      "default": "./dist/views/PhoneIncomingScene.js"
+    "./views/phone/PhoneIncomingScene": {
+      "types": "./dist/views/phone/PhoneIncomingScene.d.ts",
+      "import": "./dist/views/phone/PhoneIncomingScene.js",
+      "default": "./dist/views/phone/PhoneIncomingScene.js"
     },
-    "./views/PhoneKeypad": {
-      "types": "./dist/views/PhoneKeypad.d.ts",
-      "import": "./dist/views/PhoneKeypad.js",
-      "default": "./dist/views/PhoneKeypad.js"
+    "./views/phone/PhoneKeypad": {
+      "types": "./dist/views/phone/PhoneKeypad.d.ts",
+      "import": "./dist/views/phone/PhoneKeypad.js",
+      "default": "./dist/views/phone/PhoneKeypad.js"
     },
-    "./views/SimulatorScreenTile": {
-      "types": "./dist/views/SimulatorScreenTile.d.ts",
-      "import": "./dist/views/SimulatorScreenTile.js",
-      "default": "./dist/views/SimulatorScreenTile.js"
+    "./views/shared/SimulatorScreenTile": {
+      "types": "./dist/views/shared/SimulatorScreenTile.d.ts",
+      "import": "./dist/views/shared/SimulatorScreenTile.js",
+      "default": "./dist/views/shared/SimulatorScreenTile.js"
     }
   },
   "files": [
@@ -472,9 +472,7 @@
     "docs",
     "CHANGELOG.md",
     "RELEASING.md",
-    "vendor/npm/manifest.json",
-    "MIGRATION.md",
-    "vendor/npm/signalsafe-simulator-core-0.5.0-cleanup.3.tgz"
+    "MIGRATION.md"
   ],
   "engines": {
     "node": ">=19.0.0"
@@ -501,7 +499,7 @@
     "check:release": "node scripts/check-package-artifacts.mjs --release"
   },
   "dependencies": {
-    "@signalsafe/simulator-core": "file:vendor/npm/signalsafe-simulator-core-0.5.0-cleanup.3.tgz",
+    "@signalsafe/simulator-core": "0.5.0",
     "@signalsafe/tree-spec": "^0.4.1",
     "lucide-react": "^1.31.0"
   },
@@ -524,8 +522,5 @@
     "vite": "^8.3.0",
     "vitest": "^5.0.1",
     "@types/node": "22.17.0"
-  },
-  "resolutions": {
-    "@signalsafe/simulator-core": "file:vendor/npm/signalsafe-simulator-core-0.5.0-cleanup.3.tgz"
   }
 }

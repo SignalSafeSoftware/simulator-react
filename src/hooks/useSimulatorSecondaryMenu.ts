@@ -10,13 +10,13 @@ import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 
 import { useMemo } from 'react';
 import type { SimulatorSessionState } from '../types/session.js';
-import type { SimulatorCapabilities } from '../utils/simulatorCapabilities.js';
-import { getPhoneLocalNavItems } from '../utils/phoneLocalNavItems.js';
+import type { SimulatorCapabilities } from '../utils/payload/simulatorCapabilities.js';
+import { getPhoneLocalNavItems } from '../utils/navigation/phoneLocalNavItems.js';
 import {
     getEmailSecondaryItems,
     getEmailSecondaryActiveId,
     getPhoneSecondaryActiveId,
-} from '../utils/simulatorSecondaryMenuHelpers.js';
+} from '../utils/navigation/simulatorSecondaryMenuHelpers.js';
 
 export interface SimulatorSecondaryMenuConfig {
     items: Array<{ id: string; label: string; icon: string }>;

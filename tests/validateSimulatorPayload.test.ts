@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { validateSimulatorPayload } from '../src/utils/validateSimulatorPayload';
+import { validateSimulatorPayload } from '../src/utils/payload/validateSimulatorPayload';
 
 describe('validateSimulatorPayload', () => {
     it('accepts a valid email payload', () => {

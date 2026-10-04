@@ -4,11 +4,12 @@
  */
 import { simLocalNav, simSpacing } from '../../simulatorStyles.js';
 import {
-    joinClasses,
+    SIM_BORDER_NONE,
     SIM_BORDER_SECONDARY,
     SIM_FLEX_GROW_1,
     SIM_TEXT_SM,
-} from '../simulatorClasses.js';
+    joinClasses,
+} from '../styles/simulatorClasses.js';
 
 export interface SimulatorLocalNavItem {
     id: string;
@@ -50,7 +51,7 @@ export default function SimulatorLocalNav({
                         className={joinClasses(
                             SIM_FLEX_GROW_1,
                             simSpacing.py2,
-                            'simulator-border--none',
+                            SIM_BORDER_NONE,
                             SIM_TEXT_SM,
                             !isLast && joinClasses('simulator-border--end', SIM_BORDER_SECONDARY),
                             isActive ? simLocalNav.active : simLocalNav.inactive,

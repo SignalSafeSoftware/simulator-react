@@ -1,3 +1,7 @@
+import type {
+    SimulatorMessagesScreenId,
+    SimulatorPhoneScreenId,
+} from '@signalsafe/simulator-core/devicePayload';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
@@ -7,22 +11,22 @@ import type { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 import type { ComponentType, ReactNode } from 'react';
 import type { SimulatorSessionState } from '../types/session.js';
 import { type SimulatorDispatchAction } from '../state/simulatorDispatchActions.js';
-import type { SimulatorCapabilities } from '../utils/simulatorCapabilities.js';
+import type { SimulatorCapabilities } from '../utils/payload/simulatorCapabilities.js';
 import type {
     SimulatorChoiceRenderProps,
     SimulatorFeedbackRenderProps,
     SimulatorPhoneContactOpenProps,
     SimulatorPhoneIncomingCallExtraRenderProps,
 } from '../ui/renderSlots.js';
-import type { EmailSimulatorViewProps } from '../views/EmailSimulatorView.js';
-import type { MessagesThreadListViewProps } from '../views/MessagesThreadListView.js';
-import type { MessagesNewThreadViewProps } from '../views/MessagesNewThreadView.js';
-import type { SmsSimulatorViewProps } from '../views/SmsSimulatorView.js';
-import type { BrowserSimulatorViewProps } from '../views/BrowserSimulatorView.js';
-import type { ContactsViewProps } from '../views/ContactsView.js';
-import type { PhoneSimulatorViewProps } from '../views/PhoneSimulatorView.js';
-import type { HomeSimulatorViewProps } from '../views/HomeSimulatorView.js';
-import type { DirectoryViewProps } from '../views/DirectoryView.js';
+import type { EmailSimulatorViewProps } from '../views/email/EmailSimulatorView.js';
+import type { MessagesThreadListViewProps } from '../views/messages/MessagesThreadListView.js';
+import type { MessagesNewThreadViewProps } from '../views/messages/MessagesNewThreadView.js';
+import type { SmsSimulatorViewProps } from '../views/messages/SmsSimulatorView.js';
+import type { BrowserSimulatorViewProps } from '../views/browser/BrowserSimulatorView.js';
+import type { ContactsViewProps } from '../views/contacts/ContactsView.js';
+import type { PhoneSimulatorViewProps } from '../views/phone/PhoneSimulatorView.js';
+import type { HomeSimulatorViewProps } from '../views/home/HomeSimulatorView.js';
+import type { DirectoryViewProps } from '../views/contacts/DirectoryView.js';
 
 /** Context passed to getProps: state, dispatch, capabilities, and shell-level handlers. */
 export interface SimulatorRenderContext {
@@ -63,19 +67,19 @@ export type ScreenEntry =
       }
     | {
           app: typeof SimulatorApp.Messages;
-          screen: 'threads';
+          screen: typeof SimulatorMessagesScreenId.Threads;
           component: ComponentType<MessagesThreadListViewProps>;
           getProps: (ctx: SimulatorRenderContext) => MessagesThreadListViewProps;
       }
     | {
           app: typeof SimulatorApp.Messages;
-          screen: 'new_thread';
+          screen: typeof SimulatorMessagesScreenId.NewThread;
           component: ComponentType<MessagesNewThreadViewProps>;
           getProps: (ctx: SimulatorRenderContext) => MessagesNewThreadViewProps;
       }
     | {
           app: typeof SimulatorApp.Messages;
-          screen: 'thread_detail';
+          screen: typeof SimulatorMessagesScreenId.ThreadDetail;
           component: ComponentType<SmsSimulatorViewProps>;
           getProps: (ctx: SimulatorRenderContext) => SmsSimulatorViewProps;
       }
@@ -87,13 +91,13 @@ export type ScreenEntry =
       }
     | {
           app: typeof SimulatorApp.Phone;
-          screen: 'contacts';
+          screen: typeof SimulatorPhoneScreenId.Contacts;
           component: ComponentType<ContactsViewProps>;
           getProps: (ctx: SimulatorRenderContext) => ContactsViewProps;
       }
     | {
           app: typeof SimulatorApp.Phone;
-          screen: 'directory';
+          screen: typeof SimulatorPhoneScreenId.Directory;
           component: ComponentType<DirectoryViewProps>;
           getProps: (ctx: SimulatorRenderContext) => DirectoryViewProps;
       }

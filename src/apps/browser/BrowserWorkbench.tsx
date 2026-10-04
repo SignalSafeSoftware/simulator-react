@@ -1,4 +1,8 @@
-import { SimulatorButtonTone, simBtnToneClass } from '../../ui/simulatorClasses.js';
+import {
+    SIM_INPUT,
+    SimulatorButtonTone,
+    simBtnToneClass,
+} from '../../ui/styles/simulatorClasses.js';
 import {
     BROWSER_ACTION_TYPE,
     BROWSER_ACTION_VERSION,
@@ -10,6 +14,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { browserActionSchema } from '@signalsafe/simulator-core/apps/browserProtocol';
 import type { BrowserAction } from '@signalsafe/simulator-core/apps/browserProtocol';
 import { buildBrowserDocument } from './browserDocument.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 export interface MockPage {
     id: string;
     title: string;
@@ -27,6 +32,7 @@ export function HtmlMockPage({
     onAction: (action: BrowserAction) => void;
 }) {
     const frame = useRef<HTMLIFrameElement>(null);
+    const { t } = useSimulatorLocale();
     const callback = useRef(onAction);
     useEffect(() => {
         callback.current = onAction;
@@ -50,10 +56,10 @@ export function HtmlMockPage({
             return {
                 session,
                 html: '',
-                error: reason instanceof Error ? reason.message : 'Page could not be rendered.',
+                error: reason instanceof Error ? reason.message : t('app.browser.renderFailed'),
             };
         }
-    }, [page.html, page.css, page.id, themeCss]);
+    }, [page.html, page.css, page.id, themeCss, t]);
     useEffect(() => {
         function receive(event: MessageEvent<unknown>) {
             if (event.source !== frame.current?.contentWindow || event.origin !== 'null') return;
@@ -129,6 +135,7 @@ export default function BrowserWorkbench({
     const [history, setHistory] = useState<MockPage[]>([sample]);
     const [position, setPosition] = useState(0);
     const [last, setLast] = useState('');
+    const { t } = useSimulatorLocale();
     function navigate(next: MockPage) {
         setHistory((previous) => [...previous.slice(0, position + 1), next].slice(-100));
         setPosition(Math.min(position + 1, 99));
@@ -166,7 +173,7 @@ export default function BrowserWorkbench({
         try {
             const url = new URL(/^[a-z][a-z0-9+.-]*:/i.test(value) ? value : `https://${value}`);
             if (!['http:', 'https:'].includes(url.protocol)) {
-                setLast('Use an HTTP or HTTPS address.');
+                setLast(t('app.browser.badProtocol'));
                 return;
             }
             const existing = history.find((item) => item.url === url.href);
@@ -180,11 +187,11 @@ export default function BrowserWorkbench({
             );
             setLast('');
         } catch {
-            setLast('Enter a valid address or search term.');
+            setLast(t('app.browser.badAddress'));
         }
     }
     return (
-        <DevicePage title="Internet" listLayout>
+        <DevicePage title={t('app.browser.title')} listLayout>
             {mode === 'templates' ? (
                 templates
             ) : (
@@ -199,8 +206,8 @@ export default function BrowserWorkbench({
                         <button
                             className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
                             type="button"
-                            aria-label="Back page"
-                            title="Back page"
+                            aria-label={t('app.browser.back')}
+                            title={t('app.browser.back')}
                             disabled={position === 0}
                             onClick={() => goTo(position - 1)}
                         >
@@ -209,18 +216,18 @@ export default function BrowserWorkbench({
                         <button
                             className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
                             type="button"
-                            aria-label="Forward page"
-                            title="Forward page"
+                            aria-label={t('app.browser.forward')}
+                            title={t('app.browser.forward')}
                             disabled={position === history.length - 1}
                             onClick={() => goTo(position + 1)}
                         >
                             <ArrowRight size={18} aria-hidden="true" />
                         </button>
                         <input
-                            className="simulator-input"
+                            className={SIM_INPUT}
                             type="search"
-                            aria-label="Search or enter address"
-                            placeholder="Search or enter address"
+                            aria-label={t('app.browser.address')}
+                            placeholder={t('app.browser.address')}
                             value={address}
                             onChange={(event) => setAddress(event.target.value)}
                             autoComplete="off"

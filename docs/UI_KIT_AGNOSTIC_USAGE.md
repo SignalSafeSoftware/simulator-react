@@ -28,7 +28,7 @@ Peer dependencies: `react`, `react-dom` only.
 
 ## Class hooks (`simulator-*`)
 
-Shell, lists, buttons, alerts, and modals emit predictable class names from `src/ui/simulatorClasses.ts` and `src/simulatorStyles.ts`:
+Shell, lists, buttons, alerts, and modals emit predictable class names from `src/ui/styles/simulatorClasses.ts` and `src/simulatorStyles.ts`:
 
 | Token | Example classes | Used for |
 |-------|-----------------|----------|
@@ -46,7 +46,7 @@ Shell, lists, buttons, alerts, and modals emit predictable class names from `src
 
 ## Semantic view hooks (stable DOM contract)
 
-In addition to layout primitives (`simulator-btn`, `simulator-list`, …), major simulator views emit **stable semantic class names** from `src/ui/semanticSimulatorClasses.ts`. Host apps can target these in CSS or tests without `MutationObserver` DOM enhancers.
+In addition to layout primitives (`simulator-btn`, `simulator-list`, …), major simulator views emit **stable semantic class names** from `src/ui/styles/semanticSimulatorClasses.ts`. Host apps can target these in CSS or tests without `MutationObserver` DOM enhancers.
 
 | Class | Region |
 |-------|--------|

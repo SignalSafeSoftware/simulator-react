@@ -1,12 +1,12 @@
 import { createElement } from 'react';
 import { act, create } from 'react-test-renderer';
 import { afterEach, expect, it, vi } from 'vitest';
-import PhoneCallView from '../src/views/PhoneCallView.js';
-import { formatPhoneCallDuration } from '../src/views/PhoneCallView.js';
-import PhoneContactEditor from '../src/views/PhoneContactEditor.js';
-import PhoneHistoryDetail from '../src/views/PhoneHistoryDetail.js';
-import { PhoneHistoryPagination } from '../src/views/PhoneHistoryDetail.js';
-import PhoneKeypad from '../src/views/PhoneKeypad.js';
+import PhoneCallView from '../src/views/phone/PhoneCallView.js';
+import { formatPhoneCallDuration } from '../src/views/phone/PhoneCallView.js';
+import PhoneContactEditor from '../src/views/contacts/PhoneContactEditor.js';
+import PhoneHistoryDetail from '../src/views/phone/PhoneHistoryDetail.js';
+import { PhoneHistoryPagination } from '../src/views/phone/PhoneHistoryDetail.js';
+import PhoneKeypad from '../src/views/phone/PhoneKeypad.js';
 afterEach(() => vi.useRealTimers());
 it('delegates all call controls and cleans up its display clock', () => {
     vi.useFakeTimers();

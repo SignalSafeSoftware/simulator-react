@@ -1,3 +1,5 @@
+import { SimulatorActionType } from '../utils/telemetry/simulatorActionTaxonomy.js';
+import { SimulatorEmailScreenId } from '@signalsafe/simulator-core/devicePayload';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 /**
  * Content and simulator-action handlers: email, browser, SIMULATOR_ACTION.
@@ -27,7 +29,7 @@ export function applySelectEmail(
             email: {
                 ...state.email,
                 stack: [...state.email.stack, state.email.screen],
-                screen: 'detail',
+                screen: SimulatorEmailScreenId.Detail,
                 selectedMessageId: messageId,
             },
         };
@@ -37,7 +39,7 @@ export function applySelectEmail(
         ...state,
         email: {
             ...state.email,
-            screen: 'list',
+            screen: SimulatorEmailScreenId.List,
             stack: [],
             selectedMessageId: null,
         },
@@ -60,7 +62,7 @@ export function applyBrowserScreen(
 
 function applyClickLinkAction(
     state: SimulatorViewState,
-    action: Extract<SimulatorAction, { type: 'click_link' }>,
+    action: Extract<SimulatorAction, { type: typeof SimulatorActionType.ClickLink }>,
 ): SimulatorViewState {
     if (action.href == null && action.pageId == null) return state;
     const pageId =
@@ -86,20 +88,20 @@ export function applySimulatorAction(
     };
 
     switch (action.type) {
-        case 'navigate_screen':
+        case SimulatorActionType.NavigateScreen:
             next = applyNavLocal(next, action.app, action.screen);
             break;
-        case 'open_app':
+        case SimulatorActionType.OpenApp:
             next = applySwitchApp(next, action.app);
             break;
-        case 'click_link':
+        case SimulatorActionType.ClickLink:
             next = applyClickLinkAction(next, action);
             break;
-        case 'check_contact':
-        case 'check_contacts':
+        case SimulatorActionType.CheckContact:
+        case SimulatorActionType.CheckContacts:
             next = { ...next, contactsPanelOpen: true };
             break;
-        case 'answer_call':
+        case SimulatorActionType.AnswerCall:
             if (typeof action.choiceIndex === 'number') {
                 next = { ...next, phone: { ...next.phone, chosenIndex: action.choiceIndex } };
             }

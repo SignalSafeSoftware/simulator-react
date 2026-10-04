@@ -22,13 +22,13 @@ import {
     isSimulatorActionType,
     SIMULATOR_ACTION_CATEGORY,
     validateSimulatorAction,
-} from '../src/utils/simulatorActionTaxonomy';
+} from '../src/utils/telemetry/simulatorActionTaxonomy';
 import {
     focusSimulatorSearch,
     handleSimulatorKeyboard,
     isTypingTarget,
     LIST_NAV_EVENT,
-} from '../src/utils/simulatorKeyboardCommands';
+} from '../src/utils/navigation/simulatorKeyboardCommands';
 import { TestRenderer, act } from './reactTestRenderer';
 const originalArgv = [...process.argv];
 const originalCwd = process.cwd();

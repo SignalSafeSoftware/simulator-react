@@ -1,14 +1,14 @@
 import React from 'react';
 import type { ReactTestRenderer, ReactTestRendererJSON } from 'react-test-renderer';
 import { describe, expect, it, vi } from 'vitest';
-import BrowserPageRenderer from '../src/views/BrowserPageRenderer';
-import BrowserSimulatorView from '../src/views/BrowserSimulatorView';
-import DirectoryView from '../src/views/DirectoryView';
-import EmailComposeView from '../src/views/EmailComposeView';
-import EmailSimulatorView from '../src/views/EmailSimulatorView';
-import HomeSimulatorView from '../src/views/HomeSimulatorView';
-import MessagesNewThreadView from '../src/views/MessagesNewThreadView';
-import PhoneIncomingScene from '../src/views/PhoneIncomingScene';
+import BrowserPageRenderer from '../src/views/browser/BrowserPageRenderer';
+import BrowserSimulatorView from '../src/views/browser/BrowserSimulatorView';
+import DirectoryView from '../src/views/contacts/DirectoryView';
+import EmailComposeView from '../src/views/email/EmailComposeView';
+import EmailSimulatorView from '../src/views/email/EmailSimulatorView';
+import HomeSimulatorView from '../src/views/home/HomeSimulatorView';
+import MessagesNewThreadView from '../src/views/messages/MessagesNewThreadView';
+import PhoneIncomingScene from '../src/views/phone/PhoneIncomingScene';
 
 import { TestRenderer, act } from './reactTestRenderer';
 

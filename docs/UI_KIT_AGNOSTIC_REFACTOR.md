@@ -26,7 +26,7 @@
 
 ### Phase 1 — Semantic tokens ✓
 
-- `src/ui/simulatorClasses.ts` — `simulator-*` layout/shell hooks
+- `src/ui/styles/simulatorClasses.ts` — `simulator-*` layout/shell hooks
 - `src/ui/primitives.tsx` — `SimulatorButton`, `SimulatorInput`, `SimulatorCard`, `SimulatorDialog`, …
 - `src/simulatorStyles.ts` — rewritten to use `simulator-*` tokens
 

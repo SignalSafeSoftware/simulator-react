@@ -35,7 +35,7 @@ function listFiles(dir: string): string[] {
 }
 
 function resolveRuntimeSpecifier(filePath: string, specifier: string): string {
-    if (!specifier.startsWith('./') && !specifier.startsWith('../')) {
+    if (!specifier.startsWith('.') && !specifier.startsWith('..')) {
         return specifier;
     }
     if (EXPLICIT_EXTENSION_RE.test(specifier)) {

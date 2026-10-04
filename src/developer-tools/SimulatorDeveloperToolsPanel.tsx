@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { type SimulatorTemplatePayload } from '../types/session.js';
-import { analyzeReachability } from '../utils/simulatorReachability.js';
-import { buildSimulatorPreviewReport } from '../utils/simulatorPreviewReport.js';
+import { analyzeReachability } from '../utils/navigation/simulatorReachability.js';
+import { buildSimulatorPreviewReport } from '../utils/preview/simulatorPreviewReport.js';
 import {
     resolveSimulatorDeveloperTools,
     type SimulatorDeveloperTools,

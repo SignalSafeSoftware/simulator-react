@@ -2,9 +2,9 @@ import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-render
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import SimulatorReachabilityReport from '../src/developer-tools/SimulatorReachabilityReport.js';
-import BrowserPageRenderer from '../src/views/BrowserPageRenderer';
-import ContactsView from '../src/views/ContactsView.js';
-import { contactMatchesSearch, contextMatchesContact } from '../src/views/ContactsView.js';
+import BrowserPageRenderer from '../src/views/browser/BrowserPageRenderer';
+import ContactsView from '../src/views/contacts/ContactsView.js';
+import { contactMatchesSearch, contextMatchesContact } from '../src/views/contacts/ContactsView.js';
 
 import { TestRenderer, act } from './reactTestRenderer';
 

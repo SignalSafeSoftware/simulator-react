@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import type {
     DeviceCollection,
     DeviceQuery,
@@ -21,6 +22,9 @@ export function useDevicePage<K extends DeviceCollection>(
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [retry, setRetry] = useState(0);
+    const { t } = useSimulatorLocale();
+    const translate = useRef(t);
+    translate.current = t;
     const key = JSON.stringify([
         collection,
         query.folder,
@@ -60,9 +64,7 @@ export function useDevicePage<K extends DeviceCollection>(
                         }));
                     if (cancelled) return;
                     if (response.revision !== revision)
-                        throw new Error(
-                            'This device changed. Reload saved state to refresh the list.',
-                        );
+                        throw new Error(translate.current('app.records.changed'));
                     total = response.total;
                     cache.current.set(offset, response);
                     records.push(...response.records);
@@ -72,7 +74,9 @@ export function useDevicePage<K extends DeviceCollection>(
             } catch (reason) {
                 if (!cancelled)
                     setError(
-                        reason instanceof Error ? reason.message : 'Could not load saved records.',
+                        reason instanceof Error
+                            ? reason.message
+                            : translate.current('app.records.loadFailed'),
                     );
             } finally {
                 if (!cancelled) setLoading(false);

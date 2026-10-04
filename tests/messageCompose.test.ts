@@ -1,7 +1,7 @@
 import { createElement } from 'react';
 import { act, create } from 'react-test-renderer';
 import { expect, it, vi } from 'vitest';
-import MessagesNewThreadView from '../src/views/MessagesNewThreadView.js';
+import MessagesNewThreadView from '../src/views/messages/MessagesNewThreadView.js';
 it('retains a rejected message and only navigates after the host accepts it', async () => {
     const onSend = vi
         .fn()

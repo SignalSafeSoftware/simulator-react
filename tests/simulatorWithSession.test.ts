@@ -21,7 +21,7 @@ vi.mock('../src/developer-tools/SimulatorDeveloperToolsPanel.js', () => ({
     default: () => null,
 }));
 
-vi.mock('../src/views/ContactsView.js', () => ({
+vi.mock('../src/views/contacts/ContactsView.js', () => ({
     default: () => null,
 }));
 
@@ -40,15 +40,15 @@ vi.mock('../src/UnsupportedScreenFallback.js', () => ({
     default: () => null,
 }));
 
-vi.mock('../src/utils/screenMetadata.js', () => ({
+vi.mock('../src/utils/navigation/screenMetadata.js', () => ({
     getScreenMetadata: () => ({ app: 'phone', screen: 'history', label: 'History' }),
 }));
 
-vi.mock('../src/utils/simulatorCapabilities.js', () => ({
+vi.mock('../src/utils/payload/simulatorCapabilities.js', () => ({
     getSimulatorCapabilities: () => ({ phone: {} }),
 }));
 
-vi.mock('../src/utils/phoneLocalNavItems.js', () => ({
+vi.mock('../src/utils/navigation/phoneLocalNavItems.js', () => ({
     getPhoneLocalNavItems: () => [
         { id: 'history', label: 'History', icon: 'H' },
         { id: 'contacts', label: 'Contacts', icon: 'C' },

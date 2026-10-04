@@ -12,7 +12,7 @@ import type { SimulatorSessionState, SimulatorViewState } from '../types/session
 import {
     isSimulatorTransitionLoggingEnabled,
     logSimulatorTransition,
-} from '../utils/simulatorTransitionLogger.js';
+} from '../utils/telemetry/simulatorTransitionLogger.js';
 import {
     applyBack,
     applyCancel,

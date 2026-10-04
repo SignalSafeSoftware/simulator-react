@@ -1,7 +1,8 @@
+import { SIM_VISUALLY_HIDDEN } from '../styles/simulatorClasses.js';
 import { UserRound } from 'lucide-react';
 import { useId, useRef, type ReactNode } from 'react';
 import { CapabilityButton } from '../controls/CapabilityButton.js';
-import { type SimulatorCapability } from '../../contract/capabilities.js';
+import { type SimulatorCapability, SimulatorCapabilityState } from '../../contract/capabilities.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 
 export interface ContactPhotoControlsProps {
@@ -49,9 +50,7 @@ export function ContactPhotoControls({
                         fallback ?? (
                             <span className="simulator-contact-photo-placeholder">
                                 <UserRound className="contact-photo" aria-hidden="true" />
-                                <span className="simulator-visually-hidden">
-                                    {t('contact.noPhoto')}
-                                </span>
+                                <span className={SIM_VISUALLY_HIDDEN}>{t('contact.noPhoto')}</span>
                             </span>
                         ))
                     )}
@@ -64,13 +63,14 @@ export function ContactPhotoControls({
                         ref={input}
                         type="file"
                         hidden
-                        disabled={capability.state !== 'enabled'}
+                        disabled={capability.state !== SimulatorCapabilityState.Enabled}
                         accept={accept}
                         aria-label={t('contact.changePhoto')}
                         onChange={(event) => {
                             const file = event.target.files?.[0];
                             event.target.value = '';
-                            if (file && capability.state === 'enabled') onSelect(file);
+                            if (file && capability.state === SimulatorCapabilityState.Enabled)
+                                onSelect(file);
                         }}
                     />
                     <CapabilityButton

@@ -1,3 +1,7 @@
+import {
+    SimulatorMessagesScreenId,
+    SimulatorPhoneScreenId,
+} from '@signalsafe/simulator-core/devicePayload';
 import { SimulatorDispatchActionType } from '../state/simulatorDispatchActions.js';
 import { createTranslator, simulatorEnglish } from '../i18n/catalog.js';
 const defaultLocale = createTranslator(simulatorEnglish);
@@ -6,22 +10,22 @@ const defaultLocale = createTranslator(simulatorEnglish);
  * Resolution: exact (app, screen) first, then (app) default. No reducer logic here.
  */
 import type { ComponentType, ReactNode } from 'react';
-import type { PhoneScreenId, EmailScreenId } from '../types/session.js';
+import type { PhoneScreenId, EmailScreenId, HomeScreenId } from '../types/session.js';
 import { getCurrentScreenForApp } from '../types/session.js';
 import { SimulatorActions } from '../actions/simulatorActions.js';
-import { getPhoneLocalNavItems } from '../utils/phoneLocalNavItems.js';
+import { getPhoneLocalNavItems } from '../utils/navigation/phoneLocalNavItems.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { SimulatorRenderContext, ScreenEntry } from './types.js';
-import EmailSimulatorView from '../views/EmailSimulatorView.js';
-import MessagesThreadListView from '../views/MessagesThreadListView.js';
-import MessagesNewThreadView from '../views/MessagesNewThreadView.js';
-import SmsSimulatorView from '../views/SmsSimulatorView.js';
-import BrowserSimulatorView from '../views/BrowserSimulatorView.js';
-import ContactsView from '../views/ContactsView.js';
-import DirectoryView from '../views/DirectoryView.js';
-import PhoneSimulatorView from '../views/PhoneSimulatorView.js';
-import HomeSimulatorView from '../views/HomeSimulatorView.js';
-import type { ThreadListRow } from '../views/MessagesThreadListView.js';
+import EmailSimulatorView from '../views/email/EmailSimulatorView.js';
+import MessagesThreadListView from '../views/messages/MessagesThreadListView.js';
+import MessagesNewThreadView from '../views/messages/MessagesNewThreadView.js';
+import SmsSimulatorView from '../views/messages/SmsSimulatorView.js';
+import BrowserSimulatorView from '../views/browser/BrowserSimulatorView.js';
+import ContactsView from '../views/contacts/ContactsView.js';
+import DirectoryView from '../views/contacts/DirectoryView.js';
+import PhoneSimulatorView from '../views/phone/PhoneSimulatorView.js';
+import HomeSimulatorView from '../views/home/HomeSimulatorView.js';
+import type { ThreadListRow } from '../views/messages/MessagesThreadListView.js';
 
 function buildMessagesThreadList(
     payload: SimulatorRenderContext['state']['payload'],
@@ -76,7 +80,7 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
     },
     {
         app: SimulatorApp.Messages,
-        screen: 'threads',
+        screen: SimulatorMessagesScreenId.Threads,
         component: MessagesThreadListView,
         getProps: (ctx) => ({
             threads: buildMessagesThreadList(ctx.state.payload),
@@ -85,13 +89,13 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
                 ctx.dispatch({
                     type: SimulatorDispatchActionType.NavLocal,
                     app: SimulatorApp.Messages,
-                    screen: 'new_thread',
+                    screen: SimulatorMessagesScreenId.NewThread,
                 }),
         }),
     },
     {
         app: SimulatorApp.Messages,
-        screen: 'new_thread',
+        screen: SimulatorMessagesScreenId.NewThread,
         component: MessagesNewThreadView,
         getProps: (ctx) => ({
             onBack: ctx.onBack,
@@ -100,7 +104,7 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
     },
     {
         app: SimulatorApp.Messages,
-        screen: 'thread_detail',
+        screen: SimulatorMessagesScreenId.ThreadDetail,
         component: SmsSimulatorView,
         getProps: (ctx) => ({
             payload: ctx.state.payload.sms,
@@ -128,7 +132,7 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
     },
     {
         app: SimulatorApp.Phone,
-        screen: 'contacts',
+        screen: SimulatorPhoneScreenId.Contacts,
         component: ContactsView,
         getProps: (ctx) => {
             const phoneScreen = ctx.state.view.phone.screen;
@@ -156,7 +160,8 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
                     : getPhoneLocalNavItems(ctx.capabilities.phone, ctx.locale),
                 phoneActiveId: phoneScreen,
                 onPhoneNavSelect: navRenderedByShell ? undefined : onPhoneNav,
-                onAddContact: () => navigateTo(ctx, SimulatorApp.Phone, 'add_contact'),
+                onAddContact: () =>
+                    navigateTo(ctx, SimulatorApp.Phone, SimulatorPhoneScreenId.AddContact),
                 initialSelectedContactId: isItHelpdeskWireframe ? 'it-helpdesk' : null,
                 contactDetailTitleOnly: isItHelpdeskWireframe,
                 hostOwnsPhoneContactDetail: ctx.hostOwnsPhoneContactDetail,
@@ -175,7 +180,7 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
     },
     {
         app: SimulatorApp.Phone,
-        screen: 'directory',
+        screen: SimulatorPhoneScreenId.Directory,
         component: DirectoryView,
         getProps: (ctx) => {
             const phoneScreen = ctx.state.view.phone.screen;
@@ -229,8 +234,7 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             payload: ctx.state.payload.home,
             homeCapabilities: ctx.capabilities.home,
             screen: ctx.state.view.home.screen,
-            onNavigate: (screenId: 'home' | 'store' | 'settings') =>
-                navigateTo(ctx, SimulatorApp.Home, screenId),
+            onNavigate: (screenId: HomeScreenId) => navigateTo(ctx, SimulatorApp.Home, screenId),
             onAction: ctx.onAction,
             onBack: ctx.onBack,
         }),

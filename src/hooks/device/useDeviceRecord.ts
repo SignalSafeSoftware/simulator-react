@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import type { DeviceCollection, DeviceRecords } from '@signalsafe/simulator-core/apps/deviceData';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
 export function useDeviceRecord<K extends DeviceCollection>(
@@ -7,6 +8,9 @@ export function useDeviceRecord<K extends DeviceCollection>(
     id: string | null,
 ) {
     const [attempt, setAttempt] = useState(0);
+    const { t } = useSimulatorLocale();
+    const translate = useRef(t);
+    translate.current = t;
     const [result, setResult] = useState<{
         key: string;
         record: DeviceRecords[K] | null;
@@ -24,7 +28,7 @@ export function useDeviceRecord<K extends DeviceCollection>(
                     setResult({
                         key,
                         record,
-                        error: record ? '' : 'This saved record is no longer available.',
+                        error: record ? '' : translate.current('app.records.gone'),
                     });
             },
             (reason: unknown) => {
@@ -35,7 +39,7 @@ export function useDeviceRecord<K extends DeviceCollection>(
                         error:
                             reason instanceof Error
                                 ? reason.message
-                                : 'Saved record could not be loaded.',
+                                : translate.current('app.records.recordLoadFailed'),
                     });
             },
         );

@@ -3,8 +3,8 @@ import React from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import PhoneSimulatorShell from '../src/shell/PhoneSimulatorShell';
-import PhoneDialView from '../src/views/PhoneDialView';
-import EmailInboxList from '../src/views/EmailInboxList';
+import PhoneDialView from '../src/views/phone/PhoneDialView';
+import EmailInboxList from '../src/views/email/EmailInboxList';
 import { TestRenderer, act } from './reactTestRenderer';
 import { collectBootstrapViolations } from './bootstrapClassDenylist';
 

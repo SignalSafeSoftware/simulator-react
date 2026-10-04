@@ -1,0 +1,470 @@
+import { SimulatorPhoneScreenId } from '@signalsafe/simulator-core/devicePayload';
+import {
+    SIM_BORDER,
+    SIM_BORDER_BOTTOM_NONE,
+    SIM_BTN_SM,
+    SIM_FLEX_COL,
+    SIM_FLEX_GROW_1,
+    SIM_FLEX_SHRINK_0,
+    SIM_LIST_FLUSH_MOD,
+    SIM_MIN_W_0,
+    SIM_MUTED,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_LIGHT,
+    SIM_SURFACE_WHITE,
+    SIM_TEXT_CENTER,
+    SIM_TEXT_MEDIUM,
+    SIM_TEXT_SM,
+    SIM_TEXT_TRUNCATE,
+    SimulatorButtonTone,
+    joinClasses,
+} from '../../ui/styles/simulatorClasses.js';
+import SimulatorAvatar from '../../ui/media/SimulatorAvatar.js';
+import { englishLocale } from '../../i18n/englishLocale.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
+import { PhoneNumberText } from '../../ui/contacts/PhoneNumberText.js';
+import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
+import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
+/**
+ * Contacts list, search, and detail inside the simulator.
+ * Used from Phone app (screen=contacts) and from the Check contact panel overlay.
+ * When phoneLocalNavItems is provided, shows wireframe-style phone tabs above content (Back still available).
+ */
+import { useMemo, useState } from 'react';
+import { SimulatorList, SimulatorListItem } from '../../ui/lists/SimulatorList.js';
+import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../../ui/layout/SimulatorDetail.js';
+import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';
+import SimulatorLocalNav from '../../ui/navigation/SimulatorLocalNav.js';
+import { simLayout, simRowSurface, simScreen, simSpacing, simTypo } from '../../simulatorStyles.js';
+import { SimulatorButton } from '../../ui/primitives.js';
+import {
+    SIM_PHONE_CONTACT_DETAIL,
+    SIM_PHONE_CONTACT_LIST,
+    SIM_PHONE_CONTACT_ROW,
+    SIM_PHONE_CONTACT_ROW_AVATAR,
+    SIM_PHONE_CONTACT_ROW_MAIN,
+    SIM_PHONE_CONTACT_ROW_NAME,
+    SIM_PHONE_CONTACT_ROW_NUMBER,
+    SIM_SCREEN_HEADER_ROW,
+} from '../../ui/styles/semanticSimulatorClasses.js';
+import type { SimulatorSessionContact } from '../../types/session.js';
+import {
+    normalizeNameForMatch,
+    phoneDigitsOnly,
+    normalizeEmailForMatch,
+    phonesMatch,
+    namesMatch,
+} from '../../utils/payload/contactNormalization.js';
+
+export interface ContactsViewProps {
+    contacts: SimulatorSessionContact[] | null;
+    onBack: () => void;
+    /** When opened from "Check contact", pass the name/number being verified so we can show match status. */
+    verificationContext?: { name?: string; number?: string } | null;
+    /** Optional title (e.g. "Contacts" in app, "Verify contact" in panel). */
+    title?: string;
+    /** Called when user opens a contact (navigates to detail). */
+    onOpenContact?: (contactId: string) => void;
+    /** Called when user performs a search (e.g. Enter in search field). Emits search_performed when provided. */
+    onSearchSubmit?: (query: string) => void;
+    /** Optional initial search query (e.g. from deep-link). When provided with onSearchChange, search is controlled (state stored in shell). */
+    initialSearch?: string;
+    /** Controlled search query (e.g. from view state); when set, use with onSearchChange. */
+    searchQuery?: string;
+    /** Called when search input changes (for controlled state restoration). */
+    onSearchChange?: (query: string) => void;
+    /** When set (phone app context), show phone secondary nav above content. */
+    phoneLocalNavItems?: { id: string; label: string }[];
+    /** Active phone tab id (e.g. "contacts"). */
+    phoneActiveId?: string;
+    /** When user selects a phone tab (e.g. History, Dial). */
+    onPhoneNavSelect?: (id: string) => void;
+    /** When set, show a plus button in the header to add a contact (e.g. navigate to Add Contact screen). */
+    onAddContact?: () => void;
+    /** Open with this contact id selected (detail view) — e.g. README / harness screenshots. */
+    initialSelectedContactId?: string | null;
+    /** When true, contact detail shows title only (no ← Back) for tight wireframe captures. */
+    contactDetailTitleOnly?: boolean;
+    /** When true, row clicks invoke {@link onPhoneContactOpen} instead of internal detail view. */
+    hostOwnsPhoneContactDetail?: boolean;
+    /** Called when host owns contact detail; shell injects state/dispatch before invoking host callback. */
+    onPhoneContactOpen?: (contactId: string, contact: SimulatorSessionContact) => void;
+}
+
+function matchesPrimaryEmail(
+    email: string | undefined,
+    emailQuery: string,
+    nameQuery: string,
+): boolean {
+    if (!email) return false;
+    if (emailQuery) return normalizeEmailForMatch(email).includes(emailQuery);
+    return normalizeNameForMatch(email).includes(nameQuery);
+}
+
+/** True if contact matches query (name, number, or email). Exported for tests. */
+export function contactMatchesSearch(contact: SimulatorSessionContact, query: string): boolean {
+    if (!query) return true;
+    const qName = normalizeNameForMatch(query);
+    const qPhone = phoneDigitsOnly(query);
+    const qEmail = normalizeEmailForMatch(query);
+    if (!qName && !qPhone && !qEmail) return false;
+    if (qName && normalizeNameForMatch(contact.displayName).includes(qName)) return true;
+    if (
+        qName &&
+        [
+            ...(contact.phoneNumbers ?? []),
+            ...(contact.emailAddresses ?? []),
+            ...(contact.postalAddresses ?? []),
+        ].some((item) => normalizeNameForMatch(`${item.label} ${item.value}`).includes(qName))
+    )
+        return true;
+    if (
+        qPhone &&
+        contact.phoneNumbers?.some((item) =>
+            phoneDigitsOnly(item.number || item.value).includes(qPhone),
+        )
+    )
+        return true;
+    if (
+        qEmail &&
+        contact.emailAddresses?.some((item) => normalizeEmailForMatch(item.value).includes(qEmail))
+    )
+        return true;
+    if (contact.number && qPhone && phoneDigitsOnly(contact.number).includes(qPhone)) return true;
+    return matchesPrimaryEmail(contact.email, qEmail, qName);
+}
+
+/** True if verification context (name/number) matches contact. Exported for tests. */
+export function contextMatchesContact(
+    contact: SimulatorSessionContact,
+    ctx: { name?: string; number?: string },
+): boolean {
+    if (
+        ctx.number &&
+        contact.phoneNumbers?.some((item) => phonesMatch(item.number || item.value, ctx.number!))
+    )
+        return true;
+    if (ctx.number && contact.number && phonesMatch(contact.number, ctx.number)) return true;
+    if (ctx.name && contact.displayName && namesMatch(contact.displayName, ctx.name)) return true;
+    return false;
+}
+
+const CONTACTS_SEARCH_PLACEHOLDER = englishLocale.t(
+    'copy.ContactsView.search.by.name.number.or.email',
+);
+
+export default function ContactsView({
+    contacts,
+    onBack,
+    verificationContext,
+    title,
+    onOpenContact,
+    onSearchSubmit,
+    initialSearch = '',
+    searchQuery: controlledSearchQuery,
+    onSearchChange,
+    phoneLocalNavItems,
+    phoneActiveId = SimulatorPhoneScreenId.Contacts,
+    onPhoneNavSelect,
+    onAddContact,
+    initialSelectedContactId = null,
+    contactDetailTitleOnly = false,
+    hostOwnsPhoneContactDetail = false,
+    onPhoneContactOpen,
+}: Readonly<ContactsViewProps>) {
+    const screenLocale = useSimulatorLocale();
+
+    const formatNumber = usePhoneNumberFormatter();
+    const [internalQuery, setInternalQuery] = useState(initialSearch);
+    const isControlled = controlledSearchQuery !== undefined && onSearchChange !== undefined;
+    const searchQuery = isControlled ? controlledSearchQuery : internalQuery;
+    const setSearchQuery = isControlled ? onSearchChange : setInternalQuery;
+    const [selectedId, setSelectedId] = useState<string | null>(
+        () => initialSelectedContactId ?? null,
+    );
+
+    const list = useMemo(() => contacts ?? [], [contacts]);
+    const filtered = useMemo(
+        () => list.filter((c) => contactMatchesSearch(c, searchQuery)),
+        [list, searchQuery],
+    );
+    const matchingContact = useMemo(() => {
+        if (!verificationContext || list.length === 0) return null;
+        return list.find((c) => contextMatchesContact(c, verificationContext)) ?? null;
+    }, [list, verificationContext]);
+
+    const selected = selectedId ? list.find((c) => c.id === selectedId) : null;
+    const hasPhoneNav = phoneLocalNavItems != null && phoneLocalNavItems.length > 0;
+
+    const open = (contact: SimulatorSessionContact) => {
+        onOpenContact?.(contact.id);
+        if (hostOwnsPhoneContactDetail && onPhoneContactOpen)
+            onPhoneContactOpen(contact.id, contact);
+        else setSelectedId(contact.id);
+    };
+
+    const phoneNavBlock =
+        hasPhoneNav && onPhoneNavSelect ? (
+            <SimulatorLocalNav
+                items={phoneLocalNavItems}
+                activeId={phoneActiveId}
+                onSelect={onPhoneNavSelect}
+                className={joinClasses(simSpacing.mb0, SIM_BORDER_BOTTOM_NONE, SIM_FLEX_SHRINK_0)}
+                aria-label={screenLocale.t('screen.contactsView.phone.tabs')}
+            />
+        ) : null;
+
+    const listContent = hasPhoneNav
+        ? renderPhoneContactList(filtered, open)
+        : renderCompactContactList(filtered, open);
+
+    if (selected) {
+        return (
+            <div className={simLayout.screenColumn}>
+                <div className={simLayout.scrollBody}>
+                    <SimulatorDetailBackBar
+                        onBack={() => setSelectedId(null)}
+                        title={screenLocale.t('screen.contactsView.contact')}
+                        ariaLabel={screenLocale.t('a11y.back.to.list')}
+                        titleOnly={contactDetailTitleOnly}
+                    />
+                    <SimulatorDetailBlock className={SIM_PHONE_CONTACT_DETAIL}>
+                        <h3 className={simTypo.subheading}>{selected.displayName}</h3>
+                        {selected.number != null && selected.number !== '' && (
+                            <p className={joinClasses(simSpacing.mb1, SIM_TEXT_SM)}>
+                                <span className={simTypo.secondary}>
+                                    {screenLocale.t('screen.contactsView.number')}
+                                </span>{' '}
+                                {formatNumber(selected.number)}
+                            </p>
+                        )}
+                        {selected.email != null && selected.email !== '' && (
+                            <p className={joinClasses(simSpacing.mb0, SIM_TEXT_SM)}>
+                                <span className={simTypo.secondary}>
+                                    {screenLocale.t('screen.contactsView.email')}
+                                </span>{' '}
+                                {selected.email}
+                            </p>
+                        )}
+                    </SimulatorDetailBlock>
+                </div>
+                {phoneNavBlock}
+            </div>
+        );
+    }
+
+    return (
+        <div className={simLayout.screenColumn}>
+            <div className={simLayout.scrollBody}>
+                {hasPhoneNav && (
+                    <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>
+                        {screenLocale.t('screen.contactsView.contacts')}
+                    </div>
+                )}
+                {onAddContact == null ? (
+                    <SimulatorDetailBackBar
+                        onBack={onBack}
+                        title={title ?? screenLocale.t('screen.contactsView.contacts')}
+                        ariaLabel={screenLocale.t('a11y.back')}
+                        titleOnly
+                    />
+                ) : (
+                    <div className={joinClasses(simLayout.headerRowBetween, SIM_SCREEN_HEADER_ROW)}>
+                        <span className={joinClasses(SIM_FLEX_GROW_1, SIM_TEXT_CENTER)}>
+                            {title ?? screenLocale.t('screen.contactsView.contacts')}
+                        </span>
+                        <SimulatorButton
+                            tone={SimulatorButtonTone.PrimaryOutline}
+                            className={joinClasses(
+                                SIM_ROUNDED_NONE,
+                                simSpacing.py1,
+                                simSpacing.px2,
+                                simSpacing.me2,
+                                SIM_BTN_SM,
+                            )}
+                            onClick={onAddContact}
+                            aria-label={screenLocale.t('screen.contactsView.add.contact')}
+                        >
+                            {screenLocale.t('screen.contactsView.add')}
+                        </SimulatorButton>
+                    </div>
+                )}
+
+                {verificationContext &&
+                    (verificationContext.number || verificationContext.name) && (
+                        <div
+                            className={joinClasses(
+                                simTypo.secondaryTight,
+                                simSpacing.p2,
+                                SIM_ROUNDED_NONE,
+                                SIM_SURFACE_LIGHT,
+                                SIM_BORDER,
+                            )}
+                        >
+                            {matchingContact ? (
+                                <span>
+                                    <span className={simTypo.secondary}>
+                                        {screenLocale.t(
+                                            'screen.contactsView.matches.saved.contact',
+                                        )}
+                                    </span>
+                                    <strong>{matchingContact.displayName}</strong>
+                                    {matchingContact.number &&
+                                        screenLocale.t('screen.contactsView.value1', {
+                                            value1: String(matchingContact.number),
+                                        })}
+                                </span>
+                            ) : (
+                                <span className={simTypo.secondary}>
+                                    {screenLocale.t(
+                                        'screen.contactsView.no.match.in.contacts.for.this.number.or.name',
+                                    )}
+                                </span>
+                            )}
+                        </div>
+                    )}
+
+                <SimulatorListGroup
+                    empty={filtered.length === 0}
+                    emptyMessage={
+                        list.length === 0
+                            ? screenLocale.t('screen.contactsView.no.contacts')
+                            : screenLocale.t('screen.contactsView.no.results.for.value1', {
+                                  value1: String(searchQuery),
+                              })
+                    }
+                    search={
+                        <SimulatorSearchInput
+                            value={searchQuery}
+                            onChange={setSearchQuery}
+                            onSubmit={onSearchSubmit}
+                            placeholder={CONTACTS_SEARCH_PLACEHOLDER}
+                            ariaLabel={screenLocale.t('a11y.search.contacts')}
+                            className={simSpacing.mb2}
+                            dataSimulatorSearch
+                        />
+                    }
+                >
+                    {listContent}
+                </SimulatorListGroup>
+            </div>
+            {phoneNavBlock}
+        </div>
+    );
+}
+
+function primaryNumber(contact: SimulatorSessionContact): string {
+    return contact.number || contact.phoneNumbers?.[0]?.value || '';
+}
+
+function renderPhoneContactList(
+    filtered: SimulatorSessionContact[],
+    open: (contact: SimulatorSessionContact) => void,
+): JSX.Element {
+    return (
+        <div className={joinClasses(SIM_LIST_FLUSH_MOD, SIM_PHONE_CONTACT_LIST)}>
+            {filtered.map((c) => (
+                <button
+                    type="button"
+                    key={c.id}
+                    data-simulator-contact-id={c.id}
+                    onClick={() => open(c)}
+                    className={joinClasses(
+                        simRowSurface.selectable,
+                        'simulator-border--top-none',
+                        SIM_SURFACE_WHITE,
+                        SIM_PHONE_CONTACT_ROW,
+                    )}
+                    style={{ cursor: 'pointer' }}
+                >
+                    <SimulatorAvatar className={SIM_PHONE_CONTACT_ROW_AVATAR} />
+                    <div
+                        className={joinClasses(
+                            SIM_PHONE_CONTACT_ROW_MAIN,
+                            SIM_FLEX_COL,
+                            SIM_MIN_W_0,
+                            SIM_FLEX_GROW_1,
+                        )}
+                    >
+                        <span
+                            className={joinClasses(
+                                SIM_PHONE_CONTACT_ROW_NAME,
+                                SIM_TEXT_MEDIUM,
+                                SIM_TEXT_TRUNCATE,
+                            )}
+                        >
+                            {c.displayName}
+                        </span>
+                        {primaryNumber(c) && (
+                            <span
+                                className={joinClasses(
+                                    SIM_PHONE_CONTACT_ROW_NUMBER,
+                                    SIM_TEXT_SM,
+                                    SIM_MUTED,
+                                    SIM_TEXT_TRUNCATE,
+                                )}
+                            >
+                                <PhoneNumberText value={primaryNumber(c)} />
+                            </span>
+                        )}
+                        {c.email && !c.number && (
+                            <span
+                                className={joinClasses(
+                                    SIM_PHONE_CONTACT_ROW_NUMBER,
+                                    SIM_TEXT_SM,
+                                    SIM_MUTED,
+                                    SIM_TEXT_TRUNCATE,
+                                )}
+                            >
+                                {c.email}
+                            </span>
+                        )}
+                    </div>
+                </button>
+            ))}
+        </div>
+    );
+}
+
+function renderCompactContactList(
+    filtered: SimulatorSessionContact[],
+    open: (contact: SimulatorSessionContact) => void,
+): JSX.Element {
+    return (
+        <SimulatorList>
+            {filtered.map((c) => (
+                <SimulatorListItem
+                    key={c.id}
+                    data-simulator-contact-id={c.id}
+                    variant="compact"
+                    onClick={() => open(c)}
+                    className={joinClasses('simulator-flex--between', SIM_PHONE_CONTACT_ROW)}
+                >
+                    <div
+                        className={joinClasses(
+                            SIM_PHONE_CONTACT_ROW_MAIN,
+                            SIM_FLEX_GROW_1,
+                            SIM_MIN_W_0,
+                            'simulator-flex--between',
+                            'simulator-flex--align-center',
+                        )}
+                    >
+                        <span className={joinClasses(SIM_PHONE_CONTACT_ROW_NAME, SIM_TEXT_MEDIUM)}>
+                            {c.displayName}
+                        </span>
+                        {primaryNumber(c) && (
+                            <span
+                                className={joinClasses(
+                                    SIM_PHONE_CONTACT_ROW_NUMBER,
+                                    simTypo.secondary,
+                                )}
+                            >
+                                <PhoneNumberText value={primaryNumber(c)} />
+                            </span>
+                        )}
+                    </div>
+                </SimulatorListItem>
+            ))}
+        </SimulatorList>
+    );
+}

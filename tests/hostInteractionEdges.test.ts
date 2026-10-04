@@ -3,11 +3,11 @@ import React from 'react';
 import { act, create } from 'react-test-renderer';
 import { expect, it, vi } from 'vitest';
 import { SimulatorCapabilitiesContext } from '../src/contract/capabilities';
-import EmailComposeView from '../src/views/EmailComposeView';
-import MessagesNewThreadView from '../src/views/MessagesNewThreadView';
-import PhoneCallView from '../src/views/PhoneCallView.js';
-import { formatPhoneCallDuration } from '../src/views/PhoneCallView.js';
-import MessagesThreadListView from '../src/views/MessagesThreadListView';
+import EmailComposeView from '../src/views/email/EmailComposeView';
+import MessagesNewThreadView from '../src/views/messages/MessagesNewThreadView';
+import PhoneCallView from '../src/views/phone/PhoneCallView.js';
+import { formatPhoneCallDuration } from '../src/views/phone/PhoneCallView.js';
+import MessagesThreadListView from '../src/views/messages/MessagesThreadListView';
 import SimulatorWithSession from '../src/SimulatorWithSession';
 import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 import {
@@ -243,7 +243,7 @@ it('keeps compose drafts controlled by the host', async () => {
     view.unmount();
 });
 it('updates a dial draft from typed input and rejects submission when calling is unavailable', async () => {
-    const { default: PhoneDialView } = await import('../src/views/PhoneDialView.js');
+    const { default: PhoneDialView } = await import('../src/views/phone/PhoneDialView.js');
     const onDial = vi.fn();
     const view = create(
         React.createElement(
@@ -277,7 +277,7 @@ it('hides disabled developer controls and returns from contact detail to the lis
     );
     expect(controls.toJSON()).toBeNull();
     controls.unmount();
-    const { default: Contacts } = await import('../src/views/ContactsView.js');
+    const { default: Contacts } = await import('../src/views/contacts/ContactsView.js');
     const contacts = create(
         React.createElement(Contacts, {
             contacts: [{ id: 'one', displayName: 'Ada' }],
@@ -320,7 +320,7 @@ it('renders custom URL highlighting without losing surrounding address text', as
     expect(full).toContain('domain');
 });
 it('labels a selected trash message with its folder', async () => {
-    const { default: Email } = await import('../src/views/EmailSimulatorView.js');
+    const { default: Email } = await import('../src/views/email/EmailSimulatorView.js');
     const { renderToStaticMarkup } = await import('react-dom/server');
     const html = renderToStaticMarkup(
         React.createElement(Email, {
@@ -342,7 +342,7 @@ it('labels a selected trash message with its folder', async () => {
     expect(html).toContain('Deleted');
 });
 it('falls back from a failed conversation avatar and exposes loading status', async () => {
-    const { default: Sms } = await import('../src/views/SmsSimulatorView.js');
+    const { default: Sms } = await import('../src/views/messages/SmsSimulatorView.js');
     const view = create(
         React.createElement(Sms, {
             payload: {
@@ -370,7 +370,8 @@ it.each(['phone', 'email'] as const)(
     async (app) => {
         const { useSimulatorSecondaryMenu } =
             await import('../src/hooks/useSimulatorSecondaryMenu.js');
-        const { getSimulatorCapabilities } = await import('../src/utils/simulatorCapabilities.js');
+        const { getSimulatorCapabilities } =
+            await import('../src/utils/payload/simulatorCapabilities.js');
         const state = getInitialSessionState(
             payload({
                 channel: app,
@@ -446,7 +447,7 @@ it('navigates to a configured form target without an event observer', () => {
     view.unmount();
 });
 it('blocks SMS replies while showing a host-provided reason', async () => {
-    const { default: Sms } = await import('../src/views/SmsSimulatorView.js');
+    const { default: Sms } = await import('../src/views/messages/SmsSimulatorView.js');
     const onAction = vi.fn();
     const view = create(
         React.createElement(
@@ -535,7 +536,7 @@ it('removes the keyboard listener on unmount and ignores unrelated keys', async 
     }
 });
 it('keeps stable history rows on prepend without scenario reveal timers', async () => {
-    const { default: Sms } = await import('../src/views/SmsSimulatorView.js');
+    const { default: Sms } = await import('../src/views/messages/SmsSimulatorView.js');
     vi.useFakeTimers();
     try {
         const onRevealNext = vi.fn();

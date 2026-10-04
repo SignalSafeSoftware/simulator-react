@@ -11,7 +11,7 @@ import { minimalPhoneWorld } from './support/fixtureWorlds';
 import {
     SIM_PHONE_INCOMING_CALL_AFTER_ACTIONS,
     SIM_PHONE_INCOMING_CALL_EXTRA,
-} from '../src/ui/semanticSimulatorClasses';
+} from '../src/ui/styles/semanticSimulatorClasses';
 import { TestRenderer } from './reactTestRenderer';
 import { collectBootstrapViolations } from './bootstrapClassDenylist';
 

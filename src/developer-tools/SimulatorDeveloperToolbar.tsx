@@ -5,11 +5,13 @@
 import { type SimulatorDeveloperSectionKey } from './configuration.js';
 import { simBorder, simLayout, simSpacing } from '../simulatorStyles.js';
 import {
-    joinClasses,
+    SIM_BORDER_NONE,
+    SIM_FLEX_CENTER_MOD,
     SIM_OVERFLOW_HIDDEN,
     SIM_ROUNDED_NONE,
     SIM_SURFACE_WHITE,
-} from '../ui/simulatorClasses.js';
+    joinClasses,
+} from '../ui/styles/simulatorClasses.js';
 import { DEVELOPER_TOOLBAR_ICONS, DEVELOPER_TOOLBAR_LABELS } from './toolbarConfig.js';
 
 export interface SimulatorDeveloperToolbarProps {
@@ -52,9 +54,9 @@ export default function SimulatorDeveloperToolbar({
                             key={section}
                             type="button"
                             className={joinClasses(
-                                'simulator-border--none',
+                                SIM_BORDER_NONE,
                                 'simulator-inline-flex',
-                                'simulator-flex--center',
+                                SIM_FLEX_CENTER_MOD,
                                 SIM_ROUNDED_NONE,
                             )}
                             onClick={() => onToggleSection(section)}

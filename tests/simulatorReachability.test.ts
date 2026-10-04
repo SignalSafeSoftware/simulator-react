@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { analyzeReachability } from '../src/utils/simulatorReachability';
+import { analyzeReachability } from '../src/utils/navigation/simulatorReachability';
 
 describe('analyzeReachability', () => {
     it('starts browser reachability from the entry screen when it is present', () => {

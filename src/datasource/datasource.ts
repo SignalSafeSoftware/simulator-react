@@ -1,7 +1,8 @@
+import { SimulatorEmailScreenId } from '@signalsafe/simulator-core/devicePayload';
 import { englishLocale } from '../i18n/englishLocale.js';
 import type { SimulatorTemplatePayload, SimulatorSessionState } from '../types/session.js';
 import { fullDeviceToPayload } from '../adapters/deviceToSession.js';
-import { validateSimulatorPayload } from '../utils/validateSimulatorPayload.js';
+import { validateSimulatorPayload } from '../utils/payload/validateSimulatorPayload.js';
 import { validateDeviceJson } from '@signalsafe/simulator-core/validateDeviceJson';
 
 /** JSON-shaped snapshot fields, including all nested arrays and objects. */
@@ -101,7 +102,9 @@ export function updateSimulatorPayload(
                       ...state.view.email,
                       selectedMessageId: null,
                       screen:
-                          state.view.email.screen === 'detail' ? 'list' : state.view.email.screen,
+                          state.view.email.screen === SimulatorEmailScreenId.Detail
+                              ? 'list'
+                              : state.view.email.screen,
                   },
               },
     };

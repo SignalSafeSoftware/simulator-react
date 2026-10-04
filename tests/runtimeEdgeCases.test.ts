@@ -5,16 +5,16 @@ import { validateDeviceJson } from '@signalsafe/simulator-core/validateDeviceJso
 import { createTranslator } from '../src/i18n/catalog';
 import { ContactValuesEditor } from '../src/ui/contacts/ContactValuesEditor.js';
 import { ContactPhotoControls } from '../src/ui/contacts/ContactPhotoControls.js';
-import PhoneContactEditor from '../src/views/PhoneContactEditor';
-import SimulatorScreenTile from '../src/views/SimulatorScreenTile';
-import PhoneHistoryDetail from '../src/views/PhoneHistoryDetail.js';
-import { PhoneHistoryPagination } from '../src/views/PhoneHistoryDetail.js';
+import PhoneContactEditor from '../src/views/contacts/PhoneContactEditor';
+import SimulatorScreenTile from '../src/views/shared/SimulatorScreenTile';
+import PhoneHistoryDetail from '../src/views/phone/PhoneHistoryDetail.js';
+import { PhoneHistoryPagination } from '../src/views/phone/PhoneHistoryDetail.js';
 import { SimulatorDialog } from '../src/ui/primitives';
 import { SimulatorListGroup } from '../src/ui/lists/SimulatorListGroup.js';
 import { SimulatorSearchInput } from '../src/ui/lists/SimulatorSearchInput.js';
 import { applyBack } from '../src/state/simulatorNavigationHandlers';
 import { initialViewState } from '../src/state/simulatorViewStateHelpers.js';
-import { contactMatchesSearch, contextMatchesContact } from '../src/views/ContactsView';
+import { contactMatchesSearch, contextMatchesContact } from '../src/views/contacts/ContactsView';
 
 const entry_point = { app: 'phone', screen: 'history' };
 

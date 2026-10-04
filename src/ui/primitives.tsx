@@ -1,4 +1,4 @@
-import type { SimulatorButtonTone } from './simulatorClasses.js';
+import { SimulatorAlertTone, type SimulatorButtonTone } from './styles/simulatorClasses.js';
 import type {
     ButtonHTMLAttributes,
     InputHTMLAttributes,
@@ -26,7 +26,7 @@ import {
     joinClasses,
     simAlertToneClass,
     simBtnToneClass,
-} from './simulatorClasses.js';
+} from './styles/simulatorClasses.js';
 
 export function SimulatorButton({
     tone,
@@ -115,11 +115,11 @@ export function SimulatorCardBody({
 }
 
 export function SimulatorAlert({
-    tone = 'warning',
+    tone = SimulatorAlertTone.Warning,
     className,
     children,
     ...rest
-}: Readonly<React.HTMLAttributes<HTMLDivElement> & { tone?: 'warning' | 'danger' | 'info' }>) {
+}: Readonly<React.HTMLAttributes<HTMLDivElement> & { tone?: SimulatorAlertTone }>) {
     return (
         <div className={joinClasses(simAlertToneClass(tone), className)} role="alert" {...rest}>
             {children}

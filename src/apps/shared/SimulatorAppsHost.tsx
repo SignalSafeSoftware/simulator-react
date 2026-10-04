@@ -1,3 +1,4 @@
+import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
 import { createContext, useContext, type ComponentType, type ReactNode } from 'react';
 import type { PhotoMetadata } from '@signalsafe/simulator-core/apps/contracts';
 import { checkLock, createLock } from '../lock/lock.js';
@@ -32,7 +33,7 @@ const defaults: SimulatorAppsHost = {
         <label>
             {label}
             <textarea
-                className="simulator-input"
+                className={SIM_INPUT}
                 value={markdown}
                 readOnly={readOnly}
                 placeholder={placeholder}

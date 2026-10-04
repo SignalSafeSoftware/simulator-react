@@ -1,21 +1,21 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { diffSimulatorPayloads } from '../src/utils/simulatorPayloadDiff';
-import { getScreenContextLabel, getScreenMetadata } from '../src/utils/screenMetadata';
+import { diffSimulatorPayloads } from '../src/utils/payload/simulatorPayloadDiff';
+import { getScreenContextLabel, getScreenMetadata } from '../src/utils/navigation/screenMetadata';
 import {
     applyDeepLinkToState,
     getDeepLinkContactsSearch,
     parseSimulatorSearchParams,
-} from '../src/utils/simulatorDeepLink';
-import { lintSimulatorPayload } from '../src/utils/lintSimulatorPayload';
+} from '../src/utils/navigation/simulatorDeepLink';
+import { lintSimulatorPayload } from '../src/utils/payload/lintSimulatorPayload';
 import {
     isSimulatorTransitionLoggingEnabled,
     logSimulatorTransition,
-} from '../src/utils/simulatorTransitionLogger';
+} from '../src/utils/telemetry/simulatorTransitionLogger';
 import {
     actionToInteractionEvent,
     appOpenedEvent,
     screenViewedEvent,
-} from '../src/utils/simulatorEventMapper';
+} from '../src/utils/telemetry/simulatorEventMapper';
 import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 import { initialViewState } from '../src/state/simulatorViewStateHelpers.js';
 import type {

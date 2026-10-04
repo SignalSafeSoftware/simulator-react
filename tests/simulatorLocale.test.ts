@@ -1,4 +1,4 @@
-import PhoneDialView from '../src/views/PhoneDialView';
+import PhoneDialView from '../src/views/phone/PhoneDialView';
 import { SimulatorCapabilitiesContext } from '../src/contract/capabilities';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';

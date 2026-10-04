@@ -13,30 +13,32 @@
  */
 
 /** High-value event kinds the simulator can emit (event type vocabulary). */
-export type SimulatorEventKind =
-    | 'app_opened'
-    | 'screen_viewed'
-    | 'thread_opened'
-    | 'email_opened'
-    | 'contact_opened'
-    | 'search_performed'
-    | 'link_clicked'
-    | 'attachment_opened'
-    | 'attachment_downloaded'
-    | 'call_answered'
-    | 'call_ignored'
-    | 'dial_started'
-    | 'form_submitted'
-    | 'message_sent'
-    | 'button_clicked'
-    | 'page_viewed'
-    | 'store_opened'
-    | 'settings_opened'
-    | 'report_clicked'
-    | 'download_clicked'
-    | 'check_contact_clicked'
-    | 'voicemail_opened'
-    | 'directory_entry_viewed';
+export const SimulatorEventKind = Object.freeze({
+    AppOpened: 'app_opened',
+    ScreenViewed: 'screen_viewed',
+    ThreadOpened: 'thread_opened',
+    EmailOpened: 'email_opened',
+    ContactOpened: 'contact_opened',
+    SearchPerformed: 'search_performed',
+    LinkClicked: 'link_clicked',
+    AttachmentOpened: 'attachment_opened',
+    AttachmentDownloaded: 'attachment_downloaded',
+    CallAnswered: 'call_answered',
+    CallIgnored: 'call_ignored',
+    DialStarted: 'dial_started',
+    FormSubmitted: 'form_submitted',
+    MessageSent: 'message_sent',
+    ButtonClicked: 'button_clicked',
+    PageViewed: 'page_viewed',
+    StoreOpened: 'store_opened',
+    SettingsOpened: 'settings_opened',
+    ReportClicked: 'report_clicked',
+    DownloadClicked: 'download_clicked',
+    CheckContactClicked: 'check_contact_clicked',
+    VoicemailOpened: 'voicemail_opened',
+    DirectoryEntryViewed: 'directory_entry_viewed',
+} as const);
+export type SimulatorEventKind = (typeof SimulatorEventKind)[keyof typeof SimulatorEventKind];
 
 /** Metadata payload: extra data for the host; keys are stable (e.g. messageId, threadId, href). No per-app ad hoc top-level fields. */
 export type SimulatorEventMetadata = Record<string, unknown>;

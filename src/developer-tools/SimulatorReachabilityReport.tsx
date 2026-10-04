@@ -1,11 +1,19 @@
-import { SIM_MUTED, joinClasses, SIM_BORDER_TOP } from '../ui/simulatorClasses.js';
+import {
+    SIM_BORDER_TOP,
+    SIM_MUTED,
+    SIM_TEXT_BODY,
+    SIM_TEXT_SEMIBOLD,
+    SIM_TEXT_SM,
+    SIM_TEXT_WARNING,
+    joinClasses,
+} from '../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Development/admin reachability report for simulator templates.
  * Shows which screens and entities are reachable from the entry flow.
  */
 import { simSpacing } from '../simulatorStyles.js';
-import { type ReachabilityReport } from '../utils/simulatorReachability.js';
+import { type ReachabilityReport } from '../utils/navigation/simulatorReachability.js';
 import { CollapsibleReport } from './CollapsibleReport.js';
 
 export interface SimulatorReachabilityReportProps {
@@ -18,9 +26,9 @@ export interface SimulatorReachabilityReportProps {
 function Line({ label, value }: Readonly<{ label: string; value: string | string[] }>) {
     const text = Array.isArray(value) ? value.join(', ') || '—' : value;
     return (
-        <div className="simulator-text--sm">
+        <div className={SIM_TEXT_SM}>
             <span className={SIM_MUTED}>{label}:</span>{' '}
-            <span className="simulator-text--body">{text}</span>
+            <span className={SIM_TEXT_BODY}>{text}</span>
         </div>
     );
 }
@@ -161,7 +169,7 @@ export default function SimulatorReachabilityReport({
             )}
             {hasUnreachable && (
                 <div className={joinClasses(simSpacing.mt2, simSpacing.pt2, SIM_BORDER_TOP)}>
-                    <span className={joinClasses(SIM_MUTED, 'simulator-text--semibold')}>
+                    <span className={joinClasses(SIM_MUTED, SIM_TEXT_SEMIBOLD)}>
                         {screenLocale.t('screen.simulatorReachabilityReport.unreachable')}
                     </span>
                     {unreachable.screens.length > 0 && (
@@ -191,7 +199,7 @@ export default function SimulatorReachabilityReport({
                 </div>
             )}
             {browserHasCycle && (
-                <div className={joinClasses(simSpacing.mt2, 'simulator-text--warning')}>
+                <div className={joinClasses(simSpacing.mt2, SIM_TEXT_WARNING)}>
                     {screenLocale.t(
                         'screen.simulatorReachabilityReport.browser.navigation.has.a.cycle.e.g.a.b.a',
                     )}

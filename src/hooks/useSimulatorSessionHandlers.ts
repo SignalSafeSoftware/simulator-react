@@ -1,3 +1,5 @@
+import { SimulatorActionType } from '../utils/telemetry/simulatorActionTaxonomy.js';
+import { SimulatorMessagesScreenId } from '@signalsafe/simulator-core/devicePayload';
 import {
     SimulatorDispatchActionType,
     switchChannelAction,
@@ -17,9 +19,9 @@ import {
     actionToInteractionEvent,
     appOpenedEvent,
     screenViewedEvent,
-} from '../utils/simulatorEventMapper.js';
-import { getSimulatorCapabilities } from '../utils/simulatorCapabilities.js';
-import { getBrowserSubmitTargetId } from '../utils/simulatorSecondaryMenuHelpers.js';
+} from '../utils/telemetry/simulatorEventMapper.js';
+import { getSimulatorCapabilities } from '../utils/payload/simulatorCapabilities.js';
+import { getBrowserSubmitTargetId } from '../utils/navigation/simulatorSecondaryMenuHelpers.js';
 import { type SimulatorRenderContext } from '../screenRegistry/types.js';
 import type {
     SimulatorChoiceRenderProps,
@@ -91,7 +93,7 @@ export function useSimulatorSessionHandlers({
     const handleAction = useCallback(
         (action: SimulatorAction) => {
             dispatch({ type: SimulatorDispatchActionType.SimulatorAction, action });
-            if (action.type === 'submit_form') {
+            if (action.type === SimulatorActionType.SubmitForm) {
                 const pages = state.payload.browser?.pages ?? [];
                 const currentPageId = state.view.internet.screen;
                 const currentPage = pages.find((p) => p?.id === currentPageId);
@@ -114,7 +116,7 @@ export function useSimulatorSessionHandlers({
             if (onSimulatorEvent) {
                 const event = actionToInteractionEvent(action, state.view, state.payload);
                 if (event) onSimulatorEvent(event);
-                if (action.type === 'navigate_screen') {
+                if (action.type === SimulatorActionType.NavigateScreen) {
                     onSimulatorEvent(
                         screenViewedEvent(action.app, action.screen, state.view, state.payload),
                     );
@@ -159,7 +161,7 @@ export function useSimulatorSessionHandlers({
             dispatch({
                 type: SimulatorDispatchActionType.NavLocal,
                 app: SimulatorApp.Messages,
-                screen: 'thread_detail',
+                screen: SimulatorMessagesScreenId.ThreadDetail,
             });
         },
         [dispatch, recordAction],

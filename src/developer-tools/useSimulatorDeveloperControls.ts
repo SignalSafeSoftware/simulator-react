@@ -30,12 +30,12 @@ import {
     buildSimulatorNavGraph,
     simulatorNavGraphToJson,
     type SimulatorNavGraph,
-} from '../utils/simulatorNavGraph.js';
-import { captureSimulatorSnapshot, snapshotToJson } from '../utils/simulatorSnapshot.js';
+} from '../utils/navigation/simulatorNavGraph.js';
+import { captureSimulatorSnapshot, snapshotToJson } from '../utils/telemetry/simulatorSnapshot.js';
 import {
     focusSimulatorSearch,
     handleSimulatorKeyboard,
-} from '../utils/simulatorKeyboardCommands.js';
+} from '../utils/navigation/simulatorKeyboardCommands.js';
 import { DEVELOPER_TOOLBAR_LABELS } from './toolbarConfig.js';
 
 export interface UseSimulatorDeveloperControlsOptions {

@@ -1,4 +1,5 @@
 import { SimulatorAppNavItem } from '../../ui/navigation/SimulatorAppNavItem.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 
 export interface AppNavAction {
     label: string;
@@ -11,10 +12,11 @@ export interface AppNavAction {
 }
 
 export function AppSecondaryNav({ actions }: Readonly<{ actions: readonly AppNavAction[] }>) {
+    const { t } = useSimulatorLocale();
     return (
         <nav
             className="simulator-device-nav"
-            aria-label="App secondary menu"
+            aria-label={t('nav.appSecondaryMenu')}
             data-nav-mode="secondary"
         >
             <ul className="simulator-device-nav__list">

@@ -6,7 +6,7 @@ import {
     normalizePhoneForMatch,
     phoneDigitsOnly,
     phonesMatch,
-} from '../src/utils/contactNormalization';
+} from '../src/utils/payload/contactNormalization';
 
 describe('contactNormalization', () => {
     it('covers string normalization fallbacks and matching helpers', () => {

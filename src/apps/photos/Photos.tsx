@@ -1,10 +1,16 @@
-import { SimulatorButtonTone, simBtnToneClass } from '../../ui/simulatorClasses.js';
+import {
+    SIM_INPUT,
+    SIM_LIST_ERROR,
+    SimulatorButtonTone,
+    simBtnToneClass,
+} from '../../ui/styles/simulatorClasses.js';
 import { useDevicePage } from '../../hooks/device/useDevicePage.js';
 import { useVisiblePage } from '../../hooks/device/useVisiblePage.js';
 import { LoadMore } from '../../ui/lists/LoadMore.js';
 import PhotoLocation from './PhotoLocation.js';
 import PhotoEditor from './PhotoEditor.js';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { createSimulatorId } from '@signalsafe/simulator-core/apps/id';
 import { useEffect, useRef, useState } from 'react';
 import { DevicePage } from '../shared/DevicePage.js';
@@ -18,6 +24,7 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
         readAsset,
         extractPhotoMetadata,
     } = useSimulatorAppsHost();
+    const { t } = useSimulatorLocale();
     const visiblePage = useVisiblePage('photos');
     const photos = useDevicePage(store, 'photos', {}, visiblePage.count);
     const [existing, setExisting] = useState(false);
@@ -50,7 +57,7 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
         if (
             editing &&
             JSON.stringify(draft) !== JSON.stringify(baseline.current) &&
-            !window.confirm('Discard unsaved photo changes?')
+            !window.confirm(t('app.photos.discardConfirm'))
         )
             return;
         close();
@@ -81,7 +88,7 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
             });
         } catch (reason) {
             if (request !== generation.current) return;
-            setError(reason instanceof Error ? reason.message : 'Photo import failed.');
+            setError(reason instanceof Error ? reason.message : t('app.photos.importFailed'));
         } finally {
             if (request === generation.current) setLoading(false);
         }
@@ -96,7 +103,10 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
         if (!parsed.success) {
             const issue = parsed.error.issues[0];
             setError(
-                `Photo could not be saved: ${issue?.path.join('.') ?? 'details'} — ${issue?.message ?? 'Check the photo details.'}`,
+                t('app.photos.saveFailed', {
+                    path: issue?.path.join('.') ?? t('app.photos.saveFailedPath'),
+                    message: issue?.message ?? t('app.photos.saveFailedMessage'),
+                }),
             );
             return;
         }
@@ -107,13 +117,13 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
         const actions: AppNavAction[] = [
             editing
                 ? {
-                      label: 'Save photo',
+                      label: t('app.photos.save'),
                       icon: '✓',
                       disabled: unavailable,
                       onClick: () => void save(),
                   }
                 : {
-                      label: 'Edit photo',
+                      label: t('app.photos.edit'),
                       icon: '✎',
                       disabled: unavailable,
                       onClick: () => setEditing(true),
@@ -121,23 +131,24 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
         ];
         if (existing)
             actions.push({
-                label: 'Delete photo',
+                label: t('app.photos.delete'),
                 icon: '🗑',
                 disabled: unavailable,
                 onClick: async () => {
                     if (
-                        window.confirm(`Delete ${current.title}?`) &&
+                        window.confirm(t('app.photos.deleteConfirm', { title: current.title })) &&
                         (await store.remove('photos', current.id))
                     )
                         close();
                 },
             });
-        actions.push({ label: 'Back', icon: '↩', disabled: store.busy, onClick: back });
+        actions.push({ label: t('app.back'), icon: '↩', disabled: store.busy, onClick: back });
         return actions;
     }
     return (
         <DevicePage
-            title="Photos"
+            title={t('app.photos.title')}
+            icon="🖼"
             listLayout={draft !== null}
             navigation={draft ? <AppSecondaryNav actions={navActions(draft)} /> : undefined}
             onBack={() => {
@@ -149,12 +160,12 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
             }}
         >
             {error && <p role="alert">{error}</p>}
-            {loading && <output>Reading image…</output>}
+            {loading && <output>{t('app.photos.reading')}</output>}
             {!draft && (
                 <label>
-                    Add photo
+                    {t('app.photos.add')}
                     <input
-                        className="simulator-input"
+                        className={SIM_INPUT}
                         type="file"
                         accept="image/png,image/jpeg,image/webp"
                         disabled={loading || store.busy}
@@ -168,7 +179,7 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
             )}
             {draft ? (
                 <>
-                    <article className="prototype-photo-card" aria-label="Photo details">
+                    <article className="prototype-photo-card" aria-label={t('app.photos.details')}>
                         {/* oxlint-disable-next-line nextjs/no-img-element -- Vite host displaying bounded local image data. */}
                         <img
                             className="prototype-photo"
@@ -185,23 +196,23 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
                         />
                         <div className="prototype-photo-card-body">
                             <dl className="prototype-photo-details">
-                                <dt>Title</dt>
+                                <dt>{t('app.vault.title')}</dt>
                                 <dd>{draft.title}</dd>
-                                <dt>File type</dt>
+                                <dt>{t('app.photos.fileType')}</dt>
                                 <dd>{draft.asset.mime}</dd>
-                                <dt>Width</dt>
+                                <dt>{t('app.photos.width')}</dt>
                                 <dd>
                                     {dimensions?.source === draft.asset.data
-                                        ? `${dimensions.width} px`
-                                        : 'Unknown'}
+                                        ? t('app.photos.pixels', { value: dimensions.width })
+                                        : t('app.unknown')}
                                 </dd>
-                                <dt>Height</dt>
+                                <dt>{t('app.photos.height')}</dt>
                                 <dd>
                                     {dimensions?.source === draft.asset.data
-                                        ? `${dimensions.height} px`
-                                        : 'Unknown'}
+                                        ? t('app.photos.pixels', { value: dimensions.height })
+                                        : t('app.unknown')}
                                 </dd>
-                                <dt>Capture date and time</dt>
+                                <dt>{t('app.photos.captured')}</dt>
                                 <dd>{captureDateLabel(draft.metadata)}</dd>
                             </dl>
                         </div>
@@ -247,7 +258,7 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
                         ))}
                     </div>
                     {photos.error && (
-                        <p className="simulator-list-error" role="alert">
+                        <p className={SIM_LIST_ERROR} role="alert">
                             {photos.error}
                         </p>
                     )}
@@ -257,9 +268,11 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
                         loading={photos.loading}
                         error={photos.error}
                         onLoadMore={photos.error ? photos.retry : visiblePage.loadMore}
-                        label="Load more photos"
+                        label={t('app.photos.loadMore')}
                     />
-                    {!photos.loading && !photos.error && !photos.total && <p>No photos saved.</p>}
+                    {!photos.loading && !photos.error && !photos.total && (
+                        <p>{t('app.photos.none')}</p>
+                    )}
                 </>
             )}
         </DevicePage>

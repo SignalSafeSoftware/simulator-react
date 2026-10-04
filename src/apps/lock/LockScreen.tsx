@@ -1,17 +1,24 @@
-import { SimulatorButtonTone, simBtnToneClass } from '../../ui/simulatorClasses.js';
-import { SIM_APP_PAGE_CONTENT } from '../../ui/semanticSimulatorClasses.js';
+import {
+    SIM_INPUT,
+    SIM_VISUALLY_HIDDEN,
+    SimulatorButtonTone,
+    simBtnToneClass,
+} from '../../ui/styles/simulatorClasses.js';
+import { SIM_APP_PAGE_CONTENT } from '../../ui/styles/semanticSimulatorClasses.js';
 import { DevicePage } from '../shared/DevicePage.js';
 import { useEffect, useRef, useState } from 'react';
 import { LockKeyhole } from 'lucide-react';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 export function LockScreen({ store, onUnlock }: { store: DeviceStore; onUnlock: () => void }) {
     const { checkLock } = useSimulatorAppsHost();
+    const { t } = useSimulatorLocale();
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [busy, setBusy] = useState(false);
     return (
-        <DevicePage title="Device locked">
+        <DevicePage title={t('app.lock.title')}>
             <LockKeyhole size={48} aria-hidden="true" />
             <form
                 onSubmit={async (event) => {
@@ -22,18 +29,18 @@ export function LockScreen({ store, onUnlock }: { store: DeviceStore; onUnlock: 
                         if (await checkLock(password, store.data.lock)) {
                             setPassword('');
                             onUnlock();
-                        } else setError('Incorrect screen password.');
+                        } else setError(t('app.lock.incorrect'));
                     } catch {
-                        setError('Unlock is unavailable. Try again.');
+                        setError(t('app.lock.unavailable'));
                     } finally {
                         setBusy(false);
                     }
                 }}
             >
                 <label>
-                    Screen password
+                    {t('app.lock.password')}
                     <input
-                        className="simulator-input"
+                        className={SIM_INPUT}
                         type="password"
                         autoComplete="current-password"
                         value={password}
@@ -44,20 +51,17 @@ export function LockScreen({ store, onUnlock }: { store: DeviceStore; onUnlock: 
                     className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
                     disabled={busy}
                 >
-                    Unlock
+                    {t('app.lock.unlock')}
                 </button>
             </form>
             {error && <p role="alert">{error}</p>}
-            <p>
-                This locks the simulated device. To recover a forgotten password, clear the
-                simulated records using your host application's recovery controls. Keep a simulator
-                backup first.
-            </p>
+            <p>{t('app.lock.recovery')}</p>
         </DevicePage>
     );
 }
 export function LockSettings({ store, onLock }: { store: DeviceStore; onLock: () => void }) {
     const { checkLock, createLock } = useSimulatorAppsHost();
+    const { t } = useSimulatorLocale();
     const [current, setCurrent] = useState('');
     const [password, setPassword] = useState('');
     const [confirm, setConfirm] = useState('');
@@ -84,18 +88,18 @@ export function LockSettings({ store, onLock }: { store: DeviceStore; onLock: ()
         setMessage('');
         try {
             if (!(await checkLock(current, store.data.lock)))
-                throw new Error('Incorrect current screen password.');
-            if (!remove && password !== confirm) throw new Error('The new passwords do not match.');
+                throw new Error(t('app.lock.currentIncorrect'));
+            if (!remove && password !== confirm) throw new Error(t('app.lock.mismatch'));
             const lock = remove ? null : await createLock(password);
             if (request !== generation.current) return;
             if (await store.save({ ...store.data, lock })) {
                 if (request !== generation.current) return;
                 clearFields();
-                setMessage(remove ? 'Screen password removed.' : 'Screen password saved.');
+                setMessage(remove ? t('app.lock.removed') : t('app.lock.saved'));
             }
         } catch (reason) {
             if (request !== generation.current) return;
-            setMessage(reason instanceof Error ? reason.message : 'Password could not be changed.');
+            setMessage(reason instanceof Error ? reason.message : t('app.lock.changeFailed'));
         } finally {
             saving.current = false;
             if (request === generation.current) setBusy(false);
@@ -103,7 +107,7 @@ export function LockSettings({ store, onLock }: { store: DeviceStore; onLock: ()
     }
     return (
         <section className={SIM_APP_PAGE_CONTENT}>
-            <h3>Screen password</h3>
+            <h3>{t('app.lock.password')}</h3>
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
@@ -111,12 +115,12 @@ export function LockSettings({ store, onLock }: { store: DeviceStore; onLock: ()
                 }}
             >
                 <fieldset disabled={busy || store.busy}>
-                    <legend className="simulator-visually-hidden">Screen password settings</legend>
+                    <legend className={SIM_VISUALLY_HIDDEN}>{t('app.lock.settings')}</legend>
                     {store.data?.lock && (
                         <label>
-                            Current password
+                            {t('app.lock.current')}
                             <input
-                                className="simulator-input"
+                                className={SIM_INPUT}
                                 type="password"
                                 autoComplete="current-password"
                                 value={current}
@@ -125,9 +129,9 @@ export function LockSettings({ store, onLock }: { store: DeviceStore; onLock: ()
                         </label>
                     )}
                     <label>
-                        New password
+                        {t('app.lock.new')}
                         <input
-                            className="simulator-input"
+                            className={SIM_INPUT}
                             type="password"
                             autoComplete="new-password"
                             minLength={4}
@@ -138,9 +142,9 @@ export function LockSettings({ store, onLock }: { store: DeviceStore; onLock: ()
                         />
                     </label>
                     <label>
-                        Confirm password
+                        {t('app.lock.confirm')}
                         <input
-                            className="simulator-input"
+                            className={SIM_INPUT}
                             type="password"
                             autoComplete="new-password"
                             required
@@ -153,7 +157,7 @@ export function LockSettings({ store, onLock }: { store: DeviceStore; onLock: ()
                             className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
                             disabled={busy || store.busy}
                         >
-                            Save screen password
+                            {t('app.lock.save')}
                         </button>
                         <button
                             className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
@@ -164,7 +168,7 @@ export function LockSettings({ store, onLock }: { store: DeviceStore; onLock: ()
                                 setMessage('');
                             }}
                         >
-                            Cancel
+                            {t('action.cancel')}
                         </button>
                         {store.data?.lock && (
                             <>
@@ -174,7 +178,7 @@ export function LockSettings({ store, onLock }: { store: DeviceStore; onLock: ()
                                     disabled={busy || store.busy}
                                     onClick={() => void apply(true)}
                                 >
-                                    Remove password
+                                    {t('app.lock.remove')}
                                 </button>
                                 <button
                                     className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
@@ -182,19 +186,16 @@ export function LockSettings({ store, onLock }: { store: DeviceStore; onLock: ()
                                     disabled={busy || store.busy}
                                     onClick={onLock}
                                 >
-                                    Lock now
+                                    {t('app.lock.now')}
                                 </button>
                             </>
                         )}
                     </div>
                 </fieldset>
             </form>
-            {busy && <output>Saving screen password…</output>}
+            {busy && <output>{t('app.lock.saving')}</output>}
             {message && <output>{message}</output>}
-            <p>
-                Saving or changing the password locks the device immediately. It locks again on
-                reload. This is a simulated screen lock, not application authentication.
-            </p>
+            <p>{t('app.lock.settingsNotice')}</p>
         </section>
     );
 }

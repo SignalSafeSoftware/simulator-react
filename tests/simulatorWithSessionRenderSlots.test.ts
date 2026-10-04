@@ -13,7 +13,7 @@ vi.mock('../src/shell/PhoneSimulatorShell.js', () => ({
 vi.mock('../src/developer-tools/SimulatorDeveloperToolsPanel.js', () => ({
     default: () => null,
 }));
-vi.mock('../src/views/ContactsView.js', () => ({
+vi.mock('../src/views/contacts/ContactsView.js', () => ({
     default: () =>
         React.createElement('div', { 'data-testid': 'default-contacts-view' }, 'default'),
 }));

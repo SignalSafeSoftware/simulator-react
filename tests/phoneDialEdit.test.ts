@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { editDialNumber } from '../src/views/phoneDialEdit.js';
+import { editDialNumber } from '../src/views/phone/phoneDialEdit.js';
 it('inserts or replaces at the selected position', () => {
     expect(editDialNumber('+1 (202)', 4, 7, '5')).toEqual({ value: '+1 (5)', caret: 5 });
     expect(editDialNumber('123', 0, 0, '4')).toEqual({ value: '4123', caret: 1 });

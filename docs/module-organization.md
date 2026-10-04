@@ -6,12 +6,17 @@
 | --- | --- |
 | `apps/home`, `apps/browser`, `apps/mail`, `apps/photos`, `apps/vault`, `apps/lock` | Device apps and their feature-specific helpers |
 | `apps/shared` | Device-app page composition, host adapters and file-reading support shared by apps |
-| `views` | Scenario screens and controlled phone/message/email views |
-| `ui` | Shared controls, lists, page slots, contacts, avatars and navigation |
+| `views/{browser,contacts,email,home,messages,phone,shared}` | Scenario screens and controlled views, grouped by app |
+| `ui` | Shared controls, lists, page slots, contacts, avatars, navigation and `ui/styles` class names |
 | `contract` | Host policy, callback contracts and shared composition contexts |
 | `hooks/device` | Device-store paging, record retrieval and visible-page state |
 | `developer-tools` | Preview diagnostics, developer controls, reports and their configuration |
-| `state`, `adapters`, `datasource`, `types`, `utils` | Session behavior, input mapping, data access, local template types and shared algorithms |
+| `utils/navigation` | Nav graph, policy, reachability, deep links, keyboard commands, screen metadata |
+| `utils/payload` | Payload validation, lint, diff, realism checks, capabilities and normalization |
+| `utils/preview` | Preview report and fallback world |
+| `utils/telemetry` | Action taxonomy, event mapping, snapshots, transition logging and verification context |
+| `utils/lists` | Stable keys and text matching |
+| `state`, `adapters`, `datasource`, `types` | Session behavior, input mapping, data access and local template types |
 
 `apps/home/DeviceHome` owns the device Home heading, host header slot, tiles and optional lock action. The device package supplies navigation callbacks and decides whether locking is available; Home presentation must not read the store or own routing state.
 

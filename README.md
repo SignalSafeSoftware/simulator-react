@@ -132,11 +132,11 @@ import SimulatorLintBanner from '@signalsafe/simulator-react/developer-tools/Sim
 import { templateDetailToPayload } from '@signalsafe/simulator-react/adapters/templateToSession';
 import { getInitialSessionState } from '@signalsafe/simulator-react/state/simulatorSessionInitialState';
 import { simulatorSessionReducerWithLogging } from '@signalsafe/simulator-react/state/simulatorSessionReducer';
-import { lintSimulatorPayload } from '@signalsafe/simulator-react/utils/lintSimulatorPayload';
-import { parseSimulatorSearchParams } from '@signalsafe/simulator-react/utils/simulatorDeepLink';
-import { applyDeepLinkToState } from '@signalsafe/simulator-react/utils/simulatorDeepLink';
-import { getDeepLinkContactsSearch } from '@signalsafe/simulator-react/utils/simulatorDeepLink';
-import { applyPreviewFallback } from '@signalsafe/simulator-react/utils/previewFallbackWorld';
+import { lintSimulatorPayload } from '@signalsafe/simulator-react/utils/payload/lintSimulatorPayload';
+import { parseSimulatorSearchParams } from '@signalsafe/simulator-react/utils/navigation/simulatorDeepLink';
+import { applyDeepLinkToState } from '@signalsafe/simulator-react/utils/navigation/simulatorDeepLink';
+import { getDeepLinkContactsSearch } from '@signalsafe/simulator-react/utils/navigation/simulatorDeepLink';
+import { applyPreviewFallback } from '@signalsafe/simulator-react/utils/preview/previewFallbackWorld';
 import { SimulatorSessionState } from '@signalsafe/simulator-react/types/session';
 import { SimulatorDispatchAction } from '@signalsafe/simulator-react/state/simulatorDispatchActions';
 import { SimulatorInteractionEvent } from '@signalsafe/simulator-react/types/simulatorEvents';
@@ -164,8 +164,8 @@ function SimulatorHost({ detail }: { detail: SimulatorTemplateDetail }) {
 ## Compare two payloads
 
 ```tsx
-import { diffSimulatorPayloads } from '@signalsafe/simulator-react/utils/simulatorPayloadDiff';
-import { SimulatorDiffItem } from '@signalsafe/simulator-react/utils/simulatorPayloadDiff';
+import { diffSimulatorPayloads } from '@signalsafe/simulator-react/utils/payload/simulatorPayloadDiff';
+import { SimulatorDiffItem } from '@signalsafe/simulator-react/utils/payload/simulatorPayloadDiff';
 
 const items: SimulatorDiffItem[] = diffSimulatorPayloads(leftPayload, rightPayload);
 ```
@@ -201,10 +201,10 @@ Public imports use **explicit owner subpaths** declared in **`exports`**. Repres
 
 | Import | Purpose |
 |--------|---------|
-| `@signalsafe/simulator-react/utils/validateSimulatorPayload` | JSON-schema style validation helper |
-| `@signalsafe/simulator-react/utils/simulatorPreviewReport` | Authoring / preview report builder |
-| `@signalsafe/simulator-react/utils/simulatorRealismChecks` | QA / fixture realism checks |
-| `@signalsafe/simulator-react/utils/previewFallbackWorld` | Preview fallback helpers + `PREVIEW_PLACEHOLDER_ID_PREFIX` |
+| `@signalsafe/simulator-react/utils/payload/validateSimulatorPayload` | JSON-schema style validation helper |
+| `@signalsafe/simulator-react/utils/preview/simulatorPreviewReport` | Authoring / preview report builder |
+| `@signalsafe/simulator-react/utils/payload/simulatorRealismChecks` | QA / fixture realism checks |
+| `@signalsafe/simulator-react/utils/preview/previewFallbackWorld` | Preview fallback helpers + `PREVIEW_PLACEHOLDER_ID_PREFIX` |
 
 Use the owner subpaths listed in `package.json` for all app/runtime UI. Undeclared deep paths and root imports are unsupported.
 

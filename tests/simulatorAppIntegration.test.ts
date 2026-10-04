@@ -5,8 +5,8 @@ import { templateDetailToPayload } from '../src/adapters/templateToSession.js';
 import {
     parseSimulatorSearchParams,
     applyDeepLinkToState,
-} from '../src/utils/simulatorDeepLink.js';
-import { analyzeReachability } from '../src/utils/simulatorReachability.js';
+} from '../src/utils/navigation/simulatorDeepLink.js';
+import { analyzeReachability } from '../src/utils/navigation/simulatorReachability.js';
 
 describe('shared app IDs through the runtime', () => {
     it.each(Object.values(SimulatorApp))(

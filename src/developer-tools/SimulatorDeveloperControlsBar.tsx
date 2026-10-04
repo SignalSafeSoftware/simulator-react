@@ -1,24 +1,27 @@
 import {
-    SimulatorButtonTone,
+    SIM_BTN_PLAIN,
     SIM_BTN_SM,
-    joinClasses,
     SIM_FLEX,
+    SIM_FLEX_WRAP,
+    SIM_LIST_PLAIN,
     SIM_MUTED,
     SIM_OVERFLOW_AUTO,
     SIM_ROUNDED_NONE,
     SIM_SURFACE_LIGHT,
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
+    SimulatorButtonTone,
+    joinClasses,
     simBtnToneClass,
-} from '../ui/simulatorClasses.js';
+} from '../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Developer controls bar: snapshot/graph copy and keyboard shortcuts help.
  */
 
-import { type SimulatorNavGraph } from '../utils/simulatorNavGraph.js';
-import { simulatorNavGraphToJson } from '../utils/simulatorNavGraph.js';
-import { SIMULATOR_KEYBOARD_COMMANDS } from '../utils/simulatorKeyboardCommands.js';
+import { type SimulatorNavGraph } from '../utils/navigation/simulatorNavGraph.js';
+import { simulatorNavGraphToJson } from '../utils/navigation/simulatorNavGraph.js';
+import { SIMULATOR_KEYBOARD_COMMANDS } from '../utils/navigation/simulatorKeyboardCommands.js';
 import { simBorder, simSpacing } from '../simulatorStyles.js';
 
 export interface SimulatorDeveloperControlsBarProps {
@@ -56,7 +59,7 @@ export default function SimulatorDeveloperControlsBar({
     const devLinkClass = joinClasses(
         simBtnToneClass(SimulatorButtonTone.Link),
         SIM_BTN_SM,
-        'simulator-btn--plain',
+        SIM_BTN_PLAIN,
         SIM_MUTED,
         'simulator-text--link-plain',
     );
@@ -74,7 +77,7 @@ export default function SimulatorDeveloperControlsBar({
                             SIM_FLEX,
                             'simulator-flex--align-center',
                             simSpacing.gap2,
-                            'simulator-flex--wrap',
+                            SIM_FLEX_WRAP,
                         )}
                     >
                         {showSnapshotExport && (
@@ -189,7 +192,7 @@ export default function SimulatorDeveloperControlsBar({
                         className={joinClasses(
                             simSpacing.mb0,
                             'simulator-spacing--ps-3',
-                            'simulator-list--plain',
+                            SIM_LIST_PLAIN,
                         )}
                     >
                         {SIMULATOR_KEYBOARD_COMMANDS.map((cmd) => (

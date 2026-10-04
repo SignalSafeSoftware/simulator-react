@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { SimulatorTemplatePayload } from '../src/types/session';
-import { lintSimulatorPayload } from '../src/utils/lintSimulatorPayload';
-import { runSimulatorRealismChecks } from '../src/utils/simulatorRealismChecks';
-import { applyPreviewFallback } from '../src/utils/previewFallbackWorld';
-import { buildSimulatorNavGraph } from '../src/utils/simulatorNavGraph';
-import { simBtnToneClass } from '../src/ui/simulatorClasses';
-import { validateSimulatorAction } from '../src/utils/simulatorActionTaxonomy';
+import { lintSimulatorPayload } from '../src/utils/payload/lintSimulatorPayload';
+import { runSimulatorRealismChecks } from '../src/utils/payload/simulatorRealismChecks';
+import { applyPreviewFallback } from '../src/utils/preview/previewFallbackWorld';
+import { buildSimulatorNavGraph } from '../src/utils/navigation/simulatorNavGraph';
+import { simBtnToneClass } from '../src/ui/styles/simulatorClasses';
+import { validateSimulatorAction } from '../src/utils/telemetry/simulatorActionTaxonomy';
 import { mapInternet, mapEmail } from '../src/adapters/fullDeviceToSession';
 
 const base: SimulatorTemplatePayload = {
@@ -91,7 +91,7 @@ it('normalizes default and custom button tones and rejects unknown action names'
 });
 
 it('keeps unsupported message deep links on the current screen and falls back for missing browser pages', async () => {
-    const { applyDeepLinkToState } = await import('../src/utils/simulatorDeepLink.js');
+    const { applyDeepLinkToState } = await import('../src/utils/navigation/simulatorDeepLink.js');
     const { getInitialSessionState } = await import('../src/state/simulatorSessionInitialState.js');
     const state = getInitialSessionState(base);
     const message = applyDeepLinkToState(state, { app: 'messages', screen: 'unknown' });

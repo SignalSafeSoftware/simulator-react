@@ -1,4 +1,9 @@
-import { SIM_MUTED, joinClasses } from '../ui/simulatorClasses.js';
+import {
+    SIM_MUTED,
+    SIM_TEXT_DANGER,
+    SIM_TEXT_WARNING,
+    joinClasses,
+} from '../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 import { simSpacing } from '../simulatorStyles.js';
 import { CollapsibleReport } from './CollapsibleReport.js';
@@ -69,9 +74,7 @@ export default function SimulatorRuntimeIssuesReport({
                         >
                             <span
                                 className={
-                                    issue.severity === 'error'
-                                        ? 'simulator-text--danger'
-                                        : 'simulator-text--warning'
+                                    issue.severity === 'error' ? SIM_TEXT_DANGER : SIM_TEXT_WARNING
                                 }
                             >
                                 {issue.severity}

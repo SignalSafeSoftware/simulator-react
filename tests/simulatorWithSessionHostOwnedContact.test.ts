@@ -6,7 +6,7 @@ import { getInitialSessionState } from '../src/state/simulatorSessionInitialStat
 import {
     SIM_PHONE_CONTACT_DETAIL,
     SIM_PHONE_CONTACT_ROW,
-} from '../src/ui/semanticSimulatorClasses';
+} from '../src/ui/styles/semanticSimulatorClasses';
 import { minimalPhoneWorld } from './support/fixtureWorlds';
 import { TestRenderer, act } from './reactTestRenderer';
 

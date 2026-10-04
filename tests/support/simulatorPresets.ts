@@ -4,8 +4,8 @@
  */
 
 import type { SimulatorTemplatePayload, SimulatorChannel } from '../../src/types/session.js';
-import type { SimulatorWorldPartial } from '../../src/utils/simulatorWorldSections.js';
-import { applyPartials } from '../../src/utils/simulatorWorldSections.js';
+import type { SimulatorWorldPartial } from '../../src/utils/payload/simulatorWorldSections.js';
+import { applyPartials } from '../../src/utils/payload/simulatorWorldSections.js';
 
 export const PRESET_EMPLOYEE_CORPORATE_DEVICE: SimulatorWorldPartial = {
     device: {

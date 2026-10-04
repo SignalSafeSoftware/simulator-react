@@ -3,7 +3,7 @@ import {
     actionToInteractionEvent,
     appOpenedEvent,
     screenViewedEvent,
-} from '../src/utils/simulatorEventMapper';
+} from '../src/utils/telemetry/simulatorEventMapper';
 import type { SimulatorTemplatePayload, SimulatorViewState } from '../src/types/session';
 
 function createViewState(): SimulatorViewState {

@@ -5,8 +5,8 @@ import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../src/ui/layout/S
 import { SimulatorList, SimulatorListItem } from '../src/ui/lists/SimulatorList.js';
 import SimulatorLocalNav from '../src/ui/navigation/SimulatorLocalNav.js';
 import SimulatorReachabilityReport from '../src/developer-tools/SimulatorReachabilityReport.js';
-import DirectoryView from '../src/views/DirectoryView';
-import PhoneVoicemailView from '../src/views/PhoneVoicemailView';
+import DirectoryView from '../src/views/contacts/DirectoryView';
+import PhoneVoicemailView from '../src/views/phone/PhoneVoicemailView';
 import { TestRenderer, act } from './reactTestRenderer';
 function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
     if (node == null) {

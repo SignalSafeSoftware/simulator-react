@@ -1,4 +1,14 @@
-import { joinClasses, SIM_FLEX, SIM_MUTED } from '../ui/simulatorClasses.js';
+import {
+    SIM_BORDER_BOTTOM,
+    SIM_FLEX,
+    SIM_FLEX_WRAP,
+    SIM_LIST_PLAIN,
+    SIM_MUTED,
+    SIM_TEXT_BODY,
+    SIM_TEXT_BREAK,
+    SIM_TEXT_SEMIBOLD,
+    joinClasses,
+} from '../ui/styles/simulatorClasses.js';
 import { englishLocale } from '../i18n/englishLocale.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
@@ -145,7 +155,7 @@ export default function SimulatorSessionTimeline({
                     )}
                 </div>
             ) : (
-                <ul className={joinClasses('simulator-list--plain', simSpacing.mb0)}>
+                <ul className={joinClasses(SIM_LIST_PLAIN, simSpacing.mb0)}>
                     {entries.map((entry, i) => {
                         const target = targetSummary(entry);
                         return (
@@ -153,27 +163,23 @@ export default function SimulatorSessionTimeline({
                                 key={`${entry.timestamp}-${entry.kind}-${i}`}
                                 className={joinClasses(
                                     SIM_FLEX,
-                                    'simulator-flex--wrap',
+                                    SIM_FLEX_WRAP,
                                     'simulator-spacing--gap',
                                     'simulator-flex--align-baseline',
                                     simSpacing.py1,
-                                    'simulator-border simulator-border--bottom',
+                                    SIM_BORDER_BOTTOM,
                                     'simulator-border--light',
                                 )}
                             >
                                 <span className={SIM_MUTED} style={{ minWidth: '4.5rem' }}>
                                     {formatTime(entry.timestamp)}
                                 </span>
-                                <span className="simulator-text--body">
+                                <span className={SIM_TEXT_BODY}>
                                     {entry.app}/{entry.screen}
                                 </span>
-                                <span className="simulator-text--semibold">
-                                    {kindLabel(entry.kind)}
-                                </span>
+                                <span className={SIM_TEXT_SEMIBOLD}>{kindLabel(entry.kind)}</span>
                                 {target != null && (
-                                    <span
-                                        className={joinClasses(SIM_MUTED, 'simulator-text--break')}
-                                    >
+                                    <span className={joinClasses(SIM_MUTED, SIM_TEXT_BREAK)}>
                                         {target}
                                     </span>
                                 )}

@@ -1,4 +1,4 @@
-import { shouldHideSimulatorNavigation } from './utils/simulatorNavigationPolicy.js';
+import { shouldHideSimulatorNavigation } from './utils/navigation/simulatorNavigationPolicy.js';
 import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
 import {
     resolveScreenOverride,
@@ -19,12 +19,12 @@ import { type SimulatorDispatchAction } from './state/simulatorDispatchActions.j
 import type { SimulatorSessionState } from './types/session.js';
 import { viewStateToActiveChannel, getCurrentScreenForApp } from './types/session.js';
 import type { HostSimulatorEventHandler } from './contract/hostContractTypes.js';
-import ContactsView from './views/ContactsView.js';
+import ContactsView from './views/contacts/ContactsView.js';
 import { renderActiveScreen } from './screenRegistry/registry.js';
 import SimulatorErrorBoundary from './SimulatorErrorBoundary.js';
 import UnsupportedScreenFallback from './UnsupportedScreenFallback.js';
-import { getScreenMetadata } from './utils/screenMetadata.js';
-import { getVerificationContextForApp } from './utils/simulatorVerificationContext.js';
+import { getScreenMetadata } from './utils/navigation/screenMetadata.js';
+import { getVerificationContextForApp } from './utils/telemetry/simulatorVerificationContext.js';
 import { type TimelineEntry } from './developer-tools/SimulatorSessionTimeline.js';
 import {
     type SimulatorDeveloperTools,
@@ -37,7 +37,7 @@ import SimulatorDeveloperToolbar from './developer-tools/SimulatorDeveloperToolb
 import SimulatorDeveloperControlsBar from './developer-tools/SimulatorDeveloperControlsBar.js';
 import { simSpacing } from './simulatorStyles.js';
 import { SimulatorDialog } from './ui/primitives.js';
-import { joinClasses } from './ui/simulatorClasses.js';
+import { joinClasses } from './ui/styles/simulatorClasses.js';
 import {
     SIM_CHANNEL,
     SIM_RUNTIME,
@@ -45,7 +45,7 @@ import {
     SIM_RUNTIME_DIAGNOSTICS_BAND,
     SIM_RUNTIME_SCREEN,
     simChannelModifierForShellChannel,
-} from './ui/semanticSimulatorClasses.js';
+} from './ui/styles/semanticSimulatorClasses.js';
 import type {
     SimulatorChoiceRenderProps,
     SimulatorFeedbackRenderProps,

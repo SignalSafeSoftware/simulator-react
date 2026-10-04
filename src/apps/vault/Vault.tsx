@@ -1,4 +1,9 @@
-import { SimulatorButtonTone, simBtnToneClass } from '../../ui/simulatorClasses.js';
+import {
+    SIM_INPUT,
+    SIM_LIST_ERROR,
+    SimulatorButtonTone,
+    simBtnToneClass,
+} from '../../ui/styles/simulatorClasses.js';
 import { useDevicePage } from '../../hooks/device/useDevicePage.js';
 import { LoadMore } from '../../ui/lists/LoadMore.js';
 import { useVisiblePage } from '../../hooks/device/useVisiblePage.js';
@@ -16,7 +21,7 @@ import type { Secret } from '@signalsafe/simulator-core/apps/contracts';
 import { DevicePage } from '../shared/DevicePage.js';
 import { AppSecondaryNav, type AppNavAction } from '../shared/AppSecondaryNav.js';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
-import { capitalize } from '../../utils/capitalize.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 
 function SearchBox({
     label,
@@ -30,7 +35,7 @@ function SearchBox({
     return (
         <div className="vault-folder-search">
             <input
-                className="simulator-input"
+                className={SIM_INPUT}
                 type="search"
                 aria-label={label}
                 placeholder={label}
@@ -56,12 +61,21 @@ function newSecret(folder: string): Secret {
         updatedAt: now,
     };
 }
+const FolderPage = Object.freeze({ Create: 'create', Delete: 'delete' } as const);
+type FolderPage = (typeof FolderPage)[keyof typeof FolderPage];
+
 export default function Vault({ store, onBack }: { store: DeviceStore; onBack: () => void }) {
     const { NotesEditor } = useSimulatorAppsHost();
+    const { t } = useSimulatorLocale();
+    const typeLabels = {
+        note: t('app.vault.type.note'),
+        secret: t('app.vault.type.secret'),
+        credentials: t('app.vault.type.credentials'),
+    } satisfies Record<Secret['type'], string>;
     const secretId = useId();
     const formRef = useRef<HTMLFormElement>(null);
     const [folder, setFolder] = useState<string | null>(null);
-    const [folderPage, setFolderPage] = useState<'create' | 'delete' | null>(null);
+    const [folderPage, setFolderPage] = useState<FolderPage | null>(null);
     const folderFormRef = useRef<HTMLFormElement>(null);
     const [folderQuery, setFolderQuery] = useState('');
     const [folderName, setFolderName] = useState<string | null>(null);
@@ -104,12 +118,12 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
         } else onBack();
     }
     async function saveFolder() {
-        if (!data || store.busy || folderPage === 'delete') return;
-        const editing = folderPage !== 'create';
+        if (!data || store.busy || folderPage === FolderPage.Delete) return;
+        const editing = folderPage !== FolderPage.Create;
         if (editing && !folder) return;
         const name = (folderName ?? (editing ? folder : '') ?? '').trim();
         if (!name || name.length > 200) {
-            setMessage('Enter a folder name up to 200 characters.');
+            setMessage(t('app.vault.folderNameInvalid'));
             return;
         }
         if (
@@ -118,7 +132,7 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                     (!editing || item !== folder) && item.toLowerCase() === name.toLowerCase(),
             )
         ) {
-            setMessage('A folder with that name already exists.');
+            setMessage(t('app.vault.folderExists'));
             return;
         }
         if (await store.folder(editing ? folder : null, name, DEFAULT_VAULT_FOLDER)) {
@@ -138,7 +152,7 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
             setMessage('');
         }
     }
-    function openFolderPage(page: 'create' | 'delete') {
+    function openFolderPage(page: FolderPage) {
         setFolderPage(page);
         setFolderName(null);
         setMessage('');
@@ -154,7 +168,7 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
         if (store.busy) return;
         if (
             JSON.stringify(draft) === JSON.stringify(baseline.current) ||
-            window.confirm('Discard unsaved secret changes?')
+            window.confirm(t('app.vault.discardConfirm'))
         )
             close();
     }
@@ -170,7 +184,7 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
             updatedAt: new Date().toISOString(),
         });
         if (!parsed.success) {
-            setMessage('Add a title and secret; keep fields within their size limits.');
+            setMessage(t('app.vault.secretInvalid'));
             return;
         }
         if (await store.put('secrets', parsed.data)) {
@@ -180,57 +194,57 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
             close();
         }
     }
-    let title = folder ?? 'Vault folders';
-    if (folderPage === 'create') title = 'Create folder';
-    else if (folderPage === 'delete') title = 'Delete folder';
-    else if (draft) title = draft.title || 'New secret';
+    let title = folder ?? t('app.vault.folders');
+    if (folderPage === FolderPage.Create) title = t('app.vault.createFolder');
+    else if (folderPage === FolderPage.Delete) title = t('app.vault.deleteFolder');
+    else if (draft) title = draft.title || t('app.vault.newSecret');
 
     const navActions: AppNavAction[] = [];
     if (draft) {
         navActions.push({
-            label: 'Save secret',
+            label: t('app.vault.saveSecret'),
             icon: '✓',
             onClick: () => formRef.current?.requestSubmit(),
         });
         if (existing)
             navActions.push({
-                label: 'Delete secret',
+                label: t('app.vault.deleteSecret'),
                 icon: '🗑',
                 onClick: async () => {
                     if (
-                        window.confirm(`Delete ${draft.title}?`) &&
+                        window.confirm(t('app.vault.deleteConfirm', { title: draft.title })) &&
                         (await store.remove('secrets', draft.id))
                     )
                         close();
                 },
             });
-        navActions.push({ label: 'Back', icon: '↩', onClick: discard });
+        navActions.push({ label: t('app.back'), icon: '↩', onClick: discard });
     } else {
         if (!folderPage && folder !== null)
             navActions.push({
-                label: 'New secret',
+                label: t('app.vault.newSecret'),
                 icon: '+',
                 onClick: () => edit(newSecret(folder)),
             });
-        if (folderPage === 'delete')
+        if (folderPage === FolderPage.Delete)
             navActions.push({
-                label: 'Delete folder',
+                label: t('app.vault.deleteFolder'),
                 icon: '🗑',
                 onClick: () => void deleteFolder(),
             });
         else if (folderPage)
             navActions.push({
-                label: 'Save folder',
+                label: t('app.vault.saveFolder'),
                 icon: '✓',
                 onClick: () => folderFormRef.current?.requestSubmit(),
             });
         else if (folder === null)
             navActions.push({
-                label: 'New folder',
+                label: t('app.vault.newFolder'),
                 icon: '+',
-                onClick: () => openFolderPage('create'),
+                onClick: () => openFolderPage(FolderPage.Create),
             });
-        navActions.push({ label: 'Back', icon: '↩', onClick: back });
+        navActions.push({ label: t('app.back'), icon: '↩', onClick: back });
     }
 
     return (
@@ -245,10 +259,13 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
             }
         >
             {message && <output>{message}</output>}
-            {folderPage === 'delete' ? (
+            {folderPage === FolderPage.Delete ? (
                 <p>
-                    Delete “{folder}”? Its {store.counts?.secrets[folder ?? ''] ?? 0} secrets will
-                    move to {deletionDestination}. Use Delete folder below to confirm.
+                    {t('app.vault.deleteFolderNotice', {
+                        folder: folder ?? '',
+                        count: store.counts?.secrets[folder ?? ''] ?? 0,
+                        destination: deletionDestination,
+                    })}
                 </p>
             ) : folderPage ? (
                 <form
@@ -259,9 +276,9 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                     }}
                 >
                     <label>
-                        Folder name
+                        {t('app.vault.folderName')}
                         <input
-                            className="simulator-input"
+                            className={SIM_INPUT}
                             required
                             maxLength={200}
                             disabled={store.busy}
@@ -280,7 +297,7 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                     }}
                 >
                     <label>
-                        Type
+                        {t('app.vault.type')}
                         <select
                             disabled={store.busy}
                             value={draft.type}
@@ -293,15 +310,15 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                         >
                             {SECRET_TYPES.map((type) => (
                                 <option key={type} value={type}>
-                                    {capitalize(type)}
+                                    {typeLabels[type]}
                                 </option>
                             ))}
                         </select>
                     </label>
                     <label>
-                        Title
+                        {t('app.vault.title')}
                         <input
-                            className="simulator-input"
+                            className={SIM_INPUT}
                             required
                             maxLength={200}
                             disabled={store.busy}
@@ -310,7 +327,7 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                         />
                     </label>
                     <label>
-                        Folder
+                        {t('app.vault.folder')}
                         <select
                             disabled={store.busy}
                             value={draft.folder}
@@ -325,9 +342,9 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                     </label>
                     {draft.type === 'credentials' && (
                         <label>
-                            Username
+                            {t('app.vault.username')}
                             <input
-                                className="simulator-input"
+                                className={SIM_INPUT}
                                 autoComplete="off"
                                 disabled={store.busy}
                                 value={draft.username}
@@ -339,21 +356,19 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                     )}
                     {draft.type !== 'note' && (
                         <div className="vault-entry-field">
-                            <label htmlFor={secretId}>Secret</label>
+                            <label htmlFor={secretId}>{t('app.vault.secret')}</label>
                             <div className="vault-secret-group">
                                 <button
                                     className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
                                     type="button"
-                                    aria-label="Copy secret"
-                                    title="Copy secret"
+                                    aria-label={t('app.vault.copySecret')}
+                                    title={t('app.vault.copySecret')}
                                     onClick={async () => {
                                         try {
                                             await navigator.clipboard.writeText(draft.value);
-                                            setMessage('Copied.');
+                                            setMessage(t('app.vault.copied'));
                                         } catch {
-                                            setMessage(
-                                                'Clipboard unavailable. Reveal the value to copy it manually.',
-                                            );
+                                            setMessage(t('app.vault.clipboardUnavailable'));
                                         }
                                     }}
                                 >
@@ -361,7 +376,7 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                                 </button>
                                 <input
                                     id={secretId}
-                                    className="simulator-input"
+                                    className={SIM_INPUT}
                                     autoComplete="new-password"
                                     type={reveal ? 'text' : 'password'}
                                     required
@@ -374,8 +389,16 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                                 <button
                                     className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
                                     type="button"
-                                    aria-label={reveal ? 'Hide secret' : 'Reveal secret'}
-                                    title={reveal ? 'Hide secret' : 'Reveal secret'}
+                                    aria-label={
+                                        reveal
+                                            ? t('app.vault.hideSecret')
+                                            : t('app.vault.revealSecret')
+                                    }
+                                    title={
+                                        reveal
+                                            ? t('app.vault.hideSecret')
+                                            : t('app.vault.revealSecret')
+                                    }
                                     aria-pressed={reveal}
                                     onClick={() => setReveal(!reveal)}
                                 >
@@ -390,9 +413,9 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                     )}
                     {draft.type === 'credentials' && (
                         <label>
-                            Site
+                            {t('app.vault.site')}
                             <input
-                                className="simulator-input"
+                                className={SIM_INPUT}
                                 disabled={store.busy}
                                 value={draft.site}
                                 onChange={(event) =>
@@ -404,8 +427,8 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
 
                     <NotesEditor
                         key={draft.id}
-                        label="Notes"
-                        placeholder="Add notes…"
+                        label={t('app.vault.notes')}
+                        placeholder={t('app.vault.notesPlaceholder')}
                         markdown={draft.notes}
                         readOnly={store.busy}
                         onChange={(notes, initialNormalization) => {
@@ -417,11 +440,11 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
             ) : folder === null ? (
                 <div className="vault-folder-group">
                     <SearchBox
-                        label="Search folders"
+                        label={t('app.vault.searchFolders')}
                         value={folderQuery}
                         onChange={setFolderQuery}
                     />
-                    <ul className="vault-list-group" aria-label="Vault folders">
+                    <ul className="vault-list-group" aria-label={t('app.vault.folders')}>
                         {matchingFolders.map((name) => (
                             <li key={name}>
                                 <button
@@ -435,7 +458,10 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                                     }}
                                 >
                                     <span className="vault-folder-name">{name}</span>
-                                    <span className="vault-folder-count" aria-label="secrets">
+                                    <span
+                                        className="vault-folder-count"
+                                        aria-label={t('app.vault.secretsCount')}
+                                    >
                                         {store.counts?.secrets[name] ?? 0}
                                     </span>
                                     <ChevronRight size={18} aria-hidden="true" />
@@ -443,11 +469,11 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                             </li>
                         ))}
                     </ul>
-                    {matchingFolders.length === 0 && <p>No matching folders.</p>}
+                    {matchingFolders.length === 0 && <p>{t('app.vault.noMatchingFolders')}</p>}
                 </div>
             ) : (
                 <>
-                    <section className="vault-folder-editor" aria-label="Edit folder">
+                    <section className="vault-folder-editor" aria-label={t('app.vault.editFolder')}>
                         <form
                             onSubmit={(event) => {
                                 event.preventDefault();
@@ -455,9 +481,9 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                             }}
                         >
                             <label>
-                                Folder name
+                                {t('app.vault.folderName')}
                                 <input
-                                    className="simulator-input"
+                                    className={SIM_INPUT}
                                     required
                                     maxLength={200}
                                     disabled={store.busy}
@@ -469,8 +495,8 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                                 <button
                                     className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
                                     type="submit"
-                                    aria-label="Save folder"
-                                    title="Save folder"
+                                    aria-label={t('app.vault.saveFolder')}
+                                    title={t('app.vault.saveFolder')}
                                     disabled={store.busy}
                                 >
                                     <Save size={20} aria-hidden="true" />
@@ -478,10 +504,10 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                                 <button
                                     className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
                                     type="button"
-                                    aria-label="Delete folder"
-                                    title="Delete folder"
+                                    aria-label={t('app.vault.deleteFolder')}
+                                    title={t('app.vault.deleteFolder')}
                                     disabled={store.busy}
-                                    onClick={() => openFolderPage('delete')}
+                                    onClick={() => openFolderPage(FolderPage.Delete)}
                                 >
                                     <Trash2 size={20} aria-hidden="true" />
                                 </button>
@@ -489,8 +515,12 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                         </form>
                     </section>
                     <div className="vault-folder-group">
-                        <SearchBox label="Search secrets" value={query} onChange={setQuery} />
-                        <ul className="vault-list-group" aria-label="Folder secrets">
+                        <SearchBox
+                            label={t('app.vault.searchSecrets')}
+                            value={query}
+                            onChange={setQuery}
+                        />
+                        <ul className="vault-list-group" aria-label={t('app.vault.folderSecrets')}>
                             {visibleSecrets.map((item) => (
                                 <li key={item.id}>
                                     <button
@@ -502,7 +532,7 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                                             <strong>{item.title}</strong>
                                         </span>
                                         <span className="vault-secret-type">
-                                            {capitalize(item.type)}
+                                            {typeLabels[item.type]}
                                         </span>
                                         <ChevronRight size={18} aria-hidden="true" />
                                     </button>
@@ -510,7 +540,7 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                             ))}
                         </ul>
                         {secrets.error && (
-                            <p className="simulator-list-error" role="alert">
+                            <p className={SIM_LIST_ERROR} role="alert">
                                 {secrets.error}
                             </p>
                         )}
@@ -520,10 +550,14 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
                             loading={secrets.loading}
                             error={secrets.error}
                             onLoadMore={secrets.error ? secrets.retry : visiblePage.loadMore}
-                            label="Load more secrets"
+                            label={t('app.vault.loadMore')}
                         />
                         {!secrets.loading && !secrets.error && visibleSecrets.length === 0 && (
-                            <p>{query ? 'No matching secrets.' : 'No secrets in this folder.'}</p>
+                            <p>
+                                {query
+                                    ? t('app.vault.noMatchingSecrets')
+                                    : t('app.vault.noSecrets')}
+                            </p>
                         )}
                     </div>
                 </>

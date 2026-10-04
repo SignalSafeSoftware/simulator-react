@@ -2,26 +2,30 @@ import {
     SIM_APP_PAGE_CONTENT,
     SIM_APP_LIST_PAGE_CONTENT,
     SIM_SCREEN_HEADER,
-} from '../../ui/semanticSimulatorClasses.js';
+} from '../../ui/styles/semanticSimulatorClasses.js';
 import { type ReactNode } from 'react';
 import { SimulatorPage } from '../../ui/layout/SimulatorPage.js';
 import { AppSecondaryNav } from './AppSecondaryNav.js';
 import { useSimulatorAppsHost } from './SimulatorAppsHost.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 
 export function DevicePage({
     title,
+    icon = '📧',
     onBack,
     children,
     navigation,
     listLayout = false,
 }: {
     title: string;
+    icon?: string;
     onBack?: () => void;
     children: ReactNode;
     navigation?: ReactNode;
     listLayout?: boolean;
 }) {
     const { Shell: SimulatorPhoneShell } = useSimulatorAppsHost();
+    const { t } = useSimulatorLocale();
     const content = (
         <SimulatorPage
             className="simulator-app-page"
@@ -33,7 +37,6 @@ export function DevicePage({
         </SimulatorPage>
     );
     if (!onBack) return content;
-    const icon = title === 'Vault' ? '🔐' : title === 'Photos' ? '🖼' : '📧';
     return (
         <SimulatorPhoneShell
             nav={
@@ -41,7 +44,7 @@ export function DevicePage({
                     <AppSecondaryNav
                         actions={[
                             { label: title, icon, active: true, onClick: () => {} },
-                            { label: 'Back', icon: '↩', onClick: onBack },
+                            { label: t('app.back'), icon: '↩', onClick: onBack },
                         ]}
                     />
                 )

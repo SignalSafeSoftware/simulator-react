@@ -1,9 +1,9 @@
-import type {
-    SimulatorContactValue,
-    SimulatorPhoneScreenId,
+import {
     SimulatorEmailScreenId,
-    SimulatorMessagesScreenId,
     SimulatorHomeScreenId,
+    SimulatorMessagesScreenId,
+    SimulatorPhoneScreenId,
+    type SimulatorContactValue,
 } from '@signalsafe/simulator-core/devicePayload';
 /**
  * Unified simulator session state and payload contract.
@@ -18,6 +18,7 @@ import type {
     SimulatorMainMenuItem,
 } from '@signalsafe/simulator-core/devicePayload';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
+import type { SimulatorActionType } from '../utils/telemetry/simulatorActionTaxonomy.js';
 import {
     type EmailTemplateContent,
     type PhoneSimulatorContent,
@@ -46,12 +47,22 @@ export type MessagesScreenId = SimulatorMessagesScreenId;
 export type HomeScreenId = SimulatorHomeScreenId;
 
 /** Default screen per app (list/root context for Cancel). */
-export const DEFAULT_PHONE_SCREEN: PhoneScreenId = 'history';
-export const DEFAULT_EMAIL_SCREEN: EmailScreenId = 'list';
-export const DEFAULT_MESSAGES_SCREEN: MessagesScreenId = 'threads';
-export const DEFAULT_INTERNET_SCREEN = 'landing';
-/** Layout identifier for internet (browser) pages (from data). */
-export const DEFAULT_HOME_SCREEN: HomeScreenId = 'home';
+export const DEFAULT_PHONE_SCREEN: PhoneScreenId = SimulatorPhoneScreenId.History;
+export const DEFAULT_EMAIL_SCREEN: EmailScreenId = SimulatorEmailScreenId.List;
+export const DEFAULT_MESSAGES_SCREEN: MessagesScreenId = SimulatorMessagesScreenId.Threads;
+
+/** Layout identifiers for internet (browser) pages (from data). */
+export const BrowserLayout = Object.freeze({
+    Landing: 'landing',
+    Login: 'login',
+    Content: 'content',
+    Result: 'result',
+    Download: 'download',
+} as const);
+export type BrowserLayout = (typeof BrowserLayout)[keyof typeof BrowserLayout];
+
+export const DEFAULT_INTERNET_SCREEN = BrowserLayout.Landing;
+export const DEFAULT_HOME_SCREEN: HomeScreenId = SimulatorHomeScreenId.Home;
 
 /** Per-app view state (preserved when switching apps). */
 export interface PhoneAppViewState {
@@ -152,10 +163,18 @@ export interface SimulatorThreadListRow {
     unread?: boolean;
 }
 
+/** Who sent a thread message (mirrors core's SmsThreadMessage.from). */
+export const MessageSender = Object.freeze({ Me: 'me', Them: 'them' } as const);
+export type MessageSender = (typeof MessageSender)[keyof typeof MessageSender];
+
+/** History renders immediately; scenario reveals messages on timers. */
+export const SmsMode = Object.freeze({ Scenario: 'scenario', History: 'history' } as const);
+export type SmsMode = (typeof SmsMode)[keyof typeof SmsMode];
+
 /** SMS payload slice. */
 export interface SimulatorSmsPayload {
     /** History renders immediately without scenario reveal timers. */
-    mode?: 'scenario' | 'history';
+    mode?: SmsMode;
     avatarUrl?: string;
     readOnly?: boolean;
     loadingMessage?: string;
@@ -196,7 +215,14 @@ export interface SimulatorBrowserPayload {
 }
 
 /** Call history entry direction/type for display and behavior. */
-export type CallHistoryEntryKind = 'incoming' | 'outgoing' | 'missed' | 'voicemail' | 'unknown';
+export const CallHistoryEntryKind = Object.freeze({
+    Incoming: 'incoming',
+    Outgoing: 'outgoing',
+    Missed: 'missed',
+    Voicemail: 'voicemail',
+    Unknown: 'unknown',
+} as const);
+export type CallHistoryEntryKind = (typeof CallHistoryEntryKind)[keyof typeof CallHistoryEntryKind];
 
 /** Single call history row (from full-device or derived). */
 export interface SimulatorCallHistoryEntry {
@@ -237,30 +263,35 @@ export interface SimulatorPhonePayload {
  * Canonical taxonomy (types + categories + validation): see utils/simulatorActionTaxonomy.ts.
  */
 export type SimulatorAction =
-    | { type: 'navigate_screen'; app: SimulatorApp; screen: string }
-    | { type: 'open_app'; app: SimulatorApp }
-    | { type: 'open_contact'; contactId: string }
-    | { type: 'open_thread'; threadId: string }
-    | { type: 'open_email'; messageId: string }
-    | { type: 'open_page'; pageId: string }
-    | { type: 'submit_form'; submitMetadata?: Record<string, boolean> }
-    | { type: 'answer_call'; choiceIndex?: number }
-    | { type: 'ignore_call' }
-    | { type: 'search_contacts'; query?: string }
-    | { type: 'click_link'; href?: string; linkIndex?: number; pageId?: string }
-    | { type: 'open_attachment'; attachmentIndex?: number }
-    | { type: 'download_attachment'; attachmentIndex?: number }
-    | { type: 'report' }
-    | { type: 'check_contact' }
-    | { type: 'check_contacts' }
-    | { type: 'send_reply'; replyText?: string }
-    | { type: 'dial_phone'; dialedNumber?: string }
-    | { type: 'open_voicemail' }
-    | { type: 'open_store' }
-    | { type: 'open_settings' }
-    | { type: 'download_click'; downloadTarget?: string }
-    | { type: 'switch_channel'; channel: SimulatorChannel }
-    | { type: 'view_directory_entry'; entryId: string };
+    | { type: typeof SimulatorActionType.NavigateScreen; app: SimulatorApp; screen: string }
+    | { type: typeof SimulatorActionType.OpenApp; app: SimulatorApp }
+    | { type: typeof SimulatorActionType.OpenContact; contactId: string }
+    | { type: typeof SimulatorActionType.OpenThread; threadId: string }
+    | { type: typeof SimulatorActionType.OpenEmail; messageId: string }
+    | { type: typeof SimulatorActionType.OpenPage; pageId: string }
+    | { type: typeof SimulatorActionType.SubmitForm; submitMetadata?: Record<string, boolean> }
+    | { type: typeof SimulatorActionType.AnswerCall; choiceIndex?: number }
+    | { type: typeof SimulatorActionType.IgnoreCall }
+    | { type: typeof SimulatorActionType.SearchContacts; query?: string }
+    | {
+          type: typeof SimulatorActionType.ClickLink;
+          href?: string;
+          linkIndex?: number;
+          pageId?: string;
+      }
+    | { type: typeof SimulatorActionType.OpenAttachment; attachmentIndex?: number }
+    | { type: typeof SimulatorActionType.DownloadAttachment; attachmentIndex?: number }
+    | { type: typeof SimulatorActionType.Report }
+    | { type: typeof SimulatorActionType.CheckContact }
+    | { type: typeof SimulatorActionType.CheckContacts }
+    | { type: typeof SimulatorActionType.SendReply; replyText?: string }
+    | { type: typeof SimulatorActionType.DialPhone; dialedNumber?: string }
+    | { type: typeof SimulatorActionType.OpenVoicemail }
+    | { type: typeof SimulatorActionType.OpenStore }
+    | { type: typeof SimulatorActionType.OpenSettings }
+    | { type: typeof SimulatorActionType.DownloadClick; downloadTarget?: string }
+    | { type: typeof SimulatorActionType.SwitchChannel; channel: SimulatorChannel }
+    | { type: typeof SimulatorActionType.ViewDirectoryEntry; entryId: string };
 
 /** Single contact for list/detail and search (from full-device payload). */
 export interface SimulatorSessionContact {
@@ -345,31 +376,31 @@ export interface SimulatorViewState {
 export function viewStateToActiveChannel(app: SimulatorApp): SimulatorChannel {
     switch (app) {
         case SimulatorApp.Phone:
-            return 'contacts';
+            return SimulatorChannel.Contacts;
         case SimulatorApp.Messages:
-            return 'sms';
+            return SimulatorChannel.Sms;
         case SimulatorApp.Internet:
-            return 'browser';
+            return SimulatorChannel.Browser;
         case SimulatorApp.Email:
         case SimulatorApp.Home:
             return app;
         default:
-            return 'email';
+            return SimulatorChannel.Email;
     }
 }
 
 /** Map shell nav channel to app (sms→messages, browser→internet). */
 export function channelToApp(channel: SimulatorChannel): SimulatorApp {
     switch (channel) {
-        case 'contacts':
-        case 'phone':
+        case SimulatorChannel.Contacts:
+        case SimulatorChannel.Phone:
             return SimulatorApp.Phone;
-        case 'sms':
+        case SimulatorChannel.Sms:
             return SimulatorApp.Messages;
-        case 'browser':
+        case SimulatorChannel.Browser:
             return SimulatorApp.Internet;
-        case 'email':
-        case 'home':
+        case SimulatorChannel.Email:
+        case SimulatorChannel.Home:
             return channel;
         default:
             return SimulatorApp.Email;

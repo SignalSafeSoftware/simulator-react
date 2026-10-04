@@ -1,4 +1,5 @@
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 
 export default function PhotoLocation({
     latitude,
@@ -8,23 +9,24 @@ export default function PhotoLocation({
     longitude: number | null;
 }) {
     const { renderPhotoMap } = useSimulatorAppsHost();
+    const { t } = useSimulatorLocale();
     const hasLocation = latitude !== null && longitude !== null;
     return (
         <section
             className="prototype-photo-card prototype-location-card"
-            aria-label="Photo location"
+            aria-label={t('app.photos.location')}
         >
             {hasLocation ? (
                 renderPhotoMap?.(latitude, longitude)
             ) : (
-                <div className="prototype-location-empty">No location recorded for this photo.</div>
+                <div className="prototype-location-empty">{t('app.photos.noLocation')}</div>
             )}
             <div className="prototype-photo-card-body">
                 <dl className="prototype-photo-details">
-                    <dt>Latitude</dt>
-                    <dd>{latitude ?? 'Unknown'}</dd>
-                    <dt>Longitude</dt>
-                    <dd>{longitude ?? 'Unknown'}</dd>
+                    <dt>{t('app.photos.latitude')}</dt>
+                    <dd>{latitude ?? t('app.unknown')}</dd>
+                    <dt>{t('app.photos.longitude')}</dt>
+                    <dd>{longitude ?? t('app.unknown')}</dd>
                 </dl>
             </div>
         </section>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { diffSimulatorPayloads } from '../src/utils/simulatorPayloadDiff';
+import { diffSimulatorPayloads } from '../src/utils/payload/simulatorPayloadDiff';
 
 function payloadWithDeviceMenu(ids: string[]): Record<string, unknown> {
     return {

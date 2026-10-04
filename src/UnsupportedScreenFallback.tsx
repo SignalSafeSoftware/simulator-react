@@ -5,8 +5,8 @@ import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
  */
 import { simSpacing, simStatus, simTypo } from './simulatorStyles.js';
 import type { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
-import { joinClasses, SIM_TEXT_MEDIUM } from './ui/simulatorClasses.js';
-import { SIM_UNSUPPORTED } from './ui/semanticSimulatorClasses.js';
+import { SIM_TEXT_MEDIUM, SIM_TEXT_WARNING, joinClasses } from './ui/styles/simulatorClasses.js';
+import { SIM_UNSUPPORTED } from './ui/styles/semanticSimulatorClasses.js';
 
 export interface UnsupportedScreenFallbackProps {
     app: SimulatorApp;
@@ -31,7 +31,7 @@ export default function UnsupportedScreenFallback({
             data-testid="simulator-unsupported-screen"
             data-show-diagnostics={showDiagnostics ? 'true' : 'false'}
         >
-            <p className={joinClasses(SIM_TEXT_MEDIUM, 'simulator-text--warning', simSpacing.mb1)}>
+            <p className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_WARNING, simSpacing.mb1)}>
                 {showDiagnostics
                     ? screenLocale.t('fallback.unsupported_screen_title')
                     : screenLocale.t('fallback.learner_unsupported_screen_title')}

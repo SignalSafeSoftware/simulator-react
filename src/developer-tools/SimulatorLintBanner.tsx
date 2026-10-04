@@ -1,16 +1,20 @@
 import {
+    SIM_BTN_PLAIN,
+    SIM_LIST_PLAIN,
+    SIM_MUTED,
+    SIM_TEXT_SEMIBOLD,
+    SIM_TEXT_SM,
     SimulatorButtonTone,
     joinClasses,
     simBtnToneClass,
-    SIM_MUTED,
-} from '../ui/simulatorClasses.js';
+} from '../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Advisory template lint warnings for authors/admins.
  */
 import { useId, useState } from 'react';
 
-import { type SimulatorLintWarning } from '../utils/lintSimulatorPayload.js';
+import { type SimulatorLintWarning } from '../utils/payload/lintSimulatorPayload.js';
 import { SimulatorAlert, SimulatorCollapse } from '../ui/primitives.js';
 
 export interface SimulatorLintBannerProps {
@@ -30,15 +34,15 @@ export default function SimulatorLintBanner({
     return (
         <SimulatorAlert
             tone="warning"
-            className={joinClasses('simulator-text--sm', className)}
+            className={joinClasses(SIM_TEXT_SM, className)}
             data-testid="simulator-lint-banner"
         >
             <button
                 type="button"
                 className={joinClasses(
                     simBtnToneClass(SimulatorButtonTone.Link),
-                    'simulator-btn--plain',
-                    'simulator-text--semibold',
+                    SIM_BTN_PLAIN,
+                    SIM_TEXT_SEMIBOLD,
                 )}
                 onClick={() => setOpen((prev: boolean) => !prev)}
                 aria-expanded={open}
@@ -51,7 +55,7 @@ export default function SimulatorLintBanner({
                 {screenLocale.t('screen.simulatorLintBanner.advisory.scenario.still.runs')}
             </span>
             <SimulatorCollapse open={open} id={listId} className="simulator-collapse__body">
-                <ul className="simulator-list--plain">
+                <ul className={SIM_LIST_PLAIN}>
                     {warnings.map((w, i) => (
                         <li key={`${w.code}-${i}`}>
                             {w.path != null && <span className={SIM_MUTED}>{w.path}: </span>}

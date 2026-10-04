@@ -1,4 +1,5 @@
-import { SimulatorButtonTone, SIM_BTN_SCREEN_BACK } from '../simulatorClasses.js';
+import { SIM_SCREEN_HEADER } from '../styles/semanticSimulatorClasses.js';
+import { SimulatorButtonTone, SIM_BTN_SCREEN_BACK } from '../styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 /**
  * Reusable structure for simulator detail-style screens: back bar and content block.
@@ -27,7 +28,7 @@ export function SimulatorDetailBackBar({
 
     return (
         <div
-            className={`${titleOnly ? 'simulator-screen__header' : simBackBar.container} ${className ?? ''}`.trim()}
+            className={`${titleOnly ? SIM_SCREEN_HEADER : simBackBar.container} ${className ?? ''}`.trim()}
         >
             {!titleOnly && (
                 <SimulatorButton

@@ -1,10 +1,14 @@
 import { useId, useState, type ReactNode } from 'react';
 import {
-    SimulatorButtonTone,
+    SIM_BTN_PLAIN,
     SIM_MUTED,
+    SIM_TEXT_BODY,
+    SIM_TEXT_SEMIBOLD,
+    SIM_TEXT_SM,
+    SimulatorButtonTone,
     joinClasses,
     simBtnToneClass,
-} from '../ui/simulatorClasses.js';
+} from '../ui/styles/simulatorClasses.js';
 import {
     SimulatorCard,
     SimulatorCardBody,
@@ -37,7 +41,7 @@ export function CollapsibleReport({
         <SimulatorCard className={joinClasses(simSpacing.mb2, className)} data-testid={testId}>
             <SimulatorCardHeader
                 className={joinClasses(
-                    'simulator-text--sm',
+                    SIM_TEXT_SM,
                     'simulator-surface--header',
                     simSpacing.py1,
                     simSpacing.px2,
@@ -47,9 +51,9 @@ export function CollapsibleReport({
                     type="button"
                     className={joinClasses(
                         simBtnToneClass(SimulatorButtonTone.Link),
-                        'simulator-btn--plain',
-                        'simulator-text--semibold',
-                        'simulator-text--body',
+                        SIM_BTN_PLAIN,
+                        SIM_TEXT_SEMIBOLD,
+                        SIM_TEXT_BODY,
                     )}
                     onClick={() => setOpen((prev) => !prev)}
                     aria-expanded={open}
@@ -66,7 +70,7 @@ export function CollapsibleReport({
             <SimulatorCollapse open={open}>
                 <SimulatorCardBody
                     id={bodyId}
-                    className={joinClasses('simulator-text--sm', simSpacing.py2, simSpacing.px2)}
+                    className={joinClasses(SIM_TEXT_SM, simSpacing.py2, simSpacing.px2)}
                 >
                     {children}
                 </SimulatorCardBody>

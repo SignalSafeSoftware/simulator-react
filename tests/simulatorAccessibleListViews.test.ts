@@ -1,12 +1,12 @@
 import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import ContactsView from '../src/views/ContactsView';
-import EmailMessageDetail from '../src/views/EmailMessageDetail';
-import EmailInboxList from '../src/views/EmailInboxList';
-import MessagesThreadListView from '../src/views/MessagesThreadListView';
-import PhoneHistoryList from '../src/views/PhoneHistoryList';
-import SmsSimulatorView from '../src/views/SmsSimulatorView';
+import ContactsView from '../src/views/contacts/ContactsView';
+import EmailMessageDetail from '../src/views/email/EmailMessageDetail';
+import EmailInboxList from '../src/views/email/EmailInboxList';
+import MessagesThreadListView from '../src/views/messages/MessagesThreadListView';
+import PhoneHistoryList from '../src/views/phone/PhoneHistoryList';
+import SmsSimulatorView from '../src/views/messages/SmsSimulatorView';
 
 import { TestRenderer, act } from './reactTestRenderer';
 

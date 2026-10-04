@@ -3,10 +3,10 @@ import { createElement } from 'react';
 import TestRenderer from 'react-test-renderer';
 import { act } from 'react-test-renderer';
 import { describe, expect, it, vi } from 'vitest';
-import EmailComposeView from '../src/views/EmailComposeView.js';
-import MessagesNewThreadView from '../src/views/MessagesNewThreadView.js';
-import HomeSimulatorView from '../src/views/HomeSimulatorView.js';
-import PhoneSimulatorView from '../src/views/PhoneSimulatorView.js';
+import EmailComposeView from '../src/views/email/EmailComposeView.js';
+import MessagesNewThreadView from '../src/views/messages/MessagesNewThreadView.js';
+import HomeSimulatorView from '../src/views/home/HomeSimulatorView.js';
+import PhoneSimulatorView from '../src/views/phone/PhoneSimulatorView.js';
 import { demoHomeFixture } from '../examples/demo-home-fixture.js';
 
 describe('reusable screen placeholders', () => {

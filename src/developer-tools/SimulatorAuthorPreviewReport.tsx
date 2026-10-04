@@ -1,4 +1,12 @@
-import { SIM_MUTED, joinClasses, SIM_BORDER_TOP } from '../ui/simulatorClasses.js';
+import {
+    SIM_BORDER_TOP,
+    SIM_MUTED,
+    SIM_TEXT_BODY,
+    SIM_TEXT_DANGER,
+    SIM_TEXT_SM,
+    SIM_TEXT_WARNING,
+    joinClasses,
+} from '../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Structured author preview report: entry point, apps, counts, key actions, validation/lint.
@@ -6,8 +14,8 @@ import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
  */
 import { Fragment, isValidElement } from 'react';
 import { simSpacing } from '../simulatorStyles.js';
-import { type SimulatorPreviewReport } from '../utils/simulatorPreviewReport.js';
-import { withStableKeys } from '../utils/stableKeys.js';
+import { type SimulatorPreviewReport } from '../utils/preview/simulatorPreviewReport.js';
+import { withStableKeys } from '../utils/lists/stableKeys.js';
 import { CollapsibleReport } from './CollapsibleReport.js';
 
 export interface SimulatorAuthorPreviewReportProps {
@@ -99,9 +107,9 @@ function positiveCountSummary(count: number, singular: string, plural: string): 
 
 function Line({ label, value }: Readonly<{ label: string; value: React.ReactNode }>) {
     return (
-        <div className="simulator-text--sm">
+        <div className={SIM_TEXT_SM}>
             <span className={SIM_MUTED}>{label}:</span>{' '}
-            <span className="simulator-text--body">{formatPreviewValue(value)}</span>
+            <span className={SIM_TEXT_BODY}>{formatPreviewValue(value)}</span>
         </div>
     );
 }
@@ -193,7 +201,7 @@ export default function SimulatorAuthorPreviewReport({
                                 {screenLocale.t('screen.simulatorAuthorPreviewReport.ok')}
                             </span>
                         ) : (
-                            <span className="simulator-text--danger">
+                            <span className={SIM_TEXT_DANGER}>
                                 {screenLocale.t('screen.simulatorAuthorPreviewReport.failed')}
                             </span>
                         )
@@ -208,11 +216,11 @@ export default function SimulatorAuthorPreviewReport({
                         label={screenLocale.t(
                             'screen.simulatorAuthorPreviewReport.unreachable.items',
                         )}
-                        value={<span className="simulator-text--warning">{unreachableCount}</span>}
+                        value={<span className={SIM_TEXT_WARNING}>{unreachableCount}</span>}
                     />
                 )}
                 {browserHasCycle && (
-                    <div className={joinClasses('simulator-text--warning', simSpacing.mt1)}>
+                    <div className={joinClasses(SIM_TEXT_WARNING, simSpacing.mt1)}>
                         {screenLocale.t(
                             'screen.simulatorAuthorPreviewReport.browser.has.navigation.cycle',
                         )}

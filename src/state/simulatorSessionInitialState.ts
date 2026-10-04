@@ -1,4 +1,9 @@
-import { isEmailScreen, isMessagesScreen } from '@signalsafe/simulator-core/devicePayload';
+import { SimulatorChannel } from '../types/session.js';
+import {
+    SimulatorEmailScreenId,
+    isEmailScreen,
+    isMessagesScreen,
+} from '@signalsafe/simulator-core/devicePayload';
 import { isHomeScreen, isPhoneScreen } from '@signalsafe/simulator-core/devicePayload';
 /**
  * Build initial session state from payload (entry_point when present).
@@ -7,7 +12,7 @@ import { isHomeScreen, isPhoneScreen } from '@signalsafe/simulator-core/devicePa
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { SimulatorSessionState } from '../types/session.js';
 import { DEFAULT_INTERNET_SCREEN, DEFAULT_HOME_SCREEN } from '../types/session.js';
-import { validateSimulatorPayload } from '../utils/validateSimulatorPayload.js';
+import { validateSimulatorPayload } from '../utils/payload/validateSimulatorPayload.js';
 import {
     createInitialEmailState,
     createInitialHomeState,
@@ -21,14 +26,14 @@ import {
 function getEntryAppFromPayload(payload: SimulatorSessionState['payload']): SimulatorApp {
     if (payload.entryPoint?.app != null) return payload.entryPoint.app;
     switch (payload.channel) {
-        case 'sms':
+        case SimulatorChannel.Sms:
             return SimulatorApp.Messages;
-        case 'browser':
+        case SimulatorChannel.Browser:
             return SimulatorApp.Internet;
-        case 'phone':
-        case 'contacts':
+        case SimulatorChannel.Phone:
+        case SimulatorChannel.Contacts:
             return SimulatorApp.Phone;
-        case 'home':
+        case SimulatorChannel.Home:
             return SimulatorApp.Home;
         default:
             return SimulatorApp.Email;
@@ -65,7 +70,7 @@ export function getInitialSessionState(
             ...createInitialEmailState(),
             screen: app === SimulatorApp.Email && isEmailScreen(entryScreen) ? entryScreen : 'list',
             selectedMessageId:
-                app === SimulatorApp.Email && entryScreen === 'detail'
+                app === SimulatorApp.Email && entryScreen === SimulatorEmailScreenId.Detail
                     ? (payload.email?.selectedMessageId ?? payload.email?.inbox?.[0]?.id ?? null)
                     : null,
         },

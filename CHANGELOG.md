@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.19.0 — October 4, 2026
+
+- Group `utils` into `navigation`, `payload`, `preview`, `telemetry` and `lists`, `views` by app, and class-name modules under `ui/styles`. Public subpaths moved with them; see MIGRATION.md.
+- Replace repeated string literals with typed constants (`SimulatorActionType`, `SimulatorEventKind`, `SimulatorChannel` usage, `BrowserLayout`, `CallHistoryEntryKind`, `SimulatorLintCode`, tones, presets and others), shared class-name constants, and English catalog keys for device-app text.
+- Simplify large components into shared modules (`AppSecondaryNav`, `DevicePage`, `CollapsibleReport`, stable keys, text matching, browser field type) without changing behavior.
+- Require core 0.5.0.
+
 ## 0.19.0-cleanup.4 (local, unpublished)
 
 Remove legacy conversion, wire and presentation aliases; migrate consumers to canonical contracts. See MIGRATION.md.

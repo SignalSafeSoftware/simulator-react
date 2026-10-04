@@ -2,11 +2,11 @@ import type { ReactTestInstance, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import ContactsView from '../src/views/ContactsView';
+import ContactsView from '../src/views/contacts/ContactsView';
 import {
     SIM_PHONE_CONTACT_DETAIL,
     SIM_PHONE_CONTACT_ROW,
-} from '../src/ui/semanticSimulatorClasses';
+} from '../src/ui/styles/semanticSimulatorClasses';
 import { TestRenderer, act } from './reactTestRenderer';
 
 const CONTACTS = [

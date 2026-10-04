@@ -1,6 +1,8 @@
-import { SIM_APP_PAGE_CONTENT } from '../../ui/semanticSimulatorClasses.js';
+import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
+import { SIM_APP_PAGE_CONTENT } from '../../ui/styles/semanticSimulatorClasses.js';
 import type { Photo } from '@signalsafe/simulator-core/apps/contracts';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 
 export default function PhotoEditor({
     photo,
@@ -14,31 +16,32 @@ export default function PhotoEditor({
     onReplace: (file: File) => void;
 }) {
     const { formatCaptureDate: captureDateLabel } = useSimulatorAppsHost();
+    const { t } = useSimulatorLocale();
     return (
         <fieldset disabled={disabled} className={SIM_APP_PAGE_CONTENT}>
-            <legend>Edit photo</legend>
+            <legend>{t('app.photos.edit')}</legend>
             <label>
-                Title
+                {t('app.vault.title')}
                 <input
-                    className="simulator-input"
+                    className={SIM_INPUT}
                     value={photo.title}
                     maxLength={200}
                     onChange={(event) => onChange({ ...photo, title: event.target.value })}
                 />
             </label>
             <label>
-                Caption
+                {t('app.photos.caption')}
                 <textarea
-                    className="simulator-input"
+                    className={SIM_INPUT}
                     value={photo.caption}
                     maxLength={10000}
                     onChange={(event) => onChange({ ...photo, caption: event.target.value })}
                 />
             </label>
             <label>
-                Capture date and time
+                {t('app.photos.captured')}
                 <input
-                    className="simulator-input"
+                    className={SIM_INPUT}
                     type="datetime-local"
                     step="1"
                     value={photo.metadata.capturedAt}
@@ -51,12 +54,12 @@ export default function PhotoEditor({
                 />
             </label>
             <label>
-                Capture time zone or UTC offset (blank if unknown)
+                {t('app.photos.timeZone')}
                 <input
-                    className="simulator-input"
+                    className={SIM_INPUT}
                     value={photo.metadata.timeZone}
                     maxLength={100}
-                    placeholder="America/Denver or -06:00"
+                    placeholder={t('app.photos.timeZonePlaceholder')}
                     onChange={(event) =>
                         onChange({
                             ...photo,
@@ -67,9 +70,11 @@ export default function PhotoEditor({
             </label>
             {(['latitude', 'longitude'] as const).map((coordinate) => (
                 <label key={coordinate}>
-                    {coordinate === 'latitude' ? 'Latitude' : 'Longitude'}
+                    {coordinate === 'latitude'
+                        ? t('app.photos.latitude')
+                        : t('app.photos.longitude')}
                     <input
-                        className="simulator-input"
+                        className={SIM_INPUT}
                         type="number"
                         step="any"
                         min={coordinate === 'latitude' ? -90 : -180}
@@ -91,9 +96,9 @@ export default function PhotoEditor({
                 </label>
             ))}
             <label>
-                Replace image
+                {t('app.photos.replace')}
                 <input
-                    className="simulator-input"
+                    className={SIM_INPUT}
                     type="file"
                     accept="image/png,image/jpeg,image/webp"
                     onChange={(event) => {
@@ -103,14 +108,16 @@ export default function PhotoEditor({
                     }}
                 />
             </label>
-            <section aria-label="Original image metadata">
-                <h3>Original image metadata</h3>
+            <section aria-label={t('app.photos.originalMetadata')}>
+                <h3>{t('app.photos.originalMetadata')}</h3>
                 <p>{captureDateLabel(photo.original)}</p>
                 <p>
-                    Latitude: {photo.original.latitude ?? 'Unknown'}; Longitude:{' '}
-                    {photo.original.longitude ?? 'Unknown'}
+                    {t('app.photos.originalCoordinates', {
+                        latitude: photo.original.latitude ?? t('app.unknown'),
+                        longitude: photo.original.longitude ?? t('app.unknown'),
+                    })}
                 </p>
-                <p>Edits do not change metadata embedded in the image file.</p>
+                <p>{t('app.photos.editsNotice')}</p>
             </section>
         </fieldset>
     );

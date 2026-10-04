@@ -31,8 +31,8 @@ import {
     SIM_TEXT_SM,
     SIM_W_FULL,
     joinClasses,
-} from './ui/simulatorClasses.js';
-import { SIM_SCREEN_HEADER } from './ui/semanticSimulatorClasses.js';
+} from './ui/styles/simulatorClasses.js';
+import { SIM_SCREEN_HEADER } from './ui/styles/semanticSimulatorClasses.js';
 
 /** Spacing: section gaps, block padding, action bar. */
 export const simSpacing = {

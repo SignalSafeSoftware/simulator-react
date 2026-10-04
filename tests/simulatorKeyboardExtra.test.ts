@@ -3,7 +3,7 @@ import {
     focusSimulatorSearch,
     handleSimulatorKeyboard,
     LIST_NAV_EVENT,
-} from '../src/utils/simulatorKeyboardCommands';
+} from '../src/utils/navigation/simulatorKeyboardCommands';
 
 describe('simulator keyboard extra coverage', () => {
     it('returns help for question-mark and ignores unknown app-switch keys', () => {

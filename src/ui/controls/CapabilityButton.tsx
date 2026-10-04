@@ -1,3 +1,5 @@
+import { SimulatorCapabilityState } from '../../contract/capabilities.js';
+import { SIM_ACTION_REASON } from '../styles/semanticSimulatorClasses.js';
 import { useId, type ButtonHTMLAttributes } from 'react';
 import type { SimulatorCapability } from '../../contract/capabilities.js';
 
@@ -7,7 +9,7 @@ export function CapabilityButton({
     ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { capability: SimulatorCapability }) {
     const reasonId = useId();
-    const available = capability.state === 'enabled';
+    const available = capability.state === SimulatorCapabilityState.Enabled;
     return (
         <>
             <button
@@ -22,7 +24,7 @@ export function CapabilityButton({
                 {children}
             </button>
             {!available && (
-                <small id={reasonId} className="simulator-action-reason">
+                <small id={reasonId} className={SIM_ACTION_REASON}>
                     {capability.reason}
                 </small>
             )}

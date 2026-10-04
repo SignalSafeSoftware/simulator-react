@@ -5,7 +5,7 @@ import {
     applyDeepLinkToState,
     getDeepLinkContactsSearch,
     parseSimulatorSearchParams,
-} from '../src/utils/simulatorDeepLink';
+} from '../src/utils/navigation/simulatorDeepLink';
 import type { SimulatorSessionState } from '../src/types/session';
 function createPayload(): SimulatorSessionState['payload'] {
     return {

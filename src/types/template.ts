@@ -13,7 +13,12 @@ export interface EmailTemplateLink {
     title?: string;
 }
 
-export type AttachmentBehavior = 'download' | 'open' | 'macro_prompt';
+export const AttachmentBehavior = Object.freeze({
+    Download: 'download',
+    Open: 'open',
+    MacroPrompt: 'macro_prompt',
+} as const);
+export type AttachmentBehavior = (typeof AttachmentBehavior)[keyof typeof AttachmentBehavior];
 
 export interface EmailTemplateContent {
     subject: string;

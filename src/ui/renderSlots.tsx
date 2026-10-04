@@ -1,4 +1,4 @@
-import type { SimulatorButtonTone } from './simulatorClasses.js';
+import { SimulatorAlertTone, type SimulatorButtonTone } from './styles/simulatorClasses.js';
 import type { ReactNode } from 'react';
 
 import { type SimulatorDispatchAction } from '../state/simulatorDispatchActions.js';
@@ -9,11 +9,11 @@ import type {
 } from '../types/session.js';
 import { type PhoneSimulatorContent } from '../types/template.js';
 import { SimulatorAlert, SimulatorButton } from './primitives.js';
-import { joinClasses } from './simulatorClasses.js';
+import { SIM_TEXT_SM, joinClasses } from './styles/simulatorClasses.js';
 import {
     SIM_PHONE_INCOMING_CALL_AFTER_ACTIONS,
     SIM_PHONE_INCOMING_CALL_EXTRA,
-} from './semanticSimulatorClasses.js';
+} from './styles/semanticSimulatorClasses.js';
 
 export interface SimulatorChoiceRenderProps {
     label: ReactNode;
@@ -26,7 +26,7 @@ export interface SimulatorChoiceRenderProps {
 
 export interface SimulatorFeedbackRenderProps {
     message: ReactNode;
-    tone?: 'warning' | 'danger' | 'info';
+    tone?: SimulatorAlertTone;
     className?: string;
 }
 
@@ -76,8 +76,8 @@ export function renderSimulatorFeedback(
     }
     return (
         <SimulatorAlert
-            tone={props.tone ?? 'warning'}
-            className={joinClasses('simulator-text--sm', props.className)}
+            tone={props.tone ?? SimulatorAlertTone.Warning}
+            className={joinClasses(SIM_TEXT_SM, props.className)}
         >
             {props.message}
         </SimulatorAlert>

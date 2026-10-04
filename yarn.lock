@@ -468,9 +468,10 @@
   resolved "https://registry.npmjs.org/@rolldown/pluginutils/-/pluginutils-1.0.1.tgz#e3fcee093fbb5ce765e1ad088ff4de2889f6f9be"
   integrity sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==
 
-"@signalsafe/simulator-core@file:vendor/npm/signalsafe-simulator-core-0.5.0-cleanup.3.tgz":
-  version "0.5.0-cleanup.3"
-  resolved "file:vendor/npm/signalsafe-simulator-core-0.5.0-cleanup.3.tgz#e30937cb6b12503c7bbf6d02405e2c5fd5c0ec14"
+"@signalsafe/simulator-core@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@signalsafe/simulator-core/-/simulator-core-0.5.0.tgz#c6ea79e3fcc6c37663548296ae7f95447bb361d4"
+  integrity sha512-/9Y+/lixGnXaWrAjCrQizV6QeQ6gPMmDGNrqnMvBtYENbry08useoocOKikSuJvveNzrcM1PdoRqlMrRe77PgQ==
   dependencies:
     "@signalsafe/tree-spec" "^0.4.1"
     zod "^4.0.0"

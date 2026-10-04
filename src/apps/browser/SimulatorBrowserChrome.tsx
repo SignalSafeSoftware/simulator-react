@@ -1,7 +1,7 @@
 import {
-    SimulatorButtonTone,
+    SIM_BORDER_BOTTOM,
+    SIM_BTN_PLAIN,
     SIM_BTN_SM,
-    joinClasses,
     SIM_FLEX_COL,
     SIM_FLEX_GROW_1,
     SIM_MUTED,
@@ -10,8 +10,11 @@ import {
     SIM_SURFACE_WHITE,
     SIM_TEXT_BODY,
     SIM_TEXT_SM,
+    SIM_TEXT_TRUNCATE,
+    SimulatorButtonTone,
+    joinClasses,
     simBtnToneClass,
-} from '../../ui/simulatorClasses.js';
+} from '../../ui/styles/simulatorClasses.js';
 import { ArrowLeft, ArrowRight, Home, RotateCw } from 'lucide-react';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 /**
@@ -19,7 +22,7 @@ import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
  * and address/search bar (simulator UI chrome, not app routing).
  */
 import { type ReactNode } from 'react';
-import { withStableKeys } from '../../utils/stableKeys.js';
+import { withStableKeys } from '../../utils/lists/stableKeys.js';
 
 import { simBorder, simLayout, simScreen, simSpacing } from '../../simulatorStyles.js';
 
@@ -45,8 +48,9 @@ export interface SimulatorBrowserChromeProps {
 function renderUrlWithHighlights(
     url: string,
     segments: { start: number; end: number }[] | undefined,
+    fallback: string,
 ): React.ReactNode {
-    const s = url || 'Web Page Title';
+    const s = url || fallback;
     if (segments == null || segments.length === 0) return s;
     const parts: Array<{ text: string; highlight: boolean }> = [];
     let lastEnd = 0;
@@ -87,7 +91,7 @@ function renderUrlWithHighlights(
 const chromeNavBtnClass = joinClasses(
     simBtnToneClass(SimulatorButtonTone.Link),
     SIM_BTN_SM,
-    'simulator-btn--plain',
+    SIM_BTN_PLAIN,
     simSpacing.p2,
     SIM_TEXT_BODY,
 );
@@ -119,7 +123,7 @@ export default function SimulatorBrowserChrome({
                     simSpacing.gap2,
                     simSpacing.px2,
                     simSpacing.py2,
-                    'simulator-border simulator-border--bottom',
+                    SIM_BORDER_BOTTOM,
                     'simulator-surface--secondary-muted',
                 )}
                 style={{ minHeight: 40 }}
@@ -170,8 +174,12 @@ export default function SimulatorBrowserChrome({
                     )}
                     style={{ minHeight: 32 }}
                 >
-                    <span className="simulator-text--truncate">
-                        {renderUrlWithHighlights(url, urlHighlightSegments)}
+                    <span className={SIM_TEXT_TRUNCATE}>
+                        {renderUrlWithHighlights(
+                            url,
+                            urlHighlightSegments,
+                            screenLocale.t('app.browser.pageTitle'),
+                        )}
                     </span>
                 </div>
             </div>

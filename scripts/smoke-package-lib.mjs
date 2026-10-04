@@ -33,7 +33,7 @@ function fixNodeEsmRelativeImports(targetDir) {
     };
 
     const resolveRuntimeSpecifier = (filePath, specifier) => {
-        if (!specifier.startsWith('./') && !specifier.startsWith('../')) {
+        if (!specifier.startsWith('.') && !specifier.startsWith('..')) {
             return specifier;
         }
         if (explicitExtensionRe.test(specifier)) {

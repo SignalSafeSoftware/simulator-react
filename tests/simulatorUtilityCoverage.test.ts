@@ -16,9 +16,12 @@ import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../src/constants';
 import {
     applyPreviewFallback,
     PREVIEW_PLACEHOLDER_ID_PREFIX,
-} from '../src/utils/previewFallbackWorld';
-import { runSimulatorRealismChecks } from '../src/utils/simulatorRealismChecks';
-import { buildSimulatorNavGraph, simulatorNavGraphToJson } from '../src/utils/simulatorNavGraph';
+} from '../src/utils/preview/previewFallbackWorld';
+import { runSimulatorRealismChecks } from '../src/utils/payload/simulatorRealismChecks';
+import {
+    buildSimulatorNavGraph,
+    simulatorNavGraphToJson,
+} from '../src/utils/navigation/simulatorNavGraph';
 
 describe('simulator utility coverage', () => {
     it('applies preview fallbacks only when entry targets missing content', () => {
