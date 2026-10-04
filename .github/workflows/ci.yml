@@ -122,7 +122,7 @@ jobs:
             - name: Report SonarCloud new-code issues
               if: always()
               run: |
-                  response=$(curl -sS -u "$SONAR_TOKEN:" "https://sonarcloud.io/api/issues/search?componentKeys=signalsafe-package-simulator-react&branch=main&inNewCodePeriod=true&resolved=false&ps=100")
+                  response=$(curl -sS -u "$SONAR_TOKEN:" "https://sonarcloud.io/api/issues/search?organization=signalsafesoftware&componentKeys=signalsafe-package-simulator-react&branch=main&inNewCodePeriod=true&resolved=false&ps=100")
                   echo "$response" | jq -r '(.errors // [] | map(.msg)[]), "total: \(.total)", (.issues[]? | "\(.severity) \(.type) \(.rule) \(.component | sub("^[^:]*:";"")):\(.line // 0) \(.message)")' || echo "$response" | head -c 600
 
             - name: Sonar PR comment
