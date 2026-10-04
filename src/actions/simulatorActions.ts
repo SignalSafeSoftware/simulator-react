@@ -3,7 +3,7 @@
  * Use these in views so action shape is consistent and type-safe.
  */
 import type { SimulatorAction, SimulatorChannel } from '../types/session.js';
-import type { SimulatorApp } from '../types/portableSimulator.js';
+import type { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 
 export const SimulatorActions = {
     navigateScreen: (app: SimulatorApp, screen: string): SimulatorAction => ({

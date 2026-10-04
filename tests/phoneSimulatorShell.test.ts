@@ -1,3 +1,4 @@
+import type { ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import PhoneSimulatorShell from '../src/shell/PhoneSimulatorShell';
@@ -7,7 +8,7 @@ import { TestRenderer, act } from './reactTestRenderer';
 describe('PhoneSimulatorShell', () => {
     it('renders the primary channel nav when no secondary menu is present', async () => {
         const onChannelChange = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -36,7 +37,7 @@ describe('PhoneSimulatorShell', () => {
     it('renders the secondary menu and routes the back action separately', async () => {
         const onSelect = vi.fn();
         const onSecondaryBack = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -72,7 +73,7 @@ describe('PhoneSimulatorShell', () => {
     });
 
     it('renders exit links, header-only layout, and compact shell mode', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(

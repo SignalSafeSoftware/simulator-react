@@ -1,3 +1,4 @@
+import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -14,12 +15,8 @@ import {
     mapPhone,
 } from '../src/adapters/fullDeviceToSession';
 import SimulatorErrorBoundary from '../src/SimulatorErrorBoundary';
-import SimulatorLintBanner from '../src/components/SimulatorLintBanner';
-import {
-    SimulatorList,
-    SimulatorListItem,
-    SimulatorListUnreadDot,
-} from '../src/components/SimulatorList';
+import SimulatorLintBanner from '../src/developer-tools/SimulatorLintBanner.js';
+import { SimulatorList, SimulatorListItem } from '../src/ui/lists/SimulatorList.js';
 import {
     getSimulatorActionCategory,
     isSimulatorActionType,
@@ -30,25 +27,27 @@ import {
     focusSimulatorSearch,
     handleSimulatorKeyboard,
     isTypingTarget,
-    SIMULATOR_LIST_NAV_EVENT,
+    LIST_NAV_EVENT,
 } from '../src/utils/simulatorKeyboardCommands';
-
 import { TestRenderer, act } from './reactTestRenderer';
-
 const originalArgv = [...process.argv];
 const originalCwd = process.cwd();
 const originalDocument = globalThis.document;
-const originalCustomEvent = (globalThis as { CustomEvent?: unknown }).CustomEvent;
-const originalHTMLElement = (globalThis as { HTMLElement?: unknown }).HTMLElement;
-
+const originalCustomEvent = (
+    globalThis as {
+        CustomEvent?: unknown;
+    }
+).CustomEvent;
+const originalHTMLElement = (
+    globalThis as {
+        HTMLElement?: unknown;
+    }
+).HTMLElement;
 async function importFixNodeScript() {
     vi.resetModules();
-    return import('../scripts/fix-node-esm-relative-imports.ts');
+    return import('../scripts/fix-node-esm-relative-imports.js');
 }
-
-function flattenText(
-    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
-): string {
+function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
     if (node == null) {
         return '';
     }
@@ -59,16 +58,26 @@ function flattenText(
         .map((child) => (typeof child === 'string' ? child : flattenText(child)))
         .join('');
 }
-
 afterEach(() => {
     process.argv = [...originalArgv];
     process.chdir(originalCwd);
-    (globalThis as { document?: Document }).document = originalDocument;
-    (globalThis as { CustomEvent?: unknown }).CustomEvent = originalCustomEvent;
-    (globalThis as { HTMLElement?: unknown }).HTMLElement = originalHTMLElement;
+    (
+        globalThis as {
+            document?: Document;
+        }
+    ).document = originalDocument;
+    (
+        globalThis as {
+            CustomEvent?: unknown;
+        }
+    ).CustomEvent = originalCustomEvent;
+    (
+        globalThis as {
+            HTMLElement?: unknown;
+        }
+    ).HTMLElement = originalHTMLElement;
     vi.restoreAllMocks();
 });
-
 describe('remaining tail coverage', () => {
     it('covers the ESM relative import fixer script success and error paths', async () => {
         const dir = mkdtempSync(path.join(tmpdir(), 'simreact-esm-'));
@@ -84,29 +93,23 @@ describe('remaining tail coverage', () => {
             'import { helper } from "./helper";\nimport "./utils";\nconsole.log(helper);\n',
         );
         writeFileSync(path.join(nestedDir, 'types.d.ts'), 'export * from "../helper";\n');
-
         const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
         process.argv = ['node', 'fix-node-esm-relative-imports.ts', dir];
         await importFixNodeScript();
-
         const updatedEntry = readFileSync(path.join(dir, 'entry.js'), 'utf8');
         const updatedTypes = readFileSync(path.join(nestedDir, 'types.d.ts'), 'utf8');
         expect(updatedEntry).toContain('./helper.js');
         expect(updatedEntry).toContain('./utils/index.js');
         expect(updatedTypes).toContain('../helper.js');
         expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('updated 2 file(s)'));
-
         process.argv = ['node', 'fix-node-esm-relative-imports.ts'];
         await expect(importFixNodeScript()).rejects.toThrow(
             'Usage: tsx scripts/fix-node-esm-relative-imports.ts <dist-dir>',
         );
-
         process.argv = ['node', 'fix-node-esm-relative-imports.ts', 'does-not-exist'];
         await expect(importFixNodeScript()).rejects.toThrow('Target dist directory does not exist');
-
         rmSync(dir, { recursive: true, force: true });
     });
-
     it('covers keyboard helpers, typing guards, and search focus', () => {
         class FakeHTMLElement {
             tagName = 'DIV';
@@ -117,22 +120,38 @@ describe('remaining tail coverage', () => {
                 return name === 'role' ? this.roleValue : null;
             }
         }
-        (globalThis as { HTMLElement?: unknown }).HTMLElement = FakeHTMLElement;
+        (
+            globalThis as {
+                HTMLElement?: unknown;
+            }
+        ).HTMLElement = FakeHTMLElement;
         const dispatchEvent = vi.fn();
         const querySelector = vi.fn(() => new FakeHTMLElement());
-        (globalThis as { document?: unknown }).document = {
+        (
+            globalThis as {
+                document?: unknown;
+            }
+        ).document = {
             dispatchEvent,
             querySelector,
         } as never;
-        (globalThis as { CustomEvent?: unknown }).CustomEvent = class {
+        (
+            globalThis as {
+                CustomEvent?: unknown;
+            }
+        ).CustomEvent = class {
             type: string;
             detail: unknown;
-            constructor(type: string, init?: { detail?: unknown }) {
+            constructor(
+                type: string,
+                init?: {
+                    detail?: unknown;
+                },
+            ) {
                 this.type = type;
                 this.detail = init?.detail;
             }
         };
-
         const input = new FakeHTMLElement();
         input.tagName = 'INPUT';
         const textarea = new FakeHTMLElement();
@@ -143,14 +162,12 @@ describe('remaining tail coverage', () => {
         searchbox.roleValue = 'searchbox';
         const contentEditable = new FakeHTMLElement();
         contentEditable.isContentEditable = true;
-
         expect(isTypingTarget(input as never)).toBe(true);
         expect(isTypingTarget(textarea as never)).toBe(true);
         expect(isTypingTarget(textbox as never)).toBe(true);
         expect(isTypingTarget(searchbox as never)).toBe(true);
         expect(isTypingTarget(contentEditable as never)).toBe(true);
         expect(isTypingTarget(new FakeHTMLElement() as never)).toBe(false);
-
         const onBack = vi.fn();
         const onSwitchApp = vi.fn();
         const onFocusSearch = vi.fn();
@@ -179,7 +196,6 @@ describe('remaining tail coverage', () => {
             target: null,
             preventDefault: vi.fn(),
         } as unknown as KeyboardEvent;
-
         expect(
             handleSimulatorKeyboard(
                 altDown,
@@ -188,7 +204,6 @@ describe('remaining tail coverage', () => {
             ),
         ).toEqual({ handled: true });
         expect(onListNav).toHaveBeenCalledWith('next');
-
         expect(
             handleSimulatorKeyboard(
                 altUp,
@@ -197,9 +212,8 @@ describe('remaining tail coverage', () => {
             ),
         ).toEqual({ handled: true });
         expect(dispatchEvent).toHaveBeenCalledWith(
-            expect.objectContaining({ type: SIMULATOR_LIST_NAV_EVENT }),
+            expect.objectContaining({ type: LIST_NAV_EVENT }),
         );
-
         expect(
             handleSimulatorKeyboard(
                 blocked,
@@ -207,7 +221,6 @@ describe('remaining tail coverage', () => {
                 { activeApp: 'email', activeScreen: 'list' },
             ),
         ).toEqual({ handled: false });
-
         const escapeEvent = {
             key: 'Escape',
             altKey: false,
@@ -224,7 +237,6 @@ describe('remaining tail coverage', () => {
             ),
         ).toEqual({ handled: true });
         expect(onBack).toHaveBeenCalledTimes(1);
-
         const switchEvent = {
             key: '4',
             altKey: true,
@@ -241,7 +253,6 @@ describe('remaining tail coverage', () => {
             ),
         ).toEqual({ handled: true });
         expect(onSwitchApp).toHaveBeenCalledWith('messages');
-
         const searchEvent = {
             key: '/',
             altKey: false,
@@ -258,7 +269,6 @@ describe('remaining tail coverage', () => {
             ),
         ).toEqual({ handled: true });
         expect(onFocusSearch).toHaveBeenCalledTimes(1);
-
         const helpEvent = {
             key: '?',
             altKey: false,
@@ -274,29 +284,26 @@ describe('remaining tail coverage', () => {
                 { activeApp: 'email', activeScreen: 'list' },
             ),
         ).toEqual({ handled: true, showHelp: true });
-
         focusSimulatorSearch();
         expect(querySelector).toHaveBeenCalledWith('[data-simulator-search]');
     });
-
     it('covers simulator error boundary fallback rendering and retry', async () => {
         const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
         const onRetry = vi.fn();
         const Boom = () => {
             throw new Error('Boom');
         };
-
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
         await act(async () => {
             renderer = TestRenderer.create(
-                React.createElement(
-                    SimulatorErrorBoundary,
-                    { fallbackTitle: 'Custom error', onRetry, showDiagnostics: true },
-                    React.createElement(Boom),
-                ),
+                React.createElement(SimulatorErrorBoundary, {
+                    fallbackTitle: 'Custom error',
+                    onRetry,
+                    showDiagnostics: true,
+                    children: React.createElement(Boom),
+                }),
             );
         });
-
         const text = flattenText(renderer!.toJSON());
         expect(text).toContain('Custom error');
         expect(text).toContain('Boom');
@@ -306,9 +313,8 @@ describe('remaining tail coverage', () => {
         });
         expect(onRetry).toHaveBeenCalledTimes(1);
     });
-
     it('covers lint banner and simulator list components', async () => {
-        let bannerRenderer: TestRenderer.ReactTestRenderer | null = null;
+        let bannerRenderer: ReactTestRenderer | null = null;
         await act(async () => {
             bannerRenderer = TestRenderer.create(
                 React.createElement(SimulatorLintBanner, {
@@ -326,8 +332,7 @@ describe('remaining tail coverage', () => {
         expect(
             bannerRenderer!.root.findByProps({ 'data-testid': 'simulator-lint-banner' }),
         ).toBeTruthy();
-
-        let emptyBanner: TestRenderer.ReactTestRenderer | null = null;
+        let emptyBanner: ReactTestRenderer | null = null;
         await act(async () => {
             emptyBanner = TestRenderer.create(
                 React.createElement(SimulatorLintBanner, {
@@ -336,31 +341,25 @@ describe('remaining tail coverage', () => {
             );
         });
         expect(emptyBanner!.toJSON()).toBeNull();
-
-        let listRenderer: TestRenderer.ReactTestRenderer | null = null;
+        let listRenderer: ReactTestRenderer | null = null;
         await act(async () => {
             listRenderer = TestRenderer.create(
-                React.createElement(
-                    SimulatorList,
-                    { className: 'extra' },
-                    React.createElement(
-                        SimulatorListItem,
-                        {
-                            onClick: vi.fn(),
-                            active: true,
-                            variant: 'compact',
-                            className: 'row-extra',
-                        },
-                        React.createElement(SimulatorListUnreadDot),
-                    ),
-                ),
+                React.createElement(SimulatorList, {
+                    className: 'extra',
+                    children: React.createElement(SimulatorListItem, {
+                        onClick: vi.fn(),
+                        active: true,
+                        variant: 'compact',
+                        className: 'row-extra',
+                        children: 'List entry',
+                    }),
+                }),
             );
         });
         expect(listRenderer!.root.findByType('ul').props.className).toContain('extra');
         expect(listRenderer!.root.findByType('li').props.className).toContain('row-extra');
-        expect(listRenderer!.root.findByType('span').props['aria-hidden']).toBe(true);
+        expect(listRenderer!.root.findByType('button').children).toEqual(['List entry']);
     });
-
     it('covers simulator action taxonomy helpers and remaining adapter branches', () => {
         expect(getSimulatorActionCategory('open_store')).toBe(
             SIMULATOR_ACTION_CATEGORY.HOME_NAVIGATION,
@@ -385,7 +384,6 @@ describe('remaining tail coverage', () => {
         expect(validateSimulatorAction({ type: 'switch_channel' })).toBe(false);
         expect(validateSimulatorAction({ type: 'report' })).toBe(true);
         expect(validateSimulatorAction(null)).toBe(false);
-
         expect(appToChannel('bogus' as never)).toBe('email');
         expect(
             mapDevice({
@@ -416,7 +414,6 @@ describe('remaining tail coverage', () => {
             { id: 'c2', displayName: 'Grace Hopper', number: undefined, email: undefined },
         ]);
         expect(mapContacts(null as never)).toEqual([]);
-
         const mappedEmail = mapEmail({
             messages: [
                 {
@@ -502,7 +499,6 @@ describe('remaining tail coverage', () => {
             },
             selectedMessageId: null,
         });
-
         expect(mapMessages({ thread_detail: null } as never)?.thread.messages).toEqual([]);
         const mappedMessages = mapMessages({
             thread_detail: {
@@ -543,7 +539,6 @@ describe('remaining tail coverage', () => {
             timestamp: undefined,
             attachment: { label: 'Receipt', url: '/receipt.pdf' },
         });
-
         expect(mapPhone({ incoming_call: null } as never)).toBeNull();
         const mappedPhone = mapPhone({
             incoming_call: {
@@ -556,13 +551,13 @@ describe('remaining tail coverage', () => {
                 { number: '+1555', direction: 'voicemail' },
                 { number: '+1666', direction: 'missed' },
             ],
-            voicemail_transcript: 'Legacy voicemail',
+            voicemail: { transcript: 'Voicemail message' },
         } as never);
-        expect(mappedPhone?.content.transcript).toBe('Incoming call.');
-        expect(mappedPhone?.content.avatar_url).toBe('https://example.test/avatar.png');
+        expect(mappedPhone?.content?.transcript).toBe('Incoming call.');
+        expect(mappedPhone?.content?.avatar_url).toBe('https://example.test/avatar.png');
         expect(mappedPhone?.callHistory?.[0]?.kind).toBe('voicemail');
         expect(mappedPhone?.callHistory?.[1]?.kind).toBe('missed');
-        expect(mappedPhone?.voicemailTranscript).toBe('Legacy voicemail');
+        expect(mappedPhone?.voicemailTranscript).toBe('Voicemail message');
         expect(
             mapPhone({
                 incoming_call: { transcript: 'Live call' },
@@ -599,7 +594,6 @@ describe('remaining tail coverage', () => {
             voicemailCallerName: 'Caller',
             voicemailTimestamp: 'Now',
         });
-
         expect(mapInternet({ pages: [] } as never)).toBeNull();
         const typedFormInternet = mapInternet({
             pages: [{ id: 'p1', url: 'example.com', title: 'Login', layout: 'content' }],
@@ -617,7 +611,6 @@ describe('remaining tail coverage', () => {
             { name: 'user', type: 'text', label: 'User' },
             { name: 'pass', type: 'password', label: 'Password' },
         ]);
-
         const mappedInternet = mapInternet({
             pages: [
                 { url: 'portal.example.test', title: '', layout: '', submit_target_page_id: '' },
@@ -707,7 +700,6 @@ describe('remaining tail coverage', () => {
             ],
             defaultPageId: 'login',
         });
-
         expect(mapHome(null as never)).toBeNull();
         expect(
             mapHome({

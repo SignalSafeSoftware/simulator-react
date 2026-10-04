@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.19.0-cleanup.4 (local, unpublished)
+
+Remove legacy conversion, wire and presentation aliases; migrate consumers to canonical contracts. See MIGRATION.md.
+
+## 0.18.0-ui.4 (local)
+
+- Add an identity-content slot to PhoneContactEditor so hosts reuse its form and action controls with structured names and photo inputs.
+
+## Unreleased — shared PhoneMe UI
+
+- Use one shared call view, avatar/navigation primitives, and full-width history-row presentation across scenario and provider hosts.
+- Move the default PhoneMe palette and screen layout into the theme package; preserve host data, callbacks, and explicit appearance configuration.
+- Verify narrow devices and enlarged text, and prevent duplicate message actions when shell navigation renders them.
+- Local `ui` prereleases are packed integration artifacts, not registry releases.
+
 ## 0.17.0 — September 29, 2026
 
 - Export reusable Vault, Photos/editor/location, lock/settings, mutable Mailbox and HTML/React browser screens, page hooks and browser/file helpers.

@@ -6,7 +6,8 @@ scroll region, semantic screen classes, primary/secondary navigation and dialogs
 Only the active screen's content changes. No service, router or provider is required.
 
 ```tsx
-import type { SimulatorScreenOverrideProps, SimulatorScreenOverrides } from '@signalsafe/simulator-react';
+import type { SimulatorScreenOverrideProps } from '@signalsafe/simulator-react/contract/screenOverrides';
+import type { SimulatorScreenOverrides } from '@signalsafe/simulator-react/contract/screenOverrides';
 
 function HostSettings({ onBack, location }: SimulatorScreenOverrideProps) {
     return (

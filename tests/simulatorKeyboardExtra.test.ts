@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
     focusSimulatorSearch,
     handleSimulatorKeyboard,
-    SIMULATOR_LIST_NAV_EVENT,
+    LIST_NAV_EVENT,
 } from '../src/utils/simulatorKeyboardCommands';
 
 describe('simulator keyboard extra coverage', () => {
@@ -85,7 +85,7 @@ describe('simulator keyboard extra coverage', () => {
 
             expect(result).toEqual({ handled: true });
             expect(dispatchEvent).toHaveBeenCalledWith(
-                expect.objectContaining({ type: SIMULATOR_LIST_NAV_EVENT }),
+                expect.objectContaining({ type: LIST_NAV_EVENT }),
             );
         } finally {
             (globalThis as { document?: Document }).document = originalDocument;

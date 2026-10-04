@@ -1,3 +1,13 @@
+import {
+    SimulatorButtonTone,
+    joinClasses,
+    SIM_MONO,
+    SIM_MUTED,
+    SIM_OVERFLOW_AUTO,
+    SIM_TEXT_DANGER,
+    SIM_TEXT_MEDIUM,
+    SIM_TEXT_SM,
+} from './ui/simulatorClasses.js';
 import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
 /**
  * Error boundary scoped to simulator content. Catches render/lifecycle errors
@@ -9,15 +19,6 @@ import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { simSpacing, simStatus } from './simulatorStyles.js';
 import { SimulatorButton } from './ui/primitives.js';
-import {
-    joinClasses,
-    SIM_MONO,
-    SIM_MUTED,
-    SIM_OVERFLOW_AUTO,
-    SIM_TEXT_DANGER,
-    SIM_TEXT_MEDIUM,
-    SIM_TEXT_SM,
-} from './ui/simulatorClasses.js';
 import { SIM_ERROR, SIM_ERROR_DIAGNOSTICS } from './ui/semanticSimulatorClasses.js';
 
 export interface SimulatorErrorBoundaryProps {
@@ -78,7 +79,11 @@ export default class SimulatorErrorBoundary extends Component<SimulatorErrorBoun
 function ErrorDismiss({ onRetry }: Readonly<{ onRetry: () => void }>) {
     const locale = useSimulatorLocale();
     return (
-        <SimulatorButton tone="outline-secondary" className="simulator-btn--sm" onClick={onRetry}>
+        <SimulatorButton
+            tone={SimulatorButtonTone.NeutralOutline}
+            className="simulator-btn--sm"
+            onClick={onRetry}
+        >
             {locale.t('screen.simulatorErrorBoundary.dismiss')}
         </SimulatorButton>
     );

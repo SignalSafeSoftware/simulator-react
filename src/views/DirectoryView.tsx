@@ -1,3 +1,12 @@
+import {
+    SimulatorButtonTone,
+    SIM_BTN_SM,
+    joinClasses,
+    SIM_MUTED,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_LIGHT,
+    SIM_TEXT_SM,
+} from '../ui/simulatorClasses.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Official directory / trusted sources in the Phone app.
@@ -9,19 +18,12 @@ import type {
     SimulatorDirectoryEntry,
     SimulatorSessionContact,
 } from '../types/session.js';
-import { SimulatorActions } from '../actions/index.js';
-import SimulatorLocalNav from '../components/SimulatorLocalNav.js';
-import { SimulatorDetailBackBar } from '../components/SimulatorDetail.js';
-import { SimulatorList, SimulatorListItem } from '../components/SimulatorList.js';
+import { SimulatorActions } from '../actions/simulatorActions.js';
+import SimulatorLocalNav from '../ui/navigation/SimulatorLocalNav.js';
+import { SimulatorDetailBackBar } from '../ui/layout/SimulatorDetail.js';
+import { SimulatorList, SimulatorListItem } from '../ui/lists/SimulatorList.js';
 import { simBorder, simLayout, simSpacing, simTypo } from '../simulatorStyles.js';
 import { SimulatorButton } from '../ui/primitives.js';
-import {
-    joinClasses,
-    SIM_MUTED,
-    SIM_ROUNDED_NONE,
-    SIM_SURFACE_LIGHT,
-    SIM_TEXT_SM,
-} from '../ui/simulatorClasses.js';
 
 export interface DirectoryViewProps {
     directory: SimulatorDirectoryEntry[] | null;
@@ -78,156 +80,149 @@ export default function DirectoryView({
         onAction(SimulatorActions.dialPhone(number));
     };
 
+    const phoneNav = phoneLocalNavItems != null &&
+        phoneLocalNavItems.length > 0 &&
+        onPhoneNavSelect && (
+            <SimulatorLocalNav
+                items={phoneLocalNavItems}
+                activeId={phoneActiveId}
+                onSelect={onPhoneNavSelect}
+                aria-label={screenLocale.t('screen.directoryView.phone.tabs')}
+            />
+        );
+    const selectedContact = selected?.contact_id
+        ? findContact(contacts, selected.contact_id)
+        : null;
+
     if (entries.length === 0) {
         return (
             <div className={joinClasses(simLayout.stack, SIM_TEXT_SM)}>
-                {phoneLocalNavItems != null &&
-                    phoneLocalNavItems.length > 0 &&
-                    onPhoneNavSelect && (
-                        <SimulatorLocalNav
-                            items={phoneLocalNavItems}
-                            activeId={phoneActiveId}
-                            onSelect={onPhoneNavSelect}
-                            aria-label={screenLocale.t('screen.directoryView.phone.tabs')}
-                        />
-                    )}
+                {phoneNav}
                 <SimulatorDetailBackBar
                     onBack={onBack}
                     title={screenLocale.t('screen.directoryView.directory')}
                     ariaLabel={screenLocale.t('a11y.back')}
                     titleOnly
                 />
-                <p className={joinClasses(SIM_MUTED, simSpacing.mb0)}>
-                    {screenLocale.t('screen.directoryView.no.directory.for.this.scenario')}
-                </p>
+                <div className="simulator-page-content">
+                    <p className={joinClasses(SIM_MUTED, simSpacing.mb0)}>
+                        {screenLocale.t('screen.directoryView.no.directory.for.this.scenario')}
+                    </p>
+                </div>
             </div>
         );
     }
 
     return (
         <div className={simLayout.stack}>
-            {phoneLocalNavItems != null && phoneLocalNavItems.length > 0 && onPhoneNavSelect && (
-                <SimulatorLocalNav
-                    items={phoneLocalNavItems}
-                    activeId={phoneActiveId}
-                    onSelect={onPhoneNavSelect}
-                    aria-label={screenLocale.t('screen.directoryView.phone.tabs')}
-                />
-            )}
+            {phoneNav}
             <SimulatorDetailBackBar
                 onBack={onBack}
                 title={screenLocale.t('screen.directoryView.directory')}
                 ariaLabel={screenLocale.t('a11y.back')}
                 titleOnly
             />
-            <p
-                className={joinClasses(simTypo.secondary, simSpacing.mb2)}
-                style={{ fontSize: '0.8rem' }}
-            >
-                {screenLocale.t(
-                    'screen.directoryView.use.these.numbers.or.links.to.verify.information',
-                )}
-            </p>
-            {selected ? (
-                <div
-                    className={joinClasses(
-                        simBorder.tile,
-                        SIM_ROUNDED_NONE,
-                        simSpacing.p3,
-                        SIM_SURFACE_LIGHT,
-                    )}
+            <div className="simulator-page-content">
+                <p
+                    className={joinClasses(simTypo.secondary, simSpacing.mb2)}
+                    style={{ fontSize: '0.8rem' }}
                 >
-                    <div className={joinClasses(simLayout.rowBetween, simSpacing.mb2)}>
-                        <strong>{selected.label}</strong>
-                        <SimulatorButton
-                            tone="link"
-                            className={joinClasses(
-                                'simulator-btn--sm',
-                                'simulator-btn--plain',
-                                'simulator-text--secondary',
-                            )}
-                            onClick={() => setSelectedId(null)}
-                        >
-                            {screenLocale.t('screen.directoryView.change')}
-                        </SimulatorButton>
-                    </div>
-                    {selected.description && (
-                        <p className={joinClasses(SIM_TEXT_SM, SIM_MUTED, simSpacing.mb2)}>
-                            {selected.description}
-                        </p>
+                    {screenLocale.t(
+                        'screen.directoryView.use.these.numbers.or.links.to.verify.information',
                     )}
-                    {selected.contact_id &&
-                        (() => {
-                            const contact = findContact(contacts, selected.contact_id);
-                            if (contact) {
-                                return (
-                                    <div className={simSpacing.mb2}>
-                                        <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>
-                                            {contact.displayName}
-                                        </span>
-                                        {contact.number && (
-                                            <span
-                                                className={joinClasses(SIM_TEXT_SM, simSpacing.ms2)}
-                                            >
-                                                {contact.number}
-                                            </span>
-                                        )}
-                                        <div className={simSpacing.mt1}>
-                                            <SimulatorButton
-                                                tone="primary"
-                                                className="simulator-btn--sm"
-                                                onClick={() => handleCallContact(contact.id)}
-                                            >
-                                                {screenLocale.t('screen.directoryView.call')}
-                                            </SimulatorButton>
-                                        </div>
-                                    </div>
-                                );
-                            }
-                            return null;
-                        })()}
-                    {!selected.contact_id && selected.number && (
-                        <div className={simSpacing.mb2}>
-                            <span className={SIM_TEXT_SM}>{selected.number}</span>
-                            <div className={simSpacing.mt1}>
-                                <SimulatorButton
-                                    tone="primary"
-                                    className="simulator-btn--sm"
-                                    onClick={() => handleDial(selected.number!)}
-                                >
-                                    {screenLocale.t('screen.directoryView.call')}
-                                </SimulatorButton>
-                            </div>
+                </p>
+                {selected ? (
+                    <div
+                        className={joinClasses(
+                            simBorder.tile,
+                            SIM_ROUNDED_NONE,
+                            simSpacing.p3,
+                            SIM_SURFACE_LIGHT,
+                        )}
+                    >
+                        <div className={joinClasses(simLayout.rowBetween, simSpacing.mb2)}>
+                            <strong>{selected.label}</strong>
+                            <SimulatorButton
+                                tone={SimulatorButtonTone.Link}
+                                className={joinClasses(
+                                    SIM_BTN_SM,
+                                    'simulator-btn--plain',
+                                    'simulator-text--secondary',
+                                )}
+                                onClick={() => setSelectedId(null)}
+                            >
+                                {screenLocale.t('screen.directoryView.change')}
+                            </SimulatorButton>
                         </div>
-                    )}
-                    {selected.url && (
-                        <p
-                            className={joinClasses(
-                                SIM_TEXT_SM,
-                                simSpacing.mb0,
-                                'simulator-text--break',
-                            )}
-                        >
-                            <span className={SIM_MUTED}>
-                                {screenLocale.t('screen.directoryView.url')}
-                            </span>
-                            {selected.url}
-                        </p>
-                    )}
-                </div>
-            ) : (
-                <SimulatorList className={joinClasses(simBorder.tile, 'simulator-rounded')}>
-                    {entries.map((entry) => (
-                        <SimulatorListItem
-                            key={entry.id}
-                            onClick={() => handleSelect(entry)}
-                            className={simSpacing.py2}
-                        >
-                            {entry.label}
-                        </SimulatorListItem>
-                    ))}
-                </SimulatorList>
-            )}
+                        {selected.description && (
+                            <p className={joinClasses(SIM_TEXT_SM, SIM_MUTED, simSpacing.mb2)}>
+                                {selected.description}
+                            </p>
+                        )}
+                        {selectedContact && (
+                            <div className={simSpacing.mb2}>
+                                <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>
+                                    {selectedContact.displayName}
+                                </span>
+                                {selectedContact.number && (
+                                    <span className={joinClasses(SIM_TEXT_SM, simSpacing.ms2)}>
+                                        {selectedContact.number}
+                                    </span>
+                                )}
+                                <div className={simSpacing.mt1}>
+                                    <SimulatorButton
+                                        tone={SimulatorButtonTone.Primary}
+                                        className="simulator-btn--sm"
+                                        onClick={() => handleCallContact(selectedContact.id)}
+                                    >
+                                        {screenLocale.t('screen.directoryView.call')}
+                                    </SimulatorButton>
+                                </div>
+                            </div>
+                        )}
+                        {!selected.contact_id && selected.number && (
+                            <div className={simSpacing.mb2}>
+                                <span className={SIM_TEXT_SM}>{selected.number}</span>
+                                <div className={simSpacing.mt1}>
+                                    <SimulatorButton
+                                        tone={SimulatorButtonTone.Primary}
+                                        className="simulator-btn--sm"
+                                        onClick={() => handleDial(selected.number!)}
+                                    >
+                                        {screenLocale.t('screen.directoryView.call')}
+                                    </SimulatorButton>
+                                </div>
+                            </div>
+                        )}
+                        {selected.url && (
+                            <p
+                                className={joinClasses(
+                                    SIM_TEXT_SM,
+                                    simSpacing.mb0,
+                                    'simulator-text--break',
+                                )}
+                            >
+                                <span className={SIM_MUTED}>
+                                    {screenLocale.t('screen.directoryView.url')}
+                                </span>
+                                {selected.url}
+                            </p>
+                        )}
+                    </div>
+                ) : (
+                    <SimulatorList className={joinClasses(simBorder.tile, 'simulator-rounded')}>
+                        {entries.map((entry) => (
+                            <SimulatorListItem
+                                key={entry.id}
+                                onClick={() => handleSelect(entry)}
+                                className={simSpacing.py2}
+                            >
+                                {entry.label}
+                            </SimulatorListItem>
+                        ))}
+                    </SimulatorList>
+                )}
+            </div>
         </div>
     );
 }

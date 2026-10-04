@@ -1,15 +1,15 @@
+import { fullDeviceToPayload } from '../src/adapters/deviceToSession.js';
 import { describe, expect, it } from 'vitest';
 import {
     createSimulatorDatasource,
     createSimulatorDatasourceFromPayload,
-    deviceJsonToPayload,
     simulatorDatasourceToPayload,
     updateSimulatorDatasource,
     updateSimulatorPayload,
 } from '../src/datasource/datasource.js';
 import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 import { simulatorSessionReducer } from '../src/state/simulatorSessionReducer.js';
-import type { SimulatorDevicePayload } from '../src/types/portableSimulator.js';
+import type { SimulatorDevicePayload } from '@signalsafe/simulator-core/devicePayload';
 const json: SimulatorDevicePayload = {
     entry_point: { app: 'phone', screen: 'incoming_call' },
     contacts: [{ id: 'c1', display_name: 'Sample', number: '+12025550123' }],
@@ -51,11 +51,11 @@ const json: SimulatorDevicePayload = {
         pages: [{ id: 'landing', url: 'https://example.test', title: 'Sample page' }],
     },
 };
-describe('JSON datasource compatibility', () => {
-    it('normalizes text/object JSON identically to the existing full-device adapter', () => {
+describe('JSON datasource conversion', () => {
+    it('normalizes text/object JSON through the canonical full-device adapter', () => {
         const ds = createSimulatorDatasource(JSON.stringify(json));
-        expect(simulatorDatasourceToPayload(ds)).toEqual(deviceJsonToPayload(json));
-        expect(ds.calls?.content.transcript).toBe('Scenario content');
+        expect(simulatorDatasourceToPayload(ds)).toEqual(fullDeviceToPayload(json));
+        expect(ds.calls?.content?.transcript).toBe('Scenario content');
         expect(ds.calls?.callHistory?.[0].number).toBe('');
         expect(ds.contacts?.[0].id).toBe('c1');
         expect(ds.sms?.thread.messages[0].text).toBe('Sample SMS');
@@ -99,7 +99,7 @@ describe('JSON datasource compatibility', () => {
         ).toThrow('$.email.messages');
     });
     it('refreshes content without resetting choices, navigation or scenario state', () => {
-        const payload = deviceJsonToPayload(json);
+        const payload = fullDeviceToPayload(json);
         let state = getInitialSessionState(payload);
         state = simulatorSessionReducer(state, { type: 'PHONE_CHOOSE', index: 1 });
         state = simulatorSessionReducer(state, {
@@ -117,7 +117,7 @@ describe('JSON datasource compatibility', () => {
         expect(next.payload.phone?.content).toEqual(state.payload.phone?.content);
     });
     it('clears a deleted email selection without disturbing other app state', () => {
-        const state = getInitialSessionState(deviceJsonToPayload(json));
+        const state = getInitialSessionState(fullDeviceToPayload(json));
         state.view.email = {
             screen: 'detail',
             stack: ['list'],
@@ -133,7 +133,7 @@ describe('JSON datasource compatibility', () => {
         const source = createSimulatorDatasource(json);
         const original = simulatorDatasourceToPayload(source);
         const copy = simulatorDatasourceToPayload(source);
-        if (copy.phone) copy.phone.content.transcript = 'Edited scenario';
+        if (copy.phone?.content) copy.phone.content.transcript = 'Edited scenario';
         if (copy.sms) copy.sms.thread.messages.pop();
         if (copy.email) copy.email.inbox.pop();
         if (copy.home) copy.home.settingsSections.pop();
@@ -147,5 +147,19 @@ describe('JSON datasource compatibility', () => {
         const next = updateSimulatorPayload(state, payload);
         expect(next.payload).toBe(payload);
         expect(next.view).toBe(state.view);
+    });
+    it('uses no fabricated template identity for standalone device data', () => {
+        const payload = fullDeviceToPayload(json);
+        expect(payload.templateId).toBeNull();
+        expect(payload.runId).toBeNull();
+        expect(payload.attemptId).toBeNull();
+    });
+    it('rejects removed voicemail fields rather than silently losing their content', () => {
+        const value = {
+            ...json,
+            phone: { incoming_call: null, voicemail_transcript: 'Saved message' },
+        };
+        expect(() => createSimulatorDatasource(value)).toThrow('phone.voicemail.transcript');
+        expect(() => fullDeviceToPayload(value)).toThrow('phone.voicemail.transcript');
     });
 });

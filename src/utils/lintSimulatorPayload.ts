@@ -1,3 +1,4 @@
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Advisory linting for simulator template payloads.
@@ -163,19 +164,19 @@ function lintEntryAppContent(
     warnings: SimulatorLintWarning[],
 ): void {
     switch (app) {
-        case 'email':
+        case SimulatorApp.Email:
             lintEmailEntry(payload, screen, warnings);
             return;
-        case 'messages':
+        case SimulatorApp.Messages:
             lintMessagesEntry(payload, screen, warnings);
             return;
-        case 'internet':
+        case SimulatorApp.Internet:
             lintInternetEntry(payload, screen, entryPoint, warnings);
             return;
-        case 'phone':
+        case SimulatorApp.Phone:
             lintPhoneEntry(payload, screen, warnings);
             return;
-        case 'home':
+        case SimulatorApp.Home:
             lintHomeEntry(payload, warnings);
             return;
         default:
@@ -258,7 +259,7 @@ function lintPhoneVerificationContacts(
     const contacts = payload.contacts ?? [];
     const hasContacts = Array.isArray(contacts) && contacts.length > 0;
     const hasPhoneChoices = (phone?.content?.choices?.length ?? 0) > 0;
-    if (app === 'phone' && hasPhoneChoices && !hasContacts) {
+    if (app === SimulatorApp.Phone && hasPhoneChoices && !hasContacts) {
         add(
             warnings,
             'phone_verification_without_contacts',

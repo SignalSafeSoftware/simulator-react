@@ -1,3 +1,8 @@
+import {
+    SimulatorDispatchActionType,
+    type SimulatorDispatchAction,
+} from './simulatorDispatchActions.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 /**
  * Reducer for simulator session view state (shell state).
  * Apps: email, messages, internet, phone, home. entry_point sets initial app/screen. Supports Back, Cancel, NAV_LOCAL.
@@ -8,7 +13,6 @@ import {
     isSimulatorTransitionLoggingEnabled,
     logSimulatorTransition,
 } from '../utils/simulatorTransitionLogger.js';
-import type { SimulatorDispatchAction } from './simulatorDispatchActions.js';
 import {
     applyBack,
     applyCancel,
@@ -21,45 +25,40 @@ import {
     applySimulatorAction,
 } from './simulatorContentHandlers.js';
 
-export type { SimulatorDispatchAction } from './simulatorDispatchActions.js';
-export { switchChannelAction } from './simulatorDispatchActions.js';
-export { getInitialSessionState } from './simulatorSessionInitialState.js';
-export { initialViewState } from './simulatorViewStateHelpers.js';
-
 function viewReducer(
     state: SimulatorViewState,
     action: SimulatorDispatchAction,
 ): SimulatorViewState {
     switch (action.type) {
-        case 'SWITCH_APP':
+        case SimulatorDispatchActionType.SwitchApp:
             return applySwitchApp(state, action.app);
-        case 'NAV_LOCAL':
+        case SimulatorDispatchActionType.NavLocal:
             return applyNavLocal(state, action.app, action.screen);
-        case 'BACK':
+        case SimulatorDispatchActionType.Back:
             return applyBack(state);
-        case 'BACK_TO_PRIMARY':
-            return { ...state, showPrimaryMenu: true, activeApp: 'home' };
-        case 'CANCEL':
+        case SimulatorDispatchActionType.BackToPrimary:
+            return { ...state, showPrimaryMenu: true, activeApp: SimulatorApp.Home };
+        case SimulatorDispatchActionType.Cancel:
             return applyCancel(state);
-        case 'SELECT_EMAIL':
+        case SimulatorDispatchActionType.SelectEmail:
             return applySelectEmail(state, action.messageId);
-        case 'SMS_REVEAL_NEXT':
+        case SimulatorDispatchActionType.SmsRevealNext:
             return {
                 ...state,
                 messages: { ...state.messages, visibleCount: state.messages.visibleCount + 1 },
             };
-        case 'BROWSER_SCREEN':
+        case SimulatorDispatchActionType.BrowserScreen:
             return applyBrowserScreen(state, action.screen);
-        case 'PHONE_CHOOSE':
+        case SimulatorDispatchActionType.PhoneChoose:
             return { ...state, phone: { ...state.phone, chosenIndex: action.index } };
-        case 'TOGGLE_CONTACTS_PANEL':
+        case SimulatorDispatchActionType.ToggleContactsPanel:
             return { ...state, contactsPanelOpen: !state.contactsPanelOpen };
-        case 'SET_CONTACTS_SEARCH':
+        case SimulatorDispatchActionType.SetContactsSearch:
             return {
                 ...state,
                 contactsSearchQuery: typeof action.query === 'string' ? action.query : '',
             };
-        case 'SIMULATOR_ACTION':
+        case SimulatorDispatchActionType.SimulatorAction:
             return applySimulatorAction(state, action.action);
         default:
             return state;

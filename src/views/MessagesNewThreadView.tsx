@@ -1,7 +1,16 @@
-import { useReportComposerState } from './composerState.js';
+import {
+    SimulatorButtonTone,
+    joinClasses,
+    SIM_FLEX_GROW_1,
+    SIM_FLEX_SHRINK_0,
+    SIM_MIN_H_0,
+    SIM_ROUNDED_NONE,
+    SIM_TEXT_SEMIBOLD,
+} from '../ui/simulatorClasses.js';
+import { useReportComposerState } from '../contract/composerState.js';
 import { useSimulatorCapabilities } from '../contract/capabilities.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
-import { useMessageComposeOptions } from './messageComposeContract.js';
+import { useMessageComposeOptions } from '../contract/messageComposeContract.js';
 /**
  * Messages app: New Thread page. Wireframe (Messages.png): header "New Thread",
  * Phone Number field, Message body textarea, Send (blue) and Cancel (grey) buttons.
@@ -16,14 +25,6 @@ import {
     SimulatorLabel,
     SimulatorTextarea,
 } from '../ui/primitives.js';
-import {
-    joinClasses,
-    SIM_FLEX_GROW_1,
-    SIM_FLEX_SHRINK_0,
-    SIM_MIN_H_0,
-    SIM_ROUNDED_NONE,
-    SIM_TEXT_SEMIBOLD,
-} from '../ui/simulatorClasses.js';
 
 export interface MessagesNewThreadViewProps {
     onBack: () => void;
@@ -113,13 +114,13 @@ export default function MessagesNewThreadView({
             <div className={joinClasses(simScreen.header, simSpacing.mb3, SIM_FLEX_SHRINK_0)}>
                 {t('messages.newThread')}
             </div>
-            {unavailable && (
+            {unavailable && !navRenderedByShell && (
                 <p>
                     <output>{unavailable}</output>
                 </p>
             )}
             {!unavailable && !pending && (!phoneNumber.trim() || !messageBody.trim()) && (
-                <p>
+                <p className="simulator-visually-hidden">
                     <output>{t('messages.enterRecipientAndBody')}</output>
                 </p>
             )}
@@ -169,7 +170,7 @@ export default function MessagesNewThreadView({
                         )}
                     >
                         <SimulatorButton
-                            tone="primary"
+                            tone={SimulatorButtonTone.Primary}
                             className={footerBtnClass}
                             type="submit"
                             disabled={
@@ -183,7 +184,7 @@ export default function MessagesNewThreadView({
                             {t('action.send')}
                         </SimulatorButton>
                         <SimulatorButton
-                            tone="secondary"
+                            tone={SimulatorButtonTone.Neutral}
                             className={footerBtnClass}
                             type="button"
                             disabled={pending}

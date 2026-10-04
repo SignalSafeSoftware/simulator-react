@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
@@ -5,7 +6,7 @@ import {
     renderSimulatorFeedback,
     renderPhoneIncomingCallExtra,
 } from '../src/ui/renderSlots';
-import { getInitialSessionState } from '../src/state/simulatorSessionReducer';
+import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 import { minimalPhoneWorld } from './support/fixtureWorlds';
 import {
     SIM_PHONE_INCOMING_CALL_AFTER_ACTIONS,
@@ -14,10 +15,14 @@ import {
 import { TestRenderer } from './reactTestRenderer';
 import { collectBootstrapViolations } from './bootstrapClassDenylist';
 
+function renderNode(node: React.ReactNode) {
+    return TestRenderer.create(React.createElement(React.Fragment, null, node));
+}
+
 describe('renderSlots', () => {
     it('renderSimulatorChoice uses default simulator button when no slot is provided', () => {
         const onClick = vi.fn();
-        const renderer = TestRenderer.create(
+        const renderer = renderNode(
             renderSimulatorChoice({ label: 'Send', tone: 'primary', onClick }),
         );
         expect(collectBootstrapViolations(renderer.root)).toEqual([]);
@@ -39,7 +44,7 @@ describe('renderSlots', () => {
     });
 
     it('renderSimulatorFeedback uses default simulator alert when no slot is provided', () => {
-        const renderer = TestRenderer.create(
+        const renderer = renderNode(
             renderSimulatorFeedback({ message: 'Heads up', tone: 'warning' }),
         );
         expect(collectBootstrapViolations(renderer.root)).toEqual([]);
@@ -77,7 +82,7 @@ describe('renderSlots', () => {
     it('renderPhoneIncomingCallExtra wraps host content with semantic incoming-call classes', () => {
         const dispatch = vi.fn();
         const state = getInitialSessionState(minimalPhoneWorld());
-        const renderer = TestRenderer.create(
+        const renderer = renderNode(
             renderPhoneIncomingCallExtra(
                 {
                     state,

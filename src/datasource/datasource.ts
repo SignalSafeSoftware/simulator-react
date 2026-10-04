@@ -1,9 +1,8 @@
 import { englishLocale } from '../i18n/englishLocale.js';
-import type { SimulatorDevicePayload } from '../types/portableSimulator.js';
 import type { SimulatorTemplatePayload, SimulatorSessionState } from '../types/session.js';
-import { templateDetailToPayload } from '../adapters/templateToSession.js';
+import { fullDeviceToPayload } from '../adapters/deviceToSession.js';
 import { validateSimulatorPayload } from '../utils/validateSimulatorPayload.js';
-import { validateDeviceJson } from './validateDeviceJson.js';
+import { validateDeviceJson } from '@signalsafe/simulator-core/validateDeviceJson';
 
 /** JSON-shaped snapshot fields, including all nested arrays and objects. */
 export type SimulatorReadonly<T> = {
@@ -52,34 +51,7 @@ export function createSimulatorDatasource(input: unknown): SimulatorDatasource {
         }
     }
     validateDeviceJson(value);
-    return createSimulatorDatasourceFromPayload(deviceJsonToPayload(value));
-}
-
-/** Legacy conversion stays tolerant; strict source validation is opt-in through the JSON adapter. */
-export function deviceJsonToPayload(value: SimulatorDevicePayload): SimulatorTemplatePayload {
-    return templateDetailToPayload({
-        id: 0,
-        channel: 'phone',
-        key: 'simulator-device',
-        name: 'Simulator',
-        is_master: false,
-        is_active: true,
-        company: null,
-        topics: [],
-        created_on: '',
-        updated_on: '',
-        description: '',
-        content_json: {},
-        simulator_json: value,
-        simulator: value,
-        thread_id: null,
-        reply_to_message: null,
-        attachment_name: '',
-        attachment_type: '',
-        attachment_behavior: '',
-        messages: [],
-        browser_template: null,
-    });
+    return createSimulatorDatasourceFromPayload(fullDeviceToPayload(value));
 }
 
 /** A fresh mutable copy for the existing session reducer; it cannot mutate the source snapshot. */

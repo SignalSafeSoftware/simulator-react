@@ -1,25 +1,18 @@
+import {
+    isPhoneScreen,
+    isEmailScreen,
+    isMessagesScreen,
+    isHomeScreen,
+} from '@signalsafe/simulator-core/devicePayload';
 /**
  * Deep-link parsing and application for the unified simulator.
  * Query params allow opening a specific app/screen/context (preview, QA, debugging).
  * Optional: when no params present, entry_point and normal init are unchanged.
  */
 
-import type { SimulatorApp } from '../types/portableSimulator.js';
+import { SimulatorApp, isSimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { SimulatorSessionState, SimulatorViewState } from '../types/session.js';
-import { DEFAULT_INTERNET_SCREEN } from '../types/session.js';
-
-const VALID_APPS = new Set<SimulatorApp>(['email', 'messages', 'internet', 'phone', 'home']);
-const PHONE_SCREENS = [
-    'history',
-    'contacts',
-    'dial',
-    'incoming_call',
-    'voicemail',
-    'directory',
-] as const;
-const EMAIL_SCREENS = ['list', 'detail', 'compose', 'outbox', 'trash'] as const;
-const MESSAGES_SCREENS = ['threads', 'thread_detail', 'new_thread'] as const;
-const HOME_SCREENS = ['home', 'store', 'settings'] as const;
+import { BROWSER_HISTORY_MAX, DEFAULT_INTERNET_SCREEN } from '../types/session.js';
 
 export interface SimulatorDeepLink {
     app: SimulatorApp;
@@ -44,16 +37,16 @@ function normalizeQueryValue(value: string | null): string | undefined {
 
 function isValidScreenForApp(app: SimulatorApp, screen: string): boolean {
     switch (app) {
-        case 'phone':
-            return PHONE_SCREENS.includes(screen as (typeof PHONE_SCREENS)[number]);
-        case 'email':
-            return EMAIL_SCREENS.includes(screen as (typeof EMAIL_SCREENS)[number]);
-        case 'messages':
-            return MESSAGES_SCREENS.includes(screen as (typeof MESSAGES_SCREENS)[number]);
-        case 'internet':
+        case SimulatorApp.Phone:
+            return isPhoneScreen(screen);
+        case SimulatorApp.Email:
+            return isEmailScreen(screen);
+        case SimulatorApp.Messages:
+            return isMessagesScreen(screen);
+        case SimulatorApp.Internet:
             return screen.length > 0;
-        case 'home':
-            return HOME_SCREENS.includes(screen as (typeof HOME_SCREENS)[number]);
+        case SimulatorApp.Home:
+            return isHomeScreen(screen);
     }
 }
 
@@ -87,10 +80,7 @@ function buildMessagesView(
     payload: SimulatorSessionState['payload'],
     link: SimulatorDeepLink,
 ): SimulatorViewState['messages'] {
-    const screen =
-        link.screen === 'thread_detail' || link.screen === 'threads'
-            ? link.screen
-            : view.messages.screen;
+    const screen = isMessagesScreen(link.screen) ? link.screen : view.messages.screen;
     const visibleCount =
         screen === 'thread_detail' && payload.sms?.thread?.messages?.length != null
             ? Math.max(view.messages.visibleCount, payload.sms.thread.messages.length)
@@ -128,7 +118,7 @@ function buildInternetView(
     const stack =
         screen === view.internet.screen
             ? view.internet.stack
-            : [...view.internet.stack, view.internet.screen].slice(-20);
+            : [...view.internet.stack, view.internet.screen].slice(-BROWSER_HISTORY_MAX);
     return {
         ...view.internet,
         screen,
@@ -140,10 +130,7 @@ function buildPhoneView(
     view: SimulatorViewState,
     link: SimulatorDeepLink,
 ): SimulatorViewState['phone'] {
-    const screen =
-        link.screen != null && PHONE_SCREENS.includes(link.screen as (typeof PHONE_SCREENS)[number])
-            ? (link.screen as (typeof PHONE_SCREENS)[number])
-            : view.phone.screen;
+    const screen = isPhoneScreen(link.screen) ? link.screen : view.phone.screen;
     const stack = getNextPhoneStack(view.phone.stack, view.phone.screen, screen);
     return {
         ...view.phone,
@@ -156,10 +143,7 @@ function buildHomeView(
     view: SimulatorViewState,
     link: SimulatorDeepLink,
 ): SimulatorViewState['home'] {
-    const screen =
-        link.screen != null && HOME_SCREENS.includes(link.screen as (typeof HOME_SCREENS)[number])
-            ? (link.screen as (typeof HOME_SCREENS)[number])
-            : view.home.screen;
+    const screen = isHomeScreen(link.screen) ? link.screen : view.home.screen;
     return { ...view.home, screen };
 }
 
@@ -171,8 +155,8 @@ export function parseSimulatorSearchParams(params: URLSearchParams): SimulatorDe
     const appRaw = params.get(QUERY_APP);
     if (appRaw == null || appRaw === '') return null;
 
-    const app = appRaw.toLowerCase() as SimulatorApp;
-    if (!VALID_APPS.has(app)) return null;
+    const app = appRaw.toLowerCase();
+    if (!isSimulatorApp(app)) return null;
 
     const screen = normalizeQueryValue(params.get(QUERY_SCREEN));
     const messageId = normalizeQueryValue(params.get(QUERY_MESSAGE_ID));
@@ -202,19 +186,19 @@ export function applyDeepLinkToState(
     let nextView: SimulatorViewState = { ...view, activeApp: link.app };
 
     switch (link.app) {
-        case 'email':
+        case SimulatorApp.Email:
             nextView = { ...nextView, email: buildEmailView(view, payload, link) };
             break;
-        case 'messages':
+        case SimulatorApp.Messages:
             nextView = { ...nextView, messages: buildMessagesView(view, payload, link) };
             break;
-        case 'internet':
+        case SimulatorApp.Internet:
             nextView = { ...nextView, internet: buildInternetView(view, payload, link) };
             break;
-        case 'phone':
+        case SimulatorApp.Phone:
             nextView = { ...nextView, phone: buildPhoneView(view, link) };
             break;
-        case 'home':
+        case SimulatorApp.Home:
             nextView = { ...nextView, home: buildHomeView(view, link) };
             break;
         default:
@@ -232,7 +216,7 @@ export function getDeepLinkContactsSearch(link: SimulatorDeepLink | null): strin
     if (link == null) {
         return undefined;
     }
-    if (link.app === 'phone' && link.screen === 'contacts') {
+    if (link.app === SimulatorApp.Phone && link.screen === 'contacts') {
         return link.search != null && link.search !== '' ? link.search : undefined;
     }
     return undefined;
@@ -245,8 +229,8 @@ function resolveEmailScreen(
     if (link.screen === 'detail' || (link.messageId != null && link.messageId !== '')) {
         return 'detail';
     }
-    if (link.screen === 'list') {
-        return 'list';
+    if (isEmailScreen(link.screen)) {
+        return link.screen;
     }
     return view.email.screen;
 }

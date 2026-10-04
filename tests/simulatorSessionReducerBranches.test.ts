@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import {
-    getInitialSessionState,
-    initialViewState,
-    simulatorSessionReducer,
-    switchChannelAction,
-} from '../src/state/simulatorSessionReducer';
+import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
+import { initialViewState } from '../src/state/simulatorViewStateHelpers.js';
+import { simulatorSessionReducer } from '../src/state/simulatorSessionReducer.js';
+import { switchChannelAction } from '../src/state/simulatorDispatchActions.js';
 import type { SimulatorSessionState } from '../src/types/session';
 
 function createPayload(overrides: Record<string, unknown> = {}): SimulatorSessionState['payload'] {
@@ -231,7 +229,7 @@ describe('simulatorSessionReducer branch coverage', () => {
         const messagesNewThread = getInitialSessionState(
             createPayload({ entryPoint: { app: 'messages', screen: 'new_thread' } }),
         );
-        expect(messagesNewThread.view.messages.screen).toBe('threads');
+        expect(messagesNewThread.view.messages.screen).toBe('new_thread');
 
         const browserWithoutPages = getInitialSessionState(
             createPayload({

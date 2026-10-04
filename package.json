@@ -1,6 +1,6 @@
 {
   "name": "@signalsafe/simulator-react",
-  "version": "0.17.0",
+  "version": "0.19.0-cleanup.13",
   "type": "module",
   "description": "UI-kit agnostic React device simulator shell, session state, and utilities (no routing or API).",
   "license": "MIT",
@@ -27,33 +27,442 @@
     "signalsafe"
   ],
   "sideEffects": false,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
+    "./SimulatorErrorBoundary": {
+      "types": "./dist/SimulatorErrorBoundary.d.ts",
+      "import": "./dist/SimulatorErrorBoundary.js",
+      "default": "./dist/SimulatorErrorBoundary.js"
     },
-    "./utils/validateSimulatorPayload": {
-      "types": "./dist/utils/validateSimulatorPayload.d.ts",
-      "import": "./dist/utils/validateSimulatorPayload.js",
-      "default": "./dist/utils/validateSimulatorPayload.js"
+    "./SimulatorWithSession": {
+      "types": "./dist/SimulatorWithSession.d.ts",
+      "import": "./dist/SimulatorWithSession.js",
+      "default": "./dist/SimulatorWithSession.js"
+    },
+    "./adapters/deviceToSession": {
+      "types": "./dist/adapters/deviceToSession.d.ts",
+      "import": "./dist/adapters/deviceToSession.js",
+      "default": "./dist/adapters/deviceToSession.js"
+    },
+    "./adapters/templateToSession": {
+      "types": "./dist/adapters/templateToSession.d.ts",
+      "import": "./dist/adapters/templateToSession.js",
+      "default": "./dist/adapters/templateToSession.js"
+    },
+    "./apps/browser/BrowserWorkbench": {
+      "types": "./dist/apps/browser/BrowserWorkbench.d.ts",
+      "import": "./dist/apps/browser/BrowserWorkbench.js",
+      "default": "./dist/apps/browser/BrowserWorkbench.js"
+    },
+    "./apps/browser/browserBridge": {
+      "types": "./dist/apps/browser/browserBridge.d.ts",
+      "import": "./dist/apps/browser/browserBridge.js",
+      "default": "./dist/apps/browser/browserBridge.js"
+    },
+    "./apps/browser/browserDocument": {
+      "types": "./dist/apps/browser/browserDocument.d.ts",
+      "import": "./dist/apps/browser/browserDocument.js",
+      "default": "./dist/apps/browser/browserDocument.js"
+    },
+    "./apps/home/DeviceHome": {
+      "types": "./dist/apps/home/DeviceHome.d.ts",
+      "import": "./dist/apps/home/DeviceHome.js",
+      "default": "./dist/apps/home/DeviceHome.js"
+    },
+    "./apps/lock/LockScreen": {
+      "types": "./dist/apps/lock/LockScreen.d.ts",
+      "import": "./dist/apps/lock/LockScreen.js",
+      "default": "./dist/apps/lock/LockScreen.js"
+    },
+    "./apps/lock/lock": {
+      "types": "./dist/apps/lock/lock.d.ts",
+      "import": "./dist/apps/lock/lock.js",
+      "default": "./dist/apps/lock/lock.js"
+    },
+    "./apps/mail/Mailbox": {
+      "types": "./dist/apps/mail/Mailbox.d.ts",
+      "import": "./dist/apps/mail/Mailbox.js",
+      "default": "./dist/apps/mail/Mailbox.js"
+    },
+    "./apps/photos/PhotoEditor": {
+      "types": "./dist/apps/photos/PhotoEditor.d.ts",
+      "import": "./dist/apps/photos/PhotoEditor.js",
+      "default": "./dist/apps/photos/PhotoEditor.js"
+    },
+    "./apps/photos/PhotoLocation": {
+      "types": "./dist/apps/photos/PhotoLocation.d.ts",
+      "import": "./dist/apps/photos/PhotoLocation.js",
+      "default": "./dist/apps/photos/PhotoLocation.js"
+    },
+    "./apps/photos/Photos": {
+      "types": "./dist/apps/photos/Photos.d.ts",
+      "import": "./dist/apps/photos/Photos.js",
+      "default": "./dist/apps/photos/Photos.js"
+    },
+    "./apps/photos/photoMetadata": {
+      "types": "./dist/apps/photos/photoMetadata.d.ts",
+      "import": "./dist/apps/photos/photoMetadata.js",
+      "default": "./dist/apps/photos/photoMetadata.js"
+    },
+    "./apps/shared/DevicePage": {
+      "types": "./dist/apps/shared/DevicePage.d.ts",
+      "import": "./dist/apps/shared/DevicePage.js",
+      "default": "./dist/apps/shared/DevicePage.js"
+    },
+    "./apps/shared/SimulatorAppsHost": {
+      "types": "./dist/apps/shared/SimulatorAppsHost.d.ts",
+      "import": "./dist/apps/shared/SimulatorAppsHost.js",
+      "default": "./dist/apps/shared/SimulatorAppsHost.js"
+    },
+    "./apps/shared/assets": {
+      "types": "./dist/apps/shared/assets.d.ts",
+      "import": "./dist/apps/shared/assets.js",
+      "default": "./dist/apps/shared/assets.js"
+    },
+    "./apps/vault/Vault": {
+      "types": "./dist/apps/vault/Vault.d.ts",
+      "import": "./dist/apps/vault/Vault.js",
+      "default": "./dist/apps/vault/Vault.js"
+    },
+    "./contract/capabilities": {
+      "types": "./dist/contract/capabilities.d.ts",
+      "import": "./dist/contract/capabilities.js",
+      "default": "./dist/contract/capabilities.js"
+    },
+    "./contract/composerState": {
+      "types": "./dist/contract/composerState.d.ts",
+      "import": "./dist/contract/composerState.js",
+      "default": "./dist/contract/composerState.js"
+    },
+    "./contract/emailComposeContract": {
+      "types": "./dist/contract/emailComposeContract.d.ts",
+      "import": "./dist/contract/emailComposeContract.js",
+      "default": "./dist/contract/emailComposeContract.js"
+    },
+    "./contract/hostContractTypes": {
+      "types": "./dist/contract/hostContractTypes.d.ts",
+      "import": "./dist/contract/hostContractTypes.js",
+      "default": "./dist/contract/hostContractTypes.js"
+    },
+    "./contract/hostListSlots": {
+      "types": "./dist/contract/hostListSlots.d.ts",
+      "import": "./dist/contract/hostListSlots.js",
+      "default": "./dist/contract/hostListSlots.js"
+    },
+    "./contract/messageComposeContract": {
+      "types": "./dist/contract/messageComposeContract.d.ts",
+      "import": "./dist/contract/messageComposeContract.js",
+      "default": "./dist/contract/messageComposeContract.js"
+    },
+    "./contract/navigation": {
+      "types": "./dist/contract/navigation.d.ts",
+      "import": "./dist/contract/navigation.js",
+      "default": "./dist/contract/navigation.js"
+    },
+    "./contract/phoneDialContract": {
+      "types": "./dist/contract/phoneDialContract.d.ts",
+      "import": "./dist/contract/phoneDialContract.js",
+      "default": "./dist/contract/phoneDialContract.js"
+    },
+    "./contract/phonePresentation": {
+      "types": "./dist/contract/phonePresentation.d.ts",
+      "import": "./dist/contract/phonePresentation.js",
+      "default": "./dist/contract/phonePresentation.js"
+    },
+    "./contract/screenActionMenu": {
+      "types": "./dist/contract/screenActionMenu.d.ts",
+      "import": "./dist/contract/screenActionMenu.js",
+      "default": "./dist/contract/screenActionMenu.js"
+    },
+    "./contract/screenOverrides": {
+      "types": "./dist/contract/screenOverrides.d.ts",
+      "import": "./dist/contract/screenOverrides.js",
+      "default": "./dist/contract/screenOverrides.js"
+    },
+    "./datasource/datasource": {
+      "types": "./dist/datasource/datasource.d.ts",
+      "import": "./dist/datasource/datasource.js",
+      "default": "./dist/datasource/datasource.js"
+    },
+    "./developer-tools/SimulatorDeveloperToolsPanel": {
+      "types": "./dist/developer-tools/SimulatorDeveloperToolsPanel.d.ts",
+      "import": "./dist/developer-tools/SimulatorDeveloperToolsPanel.js",
+      "default": "./dist/developer-tools/SimulatorDeveloperToolsPanel.js"
+    },
+    "./developer-tools/SimulatorLintBanner": {
+      "types": "./dist/developer-tools/SimulatorLintBanner.d.ts",
+      "import": "./dist/developer-tools/SimulatorLintBanner.js",
+      "default": "./dist/developer-tools/SimulatorLintBanner.js"
+    },
+    "./developer-tools/SimulatorSessionTimeline": {
+      "types": "./dist/developer-tools/SimulatorSessionTimeline.d.ts",
+      "import": "./dist/developer-tools/SimulatorSessionTimeline.js",
+      "default": "./dist/developer-tools/SimulatorSessionTimeline.js"
+    },
+    "./developer-tools/configuration": {
+      "types": "./dist/developer-tools/configuration.d.ts",
+      "import": "./dist/developer-tools/configuration.js",
+      "default": "./dist/developer-tools/configuration.js"
+    },
+    "./hooks/device/useDevicePage": {
+      "types": "./dist/hooks/device/useDevicePage.d.ts",
+      "import": "./dist/hooks/device/useDevicePage.js",
+      "default": "./dist/hooks/device/useDevicePage.js"
+    },
+    "./hooks/device/useDeviceRecord": {
+      "types": "./dist/hooks/device/useDeviceRecord.d.ts",
+      "import": "./dist/hooks/device/useDeviceRecord.js",
+      "default": "./dist/hooks/device/useDeviceRecord.js"
+    },
+    "./hooks/device/useVisiblePage": {
+      "types": "./dist/hooks/device/useVisiblePage.d.ts",
+      "import": "./dist/hooks/device/useVisiblePage.js",
+      "default": "./dist/hooks/device/useVisiblePage.js"
+    },
+    "./i18n/SimulatorLocale": {
+      "types": "./dist/i18n/SimulatorLocale.d.ts",
+      "import": "./dist/i18n/SimulatorLocale.js",
+      "default": "./dist/i18n/SimulatorLocale.js"
+    },
+    "./i18n/catalog": {
+      "types": "./dist/i18n/catalog.d.ts",
+      "import": "./dist/i18n/catalog.js",
+      "default": "./dist/i18n/catalog.js"
+    },
+    "./package.json": "./package.json",
+    "./screenRegistry/registry": {
+      "types": "./dist/screenRegistry/registry.d.ts",
+      "import": "./dist/screenRegistry/registry.js",
+      "default": "./dist/screenRegistry/registry.js"
+    },
+    "./screenRegistry/types": {
+      "types": "./dist/screenRegistry/types.d.ts",
+      "import": "./dist/screenRegistry/types.js",
+      "default": "./dist/screenRegistry/types.js"
+    },
+    "./shell/PhoneSimulatorShell": {
+      "types": "./dist/shell/PhoneSimulatorShell.d.ts",
+      "import": "./dist/shell/PhoneSimulatorShell.js",
+      "default": "./dist/shell/PhoneSimulatorShell.js"
+    },
+    "./state/simulatorDispatchActions": {
+      "types": "./dist/state/simulatorDispatchActions.d.ts",
+      "import": "./dist/state/simulatorDispatchActions.js",
+      "default": "./dist/state/simulatorDispatchActions.js"
+    },
+    "./state/simulatorSessionInitialState": {
+      "types": "./dist/state/simulatorSessionInitialState.d.ts",
+      "import": "./dist/state/simulatorSessionInitialState.js",
+      "default": "./dist/state/simulatorSessionInitialState.js"
+    },
+    "./state/simulatorSessionReducer": {
+      "types": "./dist/state/simulatorSessionReducer.d.ts",
+      "import": "./dist/state/simulatorSessionReducer.js",
+      "default": "./dist/state/simulatorSessionReducer.js"
+    },
+    "./types/session": {
+      "types": "./dist/types/session.d.ts",
+      "import": "./dist/types/session.js",
+      "default": "./dist/types/session.js"
+    },
+    "./types/simulatorEvents": {
+      "types": "./dist/types/simulatorEvents.d.ts",
+      "import": "./dist/types/simulatorEvents.js",
+      "default": "./dist/types/simulatorEvents.js"
+    },
+    "./types/template": {
+      "types": "./dist/types/template.d.ts",
+      "import": "./dist/types/template.js",
+      "default": "./dist/types/template.js"
+    },
+    "./ui/contacts/ContactIdentityCard": {
+      "types": "./dist/ui/contacts/ContactIdentityCard.d.ts",
+      "import": "./dist/ui/contacts/ContactIdentityCard.js",
+      "default": "./dist/ui/contacts/ContactIdentityCard.js"
+    },
+    "./ui/contacts/ContactPhotoControls": {
+      "types": "./dist/ui/contacts/ContactPhotoControls.d.ts",
+      "import": "./dist/ui/contacts/ContactPhotoControls.js",
+      "default": "./dist/ui/contacts/ContactPhotoControls.js"
+    },
+    "./ui/contacts/ContactValuesEditor": {
+      "types": "./dist/ui/contacts/ContactValuesEditor.d.ts",
+      "import": "./dist/ui/contacts/ContactValuesEditor.js",
+      "default": "./dist/ui/contacts/ContactValuesEditor.js"
+    },
+    "./ui/controls/CapabilityButton": {
+      "types": "./dist/ui/controls/CapabilityButton.d.ts",
+      "import": "./dist/ui/controls/CapabilityButton.js",
+      "default": "./dist/ui/controls/CapabilityButton.js"
+    },
+    "./ui/layout/SimulatorPage": {
+      "types": "./dist/ui/layout/SimulatorPage.d.ts",
+      "import": "./dist/ui/layout/SimulatorPage.js",
+      "default": "./dist/ui/layout/SimulatorPage.js"
+    },
+    "./ui/lists/LoadMore": {
+      "types": "./dist/ui/lists/LoadMore.d.ts",
+      "import": "./dist/ui/lists/LoadMore.js",
+      "default": "./dist/ui/lists/LoadMore.js"
+    },
+    "./ui/lists/SimulatorListGroup": {
+      "types": "./dist/ui/lists/SimulatorListGroup.d.ts",
+      "import": "./dist/ui/lists/SimulatorListGroup.js",
+      "default": "./dist/ui/lists/SimulatorListGroup.js"
+    },
+    "./ui/navigation/SimulatorAppNavItem": {
+      "types": "./dist/ui/navigation/SimulatorAppNavItem.d.ts",
+      "import": "./dist/ui/navigation/SimulatorAppNavItem.js",
+      "default": "./dist/ui/navigation/SimulatorAppNavItem.js"
+    },
+    "./ui/renderSlots": {
+      "types": "./dist/ui/renderSlots.d.ts",
+      "import": "./dist/ui/renderSlots.js",
+      "default": "./dist/ui/renderSlots.js"
+    },
+    "./ui/semanticSimulatorClasses": {
+      "types": "./dist/ui/semanticSimulatorClasses.d.ts",
+      "import": "./dist/ui/semanticSimulatorClasses.js",
+      "default": "./dist/ui/semanticSimulatorClasses.js"
+    },
+    "./ui/simulatorClasses": {
+      "types": "./dist/ui/simulatorClasses.d.ts",
+      "import": "./dist/ui/simulatorClasses.js",
+      "default": "./dist/ui/simulatorClasses.js"
+    },
+    "./utils/contactNormalization": {
+      "types": "./dist/utils/contactNormalization.d.ts",
+      "import": "./dist/utils/contactNormalization.js",
+      "default": "./dist/utils/contactNormalization.js"
+    },
+    "./utils/lintSimulatorPayload": {
+      "types": "./dist/utils/lintSimulatorPayload.d.ts",
+      "import": "./dist/utils/lintSimulatorPayload.js",
+      "default": "./dist/utils/lintSimulatorPayload.js"
+    },
+    "./utils/phoneLocalNavItems": {
+      "types": "./dist/utils/phoneLocalNavItems.d.ts",
+      "import": "./dist/utils/phoneLocalNavItems.js",
+      "default": "./dist/utils/phoneLocalNavItems.js"
+    },
+    "./utils/previewFallbackWorld": {
+      "types": "./dist/utils/previewFallbackWorld.d.ts",
+      "import": "./dist/utils/previewFallbackWorld.js",
+      "default": "./dist/utils/previewFallbackWorld.js"
+    },
+    "./utils/simulatorActionTaxonomy": {
+      "types": "./dist/utils/simulatorActionTaxonomy.d.ts",
+      "import": "./dist/utils/simulatorActionTaxonomy.js",
+      "default": "./dist/utils/simulatorActionTaxonomy.js"
+    },
+    "./utils/simulatorCapabilities": {
+      "types": "./dist/utils/simulatorCapabilities.d.ts",
+      "import": "./dist/utils/simulatorCapabilities.js",
+      "default": "./dist/utils/simulatorCapabilities.js"
+    },
+    "./utils/simulatorDeepLink": {
+      "types": "./dist/utils/simulatorDeepLink.d.ts",
+      "import": "./dist/utils/simulatorDeepLink.js",
+      "default": "./dist/utils/simulatorDeepLink.js"
+    },
+    "./utils/simulatorEventMapper": {
+      "types": "./dist/utils/simulatorEventMapper.d.ts",
+      "import": "./dist/utils/simulatorEventMapper.js",
+      "default": "./dist/utils/simulatorEventMapper.js"
+    },
+    "./utils/simulatorNavGraph": {
+      "types": "./dist/utils/simulatorNavGraph.d.ts",
+      "import": "./dist/utils/simulatorNavGraph.js",
+      "default": "./dist/utils/simulatorNavGraph.js"
+    },
+    "./utils/simulatorNavigationPolicy": {
+      "types": "./dist/utils/simulatorNavigationPolicy.d.ts",
+      "import": "./dist/utils/simulatorNavigationPolicy.js",
+      "default": "./dist/utils/simulatorNavigationPolicy.js"
+    },
+    "./utils/simulatorPayloadDiff": {
+      "types": "./dist/utils/simulatorPayloadDiff.d.ts",
+      "import": "./dist/utils/simulatorPayloadDiff.js",
+      "default": "./dist/utils/simulatorPayloadDiff.js"
     },
     "./utils/simulatorPreviewReport": {
       "types": "./dist/utils/simulatorPreviewReport.d.ts",
       "import": "./dist/utils/simulatorPreviewReport.js",
       "default": "./dist/utils/simulatorPreviewReport.js"
     },
+    "./utils/simulatorReachability": {
+      "types": "./dist/utils/simulatorReachability.d.ts",
+      "import": "./dist/utils/simulatorReachability.js",
+      "default": "./dist/utils/simulatorReachability.js"
+    },
     "./utils/simulatorRealismChecks": {
       "types": "./dist/utils/simulatorRealismChecks.d.ts",
       "import": "./dist/utils/simulatorRealismChecks.js",
       "default": "./dist/utils/simulatorRealismChecks.js"
     },
-    "./utils/previewFallbackWorld": {
-      "types": "./dist/utils/previewFallbackWorld.d.ts",
-      "import": "./dist/utils/previewFallbackWorld.js",
-      "default": "./dist/utils/previewFallbackWorld.js"
+    "./utils/simulatorSecondaryMenuHelpers": {
+      "types": "./dist/utils/simulatorSecondaryMenuHelpers.d.ts",
+      "import": "./dist/utils/simulatorSecondaryMenuHelpers.js",
+      "default": "./dist/utils/simulatorSecondaryMenuHelpers.js"
+    },
+    "./utils/simulatorWorldSections": {
+      "types": "./dist/utils/simulatorWorldSections.d.ts",
+      "import": "./dist/utils/simulatorWorldSections.js",
+      "default": "./dist/utils/simulatorWorldSections.js"
+    },
+    "./utils/validateSimulatorPayload": {
+      "types": "./dist/utils/validateSimulatorPayload.d.ts",
+      "import": "./dist/utils/validateSimulatorPayload.js",
+      "default": "./dist/utils/validateSimulatorPayload.js"
+    },
+    "./views/ContactsView": {
+      "types": "./dist/views/ContactsView.d.ts",
+      "import": "./dist/views/ContactsView.js",
+      "default": "./dist/views/ContactsView.js"
+    },
+    "./views/EmailComposeView": {
+      "types": "./dist/views/EmailComposeView.d.ts",
+      "import": "./dist/views/EmailComposeView.js",
+      "default": "./dist/views/EmailComposeView.js"
+    },
+    "./views/MessagesNewThreadView": {
+      "types": "./dist/views/MessagesNewThreadView.d.ts",
+      "import": "./dist/views/MessagesNewThreadView.js",
+      "default": "./dist/views/MessagesNewThreadView.js"
+    },
+    "./views/PhoneCallView": {
+      "types": "./dist/views/PhoneCallView.d.ts",
+      "import": "./dist/views/PhoneCallView.js",
+      "default": "./dist/views/PhoneCallView.js"
+    },
+    "./views/PhoneContactEditor": {
+      "types": "./dist/views/PhoneContactEditor.d.ts",
+      "import": "./dist/views/PhoneContactEditor.js",
+      "default": "./dist/views/PhoneContactEditor.js"
+    },
+    "./views/PhoneHistoryDetail": {
+      "types": "./dist/views/PhoneHistoryDetail.d.ts",
+      "import": "./dist/views/PhoneHistoryDetail.js",
+      "default": "./dist/views/PhoneHistoryDetail.js"
+    },
+    "./views/PhoneHistoryList": {
+      "types": "./dist/views/PhoneHistoryList.d.ts",
+      "import": "./dist/views/PhoneHistoryList.js",
+      "default": "./dist/views/PhoneHistoryList.js"
+    },
+    "./views/PhoneIncomingScene": {
+      "types": "./dist/views/PhoneIncomingScene.d.ts",
+      "import": "./dist/views/PhoneIncomingScene.js",
+      "default": "./dist/views/PhoneIncomingScene.js"
+    },
+    "./views/PhoneKeypad": {
+      "types": "./dist/views/PhoneKeypad.d.ts",
+      "import": "./dist/views/PhoneKeypad.js",
+      "default": "./dist/views/PhoneKeypad.js"
+    },
+    "./views/SimulatorScreenTile": {
+      "types": "./dist/views/SimulatorScreenTile.d.ts",
+      "import": "./dist/views/SimulatorScreenTile.js",
+      "default": "./dist/views/SimulatorScreenTile.js"
     }
   },
   "files": [
@@ -62,7 +471,10 @@
     "LICENSE",
     "docs",
     "CHANGELOG.md",
-    "RELEASING.md"
+    "RELEASING.md",
+    "vendor/npm/manifest.json",
+    "MIGRATION.md",
+    "vendor/npm/signalsafe-simulator-core-0.5.0-cleanup.3.tgz"
   ],
   "engines": {
     "node": ">=19.0.0"
@@ -72,20 +484,24 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && tsx ./scripts/fix-node-esm-relative-imports.ts dist",
-    "lint": "oxlint src tests --deny-warnings",
-    "typecheck": "tsc --noEmit",
+    "build": "npm run check:artifacts && node scripts/clean-dist.mjs && tsc -p tsconfig.build.json && tsx ./scripts/fix-node-esm-relative-imports.ts dist",
+    "lint": "npm run check:modules && oxlint src tests --deny-warnings",
+    "typecheck": "tsc --noEmit && npm run typecheck:tests",
     "publish:dry-run": "npm publish --dry-run",
     "smoke:package": "node scripts/smoke-package.mjs",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run check:release && npm run build",
     "prepare": "npm run build",
     "test": "vitest run",
     "test:coverage": "yarn test --coverage",
     "format": "oxfmt src tests",
-    "format:check": "oxfmt --check src tests"
+    "format:check": "oxfmt --check src tests",
+    "check:modules": "node scripts/check-module-boundaries.mjs",
+    "typecheck:tests": "tsc --noEmit -p tsconfig.tests.json",
+    "check:artifacts": "node scripts/check-package-artifacts.mjs",
+    "check:release": "node scripts/check-package-artifacts.mjs --release"
   },
   "dependencies": {
-    "@signalsafe/simulator-core": "0.4.1",
+    "@signalsafe/simulator-core": "file:vendor/npm/signalsafe-simulator-core-0.5.0-cleanup.3.tgz",
     "@signalsafe/tree-spec": "^0.4.1",
     "lucide-react": "^1.31.0"
   },
@@ -106,6 +522,10 @@
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
     "vite": "^8.3.0",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.1",
+    "@types/node": "22.17.0"
+  },
+  "resolutions": {
+    "@signalsafe/simulator-core": "file:vendor/npm/signalsafe-simulator-core-0.5.0-cleanup.3.tgz"
   }
 }

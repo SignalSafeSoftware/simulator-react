@@ -1,0 +1,24 @@
+# Module ownership
+
+`simulator-react` contains components, hooks, contracts and browser helpers; they are not all screens or classes. Group by responsibility and import the declaring module directly.
+
+| Directory | Owns |
+| --- | --- |
+| `apps/home`, `apps/browser`, `apps/mail`, `apps/photos`, `apps/vault`, `apps/lock` | Device apps and their feature-specific helpers |
+| `apps/shared` | Device-app page composition, host adapters and file-reading support shared by apps |
+| `views` | Scenario screens and controlled phone/message/email views |
+| `ui` | Shared controls, lists, page slots, contacts, avatars and navigation |
+| `contract` | Host policy, callback contracts and shared composition contexts |
+| `hooks/device` | Device-store paging, record retrieval and visible-page state |
+| `developer-tools` | Preview diagnostics, developer controls, reports and their configuration |
+| `state`, `adapters`, `datasource`, `types`, `utils` | Session behavior, input mapping, data access, local template types and shared algorithms |
+
+`apps/home/DeviceHome` owns the device Home heading, host header slot, tiles and optional lock action. The device package supplies navigation callbacks and decides whether locking is available; Home presentation must not read the store or own routing state.
+
+`SimulatorPage` supplies generic page slots. `DevicePage` composes those slots with a device-app content container and host-supplied navigation. They have different responsibilities. `SimulatorList` provides list/row semantics; `SimulatorListGroup` provides a searchable loading/empty/paging surface. Keep these distinctions instead of merging by similar names.
+
+`BrowserWorkbench` renders simulated HTML/React documents; `BrowserSimulatorView` and `BrowserPageRenderer` render scenario data. Both paths are active. Browser-only helpers (FileReader, DOMParser, image decoding) stay out of the headless simulator-core model package. Runtime inputs use the canonical contracts in MIGRATION.md; old serialized formats are migrated by offline tooling.
+
+Public modules are exposed by explicit owner subpaths. There is no root forwarding boundary. Internal barrel files, compatibility wrappers and imports through the package's own entry are prohibited. Import canonical device schemas/types from simulator-core, and local template-specific shapes from `types/template.ts`. Do not restore removed `actions/index.ts`, `screenRegistry/index.ts`, or `datasource/validateDeviceJson.ts` shims.
+
+Run `yarn check:modules`, lint, format, types, tests and build. The module check runs in CI and rejects internal re-exports, flat app/component files and unresolved relative source imports. Builds clean generated `dist` first so removed paths cannot survive in published artifacts. Preserve the public entry and declared utility subpaths when reorganizing source; verify the packed package in actual consumers.

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
     reconcileVisibleDeveloperSections,
     resolveSimulatorDeveloperTools,
-} from '../src/developerTools';
+} from '../src/developer-tools/configuration.js';
 
 describe('resolveSimulatorDeveloperTools', () => {
     it('uses explicit sections when no preset is supplied', () => {

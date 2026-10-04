@@ -1,10 +1,10 @@
+import { createPayload } from './support/createPayload.js';
 import { describe, expect, it } from 'vitest';
 import {
     resolveScreenOverride,
     type SimulatorScreenOverrides,
 } from '../src/contract/screenOverrides.js';
-import { getInitialSessionState } from '../src/state/simulatorSessionReducer.js';
-
+import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 describe('typed override resolution', () => {
     it('resolves exact destinations across apps without changing missing-screen defaults', () => {
         const Screen = () => null;
@@ -22,7 +22,7 @@ describe('typed override resolution', () => {
             { app: 'email', screen: 'compose' },
             { app: 'messages', screen: 'new_thread' },
         ] as const) {
-            const state = getInitialSessionState({ channel: 'phone', entryPoint });
+            const state = getInitialSessionState(createPayload({ channel: 'phone', entryPoint }));
             state.view.activeApp = entryPoint.app;
             state.view.phone.screen = 'history';
             state.view.home.screen = 'settings';
@@ -35,10 +35,12 @@ describe('typed override resolution', () => {
         expect(
             resolveScreenOverride(
                 overrides,
-                getInitialSessionState({
-                    channel: 'home',
-                    entryPoint: { app: 'home', screen: 'home' },
-                }),
+                getInitialSessionState(
+                    createPayload({
+                        channel: 'home',
+                        entryPoint: { app: 'home', screen: 'home' },
+                    }),
+                ),
             ),
         ).toBeUndefined();
     });

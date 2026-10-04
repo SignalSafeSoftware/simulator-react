@@ -5,7 +5,7 @@ import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
  * Wireframe: top "Email" banner, rectangular bottom nav (Inbox, Outbox, Trash, Back).
  */
 import type { EmailScreenId, SimulatorAction, SimulatorEmailPayload } from '../types/session.js';
-import SimulatorLocalNav from '../components/SimulatorLocalNav.js';
+import SimulatorLocalNav from '../ui/navigation/SimulatorLocalNav.js';
 import EmailInboxList from './EmailInboxList.js';
 import EmailMessageDetail from './EmailMessageDetail.js';
 import EmailComposeView from './EmailComposeView.js';

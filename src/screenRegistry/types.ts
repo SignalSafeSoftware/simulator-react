@@ -1,3 +1,4 @@
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Typed screen registry: app + screen → renderer component + getProps.
@@ -5,7 +6,7 @@ import type { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
  */
 import type { ComponentType, ReactNode } from 'react';
 import type { SimulatorSessionState } from '../types/session.js';
-import type { SimulatorDispatchAction } from '../state/simulatorSessionReducer.js';
+import { type SimulatorDispatchAction } from '../state/simulatorDispatchActions.js';
 import type { SimulatorCapabilities } from '../utils/simulatorCapabilities.js';
 import type {
     SimulatorChoiceRenderProps,
@@ -25,12 +26,13 @@ import type { DirectoryViewProps } from '../views/DirectoryView.js';
 
 /** Context passed to getProps: state, dispatch, capabilities, and shell-level handlers. */
 export interface SimulatorRenderContext {
+    hostOwnsScreenActions?: boolean;
     locale?: ReturnType<typeof useSimulatorLocale>;
     state: SimulatorSessionState;
     dispatch: (action: SimulatorDispatchAction) => void;
     /** Derived from payload; controls visibility of Store, Settings, Dial, Directory, voicemail, etc. */
     capabilities: SimulatorCapabilities;
-    onAction: (action: import('../types/session').SimulatorAction) => void;
+    onAction: (action: import('../types/session.js').SimulatorAction) => void;
     onSelectEmail: (messageId: string) => void;
     onBack: () => void;
     onSmsRevealNext: () => void;
@@ -54,57 +56,56 @@ export interface SimulatorRenderContext {
 /** One registry entry: optional screen pin (exact match) or default for app. */
 export type ScreenEntry =
     | {
-          app: 'email';
+          app: typeof SimulatorApp.Email;
           screen?: never;
           component: ComponentType<EmailSimulatorViewProps>;
           getProps: (ctx: SimulatorRenderContext) => EmailSimulatorViewProps;
       }
     | {
-          app: 'messages';
+          app: typeof SimulatorApp.Messages;
           screen: 'threads';
           component: ComponentType<MessagesThreadListViewProps>;
           getProps: (ctx: SimulatorRenderContext) => MessagesThreadListViewProps;
       }
     | {
-          app: 'messages';
+          app: typeof SimulatorApp.Messages;
           screen: 'new_thread';
           component: ComponentType<MessagesNewThreadViewProps>;
           getProps: (ctx: SimulatorRenderContext) => MessagesNewThreadViewProps;
       }
     | {
-          app: 'messages';
+          app: typeof SimulatorApp.Messages;
           screen: 'thread_detail';
           component: ComponentType<SmsSimulatorViewProps>;
           getProps: (ctx: SimulatorRenderContext) => SmsSimulatorViewProps;
       }
     | {
-          app: 'internet';
+          app: typeof SimulatorApp.Internet;
           screen?: never;
           component: ComponentType<BrowserSimulatorViewProps>;
           getProps: (ctx: SimulatorRenderContext) => BrowserSimulatorViewProps;
       }
     | {
-          app: 'phone';
+          app: typeof SimulatorApp.Phone;
           screen: 'contacts';
           component: ComponentType<ContactsViewProps>;
           getProps: (ctx: SimulatorRenderContext) => ContactsViewProps;
       }
     | {
-          app: 'phone';
+          app: typeof SimulatorApp.Phone;
           screen: 'directory';
           component: ComponentType<DirectoryViewProps>;
           getProps: (ctx: SimulatorRenderContext) => DirectoryViewProps;
       }
     | {
-          app: 'phone';
+          app: typeof SimulatorApp.Phone;
           screen?: never;
           component: ComponentType<PhoneSimulatorViewProps>;
           getProps: (ctx: SimulatorRenderContext) => PhoneSimulatorViewProps;
       }
     | {
-          app: 'home';
+          app: typeof SimulatorApp.Home;
           screen?: never;
           component: ComponentType<HomeSimulatorViewProps>;
           getProps: (ctx: SimulatorRenderContext) => HomeSimulatorViewProps;
       };
-export type { SimulatorApp } from '../types/portableSimulator.js';

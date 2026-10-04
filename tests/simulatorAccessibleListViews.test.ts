@@ -1,3 +1,4 @@
+import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import ContactsView from '../src/views/ContactsView';
@@ -9,9 +10,7 @@ import SmsSimulatorView from '../src/views/SmsSimulatorView';
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(
-    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
-): string {
+function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
     if (node == null) {
         return '';
     }
@@ -28,7 +27,7 @@ describe('simulator accessible list views', () => {
         const onSelectMessage = vi.fn();
         const onCompose = vi.fn();
         const onSearchSubmit = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -109,7 +108,7 @@ describe('simulator accessible list views', () => {
         const onSelectMessage = vi.fn();
         const onSearchChange = vi.fn();
         const onSearchSubmit = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -164,7 +163,7 @@ describe('simulator accessible list views', () => {
 
     it('covers inbox sender-field searches and default empty search submit handler', async () => {
         const onSelectMessage = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -216,7 +215,7 @@ describe('simulator accessible list views', () => {
     });
 
     it('covers inbox search with missing subject and sender fields', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -224,7 +223,9 @@ describe('simulator accessible list views', () => {
                     inbox: [
                         {
                             id: 'm2',
+                            // @ts-expect-error A missing subject from untyped input must retain its runtime fallback.
                             subject: undefined,
+                            // @ts-expect-error A missing sender from untyped input must retain its runtime fallback.
                             from: undefined,
                             from_display_name: undefined,
                             snippet: 'Only snippet text',
@@ -248,7 +249,7 @@ describe('simulator accessible list views', () => {
 
     it('renders phone contact rows as buttons and still opens the selected contact', async () => {
         const onOpenContact = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -274,7 +275,7 @@ describe('simulator accessible list views', () => {
     });
 
     it('renders actionable phone history rows as buttons and passive rows as non-buttons', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -311,7 +312,7 @@ describe('simulator accessible list views', () => {
     });
 
     it('renders the sms message timeline with native list markup', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -338,7 +339,7 @@ describe('simulator accessible list views', () => {
     it('covers email message detail fallback fields and action buttons', async () => {
         const onAction = vi.fn();
         const onBack = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -442,7 +443,7 @@ describe('simulator accessible list views', () => {
     it('renders thread rows as buttons and covers compose and search handlers', async () => {
         const onSelectThread = vi.fn();
         const onCompose = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -513,7 +514,7 @@ describe('simulator accessible list views', () => {
 
     it('covers thread sender fallbacks, search matches, and non-top-row border styling', async () => {
         const onSelectThread = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -527,6 +528,7 @@ describe('simulator accessible list views', () => {
                         },
                         {
                             id: 't2',
+                            // @ts-expect-error A missing preview from untyped input must retain its runtime fallback.
                             preview: undefined,
                         },
                     ],

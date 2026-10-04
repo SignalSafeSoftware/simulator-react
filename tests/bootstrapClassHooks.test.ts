@@ -1,3 +1,4 @@
+import type { ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -8,7 +9,7 @@ import { TestRenderer, act } from './reactTestRenderer';
 import { collectBootstrapViolations } from './bootstrapClassDenylist';
 
 describe('simulator runtime class hooks', () => {
-    let renderer: TestRenderer.ReactTestRenderer | null = null;
+    let renderer: ReactTestRenderer | null = null;
 
     afterEach(() => {
         renderer?.unmount();

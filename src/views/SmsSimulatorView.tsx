@@ -1,8 +1,23 @@
+import {
+    SimulatorButtonTone,
+    joinClasses,
+    SIM_BORDER,
+    SIM_BORDER_TOP,
+    SIM_FLEX_COL,
+    SIM_FLEX_SHRINK_0,
+    SIM_ROUNDED_NONE,
+    SIM_TEXT_DARK,
+    SIM_TEXT_SEMIBOLD,
+    SIM_TEXT_SM,
+    SIM_MUTED,
+} from '../ui/simulatorClasses.js';
+import SimulatorAvatar from '../ui/media/SimulatorAvatar.js';
 import { useContext } from 'react';
-import { SimulatorTimelineContext } from '../components/HostListSlots.js';
+import { SimulatorTimelineContext } from '../contract/hostListSlots.js';
+import { useReportComposerState } from '../contract/composerState.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 import { useSimulatorCapabilities } from '../contract/capabilities.js';
-import { useMessageComposeOptions } from './messageComposeContract.js';
+import { useMessageComposeOptions } from '../contract/messageComposeContract.js';
 import { usePhoneNumberFormatter } from '../contract/phonePresentation.js';
 /**
  * Messages app: thread detail. Wireframe: profile + name, message bubbles,
@@ -10,23 +25,9 @@ import { usePhoneNumberFormatter } from '../contract/phonePresentation.js';
  */
 import { useEffect, useState, type ReactNode } from 'react';
 import type { SimulatorAction, SimulatorSmsPayload } from '../types/session.js';
-import { SimulatorActions } from '../actions/index.js';
+import { SimulatorActions } from '../actions/simulatorActions.js';
 import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles.js';
 import { SimulatorTextarea } from '../ui/primitives.js';
-import {
-    joinClasses,
-    SIM_AVATAR,
-    SIM_BORDER,
-    SIM_BORDER_TOP,
-    SIM_FLEX_COL,
-    SIM_FLEX_SHRINK_0,
-    SIM_ROUNDED_NONE,
-    SIM_SURFACE_AVATAR,
-    SIM_TEXT_DARK,
-    SIM_TEXT_SEMIBOLD,
-    SIM_TEXT_SM,
-    SIM_MUTED,
-} from '../ui/simulatorClasses.js';
 import {
     SIM_MESSAGES_BUBBLE,
     SIM_MESSAGES_BUBBLE_ME,
@@ -43,47 +44,8 @@ export interface SmsSimulatorViewProps {
     onRevealNext: () => void;
     onBack?: () => void;
     showReplyBox?: boolean;
+    navRenderedByShell?: boolean;
     renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
-}
-
-function ConversationProfileIcon({
-    className,
-    avatarUrl,
-}: Readonly<{ className?: string; avatarUrl?: string }>) {
-    const [failed, setFailed] = useState(false);
-    return (
-        <div
-            className={joinClasses(
-                SIM_AVATAR,
-                SIM_SURFACE_AVATAR,
-                'simulator-flex simulator-flex--center',
-                SIM_FLEX_SHRINK_0,
-                'simulator-flex--center',
-                'simulator-spacing--mx-auto',
-                className,
-            )}
-            style={{ width: 48, height: 48 }}
-            aria-hidden
-        >
-            {avatarUrl && !failed ? (
-                <img
-                    src={avatarUrl}
-                    alt=""
-                    onError={() => setFailed(true)}
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        borderRadius: 'inherit',
-                    }}
-                />
-            ) : (
-                <span className="simulator-text--primary" style={{ fontSize: '1.5rem' }}>
-                    👤
-                </span>
-            )}
-        </div>
-    );
 }
 
 function renderAttachmentAction(
@@ -99,7 +61,7 @@ function renderAttachmentAction(
     return renderSimulatorChoice(
         {
             label: <>📎 {attachment.label}</>,
-            tone: 'link',
+            tone: SimulatorButtonTone.Link,
             className: joinClasses(
                 'simulator-btn--plain',
                 SIM_TEXT_SM,
@@ -138,6 +100,7 @@ export default function SmsSimulatorView({
     onRevealNext,
     onBack,
     showReplyBox = true,
+    navRenderedByShell = false,
     renderChoice,
 }: Readonly<SmsSimulatorViewProps>) {
     const screenLocale = useSimulatorLocale();
@@ -153,6 +116,10 @@ export default function SmsSimulatorView({
         setLocalReply(messageBody);
         if (compose) compose.onChange({ ...compose.draft, messageBody });
     };
+    useReportComposerState(
+        Boolean(payload && !payload.readOnly && showReplyBox && !unavailable && replyText.trim()),
+        false,
+    );
     const messages = payload?.thread?.messages ?? EMPTY_MESSAGES;
 
     useEffect(() => {
@@ -182,6 +149,23 @@ export default function SmsSimulatorView({
     const senderNumber = content.sender_number;
     const contactLabel = senderName ?? (senderNumber ? formatNumber(senderNumber) : 'Unknown');
 
+    const renderLinkChoice = (
+        link: NonNullable<typeof content.links>[number],
+        idx: number,
+        className: string,
+    ) =>
+        renderSimulatorChoice(
+            {
+                label: link.text || link.href,
+                tone: SimulatorButtonTone.Link,
+                className,
+                onClick: () =>
+                    onAction(SimulatorActions.clickLink({ linkIndex: idx, href: link.href })),
+                'aria-label': `Link: ${link.text || link.href}`,
+            },
+            renderChoice,
+        );
+
     const handleSendReply = () => {
         const text = replyText.trim();
         if (text && !unavailable) {
@@ -193,7 +177,7 @@ export default function SmsSimulatorView({
 
     return (
         <div className={joinClasses(simLayout.screenColumn, SIM_MESSAGES_THREAD_DETAIL)}>
-            {unavailable && (
+            {unavailable && !navRenderedByShell && (
                 <p>
                     <output>{unavailable}</output>
                 </p>
@@ -207,10 +191,7 @@ export default function SmsSimulatorView({
                         SIM_FLEX_SHRINK_0,
                     )}
                 >
-                    <ConversationProfileIcon
-                        key={payload.avatarUrl}
-                        avatarUrl={payload.avatarUrl}
-                    />
+                    <SimulatorAvatar key={payload.avatarUrl} avatarUrl={payload.avatarUrl} />
                     <div
                         className={joinClasses(
                             SIM_TEXT_SM,
@@ -284,12 +265,7 @@ export default function SmsSimulatorView({
                             </div>
                             {msg.attachment != null && (
                                 <div className={joinClasses(simLayout.actionsRow, SIM_TEXT_SM)}>
-                                    {msg.attachment != null &&
-                                        renderAttachmentAction(
-                                            msg.attachment,
-                                            onAction,
-                                            renderChoice,
-                                        )}
+                                    {renderAttachmentAction(msg.attachment, onAction, renderChoice)}
                                 </div>
                             )}
                         </li>
@@ -327,48 +303,26 @@ export default function SmsSimulatorView({
                                     >
                                         {link.title}
                                     </span>
-                                    {renderSimulatorChoice(
-                                        {
-                                            label: link.text || link.href,
-                                            tone: 'link',
-                                            className: joinClasses(
-                                                'simulator-btn--plain',
-                                                SIM_TEXT_SM,
-                                                'simulator-text--align-baseline',
-                                            ),
-                                            onClick: () =>
-                                                onAction(
-                                                    SimulatorActions.clickLink({
-                                                        linkIndex: idx,
-                                                        href: link.href,
-                                                    }),
-                                                ),
-                                            'aria-label': `Link: ${link.text || link.href}`,
-                                        },
-                                        renderChoice,
+                                    {renderLinkChoice(
+                                        link,
+                                        idx,
+                                        joinClasses(
+                                            'simulator-btn--plain',
+                                            SIM_TEXT_SM,
+                                            'simulator-text--align-baseline',
+                                        ),
                                     )}
                                 </div>
                             ) : (
                                 <span key={`link-btn-${idx}-${link.href ?? ''}`}>
-                                    {renderSimulatorChoice(
-                                        {
-                                            label: link.text || link.href,
-                                            tone: 'link',
-                                            className: joinClasses(
-                                                'simulator-btn--plain',
-                                                'simulator-text--align-baseline',
-                                                SIM_ROUNDED_NONE,
-                                            ),
-                                            onClick: () =>
-                                                onAction(
-                                                    SimulatorActions.clickLink({
-                                                        linkIndex: idx,
-                                                        href: link.href,
-                                                    }),
-                                                ),
-                                            'aria-label': `Link: ${link.text || link.href}`,
-                                        },
-                                        renderChoice,
+                                    {renderLinkChoice(
+                                        link,
+                                        idx,
+                                        joinClasses(
+                                            'simulator-btn--plain',
+                                            'simulator-text--align-baseline',
+                                            SIM_ROUNDED_NONE,
+                                        ),
                                     )}
                                 </span>
                             ),
@@ -391,7 +345,7 @@ export default function SmsSimulatorView({
                     }}
                 >
                     {!unavailable && !replyText.trim() && (
-                        <p>
+                        <p className="simulator-visually-hidden">
                             <output>{screenLocale.t('messages.enterBody')}</output>
                         </p>
                     )}
@@ -405,13 +359,15 @@ export default function SmsSimulatorView({
                         aria-label={screenLocale.t('screen.smsSimulatorView.reply.to.message')}
                         className={SIM_ROUNDED_NONE}
                     />
-                    <button
-                        type="submit"
-                        disabled={Boolean(unavailable) || !replyText.trim()}
-                        className="simulator-messages__inline-send"
-                    >
-                        {screenLocale.t('screen.smsSimulatorView.send')}
-                    </button>
+                    {!navRenderedByShell && (
+                        <button
+                            type="submit"
+                            disabled={Boolean(unavailable) || !replyText.trim()}
+                            className="simulator-messages__inline-send"
+                        >
+                            {screenLocale.t('screen.smsSimulatorView.send')}
+                        </button>
+                    )}
                 </form>
             )}
         </div>

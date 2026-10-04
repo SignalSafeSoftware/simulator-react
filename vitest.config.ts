@@ -8,10 +8,6 @@ export default defineConfig({
     resolve: {
         alias: [
             {
-                find: "@signalsafe/simulator-react",
-                replacement: path.resolve(packageRoot, "src/index.ts"),
-            },
-            {
                 find: /^@signalsafe\/simulator-react\/(.+)$/,
                 replacement: path.resolve(packageRoot, "src") + "/$1",
             },

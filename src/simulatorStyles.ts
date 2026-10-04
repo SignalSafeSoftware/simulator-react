@@ -4,14 +4,12 @@
  */
 
 import {
-    SIM_BADGE,
     SIM_BORDER,
     SIM_BORDER_BOTTOM,
     SIM_BORDER_SECONDARY,
     SIM_BORDER_TOP,
     SIM_FLEX,
     SIM_FLEX_BETWEEN,
-    SIM_FLEX_CENTER,
     SIM_FLEX_COL,
     SIM_FLEX_GROW_1,
     SIM_FLEX_ROW,
@@ -26,14 +24,12 @@ import {
     SIM_SHELL_BODY,
     SIM_SHELL_FRAME,
     SIM_SHELL_NAV,
-    SIM_SURFACE_AVATAR,
     SIM_SURFACE_SELECTED,
     SIM_SURFACE_WHITE,
     SIM_TEXT_BODY,
     SIM_TEXT_SEMIBOLD,
     SIM_TEXT_SM,
     SIM_W_FULL,
-    SIM_AVATAR,
     joinClasses,
 } from './ui/simulatorClasses.js';
 import { SIM_SCREEN_HEADER } from './ui/semanticSimulatorClasses.js';
@@ -104,7 +100,6 @@ export const simTypo = {
     ),
     bodySmall: joinClasses('simulator-text--sm', 'simulator-text--body'),
     emptyState: joinClasses(SIM_MUTED, 'simulator-text--sm', 'simulator-text--empty'),
-    emptyStateNoResultsMessage: (query: string): string => `No results for "${query}".`,
     backBarTitle: joinClasses('simulator-text--medium', SIM_MUTED, 'simulator-text--sm'),
     rowPrimary: joinClasses('simulator-text--semibold', 'simulator-text--body'),
     rowPrimaryEmphasis: joinClasses('simulator-text--bold', 'simulator-text--body'),
@@ -129,9 +124,6 @@ export const simActionsBar = joinClasses(
     'simulator-flex--align-center',
 );
 
-/** Combined: actions bar with top spacing. */
-export const simActionsBarWithTop = `${simSpacing.actionsBarTop} ${simActionsBar}`;
-
 /** List row density. */
 export const simListRow = {
     base: joinClasses(SIM_FLEX, 'simulator-list__row', SIM_BORDER_SECONDARY),
@@ -142,11 +134,6 @@ export const simListRow = {
 /** Shared input/chrome. */
 export const simInput = {
     control: joinClasses(SIM_INPUT, SIM_BORDER_SECONDARY),
-} as const;
-
-/** Status and badges. */
-export const simBadge = {
-    tag: joinClasses(SIM_BADGE, 'simulator-badge--tag'),
 } as const;
 
 /** Local app nav (Phone tabs, Email Inbox/Outbox/Trash, etc.). */
@@ -304,11 +291,6 @@ export const simShell = {
     navTabActive: 'simulator-shell__nav-tab--active',
     navTabInactive: 'simulator-shell__nav-tab--inactive',
     navTabLabel: joinClasses('simulator-opacity--90'),
-} as const;
-
-/** Profile / list avatar placeholder. */
-export const simAvatar = {
-    icon: joinClasses(SIM_AVATAR, SIM_SURFACE_AVATAR, SIM_FLEX_CENTER, SIM_FLEX_SHRINK_0),
 } as const;
 
 /** Selectable inbox/thread row surfaces. */

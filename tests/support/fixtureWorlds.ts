@@ -15,14 +15,16 @@ import type {
     SimulatorBrowserPage,
     SimulatorPhonePayload,
     SimulatorChannel,
-} from '@signalsafe/simulator-react';
+} from '../../src/types/session.js';
 import type {
     EmailTemplateContent,
     PhoneSimulatorContent,
-    SimulatorEntryPoint,
     SmsThreadContent,
+} from '../../src/types/template.js';
+import type {
+    SimulatorEntryPoint,
     SmsThreadMessage,
-} from '@signalsafe/simulator-react/types/portableSimulator';
+} from '@signalsafe/simulator-core/devicePayload';
 
 const BASE_META = {
     templateId: null as number | null,

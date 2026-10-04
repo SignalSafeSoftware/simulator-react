@@ -1,4 +1,5 @@
 import {
+    SimulatorButtonTone,
     joinClasses,
     SIM_FLEX_COL,
     SIM_MUTED,
@@ -38,7 +39,7 @@ export default function PhoneKeypad({
 }: Readonly<PhoneKeypadProps>) {
     const call = appearance === 'call';
     const keyClass = joinClasses(
-        simBtnToneClass('outline-dark'),
+        simBtnToneClass(SimulatorButtonTone.DarkOutline),
         'simulator-rounded--sm',
         SIM_FLEX_COL,
         'simulator-flex--center',

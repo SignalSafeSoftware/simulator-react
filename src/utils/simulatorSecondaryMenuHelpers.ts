@@ -15,7 +15,6 @@ const emailItems = [
 export function getEmailSecondaryItems(locale = createTranslator(simulatorEnglish)) {
     return emailItems.map(({ labelKey, ...item }) => ({ ...item, label: locale.t(labelKey) }));
 }
-export const EMAIL_SECONDARY_ITEMS = getEmailSecondaryItems();
 
 export function getBrowserSubmitTargetId(submitTargetPageId: string | null | undefined): string {
     return submitTargetPageId == null || submitTargetPageId === ''

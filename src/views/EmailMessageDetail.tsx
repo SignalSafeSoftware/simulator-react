@@ -1,21 +1,6 @@
-import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
-/**
- * Email message read/detail: wireframe layout (From, To, Subject, Body), links, attachments,
- * and optional inline actions for standalone rendering; the device supplies a tertiary menu.
- */
-import type { EmailScreenId, SimulatorAction } from '../types/session.js';
-import { SimulatorActions } from '../actions/index.js';
-import { SimulatorDetailBackBar } from '../components/SimulatorDetail.js';
-import { simLayout, simSpacing, simTypo, simActionsBar } from '../simulatorStyles.js';
-import type { EmailTemplateContent, EmailTemplateLink } from '../types/portableSimulator.js';
 import {
-    SimulatorButton,
-    SimulatorField,
-    SimulatorInput,
-    SimulatorLabel,
-    SimulatorTextarea,
-} from '../ui/primitives.js';
-import {
+    SimulatorButtonTone,
+    SIM_BTN_SM,
     joinClasses,
     SIM_FLEX_COL,
     SIM_FLEX_GROW_1,
@@ -26,6 +11,24 @@ import {
     SIM_SURFACE_LIGHT,
     SIM_TEXT_SM,
 } from '../ui/simulatorClasses.js';
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
+/**
+ * Email message read/detail: wireframe layout (From, To, Subject, Body), links, attachments,
+ * and optional inline actions for standalone rendering; the device supplies a tertiary menu.
+ */
+import type { EmailScreenId, SimulatorAction } from '../types/session.js';
+import { SimulatorActions } from '../actions/simulatorActions.js';
+import { SimulatorDetailBackBar } from '../ui/layout/SimulatorDetail.js';
+import { simLayout, simSpacing, simTypo, simActionsBar } from '../simulatorStyles.js';
+import { type EmailTemplateContent } from '../types/template.js';
+import { joinKeyParts, withStableKeys } from '../utils/stableKeys.js';
+import {
+    SimulatorButton,
+    SimulatorField,
+    SimulatorInput,
+    SimulatorLabel,
+    SimulatorTextarea,
+} from '../ui/primitives.js';
 import {
     SIM_EMAIL_MESSAGE_DETAIL,
     SIM_EMAIL_MESSAGE_DETAIL_BODY,
@@ -44,19 +47,22 @@ export interface EmailMessageDetailProps {
     onNavigate?: (screen: EmailScreenId) => void;
 }
 
-function withStableLinkKeys(
-    links: EmailTemplateLink[],
-): Array<{ key: string; link: EmailTemplateLink; index: number }> {
-    const counts = new Map<string, number>();
-    return links.map((link, index) => {
-        const base = [link.href ?? '', link.text ?? '', link.title ?? ''].join('|');
-        const nextCount = (counts.get(base) ?? 0) + 1;
-        counts.set(base, nextCount);
-        return { key: `${base}-${nextCount}`, link, index };
-    });
-}
-
 const readOnlyFieldClass = joinClasses(SIM_ROUNDED_NONE, SIM_SURFACE_LIGHT);
+
+function ReadOnlyField({ label, value }: Readonly<{ label: string; value: string }>) {
+    return (
+        <SimulatorField className={joinClasses(simSpacing.mb0, SIM_FLEX_SHRINK_0)}>
+            <SimulatorLabel className={simLayout.fieldLabel}>{label}</SimulatorLabel>
+            <SimulatorInput
+                type="text"
+                readOnly
+                value={value}
+                className={readOnlyFieldClass}
+                aria-label={label}
+            />
+        </SimulatorField>
+    );
+}
 
 export default function EmailMessageDetail({
     message,
@@ -75,7 +81,9 @@ export default function EmailMessageDetail({
         message.from_display_name != null && message.from_display_name !== ''
             ? `${message.from_display_name} <${message.from}>`
             : (message.from ?? '');
-    const keyedLinks = withStableLinkKeys(message.links ?? []);
+    const keyedLinks = withStableKeys(message.links ?? [], (link) =>
+        joinKeyParts([link.href, link.text, link.title]),
+    );
 
     return (
         <div className={joinClasses(simLayout.screenColumn, SIM_EMAIL_MESSAGE_DETAIL)}>
@@ -106,54 +114,22 @@ export default function EmailMessageDetail({
                         SIM_MIN_H_0,
                     )}
                 >
-                    <SimulatorField className={joinClasses(simSpacing.mb0, SIM_FLEX_SHRINK_0)}>
-                        <SimulatorLabel className={simLayout.fieldLabel}>
-                            {screenLocale.t('screen.emailMessageDetail.from')}
-                        </SimulatorLabel>
-                        <SimulatorInput
-                            type="text"
-                            readOnly
-                            value={fromDisplay}
-                            className={readOnlyFieldClass}
-                            aria-label={screenLocale.t('screen.emailMessageDetail.from')}
-                        />
-                    </SimulatorField>
-                    <SimulatorField className={joinClasses(simSpacing.mb0, SIM_FLEX_SHRINK_0)}>
-                        <SimulatorLabel className={simLayout.fieldLabel}>
-                            {screenLocale.t('screen.emailMessageDetail.to')}
-                        </SimulatorLabel>
-                        <SimulatorInput
-                            type="text"
-                            readOnly
-                            value={message.to ?? ''}
-                            className={readOnlyFieldClass}
-                            aria-label={screenLocale.t('screen.emailMessageDetail.to')}
-                        />
-                    </SimulatorField>
-                    <SimulatorField className={joinClasses(simSpacing.mb0, SIM_FLEX_SHRINK_0)}>
-                        <SimulatorLabel className={simLayout.fieldLabel}>
-                            {screenLocale.t('screen.emailMessageDetail.bcc')}
-                        </SimulatorLabel>
-                        <SimulatorInput
-                            type="text"
-                            readOnly
-                            value={message.bcc ?? ''}
-                            className={readOnlyFieldClass}
-                            aria-label={screenLocale.t('screen.emailMessageDetail.bcc')}
-                        />
-                    </SimulatorField>
-                    <SimulatorField className={joinClasses(simSpacing.mb0, SIM_FLEX_SHRINK_0)}>
-                        <SimulatorLabel className={simLayout.fieldLabel}>
-                            {screenLocale.t('screen.emailMessageDetail.subject')}
-                        </SimulatorLabel>
-                        <SimulatorInput
-                            type="text"
-                            readOnly
-                            value={message.subject ?? ''}
-                            className={readOnlyFieldClass}
-                            aria-label={screenLocale.t('screen.emailMessageDetail.subject')}
-                        />
-                    </SimulatorField>
+                    <ReadOnlyField
+                        label={screenLocale.t('screen.emailMessageDetail.from')}
+                        value={fromDisplay}
+                    />
+                    <ReadOnlyField
+                        label={screenLocale.t('screen.emailMessageDetail.to')}
+                        value={message.to ?? ''}
+                    />
+                    <ReadOnlyField
+                        label={screenLocale.t('screen.emailMessageDetail.bcc')}
+                        value={message.bcc ?? ''}
+                    />
+                    <ReadOnlyField
+                        label={screenLocale.t('screen.emailMessageDetail.subject')}
+                        value={message.subject ?? ''}
+                    />
                     <SimulatorField
                         className={joinClasses(
                             'simulator-email__body-field',
@@ -199,14 +175,14 @@ export default function EmailMessageDetail({
                         <span className={joinClasses(simTypo.secondary, simSpacing.me1)}>
                             {screenLocale.t('screen.emailMessageDetail.links')}
                         </span>
-                        {keyedLinks.map(({ key, link, index }) => (
+                        {keyedLinks.map(({ key, item: link, index }) => (
                             <SimulatorButton
                                 key={key}
-                                tone="outline-primary"
+                                tone={SimulatorButtonTone.PrimaryOutline}
                                 className={joinClasses(
                                     'simulator-text--link',
                                     SIM_ROUNDED_NONE,
-                                    'simulator-btn--sm',
+                                    SIM_BTN_SM,
                                 )}
                                 onClick={() =>
                                     onAction(
@@ -241,20 +217,16 @@ export default function EmailMessageDetail({
                             )}
                         </span>
                         <SimulatorButton
-                            tone="outline-secondary"
-                            className={joinClasses(
-                                simSpacing.me1,
-                                SIM_ROUNDED_NONE,
-                                'simulator-btn--sm',
-                            )}
+                            tone={SimulatorButtonTone.NeutralOutline}
+                            className={joinClasses(simSpacing.me1, SIM_ROUNDED_NONE, SIM_BTN_SM)}
                             onClick={() => onAction(SimulatorActions.openAttachment(0))}
                             aria-label={screenLocale.t('screen.emailMessageDetail.open.attachment')}
                         >
                             {screenLocale.t('screen.emailMessageDetail.open')}
                         </SimulatorButton>
                         <SimulatorButton
-                            tone="outline-secondary"
-                            className={joinClasses(SIM_ROUNDED_NONE, 'simulator-btn--sm')}
+                            tone={SimulatorButtonTone.NeutralOutline}
+                            className={joinClasses(SIM_ROUNDED_NONE, SIM_BTN_SM)}
                             onClick={() => onAction(SimulatorActions.downloadAttachment(0))}
                             aria-label={screenLocale.t(
                                 'screen.emailMessageDetail.download.attachment',
@@ -268,7 +240,7 @@ export default function EmailMessageDetail({
             {!hideActions && (
                 <div className={simLayout.blockFooterRow}>
                     <SimulatorButton
-                        tone="primary"
+                        tone={SimulatorButtonTone.Primary}
                         className={simLayout.blockButton}
                         onClick={() => onAction(SimulatorActions.sendReply())}
                         aria-label={screenLocale.t('screen.emailMessageDetail.reply')}
@@ -276,7 +248,7 @@ export default function EmailMessageDetail({
                         {screenLocale.t('screen.emailMessageDetail.reply')}
                     </SimulatorButton>
                     <SimulatorButton
-                        tone="secondary"
+                        tone={SimulatorButtonTone.Neutral}
                         className={simLayout.blockButton}
                         onClick={onForward}
                         disabled={!onForward}
@@ -286,7 +258,7 @@ export default function EmailMessageDetail({
                         {screenLocale.t('screen.emailMessageDetail.forward')}
                     </SimulatorButton>
                     <SimulatorButton
-                        tone="secondary"
+                        tone={SimulatorButtonTone.Neutral}
                         className={simLayout.blockButton}
                         onClick={onDispose}
                         disabled={!onDispose}
@@ -296,7 +268,7 @@ export default function EmailMessageDetail({
                         {screenLocale.t('screen.emailMessageDetail.dispose')}
                     </SimulatorButton>
                     <SimulatorButton
-                        tone="secondary"
+                        tone={SimulatorButtonTone.Neutral}
                         className={simLayout.blockButton}
                         onClick={() => onBack?.()}
                         aria-label={screenLocale.t('screen.emailMessageDetail.back')}

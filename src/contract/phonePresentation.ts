@@ -4,7 +4,3 @@ import { createContext, useContext } from 'react';
 export type PhoneNumberFormatter = (original: string) => string;
 export const PhoneNumberFormatContext = createContext<PhoneNumberFormatter>((original) => original);
 export const usePhoneNumberFormatter = () => useContext(PhoneNumberFormatContext);
-
-export function PhoneNumberText({ value }: { value: string }): string {
-    return usePhoneNumberFormatter()(value);
-}

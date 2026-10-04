@@ -3,12 +3,9 @@
  * Not part of the `@signalsafe/simulator-react` published API.
  */
 
-import type {
-    SimulatorTemplatePayload,
-    SimulatorChannel,
-    SimulatorWorldPartial,
-} from '@signalsafe/simulator-react';
-import { applyPartials } from '@signalsafe/simulator-react';
+import type { SimulatorTemplatePayload, SimulatorChannel } from '../../src/types/session.js';
+import type { SimulatorWorldPartial } from '../../src/utils/simulatorWorldSections.js';
+import { applyPartials } from '../../src/utils/simulatorWorldSections.js';
 
 export const PRESET_EMPLOYEE_CORPORATE_DEVICE: SimulatorWorldPartial = {
     device: {

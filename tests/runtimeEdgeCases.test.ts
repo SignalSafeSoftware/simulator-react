@@ -1,18 +1,19 @@
 import React from 'react';
 import { act, create } from 'react-test-renderer';
 import { describe, expect, it, vi } from 'vitest';
-import { validateDeviceJson } from '../src/datasource/validateDeviceJson';
+import { validateDeviceJson } from '@signalsafe/simulator-core/validateDeviceJson';
 import { createTranslator } from '../src/i18n/catalog';
-import { ContactValuesEditor } from '../src/components/ContactValuesEditor';
-import { ContactPhotoControls } from '../src/components/ContactPhotoControls';
+import { ContactValuesEditor } from '../src/ui/contacts/ContactValuesEditor.js';
+import { ContactPhotoControls } from '../src/ui/contacts/ContactPhotoControls.js';
 import PhoneContactEditor from '../src/views/PhoneContactEditor';
 import SimulatorScreenTile from '../src/views/SimulatorScreenTile';
-import PhoneHistoryDetail, { PhoneHistoryPagination } from '../src/views/PhoneHistoryDetail';
+import PhoneHistoryDetail from '../src/views/PhoneHistoryDetail.js';
+import { PhoneHistoryPagination } from '../src/views/PhoneHistoryDetail.js';
 import { SimulatorDialog } from '../src/ui/primitives';
-import { SimulatorListGroup } from '../src/components/SimulatorListGroup';
-import { SimulatorSearchInput } from '../src/components/SimulatorSearchInput';
+import { SimulatorListGroup } from '../src/ui/lists/SimulatorListGroup.js';
+import { SimulatorSearchInput } from '../src/ui/lists/SimulatorSearchInput.js';
 import { applyBack } from '../src/state/simulatorNavigationHandlers';
-import { initialViewState } from '../src/state/simulatorSessionReducer';
+import { initialViewState } from '../src/state/simulatorViewStateHelpers.js';
 import { contactMatchesSearch, contextMatchesContact } from '../src/views/ContactsView';
 
 const entry_point = { app: 'phone', screen: 'history' };
@@ -167,7 +168,7 @@ it('delegates contact number editing and disables saving controls', () => {
         view.root.findByProps({ name: 'number' }).props.onChange({ target: { value: '123' } }),
     );
     expect(onNumberChange).toHaveBeenCalledWith('123');
-    expect(view.root.findByProps({ type: 'submit' }).props.disabled).toBe(true);
+    expect(view.root.findByProps({ 'aria-label': 'Saving…' }).props.disabled).toBe(true);
     view.unmount();
 });
 

@@ -4,7 +4,7 @@ import type {
     SimulatorEmailScreenId,
     SimulatorMessagesScreenId,
     SimulatorHomeScreenId,
-} from '@signalsafe/simulator-core';
+} from '@signalsafe/simulator-core/devicePayload';
 /**
  * Unified simulator session state and payload contract.
  * Full-device: entry_point, device defaults, contacts, and per-app slices.
@@ -14,16 +14,30 @@ import type {
 
 import type {
     BrowserFormField,
-    EmailTemplateContent,
-    PhoneSimulatorContent,
-    SimulatorApp,
     SimulatorEntryPoint,
     SimulatorMainMenuItem,
-    SmsThreadContent,
-} from './portableSimulator.js';
+} from '@signalsafe/simulator-core/devicePayload';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
+import {
+    type EmailTemplateContent,
+    type PhoneSimulatorContent,
+    type SmsThreadContent,
+} from './template.js';
 
 /** Channel id for shell nav and API (maps to app: sms→messages, browser→internet). */
-export type SimulatorChannel = 'contacts' | 'email' | 'sms' | 'browser' | 'phone' | 'home';
+export const SimulatorChannel = Object.freeze({
+    Contacts: 'contacts',
+    Email: 'email',
+    Sms: 'sms',
+    Browser: 'browser',
+    Phone: 'phone',
+    Home: 'home',
+} as const);
+export type SimulatorChannel = (typeof SimulatorChannel)[keyof typeof SimulatorChannel];
+const simulatorChannels: ReadonlySet<string> = new Set(Object.values(SimulatorChannel));
+export function isSimulatorChannel(value: unknown): value is SimulatorChannel {
+    return typeof value === 'string' && simulatorChannels.has(value);
+}
 
 /** Screen ids per app. Apps with secondary nav: phone, email. */
 export type PhoneScreenId = SimulatorPhoneScreenId;
@@ -152,7 +166,7 @@ export interface SimulatorSmsPayload {
     threads?: SimulatorThreadListRow[];
 }
 
-/** Single browser page (from full-device or legacy). */
+/** Single browser page in the session view model. */
 export interface SimulatorBrowserPage {
     id: string;
     url: string;
@@ -182,7 +196,7 @@ export interface SimulatorBrowserPayload {
 }
 
 /** Call history entry direction/type for display and behavior. */
-export type CallHistoryEntryKind = 'incoming' | 'outgoing' | 'missed' | 'voicemail';
+export type CallHistoryEntryKind = 'incoming' | 'outgoing' | 'missed' | 'voicemail' | 'unknown';
 
 /** Single call history row (from full-device or derived). */
 export interface SimulatorCallHistoryEntry {
@@ -195,17 +209,17 @@ export interface SimulatorCallHistoryEntry {
     id: string;
     number: string;
     name?: string;
-    /** Typed kind for rendering and flows. Default derived from direction/label when absent. */
-    kind?: CallHistoryEntryKind;
+    /** Typed kind for rendering and flows. */
+    kind: CallHistoryEntryKind;
     /** Optional human-readable timestamp (e.g. "Today 10:15 AM"). */
     timestamp?: string;
-    /** Legacy/override label; prefer kind for logic. */
+    /** Optional display/search label; never used to infer kind. */
     label?: string;
 }
 
 /** Phone payload slice. */
 export interface SimulatorPhonePayload {
-    content: PhoneSimulatorContent;
+    content: PhoneSimulatorContent | null;
     /** Index of chosen option; null = not yet chosen */
     chosenIndex: number | null;
     /** Optional call history for History tab. */
@@ -330,14 +344,14 @@ export interface SimulatorViewState {
 /** Derive shell nav channel from active app (messages→sms, internet→browser, phone→contacts). */
 export function viewStateToActiveChannel(app: SimulatorApp): SimulatorChannel {
     switch (app) {
-        case 'phone':
+        case SimulatorApp.Phone:
             return 'contacts';
-        case 'messages':
+        case SimulatorApp.Messages:
             return 'sms';
-        case 'internet':
+        case SimulatorApp.Internet:
             return 'browser';
-        case 'email':
-        case 'home':
+        case SimulatorApp.Email:
+        case SimulatorApp.Home:
             return app;
         default:
             return 'email';
@@ -349,31 +363,34 @@ export function channelToApp(channel: SimulatorChannel): SimulatorApp {
     switch (channel) {
         case 'contacts':
         case 'phone':
-            return 'phone';
+            return SimulatorApp.Phone;
         case 'sms':
-            return 'messages';
+            return SimulatorApp.Messages;
         case 'browser':
-            return 'internet';
+            return SimulatorApp.Internet;
         case 'email':
         case 'home':
             return channel;
         default:
-            return 'email';
+            return SimulatorApp.Email;
     }
 }
 
-/** Current screen id for the active app (for rendering, keyboard shortcuts, metadata). */
-export function getCurrentScreenForApp(view: SimulatorViewState): string {
-    switch (view.activeApp) {
-        case 'email':
+/** Current screen id for an app (defaults to the active app), for rendering, keyboard shortcuts, metadata. */
+export function getCurrentScreenForApp(
+    view: SimulatorViewState,
+    app: SimulatorApp = view.activeApp,
+): string {
+    switch (app) {
+        case SimulatorApp.Email:
             return view.email.screen;
-        case 'messages':
+        case SimulatorApp.Messages:
             return view.messages.screen;
-        case 'internet':
+        case SimulatorApp.Internet:
             return view.internet.screen;
-        case 'phone':
+        case SimulatorApp.Phone:
             return view.phone.screen;
-        case 'home':
+        case SimulatorApp.Home:
             return view.home.screen;
         default:
             return '';
@@ -385,5 +402,3 @@ export interface SimulatorSessionState {
     payload: SimulatorTemplatePayload;
     view: SimulatorViewState;
 }
-
-export type { EmailTemplateLink, SmsThreadMessage, SimulatorApp } from './portableSimulator.js';

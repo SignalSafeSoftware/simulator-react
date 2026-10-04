@@ -1,9 +1,9 @@
 import { createElement } from 'react';
 import { act, create } from 'react-test-renderer';
 import { describe, expect, it, vi } from 'vitest';
-import { ContactValuesEditor } from '../src/components/ContactValuesEditor.js';
-import { ContactPhotoControls } from '../src/components/ContactPhotoControls.js';
-import { CapabilityButton } from '../src/contract/capabilities.js';
+import { ContactValuesEditor } from '../src/ui/contacts/ContactValuesEditor.js';
+import { ContactPhotoControls } from '../src/ui/contacts/ContactPhotoControls.js';
+import { CapabilityButton } from '../src/ui/controls/CapabilityButton.js';
 describe('controlled contact groups', () => {
     it('preserves stable IDs and metadata while editing and clears a removed preference', () => {
         const onChange = vi.fn();
@@ -45,6 +45,13 @@ describe('controlled contact groups', () => {
             }),
         );
         expect(view.root.findByType('img').props.src).toBe('blob:preview');
+        const group = view.root.findByType('fieldset');
+        expect(group.props['aria-label']).toBe('Contact image');
+        expect(group.findAllByType('button').map((button) => button.props['aria-label'])).toEqual([
+            'Change image',
+            'Remove image',
+            'Restore original image',
+        ]);
         act(() =>
             view.root
                 .findAllByType('button')

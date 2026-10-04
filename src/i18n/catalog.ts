@@ -109,6 +109,7 @@ export const simulatorEnglish = {
     'action.cancel': 'Cancel',
     'action.back': 'Back',
     'calls.search': 'Search calls',
+    'calls.simulated': 'Simulated call · no audio',
     'calls.empty': 'No recent calls.',
     'search.empty': 'No results for "{query}".',
     'calls.incoming': 'Incoming',

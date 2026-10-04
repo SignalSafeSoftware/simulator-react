@@ -90,6 +90,7 @@ describe('analyzeReachability', () => {
         expect(report.reachableScreens.phone).toEqual([
             'history',
             'contacts',
+            'add_contact',
             'dial',
             'incoming_call',
             'voicemail',
@@ -161,6 +162,7 @@ describe('analyzeReachability', () => {
         expect(phoneReport.reachableScreens.phone).toEqual([
             'history',
             'contacts',
+            'add_contact',
             'dial',
             'incoming_call',
             'voicemail',
@@ -198,7 +200,7 @@ describe('analyzeReachability', () => {
         );
     });
 
-    it('falls back to synthetic landing when browser page ids are malformed', () => {
+    it('does not invent reachable pages when the selected start ID does not exist', () => {
         const report = analyzeReachability({
             channel: 'browser',
             entryPoint: { app: 'internet', screen: 'missing' },
@@ -212,8 +214,8 @@ describe('analyzeReachability', () => {
             },
         } as never);
 
-        expect(report.reachableScreens.internet).toEqual(['landing']);
-        expect(report.reachableEntities.browserPageIds).toEqual(['landing']);
+        expect(report.reachableScreens.internet).toEqual([]);
+        expect(report.reachableEntities.browserPageIds).toEqual([]);
         expect(report.unreachable.browserPageIds).toEqual(['actual-page']);
     });
 });

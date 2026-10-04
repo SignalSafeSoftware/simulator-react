@@ -1,3 +1,4 @@
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Lightweight realism checks for canonical simulator examples.
@@ -48,7 +49,7 @@ function checkEmailListEntry(
     screen: string | null,
     blockers: SimulatorRealismIssue[],
 ): void {
-    if (app !== 'email' || screen !== 'list') return;
+    if (app !== SimulatorApp.Email || screen !== 'list') return;
     if ((payload.email?.inbox?.length ?? 0) > 0) return;
     blocker(
         blockers,
@@ -76,7 +77,13 @@ function checkVerificationSources(
     const hasContacts = (payload.contacts?.length ?? 0) > 0;
     const hasDirectory = (payload.directory?.length ?? 0) > 0;
 
-    if (app === 'email' && emailHasLinks && browserHasPages && !hasContacts && !hasDirectory) {
+    if (
+        app === SimulatorApp.Email &&
+        emailHasLinks &&
+        browserHasPages &&
+        !hasContacts &&
+        !hasDirectory
+    ) {
         blocker(
             blockers,
             'realism_verification_no_contacts',
@@ -88,7 +95,13 @@ function checkVerificationSources(
     }
 
     const smsHasMessages = (payload.sms?.thread?.messages?.length ?? 0) > 0;
-    if (app === 'messages' && smsHasMessages && browserHasPages && !hasContacts && !hasDirectory) {
+    if (
+        app === SimulatorApp.Messages &&
+        smsHasMessages &&
+        browserHasPages &&
+        !hasContacts &&
+        !hasDirectory
+    ) {
         suggest(
             suggestions,
             'realism_sms_verification_contacts',
@@ -141,7 +154,7 @@ function checkPhoneEntry(
     blockers: SimulatorRealismIssue[],
     suggestions: SimulatorRealismIssue[],
 ): void {
-    if (app === 'phone' && screen === 'incoming_call') {
+    if (app === SimulatorApp.Phone && screen === 'incoming_call') {
         const phoneContent = payload.phone?.content;
         if (phoneContent) {
             const transcript = (phoneContent.transcript ?? '').trim();
@@ -170,7 +183,7 @@ function checkPhoneEntry(
     }
 
     if (
-        app === 'phone' &&
+        app === SimulatorApp.Phone &&
         screen === 'directory' &&
         !payload.directory?.length &&
         !payload.contacts?.length

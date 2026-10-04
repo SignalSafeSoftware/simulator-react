@@ -1,3 +1,4 @@
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 /**
  * Verification context for contacts panel (name/number hints per active app).
  */
@@ -56,11 +57,11 @@ export function getVerificationContextForApp(
     payload: SimulatorSessionState['payload'],
 ): SimulatorVerificationContext {
     switch (activeApp) {
-        case 'messages':
+        case SimulatorApp.Messages:
             return getMessagesVerificationContext(payload);
-        case 'phone':
+        case SimulatorApp.Phone:
             return getPhoneVerificationContext(payload);
-        case 'email':
+        case SimulatorApp.Email:
             return getEmailVerificationContext(payload);
         default:
             return null;

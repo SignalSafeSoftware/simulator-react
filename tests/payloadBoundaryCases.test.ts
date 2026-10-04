@@ -86,13 +86,13 @@ it('keeps detail snippets when supplied and accepts omitted ones', () => {
 });
 it('normalizes default and custom button tones and rejects unknown action names', () => {
     expect(simBtnToneClass()).toContain('neutral');
-    expect(simBtnToneClass('outline-custom')).toContain('custom');
+    expect(simBtnToneClass('primary-outline')).toContain('primary-outline');
     expect(validateSimulatorAction({ type: 'not-an-action' })).toBe(false);
 });
 
 it('keeps unsupported message deep links on the current screen and falls back for missing browser pages', async () => {
-    const { applyDeepLinkToState } = await import('../src/utils/simulatorDeepLink');
-    const { getInitialSessionState } = await import('../src/state/simulatorSessionReducer');
+    const { applyDeepLinkToState } = await import('../src/utils/simulatorDeepLink.js');
+    const { getInitialSessionState } = await import('../src/state/simulatorSessionInitialState.js');
     const state = getInitialSessionState(base);
     const message = applyDeepLinkToState(state, { app: 'messages', screen: 'unknown' });
     expect(message.view.messages.screen).toBe(state.view.messages.screen);

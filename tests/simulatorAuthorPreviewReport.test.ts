@@ -1,12 +1,11 @@
+import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { describe, expect, it } from 'vitest';
-import SimulatorAuthorPreviewReport from '../src/components/SimulatorAuthorPreviewReport';
+import SimulatorAuthorPreviewReport from '../src/developer-tools/SimulatorAuthorPreviewReport.js';
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(
-    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
-): string {
+function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
     if (node == null) {
         return '';
     }
@@ -20,7 +19,7 @@ function flattenText(
 
 describe('SimulatorAuthorPreviewReport', () => {
     it('renders singular/plural summary text and avoids object default stringification', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -51,7 +50,7 @@ describe('SimulatorAuthorPreviewReport', () => {
     });
 
     it('formats mixed preview values and toggles the collapsed body', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
         const circular: Record<string, unknown> = {};
         circular.self = circular;
 
@@ -108,7 +107,7 @@ describe('SimulatorAuthorPreviewReport', () => {
     });
 
     it('renders empty summaries, browser cycle warnings, and placeholder key actions', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -140,7 +139,7 @@ describe('SimulatorAuthorPreviewReport', () => {
     });
 
     it('ignores unsupported key-action node types without leaking object strings', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -172,7 +171,7 @@ describe('SimulatorAuthorPreviewReport', () => {
     });
 
     it('renders bigint key actions with stable preview keys', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -202,7 +201,7 @@ describe('SimulatorAuthorPreviewReport', () => {
     });
 
     it('stabilizes preview keys for repeated arrays, keyed elements, and serializable objects', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(

@@ -1,7 +1,8 @@
+import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import SimulatorDeveloperToolsPanel from '../src/SimulatorDeveloperToolsPanel';
-import SimulatorAuthorPreviewReport from '../src/components/SimulatorAuthorPreviewReport';
+import SimulatorDeveloperToolsPanel from '../src/developer-tools/SimulatorDeveloperToolsPanel.js';
+import SimulatorAuthorPreviewReport from '../src/developer-tools/SimulatorAuthorPreviewReport.js';
 import PhoneDialView from '../src/views/PhoneDialView';
 import PhoneHistoryList from '../src/views/PhoneHistoryList';
 import PhoneSimulatorView from '../src/views/PhoneSimulatorView';
@@ -10,9 +11,7 @@ import SmsSimulatorView from '../src/views/SmsSimulatorView';
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(
-    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
-): string {
+function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
     if (node == null) {
         return '';
     }
@@ -31,7 +30,7 @@ afterEach(() => {
 describe('phone and panel coverage', () => {
     it('covers phone simulator screens, dialer, and history list interactions', async () => {
         const onDial = vi.fn();
-        let dialRenderer: TestRenderer.ReactTestRenderer | null = null;
+        let dialRenderer: ReactTestRenderer | null = null;
         await act(async () => {
             dialRenderer = TestRenderer.create(React.createElement(PhoneDialView, { onDial }));
         });
@@ -48,7 +47,7 @@ describe('phone and panel coverage', () => {
         const onSelectIncoming = vi.fn();
         const onSelectVoicemail = vi.fn();
         const onSelectEntry = vi.fn();
-        let historyRenderer: TestRenderer.ReactTestRenderer | null = null;
+        let historyRenderer: ReactTestRenderer | null = null;
         await act(async () => {
             historyRenderer = TestRenderer.create(
                 React.createElement(PhoneHistoryList, {
@@ -63,6 +62,7 @@ describe('phone and panel coverage', () => {
                         {
                             id: 'call-2',
                             number: '+15550000002',
+                            kind: 'missed',
                             label: 'Missed call',
                             timestamp: 'Yesterday',
                         },
@@ -112,7 +112,14 @@ describe('phone and panel coverage', () => {
             historyRenderer!.update(
                 React.createElement(PhoneHistoryList, {
                     key: 'history-default-kind',
-                    entries: [{ id: 'call-4', number: '+15550000005', timestamp: 'Later' }],
+                    entries: [
+                        {
+                            id: 'call-4',
+                            number: '+15550000005',
+                            kind: 'incoming',
+                            timestamp: 'Later',
+                        },
+                    ],
                     incomingCallContent: null,
                     hasVoicemail: false,
                     onSelectIncoming,
@@ -144,7 +151,7 @@ describe('phone and panel coverage', () => {
         const onAction = vi.fn();
         const onDismissIncoming = vi.fn();
         const onBack = vi.fn();
-        let phoneRenderer: TestRenderer.ReactTestRenderer | null = null;
+        let phoneRenderer: ReactTestRenderer | null = null;
         await act(async () => {
             phoneRenderer = TestRenderer.create(
                 React.createElement(PhoneSimulatorView, {
@@ -200,8 +207,8 @@ describe('phone and panel coverage', () => {
             );
         });
         await act(async () => {
-            phoneRenderer!.root.findByProps({ 'aria-label': 'Answer' }).props.onClick();
-            phoneRenderer!.root.findByProps({ 'aria-label': 'Ignore' }).props.onClick();
+            phoneRenderer!.root.findByProps({ 'aria-label': 'Answer call' }).props.onClick();
+            phoneRenderer!.root.findByProps({ 'aria-label': 'Decline call' }).props.onClick();
         });
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'answer_call' }));
         expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ type: 'ignore_call' }));
@@ -365,6 +372,7 @@ describe('phone and panel coverage', () => {
                             {
                                 id: 'call-2',
                                 number: '+15550000002',
+                                kind: 'outgoing',
                                 label: 'Outbound call',
                                 timestamp: 'Yesterday',
                             },
@@ -418,7 +426,7 @@ describe('phone and panel coverage', () => {
         const onAction = vi.fn();
         const onRevealNext = vi.fn();
         const onBack = vi.fn();
-        let smsRenderer: TestRenderer.ReactTestRenderer | null = null;
+        let smsRenderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             smsRenderer = TestRenderer.create(
@@ -523,7 +531,7 @@ describe('phone and panel coverage', () => {
         vi.useFakeTimers();
         const onAction = vi.fn();
         const onRevealNext = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -574,7 +582,7 @@ describe('phone and panel coverage', () => {
     });
 
     it('covers author preview formatting branches and developer tools panel sections', async () => {
-        let reportRenderer: TestRenderer.ReactTestRenderer | null = null;
+        let reportRenderer: ReactTestRenderer | null = null;
         await act(async () => {
             reportRenderer = TestRenderer.create(
                 React.createElement(SimulatorAuthorPreviewReport, {
@@ -588,7 +596,9 @@ describe('phone and panel coverage', () => {
                         browserPagesCount: 2,
                         directoryCount: 1,
                         keyActions: [
+                            // @ts-expect-error Exercise rendering of a malformed report containing React nodes.
                             React.createElement('strong', { key: 'primary-action' }, 'Review'),
+                            // @ts-expect-error Exercise rendering of a malformed nested report action.
                             [
                                 'nested',
                                 React.createElement('em', { key: 'secondary-action' }, 'Open'),
@@ -612,7 +622,7 @@ describe('phone and panel coverage', () => {
         expect(reportText).toContain('Unreachable items');
         expect(reportText).toContain('Browser has navigation cycle.');
 
-        let panelRenderer: TestRenderer.ReactTestRenderer | null = null;
+        let panelRenderer: ReactTestRenderer | null = null;
         await act(async () => {
             panelRenderer = TestRenderer.create(
                 React.createElement(SimulatorDeveloperToolsPanel, {
@@ -700,10 +710,10 @@ describe('phone and panel coverage', () => {
         expect(panelRenderer!.toJSON()).toBeNull();
     });
 
-    it('covers label-derived history kinds, timestamp search, and non-actionable rows', async () => {
+    it('covers explicit history kinds, timestamp search, and non-actionable rows', async () => {
         const onSelectIncoming = vi.fn();
         const onSelectVoicemail = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -712,18 +722,21 @@ describe('phone and panel coverage', () => {
                         {
                             id: 'v1',
                             number: '+15550000001',
+                            kind: 'voicemail',
                             label: 'Voicemail alert',
                             timestamp: 'Monday',
                         },
                         {
                             id: 'o1',
                             number: '+15550000002',
+                            kind: 'outgoing',
                             label: 'Out to support',
                             timestamp: 'Tuesday',
                         },
                         {
                             id: 'u1',
                             number: '+15550000003',
+                            kind: 'unknown',
                             label: 'Something else',
                             timestamp: 'Wednesday',
                         },
@@ -759,13 +772,13 @@ describe('phone and panel coverage', () => {
     it('covers incoming-number search, custom-kind fallback labels, and unknown passive rows', async () => {
         const onSelectIncoming = vi.fn();
         const onSelectVoicemail = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
                 React.createElement(PhoneHistoryList, {
                     entries: [
-                        { id: 'custom-1', kind: 'mystery' as never, timestamp: 'Soon' },
+                        { id: 'custom-1', number: '', kind: 'mystery' as never, timestamp: 'Soon' },
                         {
                             id: 'voice-1',
                             number: '+15550000003',
@@ -815,14 +828,19 @@ describe('phone and panel coverage', () => {
         const onSelectIncoming = vi.fn();
         const onSelectVoicemail = vi.fn();
         const onSelectEntry = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
                 React.createElement(PhoneHistoryList, {
                     entries: [
-                        { id: 'call-1', number: '+15550000001', timestamp: 'Tomorrow' },
-                        { id: 'call-2', kind: 'voicemail', name: 'Mailbox' },
+                        {
+                            id: 'call-1',
+                            number: '+15550000001',
+                            kind: 'incoming',
+                            timestamp: 'Tomorrow',
+                        },
+                        { id: 'call-2', number: '', kind: 'voicemail', name: 'Mailbox' },
                     ],
                     incomingCallContent: {
                         transcript: 'Incoming',
@@ -872,7 +890,7 @@ describe('phone and panel coverage', () => {
 
     it('wires the default voicemail back handler when no explicit handler is provided', async () => {
         const onNavigate = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -899,7 +917,7 @@ describe('phone and panel coverage', () => {
 
     it('covers sms unknown sender fallback and title-only links', async () => {
         const onAction = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(

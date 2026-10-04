@@ -40,7 +40,7 @@ Shell, lists, buttons, alerts, and modals emit predictable class names from `src
 | Forms | `simulator-input`, `simulator-field`, `simulator-field__label` | Search, compose, login forms |
 | Layout | `simulator-flex`, `simulator-flex--column`, `simulator-muted`, `simulator-shell__*` | Screen chrome, device shell |
 
-**Tone mapping:** `SimulatorButton` and `renderSimulatorChoice` accept legacy tone strings (`primary`, `outline-secondary`, `link`, …). They map to `simulator-btn--*` hooks via `simBtnToneClass()`.
+**Tone mapping:** `SimulatorButton` and `renderSimulatorChoice` accept `SimulatorButtonTone` values (`primary`, `neutral-outline`, `link`, …). These map directly to `simulator-btn--*` hooks via `simBtnToneClass()`; Bootstrap aliases are removed.
 
 ---
 
@@ -81,7 +81,7 @@ Semantic classes are **appended** alongside existing `simulator-*` layout hooks;
 
 ## Primitives (internal building blocks)
 
-Small presentational components live in `src/ui/primitives.tsx`. They are **not** re-exported from the public barrel today; hosts typically style via `simulator-*` CSS or render slots. Maintainers may import from source when composing custom screens:
+Small presentational components live in `src/ui/primitives.tsx`. These are internal building blocks; hosts typically style via `simulator-*` CSS or render slots. Maintainers may import from source when composing custom screens:
 
 | Primitive | Role |
 |-----------|------|
@@ -190,13 +190,11 @@ Internal hook `useSimulatorSessionHandlers` wires dispatch, events, and render c
 
 ```tsx
 import { useReducer } from 'react';
-import {
-    SimulatorWithSession,
-    PhoneSimulatorShell,
-    getInitialSessionState,
-    simulatorSessionReducer,
-    type SimulatorTemplatePayload,
-} from '@signalsafe/simulator-react';
+import SimulatorWithSession from '@signalsafe/simulator-react/SimulatorWithSession';
+import PhoneSimulatorShell from '@signalsafe/simulator-react/shell/PhoneSimulatorShell';
+import { getInitialSessionState } from '@signalsafe/simulator-react/state/simulatorSessionInitialState';
+import { simulatorSessionReducer } from '@signalsafe/simulator-react/state/simulatorSessionReducer';
+import { SimulatorTemplatePayload } from '@signalsafe/simulator-react/types/session';
 
 // Host CSS — map simulator-* hooks (plain HTML styling, no UI library required)
 import './simulator-host.css';
@@ -231,12 +229,10 @@ The snippets below are **host-app code**. `@signalsafe/simulator-react` does not
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import Modal from 'react-bootstrap/Modal';
-import {
-    SimulatorWithSession,
-    PhoneSimulatorShell,
-    type SimulatorChoiceRenderProps,
-    type SimulatorFeedbackRenderProps,
-} from '@signalsafe/simulator-react';
+import SimulatorWithSession from '@signalsafe/simulator-react/SimulatorWithSession';
+import PhoneSimulatorShell from '@signalsafe/simulator-react/shell/PhoneSimulatorShell';
+import { SimulatorChoiceRenderProps } from '@signalsafe/simulator-react/ui/renderSlots';
+import { SimulatorFeedbackRenderProps } from '@signalsafe/simulator-react/ui/renderSlots';
 
 // Host loads Bootstrap CSS — not required by the package
 import 'bootstrap/dist/css/bootstrap.min.css';

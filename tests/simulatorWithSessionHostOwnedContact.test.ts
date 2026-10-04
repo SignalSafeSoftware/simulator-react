@@ -1,7 +1,8 @@
+import type { ReactTestInstance, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getInitialSessionState } from '../src/state/simulatorSessionReducer';
+import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 import {
     SIM_PHONE_CONTACT_DETAIL,
     SIM_PHONE_CONTACT_ROW,
@@ -9,21 +10,18 @@ import {
 import { minimalPhoneWorld } from './support/fixtureWorlds';
 import { TestRenderer, act } from './reactTestRenderer';
 
-vi.mock('../src/shell/PhoneSimulatorShell', () => ({
+vi.mock('../src/shell/PhoneSimulatorShell.js', () => ({
     default: ({ children }: { children?: React.ReactNode }) =>
         React.createElement('div', { 'data-testid': 'simulator-shell' }, children),
 }));
 
-vi.mock('../src/SimulatorDeveloperToolsPanel', () => ({
+vi.mock('../src/developer-tools/SimulatorDeveloperToolsPanel.js', () => ({
     default: () => null,
 }));
 
 import SimulatorWithSession from '../src/SimulatorWithSession';
 
-function findWithClass(
-    root: TestRenderer.ReactTestInstance,
-    className: string,
-): TestRenderer.ReactTestInstance | null {
+function findWithClass(root: ReactTestInstance, className: string): ReactTestInstance | null {
     const nodes = root.findAll(
         (node) =>
             typeof node.props.className === 'string' && node.props.className.includes(className),
@@ -32,7 +30,7 @@ function findWithClass(
     return nodes[0] ?? null;
 }
 
-function clickContactRow(root: TestRenderer.ReactTestInstance, displayName: string): void {
+function clickContactRow(root: ReactTestInstance, displayName: string): void {
     const row = root
         .findAll(
             (node) =>
@@ -54,7 +52,7 @@ function clickContactRow(root: TestRenderer.ReactTestInstance, displayName: stri
 }
 
 describe('SimulatorWithSession host-owned phone contact detail', () => {
-    let renderer: TestRenderer.ReactTestRenderer | null = null;
+    let renderer: ReactTestRenderer | null = null;
 
     afterEach(() => {
         renderer?.unmount();

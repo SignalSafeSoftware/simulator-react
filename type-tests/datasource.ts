@@ -1,4 +1,5 @@
-import { simulatorDatasourceToPayload, type SimulatorDatasource } from '../src/index.js';
+import { simulatorDatasourceToPayload } from '../src/datasource/datasource.js';
+import type { SimulatorDatasource } from '../src/datasource/datasource.js';
 
 // Compiled by typecheck. These errors must remain errors in the public API.
 export function checkSnapshot(source: SimulatorDatasource) {
@@ -36,6 +37,6 @@ export function checkSnapshot(source: SimulatorDatasource) {
   if (session.contacts) session.contacts[0].displayName = 'editable';
   if (session.sms) session.sms.thread.messages.pop();
   if (session.email) session.email.inbox.pop();
-  if (session.phone) session.phone.content.transcript = 'editable';
+  if (session.phone?.content) session.phone.content.transcript = 'editable';
   if (session.home) session.home.settingsSections.pop();
 }

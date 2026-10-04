@@ -1,28 +1,30 @@
-import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
-import { usePhoneNumberFormatter } from '../contract/phonePresentation.js';
-import { SimulatorListGroup } from '../components/SimulatorListGroup.js';
-/**
- * Messages app: thread list. Wireframe: list header with plus/add action, search, rows with
- * profile icon, contact, snippet, date.
- */
-import { useState, useMemo, type ReactNode } from 'react';
-import { SimulatorSearchInput } from '../components/SimulatorSearchInput.js';
-import { simLayout, simRowSurface, simSpacing, simTypo } from '../simulatorStyles.js';
-import { SimulatorButton } from '../ui/primitives.js';
 import {
+    SimulatorButtonTone,
+    SIM_BTN_SM,
     joinClasses,
-    SIM_AVATAR,
     SIM_FLEX_COL,
     SIM_FLEX_GROW_1,
     SIM_FLEX_SHRINK_0,
     SIM_MUTED,
     SIM_ROUNDED_NONE,
-    SIM_SURFACE_AVATAR,
     SIM_SURFACE_WHITE,
     SIM_TEXT_BOLD,
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
 } from '../ui/simulatorClasses.js';
+import SimulatorAvatar from '../ui/media/SimulatorAvatar.js';
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
+import { usePhoneNumberFormatter } from '../contract/phonePresentation.js';
+import { SimulatorListGroup } from '../ui/lists/SimulatorListGroup.js';
+/**
+ * Messages app: thread list. Wireframe: list header with plus/add action, search, rows with
+ * profile icon, contact, snippet, date.
+ */
+import { useState, useMemo } from 'react';
+import { SimulatorSearchInput } from '../ui/lists/SimulatorSearchInput.js';
+import { simLayout, simRowSurface, simSpacing } from '../simulatorStyles.js';
+import { matchesAnyField } from '../utils/textMatch.js';
+import { SimulatorButton } from '../ui/primitives.js';
 import {
     SIM_MESSAGES,
     SIM_MESSAGES_COMPOSE_ACTION,
@@ -48,51 +50,8 @@ export interface MessagesThreadListViewProps {
     onCompose?: () => void;
 }
 
-function ThreadProfileIcon({
-    className,
-    avatarUrl,
-}: Readonly<{ className?: string; avatarUrl?: string }>) {
-    const [failed, setFailed] = useState(false);
-    return (
-        <div
-            className={joinClasses(
-                SIM_AVATAR,
-                SIM_SURFACE_AVATAR,
-                'simulator-flex simulator-flex--center',
-                SIM_FLEX_SHRINK_0,
-                className,
-            )}
-            style={{ width: 40, height: 40 }}
-            aria-hidden
-        >
-            {avatarUrl && !failed ? (
-                <img
-                    src={avatarUrl}
-                    alt=""
-                    onError={() => setFailed(true)}
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        borderRadius: 'inherit',
-                    }}
-                />
-            ) : (
-                <span className="simulator-text--primary" style={{ fontSize: '1.25rem' }}>
-                    👤
-                </span>
-            )}
-        </div>
-    );
-}
-
 function matchesSearch(row: ThreadListRow, q: string): boolean {
-    if (!q.trim()) return true;
-    const lower = q.toLowerCase().trim();
-    const name = (row.senderName ?? '').toLowerCase();
-    const num = (row.senderNumber ?? '').toLowerCase();
-    const preview = (row.preview ?? '').toLowerCase();
-    return name.includes(lower) || num.includes(lower) || preview.includes(lower);
+    return matchesAnyField(q, [row.senderName, row.senderNumber, row.preview]);
 }
 
 export default function MessagesThreadListView({
@@ -108,91 +67,72 @@ export default function MessagesThreadListView({
         () => threads.filter((row) => matchesSearch(row, searchQuery)),
         [threads, searchQuery],
     );
-    let content: ReactNode;
-    if (threads.length === 0) {
-        content = (
-            <p className={joinClasses(simTypo.emptyState, simSpacing.px2)}>
-                {screenLocale.t('screen.messagesThreadListView.no.conversations')}
-            </p>
-        );
-    } else if (filtered.length === 0) {
-        content = (
-            <p className={joinClasses(simTypo.emptyState, simSpacing.px2)}>
-                {screenLocale.t('screen.messagesThreadListView.no.results.for')}
-                {searchQuery}&quot;.
-            </p>
-        );
-    } else {
-        content = (
-            <div
-                className={joinClasses(
-                    'simulator-list--flush',
-                    simSpacing.mt1,
-                    SIM_MESSAGES_THREAD_LIST,
-                )}
-            >
-                {filtered.map((row, index) => (
-                    <button
-                        type="button"
-                        key={row.id}
-                        onClick={() => onSelectThread(row.id)}
-                        className={joinClasses(
-                            simRowSurface.selectable,
-                            SIM_SURFACE_WHITE,
-                            index === 0 ? 'simulator-border--top' : 'simulator-border--top-none',
-                            SIM_MESSAGES_THREAD_ROW,
-                        )}
-                        style={{ cursor: 'pointer' }}
+    // SimulatorListGroup renders the empty message in place of its children.
+    const content = (
+        <div
+            className={joinClasses(
+                'simulator-list--flush',
+                simSpacing.mt1,
+                SIM_MESSAGES_THREAD_LIST,
+            )}
+        >
+            {filtered.map((row, index) => (
+                <button
+                    type="button"
+                    key={row.id}
+                    onClick={() => onSelectThread(row.id)}
+                    className={joinClasses(
+                        simRowSurface.selectable,
+                        SIM_SURFACE_WHITE,
+                        index === 0 ? 'simulator-border--top' : 'simulator-border--top-none',
+                        SIM_MESSAGES_THREAD_ROW,
+                    )}
+                    style={{ cursor: 'pointer' }}
+                >
+                    <SimulatorAvatar key={row.avatarUrl} avatarUrl={row.avatarUrl} />
+                    <div
+                        className={joinClasses(SIM_FLEX_COL, 'simulator-min-w-0', SIM_FLEX_GROW_1)}
                     >
-                        <ThreadProfileIcon key={row.avatarUrl} avatarUrl={row.avatarUrl} />
-                        <div
+                        <span
                             className={joinClasses(
-                                SIM_FLEX_COL,
-                                'simulator-min-w-0',
-                                SIM_FLEX_GROW_1,
+                                'simulator-messages__thread-title',
+                                SIM_TEXT_MEDIUM,
+                                'simulator-text--truncate',
+                                row.unread && SIM_TEXT_BOLD,
                             )}
                         >
-                            <span
-                                className={joinClasses(
-                                    'simulator-messages__thread-title',
-                                    SIM_TEXT_MEDIUM,
-                                    'simulator-text--truncate',
-                                    row.unread && SIM_TEXT_BOLD,
-                                )}
-                            >
-                                {row.senderName ??
-                                    (row.senderNumber ? formatNumber(row.senderNumber) : 'Unknown')}
-                            </span>
-                            <span
-                                className={joinClasses(
-                                    SIM_TEXT_SM,
-                                    SIM_MUTED,
-                                    'simulator-messages__thread-preview',
-                                    'simulator-text--break',
-                                )}
-                                style={{ lineHeight: 1.35 }}
-                            >
-                                {row.preview}
-                            </span>
-                        </div>
-                        {row.timestamp != null && (
-                            <span
-                                className={joinClasses(
-                                    SIM_TEXT_SM,
-                                    SIM_MUTED,
-                                    SIM_FLEX_SHRINK_0,
-                                    'simulator-messages__thread-time',
-                                    'simulator-flex--align-end',
-                                )}
-                            >
-                                {row.timestamp}
-                            </span>
-                        )}
-                    </button>
-                ))}
-            </div>
-        );
-    }
+                            {row.senderName ??
+                                (row.senderNumber ? formatNumber(row.senderNumber) : 'Unknown')}
+                        </span>
+                        <span
+                            className={joinClasses(
+                                SIM_TEXT_SM,
+                                SIM_MUTED,
+                                'simulator-messages__thread-preview',
+                                'simulator-text--break',
+                            )}
+                            style={{ lineHeight: 1.35 }}
+                        >
+                            {row.preview}
+                        </span>
+                    </div>
+                    {row.timestamp != null && (
+                        <span
+                            className={joinClasses(
+                                SIM_TEXT_SM,
+                                SIM_MUTED,
+                                SIM_FLEX_SHRINK_0,
+                                'simulator-messages__thread-time',
+                                'simulator-flex--align-end',
+                            )}
+                        >
+                            {row.timestamp}
+                        </span>
+                    )}
+                </button>
+            ))}
+        </div>
+    );
 
     return (
         <div className={joinClasses(simLayout.stack, SIM_MESSAGES)}>
@@ -210,13 +150,13 @@ export default function MessagesThreadListView({
                 </span>
                 {onCompose != null && (
                     <SimulatorButton
-                        tone="outline-primary"
+                        tone={SimulatorButtonTone.PrimaryOutline}
                         className={joinClasses(
                             SIM_ROUNDED_NONE,
                             simSpacing.py1,
                             simSpacing.px2,
                             simSpacing.me2,
-                            'simulator-btn--sm',
+                            SIM_BTN_SM,
                             SIM_MESSAGES_COMPOSE_ACTION,
                         )}
                         onClick={onCompose}

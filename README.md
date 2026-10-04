@@ -64,14 +64,12 @@ No Bootstrap or other UI library is required:
 
 ```tsx
 import { useReducer } from 'react';
-import {
-    SimulatorWithSession,
-    PhoneSimulatorShell,
-    getInitialSessionState,
-    simulatorSessionReducer,
-    templateDetailToPayload,
-    type SimulatorTemplateDetail,
-} from '@signalsafe/simulator-react';
+import SimulatorWithSession from '@signalsafe/simulator-react/SimulatorWithSession';
+import PhoneSimulatorShell from '@signalsafe/simulator-react/shell/PhoneSimulatorShell';
+import { getInitialSessionState } from '@signalsafe/simulator-react/state/simulatorSessionInitialState';
+import { simulatorSessionReducer } from '@signalsafe/simulator-react/state/simulatorSessionReducer';
+import { templateDetailToPayload } from '@signalsafe/simulator-react/adapters/templateToSession';
+import { SimulatorTemplateDetail } from '@signalsafe/simulator-react/types/template';
 
 import './simulator-host.css'; // map .simulator-btn, .simulator-muted, etc.
 
@@ -116,7 +114,7 @@ https://github.com/SignalSafeSoftware/simulator-react
 
 | Area | Location |
 |------|----------|
-| Main barrel | **`src/index.ts`** |
+| Public modules | Explicit subpaths in **`package.json`** |
 | Session reducer | **`src/state/simulatorSessionReducer.ts`** |
 | Template → payload adapter | **`src/adapters/templateToSession.ts`** (`templateDetailToPayload`) |
 | Screen registry | **`src/screenRegistry/`** |
@@ -128,25 +126,23 @@ Convert template detail to a payload, validate and optionally apply preview fall
 
 ```tsx
 import { useReducer } from 'react';
-import {
-    SimulatorWithSession,
-    PhoneSimulatorShell,
-    SimulatorLintBanner,
-    templateDetailToPayload,
-    getInitialSessionState,
-    simulatorSessionReducerWithLogging,
-    lintSimulatorPayload,
-    parseSimulatorSearchParams,
-    applyDeepLinkToState,
-    getDeepLinkContactsSearch,
-    applyPreviewFallback,
-    type SimulatorSessionState,
-    type SimulatorDispatchAction,
-    type SimulatorInteractionEvent,
-    type SimulatorTemplateDetail,
-} from '@signalsafe/simulator-react';
+import SimulatorWithSession from '@signalsafe/simulator-react/SimulatorWithSession';
+import PhoneSimulatorShell from '@signalsafe/simulator-react/shell/PhoneSimulatorShell';
+import SimulatorLintBanner from '@signalsafe/simulator-react/developer-tools/SimulatorLintBanner';
+import { templateDetailToPayload } from '@signalsafe/simulator-react/adapters/templateToSession';
+import { getInitialSessionState } from '@signalsafe/simulator-react/state/simulatorSessionInitialState';
+import { simulatorSessionReducerWithLogging } from '@signalsafe/simulator-react/state/simulatorSessionReducer';
+import { lintSimulatorPayload } from '@signalsafe/simulator-react/utils/lintSimulatorPayload';
+import { parseSimulatorSearchParams } from '@signalsafe/simulator-react/utils/simulatorDeepLink';
+import { applyDeepLinkToState } from '@signalsafe/simulator-react/utils/simulatorDeepLink';
+import { getDeepLinkContactsSearch } from '@signalsafe/simulator-react/utils/simulatorDeepLink';
+import { applyPreviewFallback } from '@signalsafe/simulator-react/utils/previewFallbackWorld';
+import { SimulatorSessionState } from '@signalsafe/simulator-react/types/session';
+import { SimulatorDispatchAction } from '@signalsafe/simulator-react/state/simulatorDispatchActions';
+import { SimulatorInteractionEvent } from '@signalsafe/simulator-react/types/simulatorEvents';
+import { SimulatorTemplateDetail } from '@signalsafe/simulator-react/types/template';
 
-// `SimulatorTemplateDetail` is defined in `src/types/portableSimulator.ts`.
+// `SimulatorTemplateDetail` is defined in `src/types/template.ts`.
 function SimulatorHost({ detail }: { detail: SimulatorTemplateDetail }) {
     const rawPayload = templateDetailToPayload(detail, {});
     const payload = applyPreviewFallback(rawPayload);
@@ -168,7 +164,8 @@ function SimulatorHost({ detail }: { detail: SimulatorTemplateDetail }) {
 ## Compare two payloads
 
 ```tsx
-import { diffSimulatorPayloads, type SimulatorDiffItem } from '@signalsafe/simulator-react';
+import { diffSimulatorPayloads } from '@signalsafe/simulator-react/utils/simulatorPayloadDiff';
+import { SimulatorDiffItem } from '@signalsafe/simulator-react/utils/simulatorPayloadDiff';
 
 const items: SimulatorDiffItem[] = diffSimulatorPayloads(leftPayload, rightPayload);
 ```
@@ -176,7 +173,7 @@ const items: SimulatorDiffItem[] = diffSimulatorPayloads(leftPayload, rightPaylo
 ## Interaction events (host typing)
 
 ```tsx
-import type { HostSimulatorEventHandler } from '@signalsafe/simulator-react';
+import type { HostSimulatorEventHandler } from '@signalsafe/simulator-react/contract/hostContractTypes';
 
 const onSimulatorEvent: HostSimulatorEventHandler = (event) => {
     /* forward to your API or analytics */
@@ -188,7 +185,7 @@ const onSimulatorEvent: HostSimulatorEventHandler = (event) => {
 ## Developer tools panel
 
 ```tsx
-import { SimulatorDeveloperToolsPanel } from '@signalsafe/simulator-react';
+import SimulatorDeveloperToolsPanel from '@signalsafe/simulator-react/developer-tools/SimulatorDeveloperToolsPanel';
 
 <SimulatorDeveloperToolsPanel
     developerTools={{ preset: 'qa', sections: { reachability: true } }}
@@ -200,16 +197,16 @@ import { SimulatorDeveloperToolsPanel } from '@signalsafe/simulator-react';
 
 ## Subpath exports (`package.json`)
 
-Imports outside the main barrel are **explicit** and **versioned** in **`exports`**:
+Public imports use **explicit owner subpaths** declared in **`exports`**. Representative utility modules:
 
 | Import | Purpose |
 |--------|---------|
 | `@signalsafe/simulator-react/utils/validateSimulatorPayload` | JSON-schema style validation helper |
 | `@signalsafe/simulator-react/utils/simulatorPreviewReport` | Authoring / preview report builder |
-| `@signalsafe/simulator-react/utils/simulatorRealismChecks` | QA / fixture realism checks (not on main barrel) |
+| `@signalsafe/simulator-react/utils/simulatorRealismChecks` | QA / fixture realism checks |
 | `@signalsafe/simulator-react/utils/previewFallbackWorld` | Preview fallback helpers + `PREVIEW_PLACEHOLDER_ID_PREFIX` |
 
-Other deep import paths are **unsupported**. Prefer the main barrel for app/runtime UI.
+Use the owner subpaths listed in `package.json` for all app/runtime UI. Undeclared deep paths and root imports are unsupported.
 
 ## Tests
 
@@ -219,7 +216,7 @@ yarn test
 
 ## Boundaries
 
-- **In scope:** UI and state under `src/`, main barrel exports, and documented **`exports`** subpaths in `package.json`.
+- **In scope:** UI and state under `src/`, documented **`exports`** owner subpaths in `package.json`.
 - **Out of scope:** routing, HTTP, auth — host apps supply payload and event handlers.
 - **Side effects:** `sideEffects: false` — hosts supply layout/styling (CSS or UI kit) for `simulator-*` hooks and optional render slots.
 
@@ -286,8 +283,7 @@ Node 22/24 (use Node 24.16+ locally). A separate CI job installs packed artifact
 with strict engine checks and tests runtime behavior on Node 19.0.0 and 19–24.
 
 The compatibility job builds this package and installs its declared dependencies
-from npm with strict engine checks. Release core 0.4.1, then React 0.17.0,
-then device 0.17.0; publish theme 0.10.0 before validating the device gallery.
+from npm with strict engine checks. For local audit integration use the pinned vendor artifacts. Before publication, replace file dependencies with released versions and run `yarn check:release`.
 Regenerate each downstream lockfile after its upstream releases are available.
 No sibling source overrides are used in the runtime matrix.
 
@@ -322,3 +318,18 @@ page/session-bound action messages; trusted React render callbacks run in the ho
 isolated consumer against the packed public API. The examples do not resolve
 sibling source trees or private source imports. The shared React 18 local-app
 workflow is in [simulator-device/examples/local-apps](https://github.com/SignalSafeSoftware/simulator-device/tree/main/examples/local-apps).
+
+## Source organization
+
+See [module ownership](docs/module-organization.md) before adding a screen, host contract or shared control. Internal modules import their owners directly; explicit owner subpaths are the public package API. Run `yarn check:modules` to check internal re-exports, flat app modules and relative source imports.
+
+### Shared app identifiers
+
+Import `SimulatorApp` and `isSimulatorApp` directly from `@signalsafe/simulator-core`.
+Use `SimulatorApp.Phone`, `.Email`, `.Messages`, `.Internet`, and `.Home` for app IDs.
+The frozen enum-style object also supplies the `SimulatorApp` string-union type; existing JSON
+values stay compatible. Use `isSimulatorApp(value)` at untrusted boundaries and
+`Object.values(SimulatorApp)` when enumerating all apps. Do not confuse app IDs with
+channels (`sms`, `browser`, `contacts`), screen names, or contact/input field kinds.
+
+See [AGENTS.md](./AGENTS.md) for module ownership and verification rules. Root imports were removed in the local audit prerelease; use the explicit owner paths shown in the examples.

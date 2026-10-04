@@ -1,15 +1,15 @@
+import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import SimulatorSessionTimeline, {
+import SimulatorSessionTimeline from '../src/developer-tools/SimulatorSessionTimeline.js';
+import {
     type SessionStartedEntry,
     type TimelineEntry,
-} from '../src/components/SimulatorSessionTimeline';
+} from '../src/developer-tools/SimulatorSessionTimeline.js';
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(
-    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
-): string {
+function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
     if (node == null) {
         return '';
     }
@@ -32,7 +32,7 @@ function sessionStartedEntry(): SessionStartedEntry {
 
 describe('SimulatorSessionTimeline', () => {
     it('renders singular event count and suppresses object metadata summaries', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
         const entries: TimelineEntry[] = [
             {
                 kind: 'link_clicked',
@@ -60,7 +60,7 @@ describe('SimulatorSessionTimeline', () => {
     });
 
     it('renders plural event count and empty state text when expanded with no entries', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -77,7 +77,7 @@ describe('SimulatorSessionTimeline', () => {
     });
 
     it('renders session-started entries without a target summary', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -94,7 +94,7 @@ describe('SimulatorSessionTimeline', () => {
     });
 
     it('toggles open state, truncates long hrefs, quotes search queries, and falls back when time formatting fails', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
         const timeSpy = vi.spyOn(Date.prototype, 'toLocaleTimeString').mockImplementation(() => {
             throw new Error('bad clock');
         });
@@ -142,7 +142,7 @@ describe('SimulatorSessionTimeline', () => {
     });
 
     it('covers unknown labels, action-key precedence, numeric metadata, short hrefs, and missing metadata', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -183,7 +183,7 @@ describe('SimulatorSessionTimeline', () => {
     });
 
     it('covers boolean metadata filtering and short timestamp fallback strings', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
         const timeSpy = vi.spyOn(Date.prototype, 'toLocaleTimeString').mockImplementation(() => {
             throw new Error('bad clock');
         });

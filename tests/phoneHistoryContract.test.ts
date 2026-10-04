@@ -3,7 +3,8 @@ import type { ReactTestRenderer, ReactTestInstance } from 'react-test-renderer';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TestRenderer, act } from './reactTestRenderer';
 import PhoneDialView from '../src/views/PhoneDialView';
-import { PhoneHistoryList, type PhoneHistoryListProps } from '../src/index';
+import PhoneHistoryList from '../src/views/PhoneHistoryList.js';
+import type { PhoneHistoryListProps } from '../src/views/PhoneHistoryList.js';
 
 const entries = [
     { id: 'alex', name: 'Alex', number: '555001', kind: 'outgoing' as const },
@@ -108,6 +109,33 @@ describe('native history consumer contract', () => {
         });
         expect(action).toHaveBeenCalledOnce();
         expect(onSelectEntry).toHaveBeenCalledOnce();
+    });
+
+    it('renders call-detail entries as plain rows while retaining separate actions', async () => {
+        const onSelectEntry = vi.fn();
+        const onSelectVoicemail = vi.fn();
+        const action = vi.fn();
+        const root = await render({
+            entries: [...entries, { id: 'voice', number: '555003', kind: 'voicemail' }],
+            entriesSelectable: false,
+            onSelectEntry,
+            onSelectVoicemail,
+            selectedEntryId: 'sam',
+            renderEntryActions: (entry) =>
+                createElement('button', { onClick: action }, `Delete ${entry.id}`),
+        });
+        expect(rows(root).map((row) => row.type)).toEqual(['div', 'div', 'div']);
+        for (const row of rows(root)) {
+            expect(row.props['aria-current']).toBeUndefined();
+            expect(row.props.onClick).toBeUndefined();
+            expect(row.props.tabIndex).toBeUndefined();
+        }
+        await act(async () => {
+            root.findByProps({ children: 'Delete sam' }).props.onClick();
+        });
+        expect(action).toHaveBeenCalledOnce();
+        expect(onSelectEntry).not.toHaveBeenCalled();
+        expect(onSelectVoicemail).not.toHaveBeenCalled();
     });
 
     it('preserves incoming and voicemail actions and truthful empty searches', async () => {

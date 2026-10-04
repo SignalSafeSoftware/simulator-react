@@ -1,7 +1,7 @@
 import { createElement, useState } from 'react';
 import { act, create } from 'react-test-renderer';
 import { expect, it } from 'vitest';
-import { SimulatorPage } from '../src/components/SimulatorPage';
+import { SimulatorPage } from '../src/ui/layout/SimulatorPage.js';
 import { SimulatorLocaleProvider } from '../src/i18n/SimulatorLocale';
 
 it('keeps page slots ordered and preserves content state when headers change', () => {

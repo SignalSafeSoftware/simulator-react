@@ -1,3 +1,4 @@
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { SimulatorViewState } from '../types/session.js';
 
 /** Host composition supplies its own detail/composer controls; scenarios use inline controls. */
@@ -10,8 +11,8 @@ export function shouldHideSimulatorNavigation(
     if (screen == null) return true;
     if (policy === 'host') return false;
     return (
-        (view.activeApp === 'messages' &&
+        (view.activeApp === SimulatorApp.Messages &&
             (screen === 'thread_detail' || screen === 'new_thread')) ||
-        (view.activeApp === 'email' && screen === 'detail')
+        (view.activeApp === SimulatorApp.Email && screen === 'detail')
     );
 }

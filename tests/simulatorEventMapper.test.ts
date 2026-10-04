@@ -9,6 +9,7 @@ import type { SimulatorTemplatePayload, SimulatorViewState } from '../src/types/
 function createViewState(): SimulatorViewState {
     return {
         activeApp: 'internet',
+        actionHistory: [],
         showPrimaryMenu: true,
         contactsPanelOpen: false,
         contactsSearchQuery: '',

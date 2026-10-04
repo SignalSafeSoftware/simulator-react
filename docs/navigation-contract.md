@@ -11,7 +11,7 @@ boundary with the same callbacks.
 Only `handled` suppresses package dispatch. The host then owns the requested
 transition and its matching exit/back behavior. Package state, stack, and host
 contact selection are untouched. Throwing aborts without fallback dispatch.
-Promises are not supported. With no callback, legacy dispatch behavior (including
+Promises are not supported. With no callback, package dispatch behavior (including
 its function identity in the session) is retained.
 
 Requests have `kind` (`app`, `screen`, `back`, `primary`, `cancel`) and `from`/`to`

@@ -1,28 +1,30 @@
+import {
+    SimulatorButtonTone,
+    SIM_BTN_SM,
+    joinClasses,
+    SIM_FLEX_COL,
+    SIM_FLEX_GROW_1,
+    SIM_FLEX_SHRINK_0,
+    SIM_MUTED,
+    SIM_ROUNDED_NONE,
+    SIM_TEXT_BOLD,
+    SIM_TEXT_MEDIUM,
+    SIM_TEXT_SM,
+    simBadgeToneClass,
+} from '../ui/simulatorClasses.js';
+import SimulatorAvatar from '../ui/media/SimulatorAvatar.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
-import { SimulatorListGroup } from '../components/SimulatorListGroup.js';
+import { SimulatorListGroup } from '../ui/lists/SimulatorListGroup.js';
 /**
  * Reusable email inbox list: wireframe rows (profile icon, sender, snippet, date, Read/Unread tag).
  * Optional search bar and compose (pencil) button.
  */
 import { useState, useMemo, type ReactNode } from 'react';
 import type { SimulatorInboxRow } from '../types/session.js';
-import { SimulatorSearchInput } from '../components/SimulatorSearchInput.js';
+import { SimulatorSearchInput } from '../ui/lists/SimulatorSearchInput.js';
 import { simLayout, simRowSurface, simSpacing, simTypo } from '../simulatorStyles.js';
+import { matchesAnyField } from '../utils/textMatch.js';
 import { SimulatorButton } from '../ui/primitives.js';
-import {
-    joinClasses,
-    SIM_AVATAR,
-    SIM_FLEX_COL,
-    SIM_FLEX_GROW_1,
-    SIM_FLEX_SHRINK_0,
-    SIM_MUTED,
-    SIM_ROUNDED_NONE,
-    SIM_SURFACE_AVATAR,
-    SIM_TEXT_BOLD,
-    SIM_TEXT_MEDIUM,
-    SIM_TEXT_SM,
-    simBadgeToneClass,
-} from '../ui/simulatorClasses.js';
 import {
     SIM_EMAIL_INBOX,
     SIM_EMAIL_COMPOSE_ACTION,
@@ -47,39 +49,8 @@ export interface EmailInboxListProps {
     onSearchSubmit?: (query: string) => void;
 }
 
-function InboxProfileIcon({ className }: Readonly<{ className?: string }>) {
-    return (
-        <div
-            className={joinClasses(
-                SIM_AVATAR,
-                SIM_SURFACE_AVATAR,
-                'simulator-flex simulator-flex--center',
-                SIM_FLEX_SHRINK_0,
-                className,
-            )}
-            style={{ width: 40, height: 40 }}
-            aria-hidden
-        >
-            <span className="simulator-text--primary" style={{ fontSize: '1.25rem' }}>
-                👤
-            </span>
-        </div>
-    );
-}
-
 function matchesSearch(row: SimulatorInboxRow, q: string): boolean {
-    if (!q.trim()) return true;
-    const lower = q.toLowerCase().trim();
-    const sub = (row.subject ?? '').toLowerCase();
-    const from = (row.from ?? '').toLowerCase();
-    const fromName = (row.from_display_name ?? '').toLowerCase();
-    const snippet = (row.snippet ?? '').toLowerCase();
-    return (
-        sub.includes(lower) ||
-        from.includes(lower) ||
-        fromName.includes(lower) ||
-        snippet.includes(lower)
-    );
+    return matchesAnyField(q, [row.subject, row.from, row.from_display_name, row.snippet]);
 }
 
 export default function EmailInboxList({
@@ -105,7 +76,7 @@ export default function EmailInboxList({
         [inbox, searchQuery],
     );
     let content: ReactNode;
-    if (inbox.length === 0) {
+    if (inbox.length === 0 || filtered.length === 0) {
         content = (
             <p
                 className={joinClasses(
@@ -115,23 +86,16 @@ export default function EmailInboxList({
                     'simulator-text--start',
                 )}
             >
-                {folder === 'trash'
-                    ? screenLocale.t('screen.emailInboxList.no.emails.in.trash')
-                    : screenLocale.t('screen.emailInboxList.no.emails')}
-            </p>
-        );
-    } else if (filtered.length === 0) {
-        content = (
-            <p
-                className={joinClasses(
-                    simTypo.emptyState,
-                    simSpacing.pt3,
-                    simSpacing.px2,
-                    'simulator-text--start',
+                {inbox.length > 0 ? (
+                    <>
+                        {screenLocale.t('screen.emailInboxList.no.results.for')}
+                        {searchQuery}&quot;.
+                    </>
+                ) : folder === 'trash' ? (
+                    screenLocale.t('screen.emailInboxList.no.emails.in.trash')
+                ) : (
+                    screenLocale.t('screen.emailInboxList.no.emails')
                 )}
-            >
-                {screenLocale.t('screen.emailInboxList.no.results.for')}
-                {searchQuery}&quot;.
             </p>
         );
     } else {
@@ -151,7 +115,7 @@ export default function EmailInboxList({
                         )}
                         style={{ cursor: 'pointer' }}
                     >
-                        <InboxProfileIcon />
+                        <SimulatorAvatar />
                         <div
                             className={joinClasses(
                                 SIM_FLEX_COL,
@@ -224,13 +188,13 @@ export default function EmailInboxList({
                 </span>
                 {onCompose != null && (
                     <SimulatorButton
-                        tone="outline-primary"
+                        tone={SimulatorButtonTone.PrimaryOutline}
                         className={joinClasses(
                             SIM_ROUNDED_NONE,
                             simSpacing.py1,
                             simSpacing.px2,
                             simSpacing.me2,
-                            'simulator-btn--sm',
+                            SIM_BTN_SM,
                             SIM_EMAIL_COMPOSE_ACTION,
                         )}
                         onClick={onCompose}

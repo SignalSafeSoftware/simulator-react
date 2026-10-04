@@ -1,12 +1,13 @@
+import type { SimulatorButtonTone } from './simulatorClasses.js';
 import type { ReactNode } from 'react';
 
-import type { SimulatorDispatchAction } from '../state/simulatorSessionReducer.js';
+import { type SimulatorDispatchAction } from '../state/simulatorDispatchActions.js';
 import type {
     SimulatorCallHistoryEntry,
     SimulatorSessionContact,
     SimulatorSessionState,
 } from '../types/session.js';
-import type { PhoneSimulatorContent } from '../types/portableSimulator.js';
+import { type PhoneSimulatorContent } from '../types/template.js';
 import { SimulatorAlert, SimulatorButton } from './primitives.js';
 import { joinClasses } from './simulatorClasses.js';
 import {
@@ -17,7 +18,7 @@ import {
 export interface SimulatorChoiceRenderProps {
     label: ReactNode;
     onClick: () => void;
-    tone?: string;
+    tone?: SimulatorButtonTone;
     className?: string;
     disabled?: boolean;
     'aria-label'?: string;

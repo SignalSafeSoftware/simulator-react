@@ -1,3 +1,5 @@
+import { SimulatorDispatchActionType } from '../state/simulatorDispatchActions.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 /**
  * Optional dev-only state transition logging for the simulator reducer.
  * Off by default. Simulator-scoped; no Redux or global framework.
@@ -73,15 +75,15 @@ function getScreenForActiveApp(
     app: SimulatorViewState['activeApp'],
 ): string {
     switch (app) {
-        case 'email':
+        case SimulatorApp.Email:
             return view.email.screen;
-        case 'messages':
+        case SimulatorApp.Messages:
             return view.messages.screen;
-        case 'internet':
+        case SimulatorApp.Internet:
             return view.internet.screen;
-        case 'phone':
+        case SimulatorApp.Phone:
             return view.phone.screen;
-        case 'home':
+        case SimulatorApp.Home:
             return view.home.screen;
         default:
             return '?';
@@ -89,20 +91,25 @@ function getScreenForActiveApp(
 }
 
 function formatAction(action: DispatchActionForLog): string {
-    if (action.type === 'SIMULATOR_ACTION' && action.action) {
+    if (action.type === SimulatorDispatchActionType.SimulatorAction && action.action) {
         const a = action.action;
         if (a.type === 'navigate_screen')
-            return `SIMULATOR_ACTION(navigate_screen ${a.app}/${a.screen})`;
-        if (a.type === 'open_email') return `SIMULATOR_ACTION(open_email ${a.messageId})`;
-        if (a.type === 'open_thread') return `SIMULATOR_ACTION(open_thread ${a.threadId})`;
-        if (a.type === 'open_page') return `SIMULATOR_ACTION(open_page ${a.pageId})`;
-        return `SIMULATOR_ACTION(${a.type})`;
+            return `${action.type}(navigate_screen ${a.app}/${a.screen})`;
+        if (a.type === 'open_email') return `${action.type}(open_email ${a.messageId})`;
+        if (a.type === 'open_thread') return `${action.type}(open_thread ${a.threadId})`;
+        if (a.type === 'open_page') return `${action.type}(open_page ${a.pageId})`;
+        return `${action.type}(${a.type})`;
     }
-    if (action.type === 'NAV_LOCAL') return `NAV_LOCAL(${action.app}/${action.screen})`;
-    if (action.type === 'BROWSER_SCREEN') return `BROWSER_SCREEN(${action.screen})`;
-    if (action.type === 'SELECT_EMAIL') return `SELECT_EMAIL(${action.messageId ?? 'null'})`;
-    if (action.type === 'SWITCH_APP') return `SWITCH_APP(${action.app})`;
-    if (action.type === 'PHONE_CHOOSE') return `PHONE_CHOOSE(${action.index})`;
+    if (action.type === SimulatorDispatchActionType.NavLocal)
+        return `${action.type}(${action.app}/${action.screen})`;
+    if (action.type === SimulatorDispatchActionType.BrowserScreen)
+        return `${action.type}(${action.screen})`;
+    if (action.type === SimulatorDispatchActionType.SelectEmail)
+        return `${action.type}(${action.messageId ?? 'null'})`;
+    if (action.type === SimulatorDispatchActionType.SwitchApp)
+        return `${action.type}(${action.app})`;
+    if (action.type === SimulatorDispatchActionType.PhoneChoose)
+        return `${action.type}(${action.index})`;
     return action.type;
 }
 
@@ -111,7 +118,7 @@ function appendEmailChange(
     prev: SimulatorViewState,
     next: SimulatorViewState,
 ): void {
-    if (next.activeApp !== 'email' || prev.email.screen === next.email.screen) {
+    if (next.activeApp !== SimulatorApp.Email || prev.email.screen === next.email.screen) {
         return;
     }
     parts.push(`email ${prev.email.screen}→${next.email.screen}`);
@@ -125,7 +132,7 @@ function appendMessagesChange(
     prev: SimulatorViewState,
     next: SimulatorViewState,
 ): void {
-    if (next.activeApp === 'messages' && prev.messages.screen !== next.messages.screen) {
+    if (next.activeApp === SimulatorApp.Messages && prev.messages.screen !== next.messages.screen) {
         parts.push(`messages ${prev.messages.screen}→${next.messages.screen}`);
     }
 }
@@ -135,7 +142,7 @@ function appendInternetChange(
     prev: SimulatorViewState,
     next: SimulatorViewState,
 ): void {
-    if (next.activeApp !== 'internet' || prev.internet.screen === next.internet.screen) {
+    if (next.activeApp !== SimulatorApp.Internet || prev.internet.screen === next.internet.screen) {
         return;
     }
     parts.push(`internet ${prev.internet.screen}→${next.internet.screen}`);
@@ -149,7 +156,7 @@ function appendPhoneChange(
     prev: SimulatorViewState,
     next: SimulatorViewState,
 ): void {
-    if (next.activeApp === 'phone' && prev.phone.screen !== next.phone.screen) {
+    if (next.activeApp === SimulatorApp.Phone && prev.phone.screen !== next.phone.screen) {
         parts.push(`phone ${prev.phone.screen}→${next.phone.screen}`);
     }
     if (prev.phone.chosenIndex !== next.phone.chosenIndex && next.phone.chosenIndex != null) {
@@ -162,7 +169,7 @@ function appendHomeChange(
     prev: SimulatorViewState,
     next: SimulatorViewState,
 ): void {
-    if (next.activeApp === 'home' && prev.home.screen !== next.home.screen) {
+    if (next.activeApp === SimulatorApp.Home && prev.home.screen !== next.home.screen) {
         parts.push(`home ${prev.home.screen}→${next.home.screen}`);
     }
 }

@@ -2,7 +2,7 @@ import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Phone Voicemail screen: optional caller/timestamp header + transcript + Back.
  */
-import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../components/SimulatorDetail.js';
+import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../ui/layout/SimulatorDetail.js';
 import { simSpacing, simTypo } from '../simulatorStyles.js';
 import { joinClasses, SIM_TEXT_BODY, SIM_TEXT_MEDIUM } from '../ui/simulatorClasses.js';
 
@@ -31,25 +31,27 @@ export default function PhoneVoicemailView({
                 ariaLabel={screenLocale.t('a11y.back')}
                 titleOnly
             />
-            {(callerName != null || timestamp != null) && (
-                <div className={simTypo.secondaryTight}>
-                    {callerName != null && (
-                        <span className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_BODY)}>
-                            {callerName}
-                        </span>
-                    )}
-                    {callerName != null && timestamp != null && ' · '}
-                    {timestamp != null && <span>{timestamp}</span>}
-                </div>
-            )}
-            <SimulatorDetailBlock>
-                <pre
-                    className={joinClasses(simSpacing.mb0, simTypo.bodySmall)}
-                    style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit' }}
-                >
-                    {transcript}
-                </pre>
-            </SimulatorDetailBlock>
+            <div className="simulator-page-content">
+                {(callerName != null || timestamp != null) && (
+                    <div className={simTypo.secondaryTight}>
+                        {callerName != null && (
+                            <span className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_BODY)}>
+                                {callerName}
+                            </span>
+                        )}
+                        {callerName != null && timestamp != null && ' · '}
+                        {timestamp != null && <span>{timestamp}</span>}
+                    </div>
+                )}
+                <SimulatorDetailBlock>
+                    <pre
+                        className={joinClasses(simSpacing.mb0, simTypo.bodySmall)}
+                        style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit' }}
+                    >
+                        {transcript}
+                    </pre>
+                </SimulatorDetailBlock>
+            </div>
         </div>
     );
 }

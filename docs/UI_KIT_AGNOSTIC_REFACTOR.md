@@ -1,5 +1,7 @@
 # UI-kit agnostic simulator refactor — design scan
 
+**Historical record:** this describes the 0.2.0 migration. Current consumers use `@signalsafe/simulator-theme-bootstrap`; see [module organization](module-organization.md) for the current ownership model.
+
 **Status:** **Implemented** (Prompt 12–13, `@signalsafe/simulator-react@0.2.0`)  
 **Branch:** `cleanup`  
 **Usage guide:** [UI_KIT_AGNOSTIC_USAGE.md](./UI_KIT_AGNOSTIC_USAGE.md)
@@ -16,7 +18,7 @@
 
 **Shipped semver:** **0.2.0** — peer dependency removal + styling contract change + render slots.
 
-**Optional future package:** `@signalsafe/simulator-react-bootstrap` — reference Bootstrap skin if multiple apps want the legacy wireframe look without duplicating CSS bridges.
+**Current theme package:** `@signalsafe/simulator-theme-bootstrap` provides the shared presentation. Do not introduce a separate wireframe skin.
 
 ---
 
@@ -44,7 +46,7 @@
 ### Phase 4 — Bootstrap CSS cleanup ✓ (Prompt 12B)
 
 - All shell, list, dial, inbox, browser, and dev chrome views migrated to `simulator-*` tokens
-- `simShell`, `simLayout`, `simAvatar`, and extended spacing tokens in `simulatorStyles.ts`
+- `simShell`, `simLayout`, and extended spacing tokens in `simulatorStyles.ts`
 - `tests/bootstrapClassHooks.test.ts` — denylist guard on rendered markup
 
 ---
@@ -63,7 +65,7 @@
 
 ## DeliveryPlus migration
 
-See [UI_KIT_AGNOSTIC_USAGE.md](./UI_KIT_AGNOSTIC_USAGE.md#deliveryplus-migration-guidance-only). DeliveryPlus is **not** modified in this refactor; pin `0.1.x` until host CSS or render slots are ready.
+See [UI_KIT_AGNOSTIC_USAGE.md](./UI_KIT_AGNOSTIC_USAGE.md#deliveryplus-migration-guidance-only). The original 0.2.0 migration did not modify DeliveryPlus. That migration-era pin is obsolete; current host integrations use the same simulator packages and shared theme.
 
 ---
 

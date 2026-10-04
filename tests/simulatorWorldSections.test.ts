@@ -15,10 +15,12 @@ describe('simulatorWorldSections', () => {
                 ignored: { keep: false },
             } as never,
             {
+                // @ts-expect-error Exercise recursive merging of incomplete untyped device data.
                 device: {
                     secondaryDefaults: { phone: 'history' },
                 },
                 browser: {
+                    // @ts-expect-error Exercise array replacement with incomplete untyped page data.
                     pages: [{ id: 'pricing' }],
                 },
             },
@@ -42,6 +44,7 @@ describe('simulatorWorldSections', () => {
                 [
                     {
                         email: {
+                            // @ts-expect-error Exercise incomplete inbox data at the raw merge boundary.
                             inbox: [{ id: 'm1' }],
                         },
                     },
@@ -60,6 +63,7 @@ describe('simulatorWorldSections', () => {
         expect(
             applyPartials([undefined as never], {
                 home: {
+                    // @ts-expect-error Exercise incomplete widget data at the raw merge boundary.
                     widgets: [{ id: 'w1' }],
                 },
             }),

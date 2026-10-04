@@ -1,12 +1,11 @@
+import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import SimulatorBrowserChrome from '../src/components/SimulatorBrowserChrome';
+import SimulatorBrowserChrome from '../src/apps/browser/SimulatorBrowserChrome.js';
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(
-    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
-): string {
+function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
     if (node == null) {
         return '';
     }
@@ -24,7 +23,7 @@ describe('SimulatorBrowserChrome', () => {
         const onForward = vi.fn();
         const onRefresh = vi.fn();
         const onHome = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -61,7 +60,7 @@ describe('SimulatorBrowserChrome', () => {
     });
 
     it('covers unhighlighted url rendering and repeated highlight key generation', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -85,7 +84,7 @@ describe('SimulatorBrowserChrome', () => {
     });
 
     it('covers invalid highlight ranges that collapse back to plain text', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(

@@ -1,14 +1,16 @@
+import {
+    SimulatorDispatchActionType,
+    switchChannelAction,
+    type SimulatorDispatchAction,
+} from '../state/simulatorDispatchActions.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 /**
  * Session action handlers for SimulatorWithSession (navigation, events, render context).
  */
 
 import { useCallback, useMemo, type MutableRefObject, type ReactNode } from 'react';
-import { SimulatorActions } from '../actions/index.js';
+import { SimulatorActions } from '../actions/simulatorActions.js';
 import type { HostSimulatorEventHandler } from '../contract/hostContractTypes.js';
-import {
-    switchChannelAction,
-    type SimulatorDispatchAction,
-} from '../state/simulatorSessionReducer.js';
 import type { SimulatorSessionState, SimulatorChannel, SimulatorAction } from '../types/session.js';
 import { channelToApp } from '../types/session.js';
 import {
@@ -18,7 +20,7 @@ import {
 } from '../utils/simulatorEventMapper.js';
 import { getSimulatorCapabilities } from '../utils/simulatorCapabilities.js';
 import { getBrowserSubmitTargetId } from '../utils/simulatorSecondaryMenuHelpers.js';
-import type { SimulatorRenderContext } from '../screenRegistry/index.js';
+import { type SimulatorRenderContext } from '../screenRegistry/types.js';
 import type {
     SimulatorChoiceRenderProps,
     SimulatorFeedbackRenderProps,
@@ -65,9 +67,12 @@ export function useSimulatorSessionHandlers({
     onPhoneContactOpen,
 }: UseSimulatorSessionHandlersOptions): UseSimulatorSessionHandlersResult {
     const payload = state.payload;
-    const onBack = useCallback(() => dispatch({ type: 'BACK' }), [dispatch]);
+    const onBack = useCallback(
+        () => dispatch({ type: SimulatorDispatchActionType.Back }),
+        [dispatch],
+    );
     const onToggleContactsPanel = useCallback(
-        () => dispatch({ type: 'TOGGLE_CONTACTS_PANEL' }),
+        () => dispatch({ type: SimulatorDispatchActionType.ToggleContactsPanel }),
         [dispatch],
     );
 
@@ -85,7 +90,7 @@ export function useSimulatorSessionHandlers({
 
     const handleAction = useCallback(
         (action: SimulatorAction) => {
-            dispatch({ type: 'SIMULATOR_ACTION', action });
+            dispatch({ type: SimulatorDispatchActionType.SimulatorAction, action });
             if (action.type === 'submit_form') {
                 const pages = state.payload.browser?.pages ?? [];
                 const currentPageId = state.view.internet.screen;
@@ -93,10 +98,15 @@ export function useSimulatorSessionHandlers({
                 const targetId = getBrowserSubmitTargetId(currentPage?.submitTargetPageId);
                 const targetExists = pages.some((p) => p?.id === targetId);
                 if (targetExists) {
-                    dispatch({ type: 'BROWSER_SCREEN', screen: targetId });
+                    dispatch({ type: SimulatorDispatchActionType.BrowserScreen, screen: targetId });
                     if (onSimulatorEvent) {
                         onSimulatorEvent(
-                            screenViewedEvent('internet', targetId, state.view, state.payload),
+                            screenViewedEvent(
+                                SimulatorApp.Internet,
+                                targetId,
+                                state.view,
+                                state.payload,
+                            ),
                         );
                     }
                 }
@@ -114,6 +124,17 @@ export function useSimulatorSessionHandlers({
         [dispatch, state.view, state.payload, onSimulatorEvent],
     );
 
+    const recordAction = useCallback(
+        (action: SimulatorAction) => {
+            dispatch({ type: SimulatorDispatchActionType.SimulatorAction, action });
+            const event = onSimulatorEvent
+                ? actionToInteractionEvent(action, state.view, state.payload)
+                : null;
+            if (event) onSimulatorEvent?.(event);
+        },
+        [dispatch, state.view, state.payload, onSimulatorEvent],
+    );
+
     const handleSelectEmail = useCallback(
         (messageId: string) => {
             const inbox = state.payload.email?.inbox ?? [];
@@ -121,44 +142,32 @@ export function useSimulatorSessionHandlers({
             if (!exists) {
                 return;
             }
-            const action = SimulatorActions.openEmail(messageId);
-            dispatch({ type: 'SIMULATOR_ACTION', action });
-            dispatch({ type: 'SELECT_EMAIL', messageId });
-            if (onSimulatorEvent) {
-                const event = actionToInteractionEvent(action, state.view, state.payload);
-                if (event) onSimulatorEvent(event);
-            }
+            // Select after recording the open action so the event reflects the pre-selection view.
+            recordAction(SimulatorActions.openEmail(messageId));
+            dispatch({ type: SimulatorDispatchActionType.SelectEmail, messageId });
         },
-        [dispatch, state.view, state.payload, onSimulatorEvent],
+        [dispatch, state.payload, recordAction],
     );
 
     const handleSmsRevealNext = useCallback(() => {
-        dispatch({ type: 'SMS_REVEAL_NEXT' });
+        dispatch({ type: SimulatorDispatchActionType.SmsRevealNext });
     }, [dispatch]);
 
     const handleSelectThread = useCallback(
         (threadId: string) => {
-            const action = SimulatorActions.openThread(threadId);
-            dispatch({ type: 'SIMULATOR_ACTION', action });
-            dispatch({ type: 'NAV_LOCAL', app: 'messages', screen: 'thread_detail' });
-            if (onSimulatorEvent) {
-                const event = actionToInteractionEvent(action, state.view, state.payload);
-                if (event) onSimulatorEvent(event);
-            }
+            recordAction(SimulatorActions.openThread(threadId));
+            dispatch({
+                type: SimulatorDispatchActionType.NavLocal,
+                app: SimulatorApp.Messages,
+                screen: 'thread_detail',
+            });
         },
-        [dispatch, state.view, state.payload, onSimulatorEvent],
+        [dispatch, recordAction],
     );
 
     const handleOpenContactFromPhone = useCallback(
-        (contactId: string) => {
-            const action = SimulatorActions.openContact(contactId);
-            dispatch({ type: 'SIMULATOR_ACTION', action });
-            if (onSimulatorEvent) {
-                const event = actionToInteractionEvent(action, state.view, state.payload);
-                if (event) onSimulatorEvent(event);
-            }
-        },
-        [dispatch, state.view, state.payload, onSimulatorEvent],
+        (contactId: string) => recordAction(SimulatorActions.openContact(contactId)),
+        [recordAction],
     );
 
     const capabilities = useMemo(() => getSimulatorCapabilities(payload), [payload]);

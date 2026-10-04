@@ -1,12 +1,11 @@
+import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { describe, expect, it } from 'vitest';
-import SimulatorRuntimeIssuesReport from '../src/components/SimulatorRuntimeIssuesReport';
+import SimulatorRuntimeIssuesReport from '../src/developer-tools/SimulatorRuntimeIssuesReport.js';
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(
-    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
-): string {
+function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
     if (node == null) {
         return '';
     }
@@ -20,7 +19,7 @@ function flattenText(
 
 describe('SimulatorRuntimeIssuesReport', () => {
     it('renders the empty summary and empty-state text', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -37,7 +36,7 @@ describe('SimulatorRuntimeIssuesReport', () => {
     });
 
     it('renders plural issue counts and node/choice locations', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -63,7 +62,7 @@ describe('SimulatorRuntimeIssuesReport', () => {
     });
 
     it('covers plural error summaries, fallback locations, and toggle behavior', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(

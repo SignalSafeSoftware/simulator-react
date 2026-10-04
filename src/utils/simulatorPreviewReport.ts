@@ -8,7 +8,7 @@
  */
 
 import type { SimulatorTemplatePayload } from '../types/session.js';
-import type { SimulatorApp } from '../types/portableSimulator.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { analyzeReachability } from './simulatorReachability.js';
 import { lintSimulatorPayload } from './lintSimulatorPayload.js';
 import { validateSimulatorPayload } from './validateSimulatorPayload.js';
@@ -42,15 +42,15 @@ export interface SimulatorPreviewReport {
 
 function getDefaultEntryScreen(entryApp: SimulatorApp, payload: SimulatorTemplatePayload): string {
     switch (entryApp) {
-        case 'email':
+        case SimulatorApp.Email:
             return 'list';
-        case 'messages':
+        case SimulatorApp.Messages:
             return 'threads';
-        case 'phone':
+        case SimulatorApp.Phone:
             return 'history';
-        case 'internet':
+        case SimulatorApp.Internet:
             return payload.browser?.defaultPageId ?? payload.browser?.pages?.[0]?.id ?? 'landing';
-        case 'home':
+        case SimulatorApp.Home:
             return 'home';
         default:
             return 'list';
@@ -110,7 +110,7 @@ function addEmailKeyActions(
     report: ReturnType<typeof analyzeReachability>,
     counts: { inboxCount: number },
 ): void {
-    if (report.reachableApps.includes('email') && hasEmailAccess(payload, counts)) {
+    if (report.reachableApps.includes(SimulatorApp.Email) && hasEmailAccess(payload, counts)) {
         keyActions.push('open_email');
     }
 }
@@ -120,7 +120,7 @@ function addMessagesKeyActions(
     report: ReturnType<typeof analyzeReachability>,
     counts: { threadMessageCount: number },
 ): void {
-    if (report.reachableApps.includes('messages') && counts.threadMessageCount > 0) {
+    if (report.reachableApps.includes(SimulatorApp.Messages) && counts.threadMessageCount > 0) {
         keyActions.push('open_thread');
     }
 }
@@ -131,7 +131,7 @@ function addBrowserKeyActions(
     report: ReturnType<typeof analyzeReachability>,
     counts: { threadMessageCount: number; browserPagesCount: number },
 ): void {
-    if (report.reachableApps.includes('internet') && counts.browserPagesCount > 0) {
+    if (report.reachableApps.includes(SimulatorApp.Internet) && counts.browserPagesCount > 0) {
         keyActions.push('open_page');
         if (hasBrowserFormAction(payload)) {
             keyActions.push('submit_form');
@@ -149,7 +149,7 @@ function addPhoneKeyActions(
     report: ReturnType<typeof analyzeReachability>,
     counts: { contactsCount: number; directoryCount: number },
 ): void {
-    if (!report.reachableApps.includes('phone')) {
+    if (!report.reachableApps.includes(SimulatorApp.Phone)) {
         return;
     }
     if (payload.phone?.content != null) {
@@ -171,7 +171,8 @@ function addVerificationKeyActions(
 ): void {
     if (
         counts.contactsCount > 0 &&
-        (report.reachableApps.includes('email') || report.reachableApps.includes('messages'))
+        (report.reachableApps.includes(SimulatorApp.Email) ||
+            report.reachableApps.includes(SimulatorApp.Messages))
     ) {
         keyActions.push('check_contact');
     }
@@ -181,7 +182,7 @@ function addHomeKeyActions(
     keyActions: string[],
     report: ReturnType<typeof analyzeReachability>,
 ): void {
-    if (report.reachableApps.includes('home')) {
+    if (report.reachableApps.includes(SimulatorApp.Home)) {
         keyActions.push('open_store', 'open_settings');
     }
 }
@@ -224,7 +225,7 @@ export function buildSimulatorPreviewReport(
         validationOk = false;
     }
 
-    const entryApp = report.entryApp ?? 'email';
+    const entryApp = report.entryApp ?? SimulatorApp.Email;
     const entryPoint = getEntryPoint(payload, entryApp);
 
     const contactsCount = payload.contacts?.length ?? 0;

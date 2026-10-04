@@ -571,8 +571,8 @@ describe('simulator view coverage', () => {
             );
         });
         await act(async () => {
-            incomingRenderer!.root.findByProps({ 'aria-label': 'Answer' }).props.onClick();
-            incomingRenderer!.root.findByProps({ 'aria-label': 'Ignore' }).props.onClick();
+            incomingRenderer!.root.findByProps({ 'aria-label': 'Answer call' }).props.onClick();
+            incomingRenderer!.root.findByProps({ 'aria-label': 'Decline call' }).props.onClick();
         });
         expect(onAnswer).toHaveBeenCalledTimes(1);
         expect(onIgnore).toHaveBeenCalledTimes(1);
@@ -590,8 +590,11 @@ describe('simulator view coverage', () => {
                 }),
             );
         });
-        expect(flattenText(incomingRenderer!.toJSON())).toContain('Unknown calling (URGENT)');
-        expect(flattenText(incomingRenderer!.toJSON())).toContain('+1 555 000-0000');
+        expect(flattenText(incomingRenderer!.toJSON())).toContain('Unknown');
+        expect(flattenText(incomingRenderer!.toJSON())).toContain('urgent');
+        expect(
+            incomingRenderer!.root.findAllByProps({ className: 'simulator-call-number' }),
+        ).toHaveLength(0);
     });
 
     it('shows directory entry detail when initialSelectedDirectoryId is set', async () => {

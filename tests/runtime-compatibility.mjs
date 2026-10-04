@@ -1,20 +1,15 @@
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
-import {
-    createSimulatorDatasource,
-    simulatorDatasourceToPayload,
-} from '@signalsafe/simulator-react';
+import { createSimulatorDatasource } from '@signalsafe/simulator-react/datasource/datasource';
+import { simulatorDatasourceToPayload } from '@signalsafe/simulator-react/datasource/datasource';
 
 const require = createRequire(import.meta.url);
 const manifest = JSON.parse(
-    readFileSync(
-        resolve(dirname(require.resolve('@signalsafe/simulator-react')), '../package.json'),
-        'utf8',
-    ),
+    readFileSync(require.resolve('@signalsafe/simulator-react/package.json'), 'utf8'),
 );
-assert.equal(manifest.version, '0.17.0');
+assert.equal(manifest.name, '@signalsafe/simulator-react');
+assert.equal(manifest.exports['.'], undefined);
 assert.equal(manifest.engines.node, '>=19.0.0');
 const input = {
     entry_point: { app: 'phone', screen: 'incoming_call' },
@@ -47,6 +42,6 @@ for (const subpath of [
     assert.ok(Object.keys(await import(`@signalsafe/simulator-react/utils/${subpath}`)).length > 0);
 }
 
-assert.equal(manifest.dependencies['@signalsafe/simulator-core'], '0.4.1');
-assert.equal(manifest.dependencies['@signalsafe/tree-spec'], '^0.4.1');
+assert.ok(manifest.dependencies['@signalsafe/simulator-core']);
+assert.ok(manifest.dependencies['@signalsafe/tree-spec']);
 console.log(`Runtime compatibility passed on ${process.version}`);

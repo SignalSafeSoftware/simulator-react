@@ -1,5 +1,6 @@
-import { usePhoneDialDraft } from './phoneDialContract.js';
-import { CapabilityButton, useSimulatorCapabilities } from '../contract/capabilities.js';
+import { usePhoneDialDraft } from '../contract/phoneDialContract.js';
+import { CapabilityButton } from '../ui/controls/CapabilityButton.js';
+import { useSimulatorCapabilities } from '../contract/capabilities.js';
 import { useLayoutEffect, useRef, useState } from 'react';
 import PhoneKeypad from './PhoneKeypad.js';
 import { editDialNumber } from './phoneDialEdit.js';

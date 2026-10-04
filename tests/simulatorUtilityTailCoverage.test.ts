@@ -16,7 +16,8 @@ import {
     appOpenedEvent,
     screenViewedEvent,
 } from '../src/utils/simulatorEventMapper';
-import { getInitialSessionState, initialViewState } from '../src/state/simulatorSessionReducer';
+import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
+import { initialViewState } from '../src/state/simulatorViewStateHelpers.js';
 import type {
     SimulatorSessionState,
     SimulatorTemplatePayload,

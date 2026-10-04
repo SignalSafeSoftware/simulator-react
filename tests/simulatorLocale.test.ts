@@ -3,8 +3,8 @@ import { SimulatorCapabilitiesContext } from '../src/contract/capabilities';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { SimulatorLocaleProvider } from '../src/i18n/SimulatorLocale';
-import { SimulatorDetailBackBar } from '../src/components/SimulatorDetail';
-import { SimulatorSearchInput } from '../src/components/SimulatorSearchInput';
+import { SimulatorDetailBackBar } from '../src/ui/layout/SimulatorDetail.js';
+import { SimulatorSearchInput } from '../src/ui/lists/SimulatorSearchInput.js';
 import { describe, expect, it } from 'vitest';
 import { createTranslator, simulatorEnglish } from '../src/i18n/catalog';
 
@@ -71,8 +71,8 @@ it('explains an empty dial action and preserves a host unavailability reason', (
 });
 
 it('uses catalog overrides for navigation and unsupported-screen defaults', async () => {
-    const { default: Shell } = await import('../src/shell/PhoneSimulatorShell');
-    const { default: Unsupported } = await import('../src/UnsupportedScreenFallback');
+    const { default: Shell } = await import('../src/shell/PhoneSimulatorShell.js');
+    const { default: Unsupported } = await import('../src/UnsupportedScreenFallback.js');
     const html = renderToStaticMarkup(
         React.createElement(SimulatorLocaleProvider, {
             messages: {

@@ -4,7 +4,7 @@ import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
  * Default copy is learner-safe; pass `showDiagnostics` for author/admin detail.
  */
 import { simSpacing, simStatus, simTypo } from './simulatorStyles.js';
-import type { SimulatorApp } from './types/portableSimulator.js';
+import type { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { joinClasses, SIM_TEXT_MEDIUM } from './ui/simulatorClasses.js';
 import { SIM_UNSUPPORTED } from './ui/semanticSimulatorClasses.js';
 

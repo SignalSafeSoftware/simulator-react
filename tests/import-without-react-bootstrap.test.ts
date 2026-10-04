@@ -1,11 +1,14 @@
+import SimulatorWithSession from '@signalsafe/simulator-react/SimulatorWithSession';
+import PhoneSimulatorShell from '@signalsafe/simulator-react/shell/PhoneSimulatorShell';
+import { simulatorSessionReducer } from '@signalsafe/simulator-react/state/simulatorSessionReducer';
+import { lintSimulatorPayload } from '@signalsafe/simulator-react/utils/lintSimulatorPayload';
 import { describe, expect, it } from 'vitest';
 
 describe('package imports without react-bootstrap', () => {
-    it('loads the public barrel without react-bootstrap installed', async () => {
-        const pkg = await import('../src/index');
-        expect(pkg.SimulatorWithSession).toBeTruthy();
-        expect(pkg.PhoneSimulatorShell).toBeTruthy();
-        expect(typeof pkg.simulatorSessionReducer).toBe('function');
-        expect(typeof pkg.lintSimulatorPayload).toBe('function');
+    it('loads the public modules without react-bootstrap installed', async () => {
+        expect(SimulatorWithSession).toBeTruthy();
+        expect(PhoneSimulatorShell).toBeTruthy();
+        expect(typeof simulatorSessionReducer).toBe('function');
+        expect(typeof lintSimulatorPayload).toBe('function');
     });
 });

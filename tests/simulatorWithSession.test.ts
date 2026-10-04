@@ -1,51 +1,54 @@
+import type { PhoneSimulatorShellProps } from '../src/shell/PhoneSimulatorShell.js';
+import type { SimulatorRenderContext } from '../src/screenRegistry/types.js';
+import type { ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { TestRenderer, act } from './reactTestRenderer';
 
 const mockState = vi.hoisted(() => ({
-    latestShellProps: null as null | Record<string, unknown>,
-    latestRenderContext: null as null | Record<string, unknown>,
+    latestShellProps: null as PhoneSimulatorShellProps | null,
+    latestRenderContext: null as SimulatorRenderContext | null,
 }));
 
-vi.mock('../src/shell/PhoneSimulatorShell', () => ({
-    default: (props: Record<string, unknown>) => {
+vi.mock('../src/shell/PhoneSimulatorShell.js', () => ({
+    default: (props: PhoneSimulatorShellProps) => {
         mockState.latestShellProps = props;
         return null;
     },
 }));
 
-vi.mock('../src/SimulatorDeveloperToolsPanel', () => ({
+vi.mock('../src/developer-tools/SimulatorDeveloperToolsPanel.js', () => ({
     default: () => null,
 }));
 
-vi.mock('../src/views/ContactsView', () => ({
+vi.mock('../src/views/ContactsView.js', () => ({
     default: () => null,
 }));
 
-vi.mock('../src/screenRegistry', () => ({
-    renderActiveScreen: (_app: string, ctx: Record<string, unknown>) => {
+vi.mock('../src/screenRegistry/registry.js', () => ({
+    renderActiveScreen: (_app: string, ctx: SimulatorRenderContext) => {
         mockState.latestRenderContext = ctx;
         return null;
     },
 }));
 
-vi.mock('../src/SimulatorErrorBoundary', () => ({
+vi.mock('../src/SimulatorErrorBoundary.js', () => ({
     default: ({ children }: { children: React.ReactNode }) => children,
 }));
 
-vi.mock('../src/UnsupportedScreenFallback', () => ({
+vi.mock('../src/UnsupportedScreenFallback.js', () => ({
     default: () => null,
 }));
 
-vi.mock('../src/utils/screenMetadata', () => ({
+vi.mock('../src/utils/screenMetadata.js', () => ({
     getScreenMetadata: () => ({ app: 'phone', screen: 'history', label: 'History' }),
 }));
 
-vi.mock('../src/utils/simulatorCapabilities', () => ({
+vi.mock('../src/utils/simulatorCapabilities.js', () => ({
     getSimulatorCapabilities: () => ({ phone: {} }),
 }));
 
-vi.mock('../src/utils/phoneLocalNavItems', () => ({
+vi.mock('../src/utils/phoneLocalNavItems.js', () => ({
     getPhoneLocalNavItems: () => [
         { id: 'history', label: 'History', icon: 'H' },
         { id: 'contacts', label: 'Contacts', icon: 'C' },
@@ -82,7 +85,7 @@ function createState(overrides: Record<string, unknown> = {}): Record<string, un
 
 describe('SimulatorWithSession', () => {
     it('maps phone detail screens to the expected secondary menu tab', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
         mockState.latestShellProps = null;
 
         await act(async () => {
@@ -101,7 +104,7 @@ describe('SimulatorWithSession', () => {
         });
 
         expect(renderer).not.toBeNull();
-        const secondaryMenu = mockState.latestShellProps?.secondaryMenu as Record<string, unknown>;
+        const secondaryMenu = capturedSecondaryMenu();
         expect(secondaryMenu.activeId).toBe('contacts');
     });
 
@@ -123,12 +126,12 @@ describe('SimulatorWithSession', () => {
             );
         });
 
-        const secondaryMenu = mockState.latestShellProps?.secondaryMenu as Record<string, unknown>;
+        const secondaryMenu = capturedSecondaryMenu();
         expect(secondaryMenu.activeId).toBe('outbox');
     });
 
     it('renders keyboard shortcuts in a native dialog when enabled and opened', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
         const originalDocument = globalThis.document;
         (globalThis as Record<string, unknown>).document = {
             addEventListener: vi.fn(),
@@ -196,10 +199,7 @@ describe('SimulatorWithSession', () => {
             );
         });
 
-        const renderContext = mockState.latestRenderContext as {
-            onAction: (action: unknown) => void;
-            onSelectEmail: (messageId: string) => void;
-        };
+        const renderContext = capturedRenderContext();
 
         await act(async () => {
             renderContext.onAction({ type: 'submit_form' });
@@ -230,3 +230,14 @@ describe('SimulatorWithSession', () => {
         );
     });
 });
+
+function capturedSecondaryMenu() {
+    const menu = mockState.latestShellProps?.secondaryMenu;
+    if (!menu) throw new Error('Expected the shell to receive a secondary menu');
+    return menu;
+}
+function capturedRenderContext() {
+    const context = mockState.latestRenderContext;
+    if (!context) throw new Error('Expected a render context');
+    return context;
+}

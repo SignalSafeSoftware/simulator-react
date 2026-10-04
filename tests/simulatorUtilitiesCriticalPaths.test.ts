@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { mapDirectory } from '../src/adapters/fullDeviceToSession';
-import { getInitialSessionState } from '../src/state/simulatorSessionReducer';
+import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 import type { SimulatorSessionState, SimulatorTemplatePayload } from '../src/types/session';
 import { lintSimulatorPayload } from '../src/utils/lintSimulatorPayload';
-import { isSlugLike, keyNamingSuggestion } from '../src/utils/simulatorKeyPatterns';
+import { keyNamingSuggestion } from '../src/utils/simulatorKeyPatterns';
 import { getSimulatorCapabilities } from '../src/utils/simulatorCapabilities';
 import { handleSimulatorKeyboard } from '../src/utils/simulatorKeyboardCommands';
 import { buildSimulatorPreviewReport } from '../src/utils/simulatorPreviewReport';
@@ -252,16 +252,19 @@ describe('captureSimulatorSnapshot', () => {
                     {
                         type: 'dial_phone',
                         dialedNumber: '+15550000001',
+                        // @ts-expect-error Snapshot serialization deliberately receives an extra wire field on a dial action.
                         channel: 'sms',
                     },
                     {
                         type: 'open_attachment',
+                        // @ts-expect-error Snapshot serialization deliberately receives an extra wire field on an attachment action.
                         messageId: 'm1',
                         attachmentIndex: 0,
                     },
                     {
                         type: 'answer_call',
                         choiceIndex: 2,
+                        // @ts-expect-error Snapshot serialization deliberately receives extra wire fields on an answer action.
                         threadId: 'thread-1',
                         contactId: 'c1',
                         entryId: 'call-1',
@@ -337,6 +340,7 @@ describe('getSimulatorCapabilities', () => {
                         id: 'message-1',
                         subject: 'Invoice',
                         from: 'billing@example.test',
+                        // @ts-expect-error Exercise capability detection for untyped attachment metadata on an inbox row.
                         attachment_name: 'invoice.pdf',
                     },
                 ],
@@ -935,11 +939,6 @@ describe('buildSimulatorPreviewReport', () => {
 
 describe('simulatorKeyPatterns', () => {
     it('covers slug validation and advisory key naming suggestions', () => {
-        expect(isSlugLike('')).toBe(false);
-        expect(isSlugLike('0')).toBe(true);
-        expect(isSlugLike('safe-key')).toBe(true);
-        expect(isSlugLike('Bad_Key')).toBe(false);
-
         expect(keyNamingSuggestion('', 'template')).toBe('Key should be non-empty.');
         expect(keyNamingSuggestion('x'.repeat(129), 'contact')).toContain('longer than 128');
         expect(keyNamingSuggestion('x'.repeat(65), 'template')).toContain('exceeds 64');

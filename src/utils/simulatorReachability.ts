@@ -1,3 +1,8 @@
+import {
+    SimulatorPhoneScreenId,
+    SimulatorHomeScreenId,
+} from '@signalsafe/simulator-core/devicePayload';
+import { simulatorBrowserEdges } from './simulatorBrowserEdges.js';
 /**
  * Reachability analysis for full-device simulator templates.
  * Starting from entry_point, computes which screens and entities are reachable
@@ -5,18 +10,11 @@
  * Does not modify runtime behavior; analysis only.
  */
 
-import type { SimulatorTemplatePayload } from '../types/session.js';
-import type { SimulatorApp } from '../types/portableSimulator.js';
+import type { SimulatorTemplatePayload, SimulatorBrowserPage } from '../types/session.js';
+import { SimulatorApp, isSimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 
-const PHONE_SCREENS: string[] = [
-    'history',
-    'contacts',
-    'dial',
-    'incoming_call',
-    'voicemail',
-    'directory',
-];
-const HOME_SCREENS: string[] = ['home', 'store', 'settings'];
+const PHONE_SCREENS = Object.values(SimulatorPhoneScreenId);
+const HOME_SCREENS = Object.values(SimulatorHomeScreenId);
 
 export interface ReachabilityReport {
     /** App that is the entry (from entry_point or channel). */
@@ -46,11 +44,11 @@ function getEntryApp(payload: SimulatorTemplatePayload): SimulatorApp | null {
     const ep = payload.entryPoint;
     if (ep?.app != null) return ep.app;
     const ch = payload.channel;
-    if (ch === 'sms') return 'messages';
-    if (ch === 'browser') return 'internet';
-    if (ch === 'phone' || ch === 'contacts') return 'phone';
-    if (ch === 'home') return 'home';
-    if (ch === 'email') return 'email';
+    if (ch === 'sms') return SimulatorApp.Messages;
+    if (ch === 'browser') return SimulatorApp.Internet;
+    if (ch === 'phone' || ch === 'contacts') return SimulatorApp.Phone;
+    if (ch === 'home') return SimulatorApp.Home;
+    if (ch === 'email') return SimulatorApp.Email;
     return null;
 }
 
@@ -64,46 +62,41 @@ function getReachableApps(
     if (device?.mainMenuItems != null) {
         device.mainMenuItems.forEach((item) => {
             const id = item?.id;
-            if (typeof id === 'string' && isApp(id)) apps.add(id as SimulatorApp);
+            if (isSimulatorApp(id)) apps.add(id);
         });
     }
     return Array.from(apps);
 }
 
-function isApp(s: string): boolean {
-    return ['email', 'messages', 'internet', 'phone', 'home'].includes(s);
-}
-
-interface BrowserPageLike {
-    id?: string;
-    buttons?: Array<{ targetPageId?: string }>;
-}
-
 function reachableBrowserPagesTyped(
-    pages: BrowserPageLike[],
+    pages: SimulatorBrowserPage[],
     startPageId: string,
 ): { pageIds: Set<string>; hasCycle: boolean } {
-    const idToPage = new Map<string, BrowserPageLike>();
-    pages.forEach((p) => {
-        if (p?.id != null) idToPage.set(p.id, p);
-    });
+    const byId = new Map(pages.map((page) => [page.id, page]));
     const reachable = new Set<string>();
+    const active = new Set<string>();
     let hasCycle = false;
-    const queue: string[] = [startPageId];
-    reachable.add(startPageId);
-    while (queue.length > 0) {
-        const pageId = queue.shift()!;
-        const page = idToPage.get(pageId);
-        const buttons = page?.buttons ?? [];
-        for (const btn of buttons) {
-            const target = btn.targetPageId;
-            if (target == null || target === '') continue;
-            if (reachable.has(target)) {
-                hasCycle = true;
-                continue;
-            }
-            reachable.add(target);
-            queue.push(target);
+    // Iterative DFS avoids call-stack overflow for large authored graphs.
+    const pending = [{ id: startPageId, exiting: false }];
+    while (pending.length > 0) {
+        const frame = pending.pop();
+        if (!frame) break;
+        if (frame.exiting) {
+            active.delete(frame.id);
+            continue;
+        }
+        if (active.has(frame.id)) {
+            hasCycle = true;
+            continue;
+        }
+        if (reachable.has(frame.id)) continue;
+        const page = byId.get(frame.id);
+        if (!page) continue;
+        reachable.add(frame.id);
+        active.add(frame.id);
+        pending.push({ id: frame.id, exiting: true });
+        for (const edge of simulatorBrowserEdges(page).reverse()) {
+            pending.push({ id: edge.targetPageId, exiting: false });
         }
     }
     return { pageIds: reachable, hasCycle };
@@ -115,7 +108,7 @@ function populateEmailReachability(
     reachableScreens: Record<SimulatorApp, string[]>,
     reachableEntities: ReachabilityReport['reachableEntities'],
 ): void {
-    if (!reachableApps.includes('email') || payload.email == null) {
+    if (!reachableApps.includes(SimulatorApp.Email) || payload.email == null) {
         return;
     }
 
@@ -138,7 +131,7 @@ function populateMessagesReachability(
     reachableApps: SimulatorApp[],
     reachableScreens: Record<SimulatorApp, string[]>,
 ): void {
-    if (!reachableApps.includes('messages') || payload.sms == null) {
+    if (!reachableApps.includes(SimulatorApp.Messages) || payload.sms == null) {
         return;
     }
 
@@ -156,12 +149,12 @@ function populateInternetReachability(
     reachableScreens: Record<SimulatorApp, string[]>,
     reachableEntities: ReachabilityReport['reachableEntities'],
 ): boolean {
-    if (!reachableApps.includes('internet') || payload.browser == null) {
+    if (!reachableApps.includes(SimulatorApp.Internet) || payload.browser == null) {
         return false;
     }
 
     const pages = payload.browser.pages ?? [];
-    const pageIds = pages.map((page) => page?.id).filter((id): id is string => Boolean(id));
+    const pageIds = definedIds(pages);
     const pageIdSet = new Set(pageIds);
     if (pageIdSet.size === 0) {
         return false;
@@ -169,8 +162,8 @@ function populateInternetReachability(
 
     const defaultId = payload.browser.defaultPageId ?? pages[0]?.id ?? 'landing';
     let startId = pageIdSet.has(defaultId) ? defaultId : (pages[0]?.id ?? 'landing');
-    if (entryApp === 'internet' && payload.entryPoint?.screen != null) {
-        const entryScreen = String(payload.entryPoint.screen).toLowerCase();
+    if (entryApp === SimulatorApp.Internet && payload.entryPoint?.screen != null) {
+        const entryScreen = String(payload.entryPoint.screen);
         if (pageIdSet.has(entryScreen)) {
             startId = entryScreen;
         }
@@ -188,7 +181,7 @@ function populatePhoneReachability(
     reachableScreens: Record<SimulatorApp, string[]>,
     reachableEntities: ReachabilityReport['reachableEntities'],
 ): void {
-    if (!reachableApps.includes('phone')) {
+    if (!reachableApps.includes(SimulatorApp.Phone)) {
         return;
     }
 
@@ -209,61 +202,13 @@ function populateHomeReachability(
     reachableApps: SimulatorApp[],
     reachableScreens: Record<SimulatorApp, string[]>,
 ): void {
-    if (reachableApps.includes('home')) {
+    if (reachableApps.includes(SimulatorApp.Home)) {
         reachableScreens.home = [...HOME_SCREENS];
     }
 }
 
-function getAllBrowserIds(payload: SimulatorTemplatePayload): string[] {
-    return (payload.browser?.pages ?? [])
-        .map((page) => page?.id)
-        .filter((id): id is string => Boolean(id));
-}
-
-function getAllContactIds(payload: SimulatorTemplatePayload): string[] {
-    return (payload.contacts ?? [])
-        .map((contact) => contact?.id)
-        .filter((id): id is string => Boolean(id));
-}
-
-function getAllInboxIds(payload: SimulatorTemplatePayload): string[] {
-    return (payload.email?.inbox ?? [])
-        .map((row) => row?.id)
-        .filter((id): id is string => Boolean(id));
-}
-
-function appendReachableAppUnreachables(
-    app: SimulatorApp,
-    reachableScreens: Record<SimulatorApp, string[]>,
-    allBrowserIds: string[],
-    unreachableScreens: Array<{ app: SimulatorApp; screen: string }>,
-): void {
-    const reachableSet = new Set(reachableScreens[app]);
-    if (app === 'email') {
-        ['list', 'detail'].forEach((screen) => {
-            if (!reachableSet.has(screen)) {
-                unreachableScreens.push({ app, screen });
-            }
-        });
-        return;
-    }
-
-    if (app === 'messages') {
-        ['threads', 'thread_detail', 'new_thread'].forEach((screen) => {
-            if (!reachableSet.has(screen)) {
-                unreachableScreens.push({ app, screen });
-            }
-        });
-        return;
-    }
-
-    if (app === 'internet') {
-        allBrowserIds.forEach((pageId) => {
-            if (!reachableSet.has(pageId)) {
-                unreachableScreens.push({ app, screen: pageId });
-            }
-        });
-    }
+function definedIds(items: ReadonlyArray<{ id?: string | null } | null | undefined>): string[] {
+    return items.map((item) => item?.id).filter((id): id is string => Boolean(id));
 }
 
 function hasDefinedContentForApp(
@@ -271,32 +216,32 @@ function hasDefinedContentForApp(
     payload: SimulatorTemplatePayload,
     allBrowserIds: string[],
 ): boolean {
-    if (app === 'email') {
+    if (app === SimulatorApp.Email) {
         return payload.email != null;
     }
-    if (app === 'messages') {
+    if (app === SimulatorApp.Messages) {
         return payload.sms != null;
     }
-    if (app === 'internet') {
+    if (app === SimulatorApp.Internet) {
         return allBrowserIds.length > 0;
     }
-    if (app === 'phone') {
+    if (app === SimulatorApp.Phone) {
         return payload.phone != null;
     }
     return payload.home != null;
 }
 
 function getDefinedScreensForApp(app: SimulatorApp, allBrowserIds: string[]): string[] {
-    if (app === 'phone') {
+    if (app === SimulatorApp.Phone) {
         return PHONE_SCREENS;
     }
-    if (app === 'home') {
+    if (app === SimulatorApp.Home) {
         return HOME_SCREENS;
     }
-    if (app === 'internet') {
+    if (app === SimulatorApp.Internet) {
         return allBrowserIds;
     }
-    if (app === 'messages') {
+    if (app === SimulatorApp.Messages) {
         return ['threads', 'thread_detail', 'new_thread'];
     }
     return ['list', 'detail'];
@@ -339,17 +284,19 @@ export function analyzeReachability(payload: SimulatorTemplatePayload): Reachabi
     populateHomeReachability(reachableApps, reachableScreens);
 
     // --- Unreachable: defined in payload but not reachable ---
-    const allBrowserIds = getAllBrowserIds(payload);
-    const allContactIds = getAllContactIds(payload);
-    const allInboxIds = getAllInboxIds(payload);
+    const allBrowserIds = definedIds(payload.browser?.pages ?? []);
+    const allContactIds = definedIds(payload.contacts ?? []);
+    const allInboxIds = definedIds(payload.email?.inbox ?? []);
 
     const unreachableScreens: Array<{ app: SimulatorApp; screen: string }> = [];
     reachableApps.forEach((app) => {
-        appendReachableAppUnreachables(app, reachableScreens, allBrowserIds, unreachableScreens);
-        // phone/home: all screens reachable when app is, so nothing to add
+        const reachableSet = new Set(reachableScreens[app]);
+        for (const screen of getDefinedScreensForApp(app, allBrowserIds)) {
+            if (!reachableSet.has(screen)) unreachableScreens.push({ app, screen });
+        }
     });
     // Apps with content but not in reachableApps: all their screens are unreachable
-    (['email', 'messages', 'internet', 'phone', 'home'] as const).forEach((app) => {
+    Object.values(SimulatorApp).forEach((app) => {
         if (reachableApps.includes(app) || !hasDefinedContentForApp(app, payload, allBrowserIds)) {
             return;
         }

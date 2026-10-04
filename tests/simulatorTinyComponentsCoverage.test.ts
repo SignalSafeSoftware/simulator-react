@@ -1,17 +1,14 @@
+import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../src/components/SimulatorDetail';
-import { SimulatorList, SimulatorListItem } from '../src/components/SimulatorList';
-import SimulatorLocalNav from '../src/components/SimulatorLocalNav';
-import SimulatorReachabilityReport from '../src/components/SimulatorReachabilityReport';
+import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../src/ui/layout/SimulatorDetail.js';
+import { SimulatorList, SimulatorListItem } from '../src/ui/lists/SimulatorList.js';
+import SimulatorLocalNav from '../src/ui/navigation/SimulatorLocalNav.js';
+import SimulatorReachabilityReport from '../src/developer-tools/SimulatorReachabilityReport.js';
 import DirectoryView from '../src/views/DirectoryView';
 import PhoneVoicemailView from '../src/views/PhoneVoicemailView';
-
 import { TestRenderer, act } from './reactTestRenderer';
-
-function flattenText(
-    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
-): string {
+function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
     if (node == null) {
         return '';
     }
@@ -22,12 +19,10 @@ function flattenText(
         .map((child) => (typeof child === 'string' ? child : flattenText(child)))
         .join('');
 }
-
 describe('simulator tiny component coverage', () => {
     it('covers detail helpers, list defaults, and empty local-nav state', async () => {
         const onBack = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
-
+        let renderer: ReactTestRenderer | null = null;
         await act(async () => {
             renderer = TestRenderer.create(
                 React.createElement(
@@ -38,19 +33,18 @@ describe('simulator tiny component coverage', () => {
                         title: 'Detail',
                         ariaLabel: 'Go back',
                     }),
-                    React.createElement(
-                        SimulatorDetailBlock,
-                        { variant: 'compact' },
-                        React.createElement(
+                    React.createElement(SimulatorDetailBlock, {
+                        variant: 'compact',
+                        children: React.createElement(
                             SimulatorList,
                             null,
-                            React.createElement(
-                                SimulatorListItem,
-                                { active: false, variant: 'default' },
-                                React.createElement('span', null, 'Row'),
-                            ),
+                            React.createElement(SimulatorListItem, {
+                                active: false,
+                                variant: 'default',
+                                children: React.createElement('span', null, 'Row'),
+                            }),
                         ),
-                    ),
+                    }),
                     React.createElement(SimulatorLocalNav, {
                         items: [],
                         activeId: 'none',
@@ -60,7 +54,6 @@ describe('simulator tiny component coverage', () => {
                 ),
             );
         });
-
         expect(flattenText(renderer!.toJSON())).toContain('Detail');
         expect(flattenText(renderer!.toJSON())).toContain('Row');
         await act(async () => {
@@ -68,13 +61,11 @@ describe('simulator tiny component coverage', () => {
         });
         expect(onBack).toHaveBeenCalledTimes(1);
     });
-
     it('covers voicemail header variants, directory missing-contact guards, and reachability stringify fallback', async () => {
         const onAction = vi.fn();
         const onViewEntry = vi.fn();
         const jsonUndefined = { toJSON: () => undefined };
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
-
+        let renderer: ReactTestRenderer | null = null;
         await act(async () => {
             renderer = TestRenderer.create(
                 React.createElement(
@@ -122,10 +113,8 @@ describe('simulator tiny component coverage', () => {
                 ),
             );
         });
-
         expect(flattenText(renderer!.toJSON())).toContain('Today');
         expect(flattenText(renderer!.toJSON())).not.toContain(' · ');
-
         await act(async () => {
             renderer!.root.findByProps({ children: 'Fraud line' }).props.onClick();
         });
@@ -135,11 +124,9 @@ describe('simulator tiny component coverage', () => {
         expect(flattenText(renderer!.toJSON())).not.toContain('[object Object]');
         expect(onAction).not.toHaveBeenCalled();
     });
-
     it('covers directory contact lookup when contacts are absent', async () => {
         const onAction = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
-
+        let renderer: ReactTestRenderer | null = null;
         await act(async () => {
             renderer = TestRenderer.create(
                 React.createElement(DirectoryView, {
@@ -150,11 +137,9 @@ describe('simulator tiny component coverage', () => {
                 }),
             );
         });
-
         await act(async () => {
             renderer!.root.findByProps({ children: 'Helpdesk' }).props.onClick();
         });
-
         expect(flattenText(renderer!.toJSON())).not.toContain('Call');
         expect(onAction).not.toHaveBeenCalled();
     });

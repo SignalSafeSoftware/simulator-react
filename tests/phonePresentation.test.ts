@@ -1,6 +1,8 @@
+import type { ReactTestRenderer } from 'react-test-renderer';
 import { contactMatchesSearch } from '../src/views/ContactsView.js';
 import { createElement } from 'react';
-import TestRenderer, { act } from 'react-test-renderer';
+import TestRenderer from 'react-test-renderer';
+import { act } from 'react-test-renderer';
 import { expect, it, vi } from 'vitest';
 import ContactsView from '../src/views/ContactsView.js';
 import PhoneHistoryList from '../src/views/PhoneHistoryList.js';
@@ -9,7 +11,7 @@ import { PhoneNumberFormatContext } from '../src/contract/phonePresentation.js';
 it('formats contact labels without changing the contact passed to navigation', async () => {
     const contact = { id: 'contact', displayName: 'Example', number: '+12025550123' };
     const open = vi.fn();
-    let view: TestRenderer.ReactTestRenderer;
+    let view: ReactTestRenderer;
     await act(async () => {
         view = TestRenderer.create(
             createElement(
@@ -17,6 +19,7 @@ it('formats contact labels without changing the contact passed to navigation', a
                 { value: (value) => `Display ${value}` },
                 createElement(ContactsView, {
                     contacts: [contact],
+                    onBack: vi.fn(),
                     phoneLocalNavItems: [{ id: 'contacts', label: 'Contacts' }],
                     hostOwnsPhoneContactDetail: true,
                     onPhoneContactOpen: open,
@@ -37,7 +40,7 @@ it('formats contact labels without changing the contact passed to navigation', a
 });
 
 it('shows the name, matching label and formatted number together', async () => {
-    let view: TestRenderer.ReactTestRenderer;
+    let view: ReactTestRenderer;
     await act(async () => {
         view = TestRenderer.create(
             createElement(

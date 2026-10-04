@@ -1,3 +1,4 @@
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 /**
  * Content and simulator-action handlers: email, browser, SIMULATOR_ACTION.
  */
@@ -6,12 +7,13 @@ import type { SimulatorViewState, SimulatorAction } from '../types/session.js';
 import { BROWSER_HISTORY_MAX } from '../types/session.js';
 import { applyNavLocal, applySwitchApp } from './simulatorNavigationHandlers.js';
 
-export function updateInternetHistory(
+function updateInternetHistory(
     activeApp: SimulatorViewState['activeApp'],
     internet: SimulatorViewState['internet'],
     nextScreen: string,
 ): string[] {
-    if (activeApp !== 'internet' || nextScreen === internet.screen) return internet.stack;
+    if (activeApp !== SimulatorApp.Internet || nextScreen === internet.screen)
+        return internet.stack;
     return [...internet.stack, internet.screen].slice(-BROWSER_HISTORY_MAX);
 }
 
@@ -63,7 +65,7 @@ function applyClickLinkAction(
     if (action.href == null && action.pageId == null) return state;
     const pageId =
         typeof action.pageId === 'string' && action.pageId.length > 0 ? action.pageId : 'landing';
-    const switched = applySwitchApp(state, 'internet');
+    const switched = applySwitchApp(state, SimulatorApp.Internet);
     return {
         ...switched,
         internet: {

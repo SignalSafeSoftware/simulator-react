@@ -1,11 +1,12 @@
 import { createElement } from 'react';
 import { act, create } from 'react-test-renderer';
 import { afterEach, expect, it, vi } from 'vitest';
-import PhoneCallView, { formatPhoneCallDuration } from '../src/views/PhoneCallView.js';
+import PhoneCallView from '../src/views/PhoneCallView.js';
+import { formatPhoneCallDuration } from '../src/views/PhoneCallView.js';
 import PhoneContactEditor from '../src/views/PhoneContactEditor.js';
-import PhoneHistoryDetail, { PhoneHistoryPagination } from '../src/views/PhoneHistoryDetail.js';
+import PhoneHistoryDetail from '../src/views/PhoneHistoryDetail.js';
+import { PhoneHistoryPagination } from '../src/views/PhoneHistoryDetail.js';
 import PhoneKeypad from '../src/views/PhoneKeypad.js';
-
 afterEach(() => vi.useRealTimers());
 it('delegates all call controls and cleans up its display clock', () => {
     vi.useFakeTimers();
@@ -42,7 +43,9 @@ it('delegates all call controls and cleans up its display clock', () => {
         ),
     );
     expect(root!.root.findByType('output').children.join('')).toBe('00:02');
-    act(() => vi.advanceTimersByTime(1000));
+    act(() => {
+        vi.advanceTimersByTime(1000);
+    });
     expect(root!.root.findByType('output').children.join('')).toBe('00:03');
     act(() => root.root.findByProps({ 'aria-label': 'Dial 5' }).props.onClick());
     expect(onDigit).toHaveBeenCalledWith('5');
@@ -74,8 +77,8 @@ it('keeps contact writes and history actions optional and host-owned', () => {
             saveDisabled: true,
         }),
     );
-    expect(root.root.findByProps({ type: 'submit' }).props.disabled).toBe(true);
-    act(() => root.root.findByProps({ type: 'button' }).props.onClick());
+    expect(root.root.findByProps({ 'aria-label': 'Save contact' }).props.disabled).toBe(true);
+    act(() => root.root.findByProps({ 'aria-label': 'Cancel' }).props.onClick());
     expect(onCancel).toHaveBeenCalledOnce();
     expect(onSubmit).not.toHaveBeenCalled();
     root.unmount();
@@ -98,4 +101,37 @@ it('keeps contact writes and history actions optional and host-owned', () => {
     );
     expect(pagination.toJSON()).toBeNull();
     pagination.unmount();
+});
+it('supports host identity fields without duplicating the shared form or save controls', () => {
+    const onSubmit = vi.fn(),
+        onCancel = vi.fn();
+    const props = {
+        onSubmit,
+        onCancel,
+        identityContent: createElement(
+            'label',
+            {},
+            'Company',
+            createElement('input', { name: 'company' }),
+        ),
+        valueFields: createElement('input', { name: 'phoneNumbers' }),
+        notice: createElement('output', {}, 'Review the current revision'),
+    };
+    const root = create(createElement(PhoneContactEditor, props));
+    expect(root.root.findAllByType('form')).toHaveLength(1);
+    expect(root.root.findAllByProps({ name: 'name' })).toHaveLength(0);
+    expect(root.root.findByProps({ name: 'company' })).toBeDefined();
+    expect(root.root.findByProps({ name: 'phoneNumbers' })).toBeDefined();
+    expect(root.root.findByType('output').children).toEqual(['Review the current revision']);
+    expect(root.root.findAllByProps({ 'aria-label': 'Save contact' })).toHaveLength(1);
+    act(() => root.root.findByType('form').props.onSubmit({ preventDefault: vi.fn() }));
+    expect(onSubmit).toHaveBeenCalledOnce();
+    act(() => root.update(createElement(PhoneContactEditor, { ...props, saveDisabled: true })));
+    expect(root.root.findByProps({ 'aria-label': 'Save contact' }).props.disabled).toBe(true);
+    expect(root.root.findByProps({ 'aria-label': 'Cancel' }).props.disabled).toBe(false);
+    act(() => root.root.findByProps({ 'aria-label': 'Cancel' }).props.onClick());
+    expect(onCancel).toHaveBeenCalledOnce();
+    act(() => root.update(createElement(PhoneContactEditor, { ...props, saving: true })));
+    expect(root.root.findAllByType('button').every((button) => button.props.disabled)).toBe(true);
+    root.unmount();
 });

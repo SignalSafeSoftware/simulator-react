@@ -1,3 +1,4 @@
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { ComponentType, ReactNode } from 'react';
 import type { SimulatorDispatchAction } from '../state/simulatorDispatchActions.js';
 import type {
@@ -37,15 +38,15 @@ export function resolveScreenOverride(
     state: SimulatorSessionState,
 ): ComponentType<SimulatorScreenOverrideProps> | undefined {
     switch (state.view.activeApp) {
-        case 'phone':
+        case SimulatorApp.Phone:
             return overrides?.phone?.[state.view.phone.screen];
-        case 'email':
+        case SimulatorApp.Email:
             return overrides?.email?.[state.view.email.screen];
-        case 'messages':
+        case SimulatorApp.Messages:
             return overrides?.messages?.[state.view.messages.screen];
-        case 'internet':
+        case SimulatorApp.Internet:
             return overrides?.internet?.[state.view.internet.screen];
-        case 'home':
+        case SimulatorApp.Home:
             return overrides?.home?.[state.view.home.screen];
     }
 }

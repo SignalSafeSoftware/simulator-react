@@ -4,7 +4,7 @@ import { expect, it } from 'vitest';
 import {
     SimulatorListGroup,
     SimulatorListLoadingContext,
-} from '../src/components/SimulatorListGroup';
+} from '../src/ui/lists/SimulatorListGroup.js';
 
 it('shows loading instead of an empty state, then publishes the empty message', () => {
     let view: ReturnType<typeof create>;

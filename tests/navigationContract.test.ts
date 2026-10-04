@@ -1,13 +1,13 @@
+import { createPayload } from './support/createPayload.js';
 import { describe, expect, it, vi } from 'vitest';
 import { createSimulatorNavigationDispatch } from '../src/contract/navigation.js';
-import {
-    getInitialSessionState,
-    simulatorSessionReducer,
-} from '../src/state/simulatorSessionReducer.js';
+import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
+import { simulatorSessionReducer } from '../src/state/simulatorSessionReducer.js';
 import type { SimulatorDispatchAction } from '../src/state/simulatorDispatchActions.js';
-
 const initial = () =>
-    getInitialSessionState({ channel: 'phone', entryPoint: { app: 'phone', screen: 'history' } });
+    getInitialSessionState(
+        createPayload({ channel: 'phone', entryPoint: { app: 'phone', screen: 'history' } }),
+    );
 describe('one navigation contract', () => {
     it('normalizes local and screen-action entry points and preserves identical back stacks', () => {
         const actions: SimulatorDispatchAction[] = [
@@ -69,10 +69,12 @@ describe('one navigation contract', () => {
         expect(dispatch).not.toHaveBeenCalled();
     });
     it('normalizes app switching and Settings screen actions independent of entry point', () => {
-        const state = getInitialSessionState({
-            channel: 'home',
-            entryPoint: { app: 'home', screen: 'home' },
-        });
+        const state = getInitialSessionState(
+            createPayload({
+                channel: 'home',
+                entryPoint: { app: 'home', screen: 'home' },
+            }),
+        );
         const onNavigation = vi.fn(() => 'handled' as const);
         const send = createSimulatorNavigationDispatch({
             getState: () => state,

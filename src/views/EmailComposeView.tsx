@@ -1,13 +1,13 @@
-import { useReportComposerState } from './composerState.js';
+import { useReportComposerState } from '../contract/composerState.js';
 import { useSimulatorCapabilities } from '../contract/capabilities.js';
 import { useEffect, useRef, useState } from 'react';
-import { SimulatorPage } from '../components/SimulatorPage.js';
+import { SimulatorPage } from '../ui/layout/SimulatorPage.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 import {
     useEmailComposeOptions,
     type EmailComposeDraft,
     type EmailComposeOptions,
-} from './emailComposeContract.js';
+} from '../contract/emailComposeContract.js';
 
 export interface EmailComposeViewProps extends EmailComposeOptions {
     onCancel: () => void;

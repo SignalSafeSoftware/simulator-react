@@ -1,17 +1,14 @@
+import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import SimulatorReachabilityReport from '../src/components/SimulatorReachabilityReport';
+import SimulatorReachabilityReport from '../src/developer-tools/SimulatorReachabilityReport.js';
 import BrowserPageRenderer from '../src/views/BrowserPageRenderer';
-import ContactsView, {
-    contactMatchesSearch,
-    contextMatchesContact,
-} from '../src/views/ContactsView';
+import ContactsView from '../src/views/ContactsView.js';
+import { contactMatchesSearch, contextMatchesContact } from '../src/views/ContactsView.js';
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(
-    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
-): string {
+function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
     if (node == null) {
         return '';
     }
@@ -25,7 +22,7 @@ function flattenText(
 
 describe('simulator UI hotspot coverage', () => {
     it('shows contact detail when initialSelectedContactId is set (title-only header optional)', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
         await act(async () => {
             renderer = TestRenderer.create(
                 React.createElement(ContactsView, {
@@ -82,7 +79,7 @@ describe('simulator UI hotspot coverage', () => {
         const onSearchChange = vi.fn();
         const onPhoneNavSelect = vi.fn();
         const onAddContact = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -212,7 +209,7 @@ describe('simulator UI hotspot coverage', () => {
     it('covers browser page renderer layout variants and fallback actions', async () => {
         const onAction = vi.fn();
         const onBack = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -226,6 +223,7 @@ describe('simulator UI hotspot coverage', () => {
                         logoUrl: 'https://example.test/logo.png',
                         formFields: [
                             { name: 'email', label: 'Email', type: 'email' },
+                            // @ts-expect-error Exercise fallback for an unsupported field type received from untyped input.
                             { name: 'unknown', label: 'Unknown', type: 'weird' },
                         ],
                         buttons: [{ label: 'Continue', targetPageId: 'result' }],
@@ -447,7 +445,7 @@ describe('simulator UI hotspot coverage', () => {
     });
 
     it('covers reachability report empty, unreachable, cycle, and toggle states', async () => {
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -505,6 +503,7 @@ describe('simulator UI hotspot coverage', () => {
                             browserPageIds: ['landing'],
                         },
                         unreachable: {
+                            // @ts-expect-error Exercise the diagnostic renderer with a malformed legacy screen entry.
                             screens: ['odd/screen', { app: 'email', screen: 'trash' } as never],
                             contacts: ['c2'],
                             inboxMessageIds: ['m2'],

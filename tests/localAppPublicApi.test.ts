@@ -1,12 +1,12 @@
 import React from 'react';
 import { act, create } from 'react-test-renderer';
 import { expect, it, vi } from 'vitest';
+import PhoneHistoryDetail from '../src/views/PhoneHistoryDetail.js';
 import {
-    PhoneHistoryDetail,
     SimulatorAppsProvider,
     useSimulatorAppsHost,
-    SimulatorPhotoLocation,
-} from '../src/index.js';
+} from '../src/apps/shared/SimulatorAppsHost.js';
+import SimulatorPhotoLocation from '../src/apps/photos/PhotoLocation.js';
 
 it('renders call media and labeled numbers inside the body without optional metadata', () => {
     const view = create(

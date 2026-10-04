@@ -1,4 +1,4 @@
-import type { SimulatorHomePayload } from '@signalsafe/simulator-react';
+import type { SimulatorHomePayload } from '@signalsafe/simulator-react/types/session';
 
 /**
  * Explicit authoring fixture for demos and screenshots. Reusable screens do not

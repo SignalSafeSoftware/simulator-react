@@ -1,3 +1,4 @@
+import type { SimulatorButtonTone } from './simulatorClasses.js';
 import type {
     ButtonHTMLAttributes,
     InputHTMLAttributes,
@@ -32,7 +33,7 @@ export function SimulatorButton({
     className,
     children,
     ...rest
-}: Readonly<ButtonHTMLAttributes<HTMLButtonElement> & { tone?: string }>) {
+}: Readonly<ButtonHTMLAttributes<HTMLButtonElement> & { tone?: SimulatorButtonTone }>) {
     return (
         <button type="button" className={joinClasses(simBtnToneClass(tone), className)} {...rest}>
             {children}
@@ -232,5 +233,3 @@ export function SimulatorDialog({
         </dialog>
     );
 }
-
-export { SIM_ALERT, SIM_BTN, SIM_CARD, SIM_INPUT } from './simulatorClasses.js';

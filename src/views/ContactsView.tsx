@@ -1,39 +1,40 @@
-import { englishLocale } from '../i18n/englishLocale.js';
-import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
-import { PhoneNumberText, usePhoneNumberFormatter } from '../contract/phonePresentation.js';
-import { SimulatorListGroup } from '../components/SimulatorListGroup.js';
-/**
- * Contacts list, search, and detail inside the simulator.
- * Used from Phone app (screen=contacts) and from the Check contact panel overlay.
- * When phoneLocalNavItems is provided, shows wireframe-style phone tabs above content (Back still available).
- */
-import { useMemo, useState } from 'react';
-import { SimulatorList, SimulatorListItem } from '../components/SimulatorList.js';
-import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../components/SimulatorDetail.js';
-import { SimulatorSearchInput } from '../components/SimulatorSearchInput.js';
-import SimulatorLocalNav from '../components/SimulatorLocalNav.js';
-import { simLayout, simRowSurface, simScreen, simSpacing, simTypo } from '../simulatorStyles.js';
-import { SimulatorButton } from '../ui/primitives.js';
 import {
+    SimulatorButtonTone,
+    SIM_BTN_SM,
     joinClasses,
-    SIM_AVATAR,
     SIM_BORDER,
     SIM_FLEX_COL,
     SIM_FLEX_GROW_1,
     SIM_FLEX_SHRINK_0,
     SIM_MUTED,
     SIM_ROUNDED_NONE,
-    SIM_SURFACE_AVATAR,
     SIM_SURFACE_LIGHT,
     SIM_SURFACE_WHITE,
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
 } from '../ui/simulatorClasses.js';
+import SimulatorAvatar from '../ui/media/SimulatorAvatar.js';
+import { englishLocale } from '../i18n/englishLocale.js';
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
+import { PhoneNumberText } from '../ui/contacts/PhoneNumberText.js';
+import { usePhoneNumberFormatter } from '../contract/phonePresentation.js';
+import { SimulatorListGroup } from '../ui/lists/SimulatorListGroup.js';
+/**
+ * Contacts list, search, and detail inside the simulator.
+ * Used from Phone app (screen=contacts) and from the Check contact panel overlay.
+ * When phoneLocalNavItems is provided, shows wireframe-style phone tabs above content (Back still available).
+ */
+import { useMemo, useState } from 'react';
+import { SimulatorList, SimulatorListItem } from '../ui/lists/SimulatorList.js';
+import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../ui/layout/SimulatorDetail.js';
+import { SimulatorSearchInput } from '../ui/lists/SimulatorSearchInput.js';
+import SimulatorLocalNav from '../ui/navigation/SimulatorLocalNav.js';
+import { simLayout, simRowSurface, simScreen, simSpacing, simTypo } from '../simulatorStyles.js';
+import { SimulatorButton } from '../ui/primitives.js';
 import {
     SIM_PHONE_CONTACT_DETAIL,
     SIM_PHONE_CONTACT_LIST,
     SIM_PHONE_CONTACT_ROW,
-    SIM_PHONE_CONTACT_ROW_AVATAR,
     SIM_PHONE_CONTACT_ROW_MAIN,
     SIM_PHONE_CONTACT_ROW_NAME,
     SIM_PHONE_CONTACT_ROW_NUMBER,
@@ -47,7 +48,6 @@ import {
     phonesMatch,
     namesMatch,
 } from '../utils/contactNormalization.js';
-export { normalizeNameForMatch as normalizeForSearch } from '../utils/contactNormalization.js';
 
 export interface ContactsViewProps {
     contacts: SimulatorSessionContact[] | null;
@@ -146,28 +146,6 @@ const CONTACTS_SEARCH_PLACEHOLDER = englishLocale.t(
     'copy.ContactsView.search.by.name.number.or.email',
 );
 
-/** Blue profile icon for phone-style contact rows (wireframe). */
-function ContactProfileIcon({ className }: Readonly<{ className?: string }>) {
-    return (
-        <div
-            className={joinClasses(
-                SIM_PHONE_CONTACT_ROW_AVATAR,
-                SIM_AVATAR,
-                SIM_SURFACE_AVATAR,
-                'simulator-flex simulator-flex--center',
-                SIM_FLEX_SHRINK_0,
-                className,
-            )}
-            style={{ width: 40, height: 40 }}
-            aria-hidden
-        >
-            <span className="simulator-text--primary" style={{ fontSize: '1.25rem' }}>
-                👤
-            </span>
-        </div>
-    );
-}
-
 export default function ContactsView({
     contacts,
     onBack,
@@ -209,9 +187,17 @@ export default function ContactsView({
     }, [list, verificationContext]);
 
     const selected = selectedId ? list.find((c) => c.id === selectedId) : null;
+    const hasPhoneNav = phoneLocalNavItems != null && phoneLocalNavItems.length > 0;
+
+    const open = (contact: SimulatorSessionContact) => {
+        onOpenContact?.(contact.id);
+        if (hostOwnsPhoneContactDetail && onPhoneContactOpen)
+            onPhoneContactOpen(contact.id, contact);
+        else setSelectedId(contact.id);
+    };
 
     const phoneNavBlock =
-        phoneLocalNavItems != null && phoneLocalNavItems.length > 0 && onPhoneNavSelect ? (
+        hasPhoneNav && onPhoneNavSelect ? (
             <SimulatorLocalNav
                 items={phoneLocalNavItems}
                 activeId={phoneActiveId}
@@ -225,17 +211,9 @@ export default function ContactsView({
             />
         ) : null;
 
-    const listContent = renderListContent({
-        emptyMessage: screenLocale.t('screen.contactsView.no.contacts'),
-        list,
-        filtered,
-        searchQuery,
-        phoneLocalNavItems,
-        setSelectedId,
-        onOpenContact,
-        hostOwnsPhoneContactDetail,
-        onPhoneContactOpen,
-    });
+    const listContent = hasPhoneNav
+        ? renderPhoneContactList(filtered, open)
+        : renderCompactContactList(filtered, open);
 
     if (selected) {
         return (
@@ -275,7 +253,7 @@ export default function ContactsView({
     return (
         <div className={simLayout.screenColumn}>
             <div className={simLayout.scrollBody}>
-                {phoneLocalNavItems != null && phoneLocalNavItems.length > 0 && (
+                {hasPhoneNav && (
                     <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>
                         {screenLocale.t('screen.contactsView.contacts')}
                     </div>
@@ -293,13 +271,13 @@ export default function ContactsView({
                             {title ?? screenLocale.t('screen.contactsView.contacts')}
                         </span>
                         <SimulatorButton
-                            tone="outline-primary"
+                            tone={SimulatorButtonTone.PrimaryOutline}
                             className={joinClasses(
                                 SIM_ROUNDED_NONE,
                                 simSpacing.py1,
                                 simSpacing.px2,
                                 simSpacing.me2,
-                                'simulator-btn--sm',
+                                SIM_BTN_SM,
                             )}
                             onClick={onAddContact}
                             aria-label={screenLocale.t('screen.contactsView.add.contact')}
@@ -372,27 +350,13 @@ export default function ContactsView({
     );
 }
 
-function openContact(
-    contact: SimulatorSessionContact,
-    setSelectedId: (value: string | null) => void,
-    onOpenContact: ((contactId: string) => void) | undefined,
-    hostOwnsPhoneContactDetail: boolean,
-    onPhoneContactOpen: ((contactId: string, contact: SimulatorSessionContact) => void) | undefined,
-): void {
-    onOpenContact?.(contact.id);
-    if (hostOwnsPhoneContactDetail && onPhoneContactOpen) {
-        onPhoneContactOpen(contact.id, contact);
-        return;
-    }
-    setSelectedId(contact.id);
+function primaryNumber(contact: SimulatorSessionContact): string {
+    return contact.number || contact.phoneNumbers?.[0]?.value || '';
 }
 
 function renderPhoneContactList(
     filtered: SimulatorSessionContact[],
-    setSelectedId: (value: string | null) => void,
-    onOpenContact: ((contactId: string) => void) | undefined,
-    hostOwnsPhoneContactDetail: boolean,
-    onPhoneContactOpen: ((contactId: string, contact: SimulatorSessionContact) => void) | undefined,
+    open: (contact: SimulatorSessionContact) => void,
 ): JSX.Element {
     return (
         <div className={joinClasses('simulator-list--flush', SIM_PHONE_CONTACT_LIST)}>
@@ -401,15 +365,7 @@ function renderPhoneContactList(
                     type="button"
                     key={c.id}
                     data-simulator-contact-id={c.id}
-                    onClick={() =>
-                        openContact(
-                            c,
-                            setSelectedId,
-                            onOpenContact,
-                            hostOwnsPhoneContactDetail,
-                            onPhoneContactOpen,
-                        )
-                    }
+                    onClick={() => open(c)}
                     className={joinClasses(
                         simRowSurface.selectable,
                         'simulator-border--top-none',
@@ -418,7 +374,7 @@ function renderPhoneContactList(
                     )}
                     style={{ cursor: 'pointer' }}
                 >
-                    <ContactProfileIcon />
+                    <SimulatorAvatar className="simulator-phone__contact-row-avatar" />
                     <div
                         className={joinClasses(
                             SIM_PHONE_CONTACT_ROW_MAIN,
@@ -436,7 +392,7 @@ function renderPhoneContactList(
                         >
                             {c.displayName}
                         </span>
-                        {(c.number || c.phoneNumbers?.[0]?.value) && (
+                        {primaryNumber(c) && (
                             <span
                                 className={joinClasses(
                                     SIM_PHONE_CONTACT_ROW_NUMBER,
@@ -445,9 +401,7 @@ function renderPhoneContactList(
                                     'simulator-text--truncate',
                                 )}
                             >
-                                <PhoneNumberText
-                                    value={c.number || c.phoneNumbers?.[0]?.value || ''}
-                                />
+                                <PhoneNumberText value={primaryNumber(c)} />
                             </span>
                         )}
                         {c.email && !c.number && (
@@ -471,10 +425,7 @@ function renderPhoneContactList(
 
 function renderCompactContactList(
     filtered: SimulatorSessionContact[],
-    setSelectedId: (value: string | null) => void,
-    onOpenContact: ((contactId: string) => void) | undefined,
-    hostOwnsPhoneContactDetail: boolean,
-    onPhoneContactOpen: ((contactId: string, contact: SimulatorSessionContact) => void) | undefined,
+    open: (contact: SimulatorSessionContact) => void,
 ): JSX.Element {
     return (
         <SimulatorList>
@@ -483,15 +434,7 @@ function renderCompactContactList(
                     key={c.id}
                     data-simulator-contact-id={c.id}
                     variant="compact"
-                    onClick={() =>
-                        openContact(
-                            c,
-                            setSelectedId,
-                            onOpenContact,
-                            hostOwnsPhoneContactDetail,
-                            onPhoneContactOpen,
-                        )
-                    }
+                    onClick={() => open(c)}
                     className={joinClasses('simulator-flex--between', SIM_PHONE_CONTACT_ROW)}
                 >
                     <div
@@ -506,68 +449,19 @@ function renderCompactContactList(
                         <span className={joinClasses(SIM_PHONE_CONTACT_ROW_NAME, SIM_TEXT_MEDIUM)}>
                             {c.displayName}
                         </span>
-                        {(c.number || c.phoneNumbers?.[0]?.value) && (
+                        {primaryNumber(c) && (
                             <span
                                 className={joinClasses(
                                     SIM_PHONE_CONTACT_ROW_NUMBER,
                                     simTypo.secondary,
                                 )}
                             >
-                                <PhoneNumberText
-                                    value={c.number || c.phoneNumbers?.[0]?.value || ''}
-                                />
+                                <PhoneNumberText value={primaryNumber(c)} />
                             </span>
                         )}
                     </div>
                 </SimulatorListItem>
             ))}
         </SimulatorList>
-    );
-}
-
-function renderListContent({
-    emptyMessage,
-    list,
-    filtered,
-    searchQuery,
-    phoneLocalNavItems,
-    setSelectedId,
-    onOpenContact,
-    hostOwnsPhoneContactDetail,
-    onPhoneContactOpen,
-}: Readonly<{
-    emptyMessage: string;
-    list: SimulatorSessionContact[];
-    filtered: SimulatorSessionContact[];
-    searchQuery: string;
-    phoneLocalNavItems?: { id: string; label: string }[];
-    setSelectedId: (value: string | null) => void;
-    onOpenContact?: (contactId: string) => void;
-    hostOwnsPhoneContactDetail: boolean;
-    onPhoneContactOpen?: (contactId: string, contact: SimulatorSessionContact) => void;
-}>): JSX.Element {
-    if (list.length === 0) {
-        return <p className={simTypo.emptyState}>{emptyMessage}</p>;
-    }
-    if (filtered.length === 0) {
-        return (
-            <p className={simTypo.emptyState}>{simTypo.emptyStateNoResultsMessage(searchQuery)}</p>
-        );
-    }
-    if (phoneLocalNavItems != null && phoneLocalNavItems.length > 0) {
-        return renderPhoneContactList(
-            filtered,
-            setSelectedId,
-            onOpenContact,
-            hostOwnsPhoneContactDetail,
-            onPhoneContactOpen,
-        );
-    }
-    return renderCompactContactList(
-        filtered,
-        setSelectedId,
-        onOpenContact,
-        hostOwnsPhoneContactDetail,
-        onPhoneContactOpen,
     );
 }

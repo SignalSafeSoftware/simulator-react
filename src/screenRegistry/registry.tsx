@@ -1,3 +1,4 @@
+import { SimulatorDispatchActionType } from '../state/simulatorDispatchActions.js';
 import { createTranslator, simulatorEnglish } from '../i18n/catalog.js';
 const defaultLocale = createTranslator(simulatorEnglish);
 /**
@@ -6,9 +7,10 @@ const defaultLocale = createTranslator(simulatorEnglish);
  */
 import type { ComponentType, ReactNode } from 'react';
 import type { PhoneScreenId, EmailScreenId } from '../types/session.js';
-import { SimulatorActions } from '../actions/index.js';
+import { getCurrentScreenForApp } from '../types/session.js';
+import { SimulatorActions } from '../actions/simulatorActions.js';
 import { getPhoneLocalNavItems } from '../utils/phoneLocalNavItems.js';
-import type { SimulatorApp } from '../types/portableSimulator.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { SimulatorRenderContext, ScreenEntry } from './types.js';
 import EmailSimulatorView from '../views/EmailSimulatorView.js';
 import MessagesThreadListView from '../views/MessagesThreadListView.js';
@@ -56,7 +58,7 @@ function getThreadPreview(text: string | undefined): string {
 
 const SCREEN_REGISTRY: ScreenEntry[] = [
     {
-        app: 'email',
+        app: SimulatorApp.Email,
         component: EmailSimulatorView,
         getProps: (ctx) => ({
             payload: ctx.state.payload.email,
@@ -65,36 +67,39 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             onAction: ctx.onAction,
             onSelectMessage: ctx.onSelectEmail,
             onBack: ctx.onBack,
-            onNavigate: (screen: EmailScreenId) =>
-                ctx.dispatch({
-                    type: 'SIMULATOR_ACTION',
-                    action: SimulatorActions.navigateScreen('email', screen),
-                }),
+            onNavigate: (screen: EmailScreenId) => navigateTo(ctx, SimulatorApp.Email, screen),
             navRenderedByShell:
-                !ctx.state.view.showPrimaryMenu && ctx.state.view.activeApp === 'email',
+                ctx.hostOwnsScreenActions ||
+                (!ctx.state.view.showPrimaryMenu &&
+                    ctx.state.view.activeApp === SimulatorApp.Email),
         }),
     },
     {
-        app: 'messages',
+        app: SimulatorApp.Messages,
         screen: 'threads',
         component: MessagesThreadListView,
         getProps: (ctx) => ({
             threads: buildMessagesThreadList(ctx.state.payload),
             onSelectThread: ctx.onSelectThread,
             onCompose: () =>
-                ctx.dispatch({ type: 'NAV_LOCAL', app: 'messages', screen: 'new_thread' }),
+                ctx.dispatch({
+                    type: SimulatorDispatchActionType.NavLocal,
+                    app: SimulatorApp.Messages,
+                    screen: 'new_thread',
+                }),
         }),
     },
     {
-        app: 'messages',
+        app: SimulatorApp.Messages,
         screen: 'new_thread',
         component: MessagesNewThreadView,
         getProps: (ctx) => ({
             onBack: ctx.onBack,
+            navRenderedByShell: ctx.hostOwnsScreenActions ?? false,
         }),
     },
     {
-        app: 'messages',
+        app: SimulatorApp.Messages,
         screen: 'thread_detail',
         component: SmsSimulatorView,
         getProps: (ctx) => ({
@@ -104,11 +109,12 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             onRevealNext: ctx.onSmsRevealNext,
             onBack: ctx.onBack,
             showReplyBox: true,
+            navRenderedByShell: ctx.hostOwnsScreenActions ?? false,
             renderChoice: ctx.renderChoice,
         }),
     },
     {
-        app: 'internet',
+        app: SimulatorApp.Internet,
         component: BrowserSimulatorView,
         getProps: (ctx) => ({
             payload: ctx.state.payload.browser,
@@ -121,18 +127,13 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
         }),
     },
     {
-        app: 'phone',
+        app: SimulatorApp.Phone,
         screen: 'contacts',
         component: ContactsView,
         getProps: (ctx) => {
             const phoneScreen = ctx.state.view.phone.screen;
-            const onPhoneNav = (id: string) =>
-                ctx.dispatch({
-                    type: 'SIMULATOR_ACTION',
-                    action: SimulatorActions.navigateScreen('phone', id),
-                });
-            const navRenderedByShell =
-                !ctx.state.view.showPrimaryMenu && ctx.state.view.activeApp === 'phone';
+            const onPhoneNav = (id: string) => navigateTo(ctx, SimulatorApp.Phone, id);
+            const navRenderedByShell = isPhoneNavRenderedByShell(ctx);
             const contactsSearchQuery = getContactsSearchQuery(
                 ctx.state.view.contactsSearchQuery,
                 ctx.initialContactsSearch,
@@ -148,17 +149,14 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
                 onSearchSubmit: (query) => ctx.onAction(SimulatorActions.searchContacts(query)),
                 initialSearch: ctx.initialContactsSearch,
                 searchQuery: contactsSearchQuery,
-                onSearchChange: (query) => ctx.dispatch({ type: 'SET_CONTACTS_SEARCH', query }),
+                onSearchChange: (query) =>
+                    ctx.dispatch({ type: SimulatorDispatchActionType.SetContactsSearch, query }),
                 phoneLocalNavItems: navRenderedByShell
                     ? undefined
                     : getPhoneLocalNavItems(ctx.capabilities.phone, ctx.locale),
                 phoneActiveId: phoneScreen,
                 onPhoneNavSelect: navRenderedByShell ? undefined : onPhoneNav,
-                onAddContact: () =>
-                    ctx.dispatch({
-                        type: 'SIMULATOR_ACTION',
-                        action: SimulatorActions.navigateScreen('phone', 'add_contact'),
-                    }),
+                onAddContact: () => navigateTo(ctx, SimulatorApp.Phone, 'add_contact'),
                 initialSelectedContactId: isItHelpdeskWireframe ? 'it-helpdesk' : null,
                 contactDetailTitleOnly: isItHelpdeskWireframe,
                 hostOwnsPhoneContactDetail: ctx.hostOwnsPhoneContactDetail,
@@ -176,18 +174,13 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
         },
     },
     {
-        app: 'phone',
+        app: SimulatorApp.Phone,
         screen: 'directory',
         component: DirectoryView,
         getProps: (ctx) => {
             const phoneScreen = ctx.state.view.phone.screen;
-            const onPhoneNav = (id: string) =>
-                ctx.dispatch({
-                    type: 'SIMULATOR_ACTION',
-                    action: SimulatorActions.navigateScreen('phone', id),
-                });
-            const navRenderedByShell =
-                !ctx.state.view.showPrimaryMenu && ctx.state.view.activeApp === 'phone';
+            const onPhoneNav = (id: string) => navigateTo(ctx, SimulatorApp.Phone, id);
+            const navRenderedByShell = isPhoneNavRenderedByShell(ctx);
             const payload = ctx.state.payload;
             const initialSelectedDirectoryId =
                 payload.templateKey === 'harness-phone-directory-entry'
@@ -210,7 +203,7 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
         },
     },
     {
-        app: 'phone',
+        app: SimulatorApp.Phone,
         component: PhoneSimulatorView,
         getProps: (ctx) => ({
             payload: ctx.state.payload.phone,
@@ -218,16 +211,11 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             contacts: ctx.state.payload.contacts,
             phoneCapabilities: ctx.capabilities.phone,
             screen: ctx.state.view.phone.screen,
-            onNavigate: (screenId: PhoneScreenId) =>
-                ctx.dispatch({
-                    type: 'SIMULATOR_ACTION',
-                    action: SimulatorActions.navigateScreen('phone', screenId),
-                }),
+            onNavigate: (screenId: PhoneScreenId) => navigateTo(ctx, SimulatorApp.Phone, screenId),
             onAction: ctx.onAction,
             onDismissIncoming: ctx.onBack,
             onBack: ctx.onBack,
-            navRenderedByShell:
-                !ctx.state.view.showPrimaryMenu && ctx.state.view.activeApp === 'phone',
+            navRenderedByShell: isPhoneNavRenderedByShell(ctx),
             renderChoice: ctx.renderChoice,
             sessionState: ctx.state,
             sessionDispatch: ctx.dispatch,
@@ -235,17 +223,14 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
         }),
     },
     {
-        app: 'home',
+        app: SimulatorApp.Home,
         component: HomeSimulatorView,
         getProps: (ctx) => ({
             payload: ctx.state.payload.home,
             homeCapabilities: ctx.capabilities.home,
             screen: ctx.state.view.home.screen,
             onNavigate: (screenId: 'home' | 'store' | 'settings') =>
-                ctx.dispatch({
-                    type: 'SIMULATOR_ACTION',
-                    action: SimulatorActions.navigateScreen('home', screenId),
-                }),
+                navigateTo(ctx, SimulatorApp.Home, screenId),
             onAction: ctx.onAction,
             onBack: ctx.onBack,
         }),
@@ -254,20 +239,18 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
 
 /** Current screen id for an app (from view state). */
 function getScreenForApp(app: SimulatorApp, ctx: SimulatorRenderContext): string {
-    switch (app) {
-        case 'email':
-            return ctx.state.view.email.screen;
-        case 'messages':
-            return ctx.state.view.messages.screen;
-        case 'internet':
-            return ctx.state.view.internet.screen;
-        case 'phone':
-            return ctx.state.view.phone.screen;
-        case 'home':
-            return ctx.state.view.home.screen;
-        default:
-            return '';
-    }
+    return getCurrentScreenForApp(ctx.state.view, app);
+}
+
+function navigateTo(ctx: SimulatorRenderContext, app: SimulatorApp, screen: string): void {
+    ctx.dispatch({
+        type: SimulatorDispatchActionType.SimulatorAction,
+        action: SimulatorActions.navigateScreen(app, screen),
+    });
+}
+
+function isPhoneNavRenderedByShell(ctx: SimulatorRenderContext): boolean {
+    return !ctx.state.view.showPrimaryMenu && ctx.state.view.activeApp === SimulatorApp.Phone;
 }
 
 function getContactsSearchQuery(

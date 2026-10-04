@@ -1,3 +1,4 @@
+import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -50,28 +51,28 @@ const mockState = vi.hoisted(() => ({
     ),
 }));
 
-vi.mock('../src/shell/PhoneSimulatorShell', () => ({
+vi.mock('../src/shell/PhoneSimulatorShell.js', () => ({
     default: (props: Record<string, unknown>) => {
         mockState.latestShellProps = props;
         return props.children ?? null;
     },
 }));
 
-vi.mock('../src/SimulatorDeveloperToolsPanel', () => ({
+vi.mock('../src/developer-tools/SimulatorDeveloperToolsPanel.js', () => ({
     default: (props: Record<string, unknown>) => {
         mockState.latestDeveloperPanelProps = props;
         return null;
     },
 }));
 
-vi.mock('../src/views/ContactsView', () => ({
+vi.mock('../src/views/ContactsView.js', () => ({
     default: (props: Record<string, unknown>) => {
         mockState.latestContactsProps = props;
         return null;
     },
 }));
 
-vi.mock('../src/screenRegistry', () => ({
+vi.mock('../src/screenRegistry/registry.js', () => ({
     renderActiveScreen: (app: string, ctx: Record<string, unknown>) => {
         mockState.lastRenderApp = app;
         mockState.lastRenderContext = ctx;
@@ -79,27 +80,27 @@ vi.mock('../src/screenRegistry', () => ({
     },
 }));
 
-vi.mock('../src/SimulatorErrorBoundary', () => ({
+vi.mock('../src/SimulatorErrorBoundary.js', () => ({
     default: ({ children }: { children: React.ReactNode }) => children,
 }));
 
-vi.mock('../src/UnsupportedScreenFallback', () => ({
+vi.mock('../src/UnsupportedScreenFallback.js', () => ({
     default: ({ app, screen }: { app: string; screen: string }) =>
         React.createElement('div', { 'data-testid': 'unsupported-screen' }, `${app}:${screen}`),
 }));
 
-vi.mock('../src/utils/screenMetadata', () => ({
+vi.mock('../src/utils/screenMetadata.js', () => ({
     getScreenMetadata: () => ({ app: 'email', screen: 'list', label: 'Inbox' }),
 }));
 
-vi.mock('../src/utils/simulatorCapabilities', () => ({
+vi.mock('../src/utils/simulatorCapabilities.js', () => ({
     getSimulatorCapabilities: () => ({
         phone: { dial: true, voicemail: true, directory: true },
         home: { store: true, settings: true },
     }),
 }));
 
-vi.mock('../src/utils/phoneLocalNavItems', () => ({
+vi.mock('../src/utils/phoneLocalNavItems.js', () => ({
     getPhoneLocalNavItems: () => [
         { id: 'history', label: 'History', icon: 'H' },
         { id: 'contacts', label: 'Contacts', icon: 'C' },
@@ -108,18 +109,18 @@ vi.mock('../src/utils/phoneLocalNavItems', () => ({
     ],
 }));
 
-vi.mock('../src/utils/simulatorSnapshot', () => ({
-    captureSimulatorSnapshot: (...args: unknown[]) => mockState.captureSimulatorSnapshot(...args),
-    snapshotToJson: (...args: unknown[]) => mockState.snapshotToJson(...args),
+vi.mock('../src/utils/simulatorSnapshot.js', () => ({
+    captureSimulatorSnapshot: mockState.captureSimulatorSnapshot,
+    snapshotToJson: mockState.snapshotToJson,
 }));
 
-vi.mock('../src/utils/simulatorNavGraph', () => ({
-    buildSimulatorNavGraph: (...args: unknown[]) => mockState.buildSimulatorNavGraph(...args),
-    simulatorNavGraphToJson: (...args: unknown[]) => mockState.simulatorNavGraphToJson(...args),
+vi.mock('../src/utils/simulatorNavGraph.js', () => ({
+    buildSimulatorNavGraph: mockState.buildSimulatorNavGraph,
+    simulatorNavGraphToJson: mockState.simulatorNavGraphToJson,
 }));
 
-vi.mock('../src/utils/simulatorKeyboardCommands', () => ({
-    handleSimulatorKeyboard: (...args: unknown[]) => mockState.handleSimulatorKeyboard(...args),
+vi.mock('../src/utils/simulatorKeyboardCommands.js', () => ({
+    handleSimulatorKeyboard: mockState.handleSimulatorKeyboard,
     focusSimulatorSearch: () => mockState.focusSimulatorSearch(),
     SIMULATOR_KEYBOARD_COMMANDS: [{ keys: '?', description: 'Show shortcuts' }],
 }));
@@ -202,9 +203,7 @@ function flushPromises(): Promise<void> {
     return Promise.resolve();
 }
 
-function flattenText(
-    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
-): string {
+function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
     if (node == null) {
         return '';
     }
@@ -264,7 +263,7 @@ describe('SimulatorWithSession interactions', () => {
     it('dispatches and emits events for shell channel changes and render-context callbacks', async () => {
         const dispatch = vi.fn();
         const onSimulatorEvent = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -319,7 +318,7 @@ describe('SimulatorWithSession interactions', () => {
     it('handles submit-form navigation, secondary menus, developer controls, and keyboard shortcuts', async () => {
         const dispatch = vi.fn();
         const onSimulatorEvent = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -554,7 +553,7 @@ describe('SimulatorWithSession interactions', () => {
 
     it('covers null verification contexts, unsupported fallback, and shell prop passthrough', async () => {
         const dispatch = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
         const exitLink = React.createElement('a', { href: '/leave' }, 'Leave');
 
         await act(async () => {
@@ -599,7 +598,7 @@ describe('SimulatorWithSession interactions', () => {
 
     it('covers app-specific null verification contexts, secondary menu ids, and toolbar toggles', async () => {
         const dispatch = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(
@@ -730,7 +729,7 @@ describe('SimulatorWithSession interactions', () => {
     it('covers fallback verification contexts, navigate-screen events, and non-cycle nav graph summaries', async () => {
         const dispatch = vi.fn();
         const onSimulatorEvent = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         mockState.buildSimulatorNavGraph.mockReturnValueOnce({
             entry: { app: 'internet', screen: 'landing' },

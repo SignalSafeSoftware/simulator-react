@@ -24,15 +24,15 @@ import type {
     SimulatorHomeSettingsSection,
 } from '../types/session.js';
 import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../constants.js';
+import { getFieldInputType } from '../utils/browserFieldType.js';
+import { type AttachmentBehavior, type EmailTemplateContent } from '../types/template.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type {
-    AttachmentBehavior,
-    EmailTemplateContent,
-    SimulatorApp,
     SimulatorContact,
     SimulatorDevicePayload,
     SimulatorEmailMessageRow,
     SimulatorEmailMessageDetail,
-} from '../types/portableSimulator.js';
+} from '@signalsafe/simulator-core/devicePayload';
 
 function stringOr(value: unknown, fallback = ''): string {
     return typeof value === 'string' ? value : fallback;
@@ -49,13 +49,13 @@ function nullableString(value: unknown): string | null {
 /** Map backend app id to shell channel (messages→sms, internet→browser). */
 export function appToChannel(app: SimulatorApp): SimulatorChannel {
     switch (app) {
-        case 'messages':
+        case SimulatorApp.Messages:
             return 'sms';
-        case 'internet':
+        case SimulatorApp.Internet:
             return 'browser';
-        case 'phone':
-        case 'email':
-        case 'home':
+        case SimulatorApp.Phone:
+        case SimulatorApp.Email:
+        case SimulatorApp.Home:
             return app;
         default:
             return 'email';
@@ -64,10 +64,10 @@ export function appToChannel(app: SimulatorApp): SimulatorChannel {
 
 /** Map device section to session device (main menu + secondary defaults). */
 export function mapDevice(device: SimulatorDevicePayload['device']): SimulatorSessionDevice | null {
-    if (device == null || !Array.isArray(device.main_menu_items)) {
+    if (device == null) {
         return null;
     }
-    const mainMenuItems = device.main_menu_items
+    const mainMenuItems = (Array.isArray(device.main_menu_items) ? device.main_menu_items : [])
         .filter(
             (item): item is NonNullable<typeof item> =>
                 item != null && typeof item === 'object' && typeof item.id === 'string',
@@ -78,9 +78,8 @@ export function mapDevice(device: SimulatorDevicePayload['device']): SimulatorSe
             label: stringOr((item as { label?: unknown }).label, stringOr(item.id)),
             app: typeof item.app === 'string' ? item.app : undefined,
         }));
-    if (mainMenuItems.length === 0) {
+    if (mainMenuItems.length === 0 && Object.keys(device.secondary_defaults ?? {}).length === 0)
         return null;
-    }
     return {
         mainMenuItems,
         secondaryDefaults: device.secondary_defaults ?? {},
@@ -93,18 +92,18 @@ function mapDirectoryEntry(raw: unknown): SimulatorDirectoryEntry | null {
         return null;
     }
     const o = raw as Record<string, unknown>;
-    const id = typeof o.id === 'string' ? o.id : undefined;
-    const label = typeof o.label === 'string' ? o.label : undefined;
+    const id = optionalString(o.id);
+    const label = optionalString(o.label);
     if (id == null || label == null) {
         return null;
     }
     return {
         id,
         label,
-        contact_id: typeof o.contact_id === 'string' ? o.contact_id : null,
-        number: typeof o.number === 'string' ? o.number : null,
-        url: typeof o.url === 'string' ? o.url : null,
-        description: typeof o.description === 'string' ? o.description : null,
+        contact_id: nullableString(o.contact_id),
+        number: nullableString(o.number),
+        url: nullableString(o.url),
+        description: nullableString(o.description),
     };
 }
 
@@ -210,15 +209,6 @@ function toInboxRow(
     };
 }
 
-function getSelectedMessage(
-    detail: SimulatorEmailMessageDetail | null,
-): EmailTemplateContent | null {
-    if (detail == null) {
-        return null;
-    }
-    return emailDetailToContent(detail);
-}
-
 function getSelectedMessageId(
     detail: { id?: string } | null,
     allRows: SimulatorInboxRow[],
@@ -230,16 +220,6 @@ function getSelectedMessageId(
     return allRows[0]?.id ?? inbox[0]?.id ?? null;
 }
 
-function getBrowserFieldType(fieldType: string | undefined): 'text' | 'password' | 'email' {
-    if (fieldType === 'password') {
-        return 'password';
-    }
-    if (fieldType === 'email') {
-        return 'email';
-    }
-    return 'text';
-}
-
 /** Map email app section to session email payload. */
 export function mapEmail(email: SimulatorDevicePayload['email']): SimulatorEmailPayload | null {
     if (email == null) return null;
@@ -247,22 +227,15 @@ export function mapEmail(email: SimulatorDevicePayload['email']): SimulatorEmail
     const detail = email.detail ?? null;
     const rowFrom = (row: { from?: string; from_addr?: string }) =>
         stringOr(row.from, stringOr(row.from_addr));
-    const withFolder = messages.map((row) => {
-        const r = row;
-        return {
-            row: toInboxRow(r, rowFrom),
-            folder_id: typeof r.folder_id === 'string' ? r.folder_id.toLowerCase() : 'inbox',
-        };
-    });
-    const inbox: SimulatorInboxRow[] = withFolder
-        .filter((x) => x.folder_id === 'inbox')
-        .map((x) => x.row);
-    const outbox: SimulatorInboxRow[] = withFolder
-        .filter((x) => x.folder_id === 'outbox')
-        .map((x) => x.row);
-    const trash: SimulatorInboxRow[] = withFolder
-        .filter((x) => x.folder_id === 'trash')
-        .map((x) => x.row);
+    const withFolder = messages.map((row) => ({
+        row: toInboxRow(row, rowFrom),
+        folder_id: typeof row.folder_id === 'string' ? row.folder_id.toLowerCase() : 'inbox',
+    }));
+    const inFolder = (folder: string): SimulatorInboxRow[] =>
+        withFolder.filter((x) => x.folder_id === folder).map((x) => x.row);
+    const inbox = inFolder('inbox');
+    const outbox = inFolder('outbox');
+    const trash = inFolder('trash');
     if (inbox.length === 0 && detail != null) {
         const detailSnippet = detail.snippet;
         inbox.push({
@@ -275,7 +248,7 @@ export function mapEmail(email: SimulatorDevicePayload['email']): SimulatorEmail
             unread: detail.unread,
         });
     }
-    const selectedMessage = getSelectedMessage(detail);
+    const selectedMessage = detail == null ? null : emailDetailToContent(detail);
     const allRows = [...inbox, ...outbox, ...trash];
     const selectedMessageId = getSelectedMessageId(detail, allRows, inbox);
     return {
@@ -297,17 +270,14 @@ export function mapMessages(
     const threads: SimulatorThreadListRow[] = Array.isArray(rawThreads)
         ? rawThreads
               .filter((t) => t != null && typeof t === 'object')
-              .map((t) => {
-                  const r = t;
-                  return {
-                      id: stringOr(r.id),
-                      preview: stringOr(r.snippet),
-                      senderName: optionalString(r.contact_name),
-                      senderNumber: optionalString(r.contact_number),
-                      timestamp: optionalString(r.last_at),
-                      unread: r.unread === true,
-                  };
-              })
+              .map((r) => ({
+                  id: stringOr(r.id),
+                  preview: stringOr(r.snippet),
+                  senderName: optionalString(r.contact_name),
+                  senderNumber: optionalString(r.contact_number),
+                  timestamp: optionalString(r.last_at),
+                  unread: r.unread === true,
+              }))
         : [];
 
     const fromRole = (m: { from?: string }) => (m.from === 'me' ? 'me' : 'them');
@@ -350,20 +320,14 @@ function mapHistoryKind(direction: string | undefined): CallHistoryEntryKind {
 /** Map phone app section to session phone payload (incoming_call, history, voicemail). */
 export function mapPhone(phone: SimulatorDevicePayload['phone']): SimulatorPhonePayload | null {
     if (phone == null) return null;
+    if (Object.hasOwn(phone, 'voicemail_transcript')) {
+        throw new Error(
+            'Removed simulator field phone.voicemail_transcript; migrate it to phone.voicemail.transcript.',
+        );
+    }
     const incoming = phone.incoming_call;
-    if (incoming == null) return null;
-    const transcript = stringOr(incoming.transcript);
-    const rawHistory = (
-        phone as {
-            history?: Array<{
-                id?: string;
-                number?: string;
-                name?: string;
-                direction?: string;
-                timestamp?: string;
-            }>;
-        }
-    ).history;
+    const transcript = stringOr(incoming?.transcript);
+    const rawHistory = phone.history;
     const callHistory: SimulatorCallHistoryEntry[] = Array.isArray(rawHistory)
         ? rawHistory.map((h, i) => ({
               id: typeof h.id === 'string' ? h.id : `call-${i}`,
@@ -373,24 +337,25 @@ export function mapPhone(phone: SimulatorDevicePayload['phone']): SimulatorPhone
               timestamp: optionalString(h.timestamp),
           }))
         : [];
-    const voicemailSection = (
-        phone as { voicemail?: { transcript?: string; caller_name?: string; timestamp?: string } }
-    ).voicemail;
-    const voicemailTranscript =
-        voicemailSection?.transcript ??
-        (phone as { voicemail_transcript?: string }).voicemail_transcript;
+    const voicemailSection = phone.voicemail;
+    const voicemailTranscript = voicemailSection?.transcript;
     const voicemailStr = nullableString(voicemailTranscript);
+    if (incoming == null && callHistory.length === 0 && !voicemailStr) return null;
     const voicemailCallerName = optionalString(voicemailSection?.caller_name);
     const voicemailTimestamp = optionalString(voicemailSection?.timestamp);
     return {
-        content: {
-            transcript: transcript || englishLocale.t('copy.fullDeviceToSession.incoming.call'),
-            choices: [],
-            phone_number: optionalString(incoming.phone_number),
-            caller_name: optionalString(incoming.caller_name),
-            caller_title: optionalString(incoming.caller_title),
-            avatar_url: optionalString(incoming.avatar_url),
-        },
+        content:
+            incoming == null
+                ? null
+                : {
+                      transcript:
+                          transcript || englishLocale.t('copy.fullDeviceToSession.incoming.call'),
+                      choices: [],
+                      phone_number: optionalString(incoming?.phone_number),
+                      caller_name: optionalString(incoming?.caller_name),
+                      caller_title: optionalString(incoming?.caller_title),
+                      avatar_url: optionalString(incoming?.avatar_url),
+                  },
         chosenIndex: null,
         callHistory: callHistory.length > 0 ? callHistory : undefined,
         voicemailTranscript: voicemailStr != null && voicemailStr !== '' ? voicemailStr : undefined,
@@ -415,7 +380,7 @@ function mapFormFields(
     }
     return fields.map((f) => ({
         name: stringOr(f.name, 'field'),
-        type: getBrowserFieldType(f.type),
+        type: getFieldInputType(f.type),
         label: stringOr(f.label, 'Field'),
     }));
 }
@@ -429,36 +394,41 @@ export function mapInternet(
     const forms = internet.forms ?? [];
     if (rawPages.length === 0) return null;
 
-    const pages: SimulatorBrowserPage[] = rawPages.map(
-        (p: {
-            id?: string;
-            url?: string;
-            title?: string;
-            layout?: string;
-            content?: string;
-            submit_target_page_id?: string | null;
-        }) => {
-            const pageId = stringOr(p.id, 'page');
-            const form = forms.find((f: { page_id?: string }) => f.page_id === pageId) ?? forms[0];
-            const rawFields = form?.fields ?? [];
-            const formFields = mapFormFields(rawFields);
-            const submitTargetPageId =
-                typeof p.submit_target_page_id === 'string' && p.submit_target_page_id !== ''
-                    ? p.submit_target_page_id
-                    : undefined;
-            const content =
-                typeof p.content === 'string' && p.content !== '' ? p.content : undefined;
-            return {
-                id: pageId,
-                url: normalizePageUrl(p.url),
-                title: stringOr(p.title, 'Page'),
-                layout: stringOr(p.layout, 'content'),
-                content,
-                formFields: formFields.length > 0 ? formFields : undefined,
-                submitTargetPageId: submitTargetPageId ?? undefined,
-            };
-        },
-    );
+    const pages: SimulatorBrowserPage[] = rawPages.map((p) => {
+        const pageId = stringOr(p.id, 'page');
+        const form = forms.find((f: { page_id?: string }) => f.page_id === pageId) ?? forms[0];
+        const rawFields = form?.fields ?? [];
+        const formFields = mapFormFields(rawFields);
+        const submitTargetPageId =
+            typeof p.submit_target_page_id === 'string' && p.submit_target_page_id !== ''
+                ? p.submit_target_page_id
+                : undefined;
+        const content = typeof p.content === 'string' && p.content !== '' ? p.content : undefined;
+        return {
+            id: pageId,
+            url: normalizePageUrl(p.url),
+            title: stringOr(p.title, 'Page'),
+            layout: stringOr(p.layout, 'content'),
+            content,
+            buttons: p.buttons?.map((button) => {
+                if (Object.hasOwn(button, 'targetPageId')) {
+                    throw new Error(
+                        'Removed simulator button field targetPageId; migrate it to target_page_id.',
+                    );
+                }
+                return {
+                    label: stringOr(button.label),
+                    href: optionalString(button.href),
+                    targetPageId: optionalString(button.target_page_id),
+                };
+            }),
+            logoUrl: p.logo_url,
+            warningBanner: p.warning_banner,
+            showMediaPlaceholder: p.show_media_placeholder,
+            formFields: formFields.length > 0 ? formFields : undefined,
+            submitTargetPageId: submitTargetPageId ?? undefined,
+        };
+    });
 
     const firstUrl = pages[0]?.url ?? 'https://page/';
     if (!pages.some((p) => p.id === DEFAULT_BROWSER_SUBMIT_TARGET)) {

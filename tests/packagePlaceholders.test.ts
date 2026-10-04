@@ -1,5 +1,7 @@
+import type { ReactTestRenderer } from 'react-test-renderer';
 import { createElement } from 'react';
-import TestRenderer, { act } from 'react-test-renderer';
+import TestRenderer from 'react-test-renderer';
+import { act } from 'react-test-renderer';
 import { describe, expect, it, vi } from 'vitest';
 import EmailComposeView from '../src/views/EmailComposeView.js';
 import MessagesNewThreadView from '../src/views/MessagesNewThreadView.js';
@@ -14,7 +16,7 @@ describe('reusable screen placeholders', () => {
             createElement(EmailComposeView, { onCancel: onBack }),
             createElement(MessagesNewThreadView, { onBack }),
         ]) {
-            let renderer: TestRenderer.ReactTestRenderer;
+            let renderer: ReactTestRenderer;
             await act(async () => {
                 renderer = TestRenderer.create(view);
             });
@@ -42,7 +44,7 @@ describe('reusable screen placeholders', () => {
     it('delivers configured new-message data through its callback before returning', async () => {
         const onSend = vi.fn();
         const onBack = vi.fn();
-        let renderer: TestRenderer.ReactTestRenderer;
+        let renderer: ReactTestRenderer;
         await act(async () => {
             renderer = TestRenderer.create(
                 createElement(MessagesNewThreadView, { onSend, onBack }),
@@ -72,7 +74,7 @@ describe('reusable screen placeholders', () => {
     });
 
     it('renders only functional searches and no package-owned configuration input', async () => {
-        let renderer: TestRenderer.ReactTestRenderer;
+        let renderer: ReactTestRenderer;
         await act(async () => {
             renderer = TestRenderer.create(
                 createElement(HomeSimulatorView, {
@@ -112,7 +114,7 @@ describe('reusable screen placeholders', () => {
     });
 
     it('renders an honest empty state instead of a disconnected contact form', async () => {
-        let renderer: TestRenderer.ReactTestRenderer;
+        let renderer: ReactTestRenderer;
         await act(async () => {
             renderer = TestRenderer.create(
                 createElement(PhoneSimulatorView, {

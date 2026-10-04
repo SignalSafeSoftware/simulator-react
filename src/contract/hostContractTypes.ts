@@ -3,5 +3,5 @@
  * This package does not perform transport.
  */
 export type HostSimulatorEventHandler = (
-    event: import('../types/simulatorEvents').SimulatorInteractionEvent,
+    event: import('../types/simulatorEvents.js').SimulatorInteractionEvent,
 ) => void;

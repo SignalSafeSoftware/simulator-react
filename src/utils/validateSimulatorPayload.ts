@@ -7,9 +7,9 @@ import { englishLocale } from '../i18n/englishLocale.js';
  * **App usage:** not imported by current `frontend/workspace/src` or `frontend/administration/src` (subpath export is for tests/tooling and internal callers).
  */
 
-import type { SimulatorChannel } from '../types/session.js';
+import { SimulatorChannel, isSimulatorChannel } from '../types/session.js';
 
-const VALID_CHANNELS: SimulatorChannel[] = ['contacts', 'email', 'sms', 'browser', 'phone', 'home'];
+const VALID_CHANNELS = Object.values(SimulatorChannel);
 
 const HINT = ' See docs/simulator/simulator-authoring.md for schema and allowed values.';
 
@@ -30,7 +30,7 @@ export function validateSimulatorPayload(payload: unknown): void {
         );
     }
     const p = payload as Record<string, unknown>;
-    if (typeof p.channel !== 'string' || !VALID_CHANNELS.includes(p.channel as SimulatorChannel)) {
+    if (!isSimulatorChannel(p.channel)) {
         throw new Error(
             `Invalid simulator payload: channel must be one of ${VALID_CHANNELS.join(', ')}. Got: ${String(p.channel)}.` +
                 HINT,

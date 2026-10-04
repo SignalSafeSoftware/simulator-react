@@ -1,12 +1,12 @@
+import type { ReactTestRendererJSON } from 'react-test-renderer';
+import { simulatorEnglish } from '../src/i18n/catalog.js';
 import React from 'react';
 import { describe, expect, it } from 'vitest';
 import UnsupportedScreenFallback from '../src/UnsupportedScreenFallback';
-import { LEARNER_UNSUPPORTED_SCREEN_MESSAGE } from '../src/constants';
+
 import { TestRenderer } from './reactTestRenderer';
 
-function flattenText(
-    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
-): string {
+function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
     if (node == null) {
         return '';
     }
@@ -28,7 +28,7 @@ describe('UnsupportedScreenFallback', () => {
         );
 
         const text = flattenText(filled.toJSON());
-        expect(text).toContain(LEARNER_UNSUPPORTED_SCREEN_MESSAGE);
+        expect(text).toContain(simulatorEnglish['fallback.learner_unsupported_screen_message']);
         expect(text).not.toContain('App: phone');
         expect(text).not.toContain('Screen: mystery');
         expect(

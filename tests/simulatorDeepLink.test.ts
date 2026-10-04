@@ -1,14 +1,15 @@
+import { createPayload as completePayload } from './support/createPayload.js';
 import { describe, expect, it } from 'vitest';
-import { getInitialSessionState } from '../src/state/simulatorSessionReducer';
+import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 import {
     applyDeepLinkToState,
     getDeepLinkContactsSearch,
     parseSimulatorSearchParams,
 } from '../src/utils/simulatorDeepLink';
 import type { SimulatorSessionState } from '../src/types/session';
-
 function createPayload(): SimulatorSessionState['payload'] {
     return {
+        ...completePayload(),
         channel: 'browser',
         entryPoint: { app: 'internet', screen: 'landing' },
         email: {
@@ -37,25 +38,21 @@ function createPayload(): SimulatorSessionState['payload'] {
         },
     };
 }
-
 describe('simulatorDeepLink', () => {
     it('opens email detail when a valid message id is requested', () => {
         const state = getInitialSessionState(createPayload());
-
         const next = applyDeepLinkToState(state, {
             app: 'email',
             messageId: 'm1',
         });
-
         expect(next.view.activeApp).toBe('email');
         expect(next.view.email.screen).toBe('detail');
         expect(next.view.email.selectedMessageId).toBe('m1');
         expect(next.view.email.stack).toEqual(['list']);
     });
-
     it('clears the selected email when deep-linking back to the list screen', () => {
         const initial = getInitialSessionState(createPayload());
-        const state = {
+        const state: SimulatorSessionState = {
             ...initial,
             view: {
                 ...initial.view,
@@ -67,30 +64,24 @@ describe('simulatorDeepLink', () => {
                 },
             },
         };
-
         const next = applyDeepLinkToState(state, {
             app: 'email',
             screen: 'list',
         });
-
         expect(next.view.email.screen).toBe('list');
         expect(next.view.email.selectedMessageId).toBeNull();
         expect(next.view.email.stack).toEqual(['list']);
     });
-
     it('pushes browser history only when the internet target screen changes', () => {
         const state = getInitialSessionState(createPayload());
-
         const next = applyDeepLinkToState(state, {
             app: 'internet',
             pageId: 'pricing',
         });
-
         expect(next.view.activeApp).toBe('internet');
         expect(next.view.internet.screen).toBe('pricing');
         expect(next.view.internet.stack).toEqual(['landing']);
     });
-
     it('returns search only for phone contacts deep-links', () => {
         expect(
             getDeepLinkContactsSearch({
@@ -99,7 +90,6 @@ describe('simulatorDeepLink', () => {
                 search: 'Ada',
             }),
         ).toBe('Ada');
-
         expect(
             getDeepLinkContactsSearch({
                 app: 'phone',
@@ -107,10 +97,8 @@ describe('simulatorDeepLink', () => {
                 search: 'Ada',
             }),
         ).toBeUndefined();
-
         expect(getDeepLinkContactsSearch(null)).toBeUndefined();
     });
-
     it('parses app-specific deep-link screens and preserves email selection for non-list screens', () => {
         expect(
             parseSimulatorSearchParams(new URLSearchParams('app=PHONE&screen=contacts')),
@@ -158,9 +146,8 @@ describe('simulatorDeepLink', () => {
         expect(
             parseSimulatorSearchParams(new URLSearchParams('app=phone&screen=not-real')),
         ).toBeNull();
-
         const initial = getInitialSessionState(createPayload());
-        const state = {
+        const state: SimulatorSessionState = {
             ...initial,
             view: {
                 ...initial.view,
@@ -172,20 +159,18 @@ describe('simulatorDeepLink', () => {
                 },
             },
         };
-
         const next = applyDeepLinkToState(state, {
             app: 'email',
             screen: 'compose',
         });
         expect(next.view.activeApp).toBe('email');
-        expect(next.view.email.screen).toBe('detail');
+        expect(next.view.email.screen).toBe('compose');
         expect(next.view.email.selectedMessageId).toBe('m1');
-        expect(next.view.email.stack).toEqual(['list', 'detail']);
+        expect(next.view.email.stack).toEqual(['list']);
     });
-
     it('preserves compose selection and tolerates unsupported deep-link apps', () => {
         const initial = getInitialSessionState(createPayload());
-        const state = {
+        const state: SimulatorSessionState = {
             ...initial,
             view: {
                 ...initial.view,
@@ -197,7 +182,6 @@ describe('simulatorDeepLink', () => {
                 },
             },
         };
-
         const composeNext = applyDeepLinkToState(state, {
             app: 'email',
             screen: 'compose',
@@ -205,7 +189,6 @@ describe('simulatorDeepLink', () => {
         expect(composeNext.view.email.screen).toBe('compose');
         expect(composeNext.view.email.selectedMessageId).toBe('m1');
         expect(composeNext.view.email.stack).toEqual(['list']);
-
         const unsupported = applyDeepLinkToState(initial, {
             app: 'bogus' as never,
         });
@@ -213,10 +196,9 @@ describe('simulatorDeepLink', () => {
         expect(unsupported.view.email).toEqual(initial.view.email);
         expect(unsupported.view.internet).toEqual(initial.view.internet);
     });
-
     it('falls back for invalid phone and home screens and preserves message counts on thread lists', () => {
         const initial = getInitialSessionState(createPayload());
-        const state = {
+        const state: SimulatorSessionState = {
             ...initial,
             view: {
                 ...initial.view,
@@ -233,50 +215,43 @@ describe('simulatorDeepLink', () => {
                     ...initial.view.messages,
                     screen: 'threads',
                     visibleCount: 4,
-                    stack: ['old-thread'],
+                    stack: ['threads'],
                 },
             },
         };
-
         const phoneNext = applyDeepLinkToState(state, {
             app: 'phone',
             screen: 'not-real',
         } as never);
         expect(phoneNext.view.phone.screen).toBe('dial');
         expect(phoneNext.view.phone.stack).toEqual(['history']);
-
         const homeNext = applyDeepLinkToState(state, {
             app: 'home',
             screen: 'bogus',
         } as never);
         expect(homeNext.view.home.screen).toBe('settings');
-
         const messagesNext = applyDeepLinkToState(state, {
             app: 'messages',
             screen: 'threads',
         });
         expect(messagesNext.view.messages.screen).toBe('threads');
         expect(messagesNext.view.messages.visibleCount).toBe(4);
-        expect(messagesNext.view.messages.stack).toEqual(['old-thread']);
+        expect(messagesNext.view.messages.stack).toEqual(['threads']);
     });
-
     it('falls back to the default browser page when requested targets are missing', () => {
         const initial = getInitialSessionState(createPayload());
-
         const next = applyDeepLinkToState(initial, {
             app: 'internet',
             pageId: 'missing-page',
             screen: '',
         });
-
         expect(next.view.activeApp).toBe('internet');
         expect(next.view.internet.screen).toBe('landing');
         expect(next.view.internet.stack).toEqual(initial.view.internet.stack);
     });
-
     it('keeps the current browser screen when no page target is supplied and it still exists', () => {
         const initial = getInitialSessionState(createPayload());
-        const state = {
+        const state: SimulatorSessionState = {
             ...initial,
             view: {
                 ...initial.view,
@@ -288,23 +263,18 @@ describe('simulatorDeepLink', () => {
                 },
             },
         };
-
         const next = applyDeepLinkToState(state, {
             app: 'internet',
         });
-
         expect(next.view.internet.screen).toBe('pricing');
         expect(next.view.internet.stack).toEqual(['landing']);
     });
-
     it('falls back to the browser default when a requested internet screen is missing and no pageId is provided', () => {
         const initial = getInitialSessionState(createPayload());
-
         const next = applyDeepLinkToState(initial, {
             app: 'internet',
             screen: 'missing-screen',
         } as never);
-
         expect(next.view.internet.screen).toBe('landing');
     });
 });

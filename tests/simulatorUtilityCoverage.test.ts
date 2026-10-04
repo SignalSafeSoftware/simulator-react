@@ -1,3 +1,4 @@
+import type { SimulatorTemplatePayload } from '../src/types/session.js';
 import { describe, expect, it } from 'vitest';
 import {
     appToChannel,
@@ -588,6 +589,7 @@ describe('simulator utility coverage', () => {
                         subject: 'Security update',
                         from: 'alert@example.test',
                         from_display_name: 'Alex Example',
+                        // @ts-expect-error Exercise handling of extra untyped link metadata on a summary row.
                         links: [{ href: 'https://secure.example.test' }],
                     },
                 ],
@@ -596,6 +598,7 @@ describe('simulator utility coverage', () => {
                     from: 'alert@example.test',
                     from_display_name: 'Alex Example',
                     body: 'Review the alert.',
+                    // @ts-expect-error Exercise handling of an untyped link without display text.
                     links: [{ href: 'https://secure.example.test' }],
                 },
                 selectedMessageId: 'e1',
@@ -882,7 +885,7 @@ describe('simulator utility coverage', () => {
     });
 
     it('builds nav graphs and maps full-device payload sections', () => {
-        const payload = {
+        const payload: SimulatorTemplatePayload = {
             templateId: 1,
             templateKey: 'graph-world',
             name: 'Graph World',
@@ -933,6 +936,7 @@ describe('simulator utility coverage', () => {
                         url: 'https://site.example.test/login',
                         title: 'Login',
                         layout: 'login',
+                        formFields: [{ name: 'email', label: 'Email', type: 'email' }],
                         submitTargetPageId: 'result',
                     },
                     {
@@ -1267,6 +1271,7 @@ describe('simulator utility coverage', () => {
                         url: 'https://known.example.test/login',
                         title: 'Login',
                         layout: 'login',
+                        formFields: [{ name: 'email', label: 'Email', type: 'email' }],
                         submitTargetPageId: 'result',
                     },
                     {
@@ -1332,6 +1337,7 @@ describe('simulator utility coverage', () => {
                         url: 'https://known.example.test/login',
                         title: 'Login',
                         layout: 'login',
+                        formFields: [{ name: 'email', label: 'Email', type: 'email' }],
                         submitTargetPageId: 'result',
                         buttons: [{ label: 'Continue', targetPageId: 'result' }],
                     },
@@ -1583,29 +1589,19 @@ describe('simulator utility coverage', () => {
         expect(graph.entry).toEqual({ app: 'bogus', screen: 'list' });
     });
 
-    it('maps template details into stable payloads for full-device and empty inputs', () => {
-        const empty = templateDetailToPayload({
-            id: 1,
-            key: 'empty-template',
-            name: '',
-            channel: 'browser',
-            topics: [{ key: 'phish', name: 'Phishing' }],
-            simulator: null,
-        } as never);
-        expect(empty.channel).toBe('browser');
-        expect(empty.entryPoint).toBeNull();
-        expect(empty.name).toBe('');
-
-        const invalidEntry = templateDetailToPayload({
-            id: 2,
-            key: 'invalid-entry',
-            name: 'Invalid Entry',
-            channel: 'sms',
-            topics: [],
-            simulator: { entry_point: { app: 'not-real' } },
-        } as never);
-        expect(invalidEntry.channel).toBe('sms');
-        expect(invalidEntry.entryPoint).toBeNull();
+    it('requires a full-device entry point when mapping template details', () => {
+        for (const simulator of [null, { entry_point: { app: 'not-real' } }]) {
+            expect(() =>
+                templateDetailToPayload({
+                    id: 1,
+                    key: 'invalid',
+                    name: '',
+                    channel: 'browser',
+                    topics: [],
+                    simulator,
+                } as never),
+            ).toThrow('entry_point');
+        }
 
         const full = templateDetailToPayload(
             {

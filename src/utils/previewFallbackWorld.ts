@@ -1,3 +1,4 @@
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Preview-only fallback world: minimal placeholders so partial templates can preview.
@@ -15,7 +16,7 @@ import type {
     SimulatorBrowserPage,
     SimulatorPhonePayload,
 } from '../types/session.js';
-import type { SimulatorEntryPoint } from '../types/portableSimulator.js';
+import type { SimulatorEntryPoint } from '@signalsafe/simulator-core/devicePayload';
 
 /** Placeholder id prefix so content can be recognized as fallback (e.g. for a badge or banner). */
 export const PREVIEW_PLACEHOLDER_ID_PREFIX = '__preview_placeholder';
@@ -26,7 +27,7 @@ function needsEmailFallback(
     entry: SimulatorEntryPoint | null,
     email: SimulatorEmailPayload | null,
 ): boolean {
-    if (entry?.app !== 'email') return false;
+    if (entry?.app !== SimulatorApp.Email) return false;
     if (email == null) return true;
     if (entry.screen === 'detail') {
         const hasDetail = email.selectedMessage != null || (email.inbox?.length ?? 0) > 0;
@@ -71,7 +72,7 @@ function needsMessagesFallback(
     entry: SimulatorEntryPoint | null,
     sms: SimulatorSmsPayload | null,
 ): boolean {
-    if (entry?.app !== 'messages') return false;
+    if (entry?.app !== SimulatorApp.Messages) return false;
     if (sms == null) return true;
     if (entry.screen === 'thread_detail') {
         return !sms.thread?.messages?.length;
@@ -96,7 +97,7 @@ function needsBrowserFallback(
     entry: SimulatorEntryPoint | null,
     browser: SimulatorBrowserPayload | null,
 ): boolean {
-    if (entry?.app !== 'internet') return false;
+    if (entry?.app !== SimulatorApp.Internet) return false;
     if (browser == null) return true;
     const pages = browser.pages ?? [];
     const screen = entry.screen ?? 'landing';
@@ -128,7 +129,7 @@ function needsPhoneFallback(
     entry: SimulatorEntryPoint | null,
     phone: SimulatorPhonePayload | null,
 ): boolean {
-    if (entry?.app !== 'phone') return false;
+    if (entry?.app !== SimulatorApp.Phone) return false;
     if (entry.screen === 'incoming_call' && phone?.content == null) return true;
     return false;
 }

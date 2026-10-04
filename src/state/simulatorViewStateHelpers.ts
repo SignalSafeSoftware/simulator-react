@@ -1,15 +1,15 @@
+import {
+    isPhoneScreen,
+    isEmailScreen,
+    isMessagesScreen,
+    isHomeScreen,
+} from '@signalsafe/simulator-core/devicePayload';
 /**
  * Initial view state builders and screen-id guards for the session reducer.
  */
 
-import type {
-    SimulatorViewState,
-    SimulatorApp,
-    PhoneScreenId,
-    EmailScreenId,
-    MessagesScreenId,
-    HomeScreenId,
-} from '../types/session.js';
+import { type SimulatorViewState } from '../types/session.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import {
     DEFAULT_PHONE_SCREEN,
     DEFAULT_EMAIL_SCREEN,
@@ -56,7 +56,7 @@ function initialHomeState(): SimulatorViewState['home'] {
 }
 
 export const initialViewState: SimulatorViewState = {
-    activeApp: 'email',
+    activeApp: SimulatorApp.Email,
     showPrimaryMenu: true,
     phone: initialPhoneState(),
     email: initialEmailState(),
@@ -86,64 +86,39 @@ export function createInitialHomeState(): SimulatorViewState['home'] {
 
 export function getDefaultScreen(app: SimulatorApp): string {
     switch (app) {
-        case 'phone':
+        case SimulatorApp.Phone:
             return DEFAULT_PHONE_SCREEN;
-        case 'email':
+        case SimulatorApp.Email:
             return DEFAULT_EMAIL_SCREEN;
-        case 'messages':
+        case SimulatorApp.Messages:
             return DEFAULT_MESSAGES_SCREEN;
-        case 'internet':
+        case SimulatorApp.Internet:
             return DEFAULT_INTERNET_SCREEN;
-        case 'home':
+        case SimulatorApp.Home:
             return DEFAULT_HOME_SCREEN;
         default:
             return DEFAULT_EMAIL_SCREEN;
     }
 }
 
-export function isPhoneScreen(s: string): s is PhoneScreenId {
-    return [
-        'history',
-        'contacts',
-        'add_contact',
-        'dial',
-        'incoming_call',
-        'voicemail',
-        'directory',
-    ].includes(s);
-}
-
-export function isEmailScreen(s: string): s is EmailScreenId {
-    return ['list', 'detail', 'compose', 'outbox', 'trash'].includes(s);
-}
-
-export function isMessagesScreen(s: string): s is MessagesScreenId {
-    return s === 'threads' || s === 'thread_detail' || s === 'new_thread';
-}
-
 export function isInternetScreen(s: string): s is string {
     return typeof s === 'string' && s.length > 0;
-}
-
-export function isHomeScreen(s: string): s is HomeScreenId {
-    return ['home', 'store', 'settings'].includes(s);
 }
 
 export function parseEntryScreen(app: SimulatorApp, screen: string): string {
     const lower = screen?.toLowerCase() ?? '';
     switch (app) {
-        case 'phone':
+        case SimulatorApp.Phone:
             return isPhoneScreen(lower) ? lower : DEFAULT_PHONE_SCREEN;
-        case 'email':
-            if (['detail', 'list', 'compose', 'outbox', 'trash'].includes(lower)) return lower;
+        case SimulatorApp.Email:
+            if (isEmailScreen(lower)) return lower;
             return DEFAULT_EMAIL_SCREEN;
-        case 'messages':
-            if (lower === 'thread_detail' || lower === 'threads' || lower === 'new_thread')
-                return lower;
+        case SimulatorApp.Messages:
+            if (isMessagesScreen(lower)) return lower;
             return DEFAULT_MESSAGES_SCREEN;
-        case 'internet':
-            return isInternetScreen(lower) ? lower : DEFAULT_INTERNET_SCREEN;
-        case 'home':
+        case SimulatorApp.Internet:
+            return isInternetScreen(screen) ? screen : DEFAULT_INTERNET_SCREEN;
+        case SimulatorApp.Home:
             return isHomeScreen(lower) ? lower : DEFAULT_HOME_SCREEN;
         default:
             return getDefaultScreen(app);

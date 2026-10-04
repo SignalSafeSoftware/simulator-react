@@ -1,7 +1,12 @@
-import type { FormEventHandler, ReactNode } from 'react';
+import { useMemo, useId, type FormEventHandler, type ReactNode } from 'react';
+import { ContactIdentityCard } from '../ui/contacts/ContactIdentityCard.js';
+import { AppSecondaryNav } from '../apps/shared/AppSecondaryNav.js';
+import { useScreenActionMenu } from '../contract/screenActionMenu.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 interface ContactEditorBase {
     identityImage?: ReactNode;
+    /** Optional identity section; hosts supply their own labeled fields and photo controls. */
+    identityContent?: ReactNode;
     notice?: ReactNode;
     defaultName?: string;
     defaultEmail?: string;
@@ -23,6 +28,7 @@ export type PhoneContactEditorProps = ContactEditorBase &
 export default function PhoneContactEditor({
     valueFields,
     identityImage,
+    identityContent,
     notice,
     defaultName,
     defaultEmail,
@@ -38,64 +44,84 @@ export default function PhoneContactEditor({
     numberPlaceholder,
 }: Readonly<PhoneContactEditorProps>) {
     const { t } = useSimulatorLocale();
+    const formId = useId();
+    const menu = useMemo(
+        () => (
+            <AppSecondaryNav
+                actions={[
+                    {
+                        label: saving ? t('contact.saving') : t('contact.save'),
+                        icon: '✓',
+                        disabled: saving || saveDisabled,
+                        type: 'submit',
+                        form: formId,
+                    },
+                    {
+                        label: t('action.cancel'),
+                        icon: '↩',
+                        disabled: saving,
+                        onClick: () => {
+                            if (!saving) onCancel();
+                        },
+                    },
+                ]}
+            />
+        ),
+        [saving, saveDisabled, onCancel, t, formId],
+    );
+    const menuRenderedByShell = useScreenActionMenu(menu);
     return (
-        <form className="simulator-contact-editor contact-editor-panels" onSubmit={onSubmit}>
-            <section className="contact-identity-panel" aria-label={t('contact.identity')}>
-                {identityImage}
-                <label>
-                    {t('contact.name')}
-                    <input
-                        name="name"
-                        defaultValue={defaultName}
-                        maxLength={nameMaxLength}
-                        required
-                        autoComplete="name"
-                    />
-                </label>
-            </section>
-            {notice}
-            {valueFields ?? (
-                <>
-                    <label>
-                        {t('phone.number')}
-                        <input
-                            name="number"
-                            value={number}
-                            onChange={(event) => onNumberChange?.(event.target.value)}
-                            placeholder={numberPlaceholder}
-                            type="tel"
-                            required={numberRequired}
-                        />
-                        {numberHint}
-                    </label>
-                    <label>
-                        {t('contact.email')}
-                        <input
-                            name="email"
-                            type="email"
-                            autoComplete="email"
-                            defaultValue={defaultEmail}
-                        />
-                    </label>
-                </>
-            )}
-            <div className="simulator-editor-actions">
-                <button
-                    type="button"
-                    className="simulator-editor-cancel"
-                    onClick={onCancel}
-                    disabled={saving}
-                >
-                    {t('action.cancel')}
-                </button>
-                <button
-                    type="submit"
-                    className="simulator-editor-save"
-                    disabled={saving || saveDisabled}
-                >
-                    {saving ? t('contact.saving') : t('contact.save')}
-                </button>
-            </div>
-        </form>
+        <>
+            <form
+                id={formId}
+                className="simulator-contact-editor contact-editor-panels"
+                onSubmit={(event) => {
+                    if (saving || saveDisabled) event.preventDefault();
+                    else onSubmit(event);
+                }}
+            >
+                {identityContent ?? (
+                    <ContactIdentityCard image={identityImage}>
+                        <label>
+                            {t('contact.name')}
+                            <input
+                                name="name"
+                                defaultValue={defaultName}
+                                maxLength={nameMaxLength}
+                                required
+                                autoComplete="name"
+                            />
+                        </label>
+                    </ContactIdentityCard>
+                )}
+                {notice}
+                {valueFields ?? (
+                    <>
+                        <label>
+                            {t('phone.number')}
+                            <input
+                                name="number"
+                                value={number}
+                                onChange={(event) => onNumberChange?.(event.target.value)}
+                                placeholder={numberPlaceholder}
+                                type="tel"
+                                required={numberRequired}
+                            />
+                            {numberHint}
+                        </label>
+                        <label>
+                            {t('contact.email')}
+                            <input
+                                name="email"
+                                type="email"
+                                autoComplete="email"
+                                defaultValue={defaultEmail}
+                            />
+                        </label>
+                    </>
+                )}
+            </form>
+            {!menuRenderedByShell && menu}
+        </>
     );
 }

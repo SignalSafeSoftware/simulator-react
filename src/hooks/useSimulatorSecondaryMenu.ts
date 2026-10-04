@@ -1,10 +1,14 @@
+import {
+    SimulatorDispatchActionType,
+    type SimulatorDispatchAction,
+} from '../state/simulatorDispatchActions.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Secondary menu config for phone/email shell in SimulatorWithSession.
  */
 
 import { useMemo } from 'react';
-import type { SimulatorDispatchAction } from '../state/simulatorSessionReducer.js';
 import type { SimulatorSessionState } from '../types/session.js';
 import type { SimulatorCapabilities } from '../utils/simulatorCapabilities.js';
 import { getPhoneLocalNavItems } from '../utils/phoneLocalNavItems.js';
@@ -29,11 +33,12 @@ export function useSimulatorSecondaryMenu(
     const locale = useSimulatorLocale();
     const activeApp = view.activeApp;
     const showSecondaryMenu =
-        !view.showPrimaryMenu && (activeApp === 'phone' || activeApp === 'email');
+        !view.showPrimaryMenu &&
+        (activeApp === SimulatorApp.Phone || activeApp === SimulatorApp.Email);
 
     return useMemo(() => {
         if (!showSecondaryMenu) return undefined;
-        if (activeApp === 'phone') {
+        if (activeApp === SimulatorApp.Phone) {
             const items = getPhoneLocalNavItems(phoneCapabilities, locale).map((item) => ({
                 id: item.id,
                 label: item.label,
@@ -44,10 +49,14 @@ export function useSimulatorSecondaryMenu(
                 activeId: getPhoneSecondaryActiveId(view.phone.screen),
                 onSelect: (id: string) => {
                     if (id !== 'back') {
-                        dispatch({ type: 'NAV_LOCAL', app: 'phone', screen: id });
+                        dispatch({
+                            type: SimulatorDispatchActionType.NavLocal,
+                            app: SimulatorApp.Phone,
+                            screen: id,
+                        });
                     }
                 },
-                onSecondaryBack: () => dispatch({ type: 'BACK' }),
+                onSecondaryBack: () => dispatch({ type: SimulatorDispatchActionType.Back }),
             };
         }
         return {
@@ -59,10 +68,14 @@ export function useSimulatorSecondaryMenu(
             activeId: getEmailSecondaryActiveId(view.email.screen, view.email.stack),
             onSelect: (id: string) => {
                 if (id !== 'back') {
-                    dispatch({ type: 'NAV_LOCAL', app: 'email', screen: id });
+                    dispatch({
+                        type: SimulatorDispatchActionType.NavLocal,
+                        app: SimulatorApp.Email,
+                        screen: id,
+                    });
                 }
             },
-            onSecondaryBack: () => dispatch({ type: 'BACK' }),
+            onSecondaryBack: () => dispatch({ type: SimulatorDispatchActionType.Back }),
         };
     }, [
         locale,

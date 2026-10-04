@@ -1,12 +1,11 @@
+import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { describe, expect, it } from 'vitest';
-import SimulatorReachabilityReport from '../src/components/SimulatorReachabilityReport';
+import SimulatorReachabilityReport from '../src/developer-tools/SimulatorReachabilityReport.js';
 
 import { TestRenderer, act } from './reactTestRenderer';
 
-function flattenText(
-    node: TestRenderer.ReactTestRendererJSON | TestRenderer.ReactTestRendererJSON[] | null,
-): string {
+function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
     if (node == null) {
         return '';
     }
@@ -59,7 +58,7 @@ describe('SimulatorReachabilityReport', () => {
     it('covers toggle, primitive formatting, slash trimming, and unserializable refs', async () => {
         const circular: Record<string, unknown> = {};
         circular.self = circular;
-        let renderer: TestRenderer.ReactTestRenderer | null = null;
+        let renderer: ReactTestRenderer | null = null;
 
         await act(async () => {
             renderer = TestRenderer.create(

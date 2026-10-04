@@ -1,10 +1,26 @@
+import {
+    SimulatorButtonTone,
+    SIM_BTN_SM,
+    joinClasses,
+    SIM_AVATAR,
+    SIM_FLEX_COL,
+    SIM_FLEX_GROW_1,
+    SIM_FLEX_SHRINK_0,
+    SIM_MUTED,
+    SIM_ROUNDED_NONE,
+    SIM_SURFACE_AVATAR,
+    SIM_TEXT_CENTER,
+    SIM_TEXT_MEDIUM,
+    SIM_TEXT_SM,
+} from '../ui/simulatorClasses.js';
+import { UserRound } from 'lucide-react';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Phone app: secondary nav (History, Contacts, Dial, Back) + content. Defaults to History.
  * Wireframe-style segmented local nav; Back from voicemail or secondary Back returns to primary menu.
  */
 import type { ReactNode } from 'react';
-import type { SimulatorDispatchAction } from '../state/simulatorSessionReducer.js';
+import { type SimulatorDispatchAction } from '../state/simulatorDispatchActions.js';
 import type {
     PhoneScreenId,
     SimulatorAction,
@@ -18,8 +34,8 @@ import {
     type SimulatorChoiceRenderProps,
     type SimulatorPhoneIncomingCallExtraRenderProps,
 } from '../ui/renderSlots.js';
-import { SimulatorActions } from '../actions/index.js';
-import SimulatorLocalNav from '../components/SimulatorLocalNav.js';
+import { SimulatorActions } from '../actions/simulatorActions.js';
+import SimulatorLocalNav from '../ui/navigation/SimulatorLocalNav.js';
 import PhoneHistoryList from './PhoneHistoryList.js';
 import PhoneDialView from './PhoneDialView.js';
 import PhoneVoicemailView from './PhoneVoicemailView.js';
@@ -28,19 +44,6 @@ import type { SimulatorCapabilities } from '../utils/simulatorCapabilities.js';
 import { getPhoneLocalNavItems } from '../utils/phoneLocalNavItems.js';
 import { simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles.js';
 import { SimulatorButton, SimulatorList, SimulatorListItem } from '../ui/primitives.js';
-import {
-    joinClasses,
-    SIM_AVATAR,
-    SIM_FLEX_COL,
-    SIM_FLEX_GROW_1,
-    SIM_FLEX_SHRINK_0,
-    SIM_MUTED,
-    SIM_ROUNDED_NONE,
-    SIM_SURFACE_AVATAR,
-    SIM_TEXT_CENTER,
-    SIM_TEXT_MEDIUM,
-    SIM_TEXT_SM,
-} from '../ui/simulatorClasses.js';
 import {
     SIM_PHONE,
     SIM_PHONE_CONTACT_LIST,
@@ -52,14 +55,18 @@ import {
     SIM_SCREEN_HEADER_ROW,
 } from '../ui/semanticSimulatorClasses.js';
 
+function SectionHeading({ children }: Readonly<{ children: ReactNode }>) {
+    return <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>{children}</div>;
+}
+
 function PhoneAddContactEmptyState({ onBack }: Readonly<{ onBack: () => void }>) {
     const screenLocale = useSimulatorLocale();
 
     return (
         <>
-            <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>
+            <SectionHeading>
                 {screenLocale.t('screen.phoneSimulatorView.add.contact')}
-            </div>
+            </SectionHeading>
             <div className={simSpacing.p2}>
                 <p className={simTypo.emptyState}>
                     {screenLocale.t(
@@ -67,7 +74,7 @@ function PhoneAddContactEmptyState({ onBack }: Readonly<{ onBack: () => void }>)
                     )}
                 </p>
                 <SimulatorButton
-                    tone="outline-secondary"
+                    tone={SimulatorButtonTone.NeutralOutline}
                     className="simulator-btn--sm"
                     onClick={onBack}
                 >
@@ -129,6 +136,7 @@ export default function PhoneSimulatorView({
     const screenLocale = useSimulatorLocale();
 
     const localNavItems = getPhoneLocalNavItems(phoneCapabilities, screenLocale);
+    const contactList = contacts ?? [];
     const handleNavSelect = (id: string) => {
         if (id === 'back') {
             onBack?.();
@@ -136,6 +144,16 @@ export default function PhoneSimulatorView({
             onNavigate(id as PhoneScreenId);
         }
     };
+    const localNav = (activeId: string) =>
+        !navRenderedByShell && (
+            <SimulatorLocalNav
+                items={localNavItems}
+                activeId={activeId}
+                onSelect={handleNavSelect}
+                className={localNavClass}
+                aria-label={screenLocale.t('screen.phoneSimulatorView.phone.tabs')}
+            />
+        );
     if (payload == null && screen !== 'dial') {
         return (
             <p className={simTypo.emptyState}>
@@ -169,9 +187,6 @@ export default function PhoneSimulatorView({
         return (
             <div className={joinClasses(simLayout.screenColumn, SIM_PHONE)}>
                 <div className={simLayout.scrollBody}>
-                    <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>
-                        {screenLocale.t('screen.phoneSimulatorView.incoming.call')}
-                    </div>
                     <PhoneIncomingScene
                         content={content}
                         renderChoice={renderChoice}
@@ -186,15 +201,7 @@ export default function PhoneSimulatorView({
                     />
                     {incomingCallExtra}
                 </div>
-                {!navRenderedByShell && (
-                    <SimulatorLocalNav
-                        items={localNavItems}
-                        activeId="history"
-                        onSelect={handleNavSelect}
-                        className={localNavClass}
-                        aria-label={screenLocale.t('screen.phoneSimulatorView.phone.tabs')}
-                    />
-                )}
+                {localNav('history')}
             </div>
         );
     }
@@ -204,9 +211,9 @@ export default function PhoneSimulatorView({
             <div className={simLayout.scrollBody}>
                 {screen === 'history' && (
                     <>
-                        <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>
+                        <SectionHeading>
                             {screenLocale.t('screen.phoneSimulatorView.calls')}
-                        </div>
+                        </SectionHeading>
                         <PhoneHistoryList
                             entries={payload?.callHistory ?? []}
                             incomingCallContent={payload?.content}
@@ -232,13 +239,13 @@ export default function PhoneSimulatorView({
                                 {screenLocale.t('screen.phoneSimulatorView.contacts')}
                             </span>
                             <SimulatorButton
-                                tone="outline-primary"
+                                tone={SimulatorButtonTone.PrimaryOutline}
                                 className={joinClasses(
                                     SIM_ROUNDED_NONE,
                                     simSpacing.py1,
                                     simSpacing.px2,
                                     simSpacing.me2,
-                                    'simulator-btn--sm',
+                                    SIM_BTN_SM,
                                 )}
                                 onClick={() => onNavigate('add_contact')}
                                 aria-label={screenLocale.t(
@@ -251,7 +258,7 @@ export default function PhoneSimulatorView({
                         <SimulatorList
                             className={joinClasses('simulator-list--flush', SIM_PHONE_CONTACT_LIST)}
                         >
-                            {(contacts ?? []).map((c) => (
+                            {contactList.map((c) => (
                                 <SimulatorListItem
                                     key={c.id}
                                     action
@@ -277,7 +284,11 @@ export default function PhoneSimulatorView({
                                             className="simulator-text--primary"
                                             style={{ fontSize: '1.25rem' }}
                                         >
-                                            👤
+                                            <UserRound
+                                                size={24}
+                                                strokeWidth={1.5}
+                                                aria-hidden="true"
+                                            />
                                         </span>
                                     </div>
                                     <div
@@ -310,7 +321,7 @@ export default function PhoneSimulatorView({
                                     </div>
                                     {c.number != null && (
                                         <SimulatorButton
-                                            tone="outline-primary"
+                                            tone={SimulatorButtonTone.PrimaryOutline}
                                             className="simulator-btn--sm"
                                             onClick={() =>
                                                 onAction(SimulatorActions.dialPhone(c.number))
@@ -322,7 +333,7 @@ export default function PhoneSimulatorView({
                                 </SimulatorListItem>
                             ))}
                         </SimulatorList>
-                        {(contacts ?? []).length === 0 && (
+                        {contactList.length === 0 && (
                             <p
                                 className={joinClasses(
                                     simTypo.emptyState,
@@ -342,9 +353,9 @@ export default function PhoneSimulatorView({
 
                 {screen === 'dial' && (
                     <>
-                        <div className={joinClasses(simScreen.header, simSpacing.sectionGap)}>
+                        <SectionHeading>
                             {screenLocale.t('screen.phoneSimulatorView.dial')}
-                        </div>
+                        </SectionHeading>
                         <PhoneDialView
                             onDial={(number) => onAction(SimulatorActions.dialPhone(number))}
                         />
@@ -361,20 +372,17 @@ export default function PhoneSimulatorView({
                 )}
 
                 {screen === 'voicemail' && payload?.voicemailTranscript == null && (
-                    <p className={simTypo.emptyState}>
-                        {screenLocale.t('screen.phoneSimulatorView.no.voicemail')}
-                    </p>
+                    <>
+                        <div className={simScreen.header}>
+                            {screenLocale.t('screen.phoneVoicemailView.voicemail')}
+                        </div>
+                        <p className={simTypo.emptyState}>
+                            {screenLocale.t('screen.phoneSimulatorView.no.voicemail')}
+                        </p>
+                    </>
                 )}
             </div>
-            {!navRenderedByShell && (
-                <SimulatorLocalNav
-                    items={localNavItems}
-                    activeId={screen === 'add_contact' ? 'contacts' : screen}
-                    onSelect={handleNavSelect}
-                    className={localNavClass}
-                    aria-label={screenLocale.t('screen.phoneSimulatorView.phone.tabs')}
-                />
-            )}
+            {localNav(screen === 'add_contact' ? 'contacts' : screen)}
         </div>
     );
 }

@@ -5,15 +5,17 @@ const mockLogging = vi.hoisted(() => ({
     logSimulatorTransition: vi.fn(),
 }));
 
-vi.mock('../src/utils/simulatorTransitionLogger', () => ({
+vi.mock('../src/utils/simulatorTransitionLogger.js', () => ({
     isSimulatorTransitionLoggingEnabled: () => mockLogging.enabled,
     logSimulatorTransition: mockLogging.logSimulatorTransition,
 }));
 
 describe('simulatorSessionReducerWithLogging', () => {
     it('logs transitions only when transition logging is enabled', async () => {
-        const { getInitialSessionState, simulatorSessionReducerWithLogging } =
-            await import('../src/state/simulatorSessionReducer');
+        const { simulatorSessionReducerWithLogging } =
+            await import('../src/state/simulatorSessionReducer.js');
+        const { getInitialSessionState } =
+            await import('../src/state/simulatorSessionInitialState.js');
 
         const state = getInitialSessionState({
             templateId: null,

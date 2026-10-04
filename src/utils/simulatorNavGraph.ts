@@ -4,13 +4,17 @@
  */
 
 import type { SimulatorTemplatePayload } from '../types/session.js';
-import type { SimulatorApp } from '../types/portableSimulator.js';
-import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../constants.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
+import { simulatorBrowserEdges } from './simulatorBrowserEdges.js';
+import {
+    SimulatorPhoneScreenId,
+    SimulatorHomeScreenId,
+} from '@signalsafe/simulator-core/devicePayload';
 import { analyzeReachability } from './simulatorReachability.js';
 
-const APPS: SimulatorApp[] = ['email', 'messages', 'internet', 'phone', 'home'];
-const PHONE_SCREENS = ['history', 'contacts', 'dial', 'incoming_call', 'voicemail', 'directory'];
-const HOME_SCREENS = ['home', 'store', 'settings'];
+const APPS = Object.values(SimulatorApp);
+const PHONE_SCREENS = Object.values(SimulatorPhoneScreenId);
+const HOME_SCREENS = Object.values(SimulatorHomeScreenId);
 
 export interface SimulatorNavGraphNode {
     /** Unique id: app:screen (e.g. email:list, internet:landing). */
@@ -50,15 +54,15 @@ function getDefaultScreen(app: SimulatorApp, payload: SimulatorTemplatePayload):
     const def = payload.device?.secondaryDefaults?.[app];
     if (def != null && String(def).trim() !== '') return String(def).trim();
     switch (app) {
-        case 'email':
+        case SimulatorApp.Email:
             return 'list';
-        case 'messages':
+        case SimulatorApp.Messages:
             return 'threads';
-        case 'phone':
+        case SimulatorApp.Phone:
             return 'history';
-        case 'internet':
+        case SimulatorApp.Internet:
             return payload.browser?.defaultPageId ?? payload.browser?.pages?.[0]?.id ?? 'landing';
-        case 'home':
+        case SimulatorApp.Home:
             return 'home';
         default:
             return 'list';
@@ -85,7 +89,7 @@ function getNodeLabel(
     screen: string,
     payload: SimulatorTemplatePayload,
 ): string | undefined {
-    return app === 'internet'
+    return app === SimulatorApp.Internet
         ? (payload.browser?.pages?.find((page) => page.id === screen)?.title ?? screen)
         : screen;
 }
@@ -159,37 +163,24 @@ function addBrowserEdges(
 ): void {
     for (const page of payload.browser?.pages ?? []) {
         if (!reachableBrowserScreens.includes(page.id)) continue;
-        const fromId = nodeId('internet', page.id);
+        const fromId = nodeId(SimulatorApp.Internet, page.id);
 
-        for (const button of page.buttons ?? []) {
-            const targetPageId = (button as { targetPageId?: string }).targetPageId;
-            if (targetPageId != null && reachableBrowserScreens.includes(targetPageId)) {
+        for (const edge of simulatorBrowserEdges(page)) {
+            if (reachableBrowserScreens.includes(edge.targetPageId)) {
                 edges.push({
                     from: fromId,
-                    to: nodeId('internet', targetPageId),
-                    action: 'button_click',
-                    label: (button as { label?: string }).label,
+                    to: nodeId(SimulatorApp.Internet, edge.targetPageId),
+                    action: edge.action,
+                    label: edge.label,
                 });
             }
-        }
-
-        const submitTargetPageId = page.submitTargetPageId ?? DEFAULT_BROWSER_SUBMIT_TARGET;
-        if (
-            submitTargetPageId !== page.id &&
-            reachableBrowserScreens.includes(submitTargetPageId)
-        ) {
-            edges.push({
-                from: fromId,
-                to: nodeId('internet', submitTargetPageId),
-                action: 'form_submit',
-            });
         }
     }
 }
 
 function addTabEdges(
     edges: SimulatorNavGraphEdge[],
-    app: 'phone' | 'home',
+    app: typeof SimulatorApp.Phone | typeof SimulatorApp.Home,
     screens: readonly string[],
     reachableScreens: readonly string[],
 ): void {
@@ -204,7 +195,7 @@ function addTabEdges(
 
 function addContentLinkEdges(
     edges: SimulatorNavGraphEdge[],
-    from: { app: 'email' | 'messages'; screen: string },
+    from: { app: typeof SimulatorApp.Email | typeof SimulatorApp.Messages; screen: string },
     links: Array<{ href?: string }> | undefined,
     browserPages: Array<{ id?: string; url?: string }>,
     reachableBrowserScreens: readonly string[],
@@ -215,7 +206,7 @@ function addContentLinkEdges(
         if (pageId != null && reachableBrowserScreens.includes(pageId)) {
             edges.push({
                 from: nodeId(from.app, from.screen),
-                to: nodeId('internet', pageId),
+                to: nodeId(SimulatorApp.Internet, pageId),
                 action: 'click_link',
                 label: link.href ?? undefined,
             });
@@ -236,7 +227,7 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
     const defaultScreen = (app: SimulatorApp): string => getDefaultScreen(app, payload);
 
     // Entry
-    const entryApp = report.entryApp ?? 'email';
+    const entryApp = report.entryApp ?? SimulatorApp.Email;
     const entryScreen =
         payload.entryPoint?.app === entryApp && payload.entryPoint?.screen != null
             ? String(payload.entryPoint.screen)
@@ -253,8 +244,8 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
     addPairedEdge(
         edges,
         reachableScreens.email,
-        { app: 'email', screen: 'list' },
-        { app: 'email', screen: 'detail' },
+        { app: SimulatorApp.Email, screen: 'list' },
+        { app: SimulatorApp.Email, screen: 'detail' },
         'open_email',
         'back',
     );
@@ -263,16 +254,16 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
     addPairedEdge(
         edges,
         reachableScreens.messages,
-        { app: 'messages', screen: 'threads' },
-        { app: 'messages', screen: 'thread_detail' },
+        { app: SimulatorApp.Messages, screen: 'threads' },
+        { app: SimulatorApp.Messages, screen: 'thread_detail' },
         'open_thread',
         'back',
     );
     addPairedEdge(
         edges,
         reachableScreens.messages,
-        { app: 'messages', screen: 'threads' },
-        { app: 'messages', screen: 'new_thread' },
+        { app: SimulatorApp.Messages, screen: 'threads' },
+        { app: SimulatorApp.Messages, screen: 'new_thread' },
         'new_thread',
         'back',
     );
@@ -281,10 +272,10 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
     addBrowserEdges(edges, payload, reachableScreens.internet);
 
     // Phone: tab switching between screens
-    addTabEdges(edges, 'phone', PHONE_SCREENS, reachableScreens.phone);
+    addTabEdges(edges, SimulatorApp.Phone, PHONE_SCREENS, reachableScreens.phone);
 
     // Home: tab between home, store, settings
-    addTabEdges(edges, 'home', HOME_SCREENS, reachableScreens.home);
+    addTabEdges(edges, SimulatorApp.Home, HOME_SCREENS, reachableScreens.home);
 
     // Cross-app: click_link from email:detail or messages:thread_detail to internet:pageId
     const browserPages = payload.browser?.pages ?? [];
@@ -293,7 +284,7 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
     if (reachableScreens.email.includes('detail')) {
         addContentLinkEdges(
             edges,
-            { app: 'email', screen: 'detail' },
+            { app: SimulatorApp.Email, screen: 'detail' },
             emailLinks,
             browserPages,
             reachableScreens.internet,
@@ -305,7 +296,7 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
     if (reachableScreens.messages.includes('thread_detail')) {
         addContentLinkEdges(
             edges,
-            { app: 'messages', screen: 'thread_detail' },
+            { app: SimulatorApp.Messages, screen: 'thread_detail' },
             threadLinks,
             browserPages,
             reachableScreens.internet,

@@ -1,6 +1,10 @@
-import type { SimulatorDispatchAction } from '../state/simulatorDispatchActions.js';
+import {
+    SimulatorDispatchActionType,
+    type SimulatorDispatchAction,
+} from '../state/simulatorDispatchActions.js';
 import { simulatorSessionReducer } from '../state/simulatorSessionReducer.js';
-import type { SimulatorSessionState, SimulatorApp } from '../types/session.js';
+import { type SimulatorSessionState } from '../types/session.js';
+import type { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { getCurrentScreenForApp } from '../types/session.js';
 
 export interface SimulatorNavigationLocation {
@@ -29,18 +33,18 @@ function navigationKind(
     action: SimulatorDispatchAction,
 ): SimulatorNavigationRequest['kind'] | undefined {
     switch (action.type) {
-        case 'SWITCH_APP':
+        case SimulatorDispatchActionType.SwitchApp:
             return 'app';
-        case 'NAV_LOCAL':
-        case 'BROWSER_SCREEN':
+        case SimulatorDispatchActionType.NavLocal:
+        case SimulatorDispatchActionType.BrowserScreen:
             return 'screen';
-        case 'BACK':
+        case SimulatorDispatchActionType.Back:
             return 'back';
-        case 'BACK_TO_PRIMARY':
+        case SimulatorDispatchActionType.BackToPrimary:
             return 'primary';
-        case 'CANCEL':
+        case SimulatorDispatchActionType.Cancel:
             return 'cancel';
-        case 'SIMULATOR_ACTION':
+        case SimulatorDispatchActionType.SimulatorAction:
             if (action.action.type === 'navigate_screen') return 'screen';
             if (action.action.type === 'open_app') return 'app';
             return undefined;

@@ -1,3 +1,4 @@
+import SimulatorNavIcon from '../ui/navigation/SimulatorNavIcon.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
  * Device shell: frame, bottom nav, optional secondary menu, exit slot.
@@ -145,7 +146,7 @@ function PhoneSimulatorShell({
                         >
                             {item.icon != null && item.icon !== '' && (
                                 <span className={simShell.navTabLabel} aria-hidden>
-                                    {item.icon}
+                                    <SimulatorNavIcon icon={item.icon} />
                                 </span>
                             )}
                             <span>{item.label}</span>
@@ -176,7 +177,7 @@ function PhoneSimulatorShell({
                             onClick={() => onChannelChange(ch.id)}
                         >
                             <span className={simShell.navTabLabel} aria-hidden>
-                                {ch.icon}
+                                <SimulatorNavIcon icon={ch.icon} />
                             </span>
                             <span>{screenLocale.t(ch.labelKey)}</span>
                         </button>

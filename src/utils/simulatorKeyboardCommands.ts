@@ -5,7 +5,7 @@ import { englishLocale } from '../i18n/englishLocale.js';
  * Preserves normal typing: ignores events when target is input, textarea, or contenteditable.
  */
 
-import type { SimulatorApp } from '../types/portableSimulator.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { SimulatorChannel } from '../types/session.js';
 import { channelToApp } from '../types/session.js';
 
@@ -62,7 +62,7 @@ export const SIMULATOR_KEYBOARD_COMMANDS = [
     },
 ] as const;
 
-const LIST_NAV_EVENT = 'simulator-keyboard-list-nav';
+export const LIST_NAV_EVENT = 'simulator-keyboard-list-nav';
 
 /** Dispatch a custom event for list nav so list views can optionally handle next/prev focus. */
 function dispatchListNav(direction: 'next' | 'prev'): void {
@@ -106,7 +106,11 @@ function handleSearchShortcut(
     handlers: SimulatorKeyboardCommandHandlers,
     context: { activeApp: SimulatorApp; activeScreen: string },
 ): { handled: boolean } | null {
-    if (key !== '/' || context.activeApp !== 'phone' || context.activeScreen !== 'contacts') {
+    if (
+        key !== '/' ||
+        context.activeApp !== SimulatorApp.Phone ||
+        context.activeScreen !== 'contacts'
+    ) {
         return null;
     }
     e.preventDefault();
@@ -195,9 +199,6 @@ export function handleSimulatorKeyboard(
 
     return { handled: false };
 }
-
-/** Event name list views can listen to for Alt+ArrowDown/Alt+ArrowUp (detail.direction: 'next' | 'prev'). */
-export const SIMULATOR_LIST_NAV_EVENT = LIST_NAV_EVENT;
 
 /**
  * Focus the first element with data-simulator-search (e.g. contacts search input).

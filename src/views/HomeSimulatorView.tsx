@@ -1,23 +1,6 @@
-import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
-/**
- * Home app: dashboard (Store/Settings launcher), Store (app cards), Settings (sections + inputs).
- * Wireframe: centered headers, search bar, rectangular buttons/cards. Store and Settings are subviews; Back returns to Home.
- */
-import { useState, type ReactNode } from 'react';
-import { SimulatorDetailBackBar } from '../components/SimulatorDetail.js';
-import SimulatorSearchInput from '../components/SimulatorSearchInput.js';
-import type {
-    HomeScreenId,
-    SimulatorAction,
-    SimulatorHomePayload,
-    SimulatorHomeStoreApp,
-    SimulatorHomeSettingsSection,
-} from '../types/session.js';
-import { SimulatorActions } from '../actions/index.js';
-import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles.js';
-import type { SimulatorCapabilities } from '../utils/simulatorCapabilities.js';
-import { SimulatorButton } from '../ui/primitives.js';
 import {
+    SimulatorButtonTone,
+    SIM_BTN_SM,
     joinClasses,
     SIM_AVATAR,
     SIM_FLEX_COL,
@@ -32,6 +15,26 @@ import {
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
 } from '../ui/simulatorClasses.js';
+import { UserRound } from 'lucide-react';
+import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
+/**
+ * Home app: dashboard (Store/Settings launcher), Store (app cards), Settings (sections + inputs).
+ * Wireframe: centered headers, search bar, rectangular buttons/cards. Store and Settings are subviews; Back returns to Home.
+ */
+import { useState, type ReactNode } from 'react';
+import { SimulatorDetailBackBar } from '../ui/layout/SimulatorDetail.js';
+import SimulatorSearchInput from '../ui/lists/SimulatorSearchInput.js';
+import type {
+    HomeScreenId,
+    SimulatorAction,
+    SimulatorHomePayload,
+    SimulatorHomeStoreApp,
+    SimulatorHomeSettingsSection,
+} from '../types/session.js';
+import { SimulatorActions } from '../actions/simulatorActions.js';
+import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../simulatorStyles.js';
+import type { SimulatorCapabilities } from '../utils/simulatorCapabilities.js';
+import { SimulatorButton } from '../ui/primitives.js';
 import {
     SIM_HOME_SETTINGS_BACK_BAR,
     SIM_HOME_SETTINGS_HEADER,
@@ -60,7 +63,7 @@ function StoreAppIcon({ className }: Readonly<{ className?: string }>) {
             aria-hidden
         >
             <span className="simulator-text--primary" style={{ fontSize: '1.5rem' }}>
-                👤
+                <UserRound size={24} strokeWidth={1.5} aria-hidden="true" />
             </span>
         </div>
     );
@@ -141,8 +144,8 @@ function HomeStoreScreen({
                                     {screenLocale.t('screen.homeSimulatorView.app')}
                                 </span>
                                 <SimulatorButton
-                                    tone="primary"
-                                    className={joinClasses('simulator-btn--sm', SIM_ROUNDED_NONE)}
+                                    tone={SimulatorButtonTone.Primary}
+                                    className={joinClasses(SIM_BTN_SM, SIM_ROUNDED_NONE)}
                                     onClick={() => onAction(SimulatorActions.openStore())}
                                     aria-label={screenLocale.t(
                                         'screen.homeSimulatorView.download.value1',
@@ -267,57 +270,60 @@ function HomeDashboard({
     onAction: (action: SimulatorAction) => void;
 }>) {
     const screenLocale = useSimulatorLocale();
+    const launchers = [
+        hasStore && {
+            screen: 'store' as const,
+            label: screenLocale.t('screen.homeSimulatorView.store'),
+            action: SimulatorActions.openStore(),
+        },
+        hasSettings && {
+            screen: 'settings' as const,
+            label: screenLocale.t('screen.homeSimulatorView.settings'),
+            action: SimulatorActions.openSettings(),
+        },
+    ].filter((launcher) => launcher !== false);
 
     return (
         <div className={simLayout.stack}>
-            {(hasStore || hasSettings) && (
-                <div className={joinClasses(simLayout.actionsRow, simSpacing.mb3)}>
-                    {hasStore && (
-                        <SimulatorButton
-                            tone="light"
-                            className={dashboardNavBtnClass}
-                            onClick={() => {
-                                onAction(SimulatorActions.openStore());
-                                onNavigate('store');
-                            }}
-                            aria-label={screenLocale.t('screen.homeSimulatorView.store')}
-                        >
-                            {screenLocale.t('screen.homeSimulatorView.store')}
-                        </SimulatorButton>
-                    )}
-                    {hasSettings && (
-                        <SimulatorButton
-                            tone="light"
-                            className={dashboardNavBtnClass}
-                            onClick={() => {
-                                onAction(SimulatorActions.openSettings());
-                                onNavigate('settings');
-                            }}
-                            aria-label={screenLocale.t('screen.homeSimulatorView.settings')}
-                        >
-                            {screenLocale.t('screen.homeSimulatorView.settings')}
-                        </SimulatorButton>
-                    )}
-                </div>
-            )}
-            {widgets.length > 0 && (
-                <div className={joinClasses(simLayout.actionsRow, 'simulator-flex--wrap')}>
-                    {widgets.map((w) => (
-                        <div
-                            key={w.id}
-                            className={dashboardTileClass}
-                            style={{ minWidth: 80, minHeight: 64 }}
-                        >
-                            {w.label}
-                        </div>
-                    ))}
-                </div>
-            )}
-            {widgets.length === 0 && !hasStore && !hasSettings && (
-                <p className={simTypo.emptyState}>
-                    {screenLocale.t('screen.homeSimulatorView.no.content.on.home')}
-                </p>
-            )}
+            <h2 className={simScreen.header}>{screenLocale.t('nav.home')}</h2>
+            <div className="simulator-page-content">
+                {launchers.length > 0 && (
+                    <div className={joinClasses(simLayout.actionsRow, simSpacing.mb3)}>
+                        {launchers.map(({ screen, label, action }) => (
+                            <SimulatorButton
+                                key={screen}
+                                tone={SimulatorButtonTone.Light}
+                                className={dashboardNavBtnClass}
+                                onClick={() => {
+                                    onAction(action);
+                                    onNavigate(screen);
+                                }}
+                                aria-label={label}
+                            >
+                                {label}
+                            </SimulatorButton>
+                        ))}
+                    </div>
+                )}
+                {widgets.length > 0 && (
+                    <div className={joinClasses(simLayout.actionsRow, 'simulator-flex--wrap')}>
+                        {widgets.map((w) => (
+                            <div
+                                key={w.id}
+                                className={dashboardTileClass}
+                                style={{ minWidth: 80, minHeight: 64 }}
+                            >
+                                {w.label}
+                            </div>
+                        ))}
+                    </div>
+                )}
+                {widgets.length === 0 && launchers.length === 0 && (
+                    <p className={simTypo.emptyState}>
+                        {screenLocale.t('screen.homeSimulatorView.no.content.on.home')}
+                    </p>
+                )}
+            </div>
         </div>
     );
 }

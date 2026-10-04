@@ -6,7 +6,7 @@ import { englishLocale } from '../i18n/englishLocale.js';
  */
 
 import type { SimulatorViewState, SimulatorTemplatePayload } from '../types/session.js';
-import type { SimulatorApp } from '../types/portableSimulator.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 
 export interface SimulatorScreenMetadata {
     /** Current app. */
@@ -28,11 +28,11 @@ export interface SimulatorScreenMetadata {
 }
 
 const APP_LABELS: Record<SimulatorApp, string> = {
-    email: 'Email',
-    messages: 'Messages',
-    internet: 'Internet',
-    phone: 'Phone',
-    home: 'Home',
+    [SimulatorApp.Email]: 'Email',
+    [SimulatorApp.Messages]: 'Messages',
+    [SimulatorApp.Internet]: 'Internet',
+    [SimulatorApp.Phone]: 'Phone',
+    [SimulatorApp.Home]: 'Home',
 };
 
 /** Human labels for phone app screens (metadata/debug). */
@@ -63,7 +63,7 @@ function buildEmailMetadata(view: SimulatorViewState['email']): SimulatorScreenM
     const screen = view.screen;
     const isDetail = screen === 'detail';
     return {
-        app: 'email',
+        app: SimulatorApp.Email,
         screen,
         parentScreen: isDetail ? 'list' : null,
         showBack: isDetail && view.stack.length > 0,
@@ -79,7 +79,7 @@ function buildMessagesMetadata(view: SimulatorViewState['messages']): SimulatorS
     const isDetail = screen === 'thread_detail';
     const isNewThread = screen === 'new_thread';
     return {
-        app: 'messages',
+        app: SimulatorApp.Messages,
         screen,
         parentScreen: isDetail || isNewThread ? 'threads' : null,
         showBack: (isDetail || isNewThread) && view.stack.length > 0,
@@ -124,7 +124,7 @@ function buildInternetMetadata(
     const screen = view.screen;
     const pageTitle = getInternetPageTitle(payload, screen);
     return {
-        app: 'internet',
+        app: SimulatorApp.Internet,
         screen,
         parentScreen: getStackParent(view.stack),
         showBack: view.stack.length > 0,
@@ -138,7 +138,7 @@ function buildInternetMetadata(
 function buildPhoneMetadata(view: SimulatorViewState['phone']): SimulatorScreenMetadata {
     const screen = view.screen;
     return {
-        app: 'phone',
+        app: SimulatorApp.Phone,
         screen,
         parentScreen: getStackParent(view.stack),
         showBack: view.stack.length > 0,
@@ -153,7 +153,7 @@ function buildHomeMetadata(view: SimulatorViewState['home']): SimulatorScreenMet
     const screen = view.screen;
     const isHome = screen === 'home';
     return {
-        app: 'home',
+        app: SimulatorApp.Home,
         screen,
         parentScreen: isHome ? null : 'home',
         showBack: !isHome,
@@ -179,15 +179,15 @@ export function getScreenMetadata(
     const app = view.activeApp;
 
     switch (app) {
-        case 'email':
+        case SimulatorApp.Email:
             return buildEmailMetadata(view.email);
-        case 'messages':
+        case SimulatorApp.Messages:
             return buildMessagesMetadata(view.messages);
-        case 'internet':
+        case SimulatorApp.Internet:
             return buildInternetMetadata(view.internet, payload);
-        case 'phone':
+        case SimulatorApp.Phone:
             return buildPhoneMetadata(view.phone);
-        case 'home':
+        case SimulatorApp.Home:
             return buildHomeMetadata(view.home);
         default: {
             const screen = getFallbackScreen(view, app);

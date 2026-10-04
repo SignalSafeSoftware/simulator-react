@@ -1,5 +1,7 @@
+import type { ReactTestRenderer } from 'react-test-renderer';
 import { createElement } from 'react';
-import TestRenderer, { act } from 'react-test-renderer';
+import TestRenderer from 'react-test-renderer';
+import { act } from 'react-test-renderer';
 import { expect, it, vi } from 'vitest';
 import EmailComposeView from '../src/views/EmailComposeView.js';
 
@@ -16,7 +18,7 @@ it('keeps controlled Bcc and body on failure and clears only after success', asy
         .mockResolvedValueOnce(undefined);
     const onDraftChange = vi.fn();
     const onCancel = vi.fn();
-    let view: TestRenderer.ReactTestRenderer;
+    let view: ReactTestRenderer;
     await act(async () => {
         view = TestRenderer.create(
             createElement(EmailComposeView, { draft, onSend, onDraftChange, onCancel }),

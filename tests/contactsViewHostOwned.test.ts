@@ -1,3 +1,4 @@
+import type { ReactTestInstance, ReactTestRenderer } from 'react-test-renderer';
 import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -18,10 +19,7 @@ const PHONE_NAV = {
     onPhoneNavSelect: vi.fn(),
 };
 
-function findWithClass(
-    root: TestRenderer.ReactTestInstance,
-    className: string,
-): TestRenderer.ReactTestInstance | null {
+function findWithClass(root: ReactTestInstance, className: string): ReactTestInstance | null {
     const nodes = root.findAll(
         (node) =>
             typeof node.props.className === 'string' && node.props.className.includes(className),
@@ -30,7 +28,7 @@ function findWithClass(
     return nodes[0] ?? null;
 }
 
-function clickContactRow(root: TestRenderer.ReactTestInstance, displayName: string): void {
+function clickContactRow(root: ReactTestInstance, displayName: string): void {
     const row = root
         .findAll(
             (node) =>
@@ -52,7 +50,7 @@ function clickContactRow(root: TestRenderer.ReactTestInstance, displayName: stri
 }
 
 describe('ContactsView host-owned phone contact detail', () => {
-    let renderer: TestRenderer.ReactTestRenderer | null = null;
+    let renderer: ReactTestRenderer | null = null;
 
     afterEach(() => {
         renderer?.unmount();

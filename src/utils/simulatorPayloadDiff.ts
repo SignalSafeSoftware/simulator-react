@@ -31,6 +31,19 @@ function idsFromArray(arr: unknown): string[] {
         .filter(Boolean);
 }
 
+function arrayLength(value: unknown): number {
+    return Array.isArray(value) ? value.length : 0;
+}
+
+function childArrayLength(
+    parent: Record<string, unknown> | undefined,
+    key: string,
+    childKey: string,
+): number {
+    const child = parent?.[key];
+    return isRecord(child) ? arrayLength(child[childKey]) : 0;
+}
+
 function setDiff(left: string[], right: string[]): { added: string[]; removed: string[] } {
     const l = new Set(left);
     const r = new Set(right);
@@ -172,12 +185,8 @@ function addPhoneDiff(
         });
     }
 
-    const leftHistoryLength = Array.isArray(leftPhone?.history)
-        ? (leftPhone.history as unknown[]).length
-        : 0;
-    const rightHistoryLength = Array.isArray(rightPhone?.history)
-        ? (rightPhone.history as unknown[]).length
-        : 0;
+    const leftHistoryLength = arrayLength(leftPhone?.history);
+    const rightHistoryLength = arrayLength(rightPhone?.history);
     if (leftHistoryLength !== rightHistoryLength) {
         out.push({
             section: 'phone',
@@ -228,12 +237,8 @@ function addMessagesDiff(
 ): void {
     const leftMessages = left.messages as Record<string, unknown> | undefined;
     const rightMessages = right.messages as Record<string, unknown> | undefined;
-    const leftThreads = Array.isArray(leftMessages?.threads)
-        ? (leftMessages.threads as unknown[]).length
-        : 0;
-    const rightThreads = Array.isArray(rightMessages?.threads)
-        ? (rightMessages.threads as unknown[]).length
-        : 0;
+    const leftThreads = arrayLength(leftMessages?.threads);
+    const rightThreads = arrayLength(rightMessages?.threads);
     if (leftThreads !== rightThreads) {
         out.push({
             section: 'messages',
@@ -241,18 +246,8 @@ function addMessagesDiff(
         });
     }
 
-    const leftThreadDetail = isRecord(leftMessages?.thread_detail)
-        ? leftMessages.thread_detail
-        : {};
-    const rightThreadDetail = isRecord(rightMessages?.thread_detail)
-        ? rightMessages.thread_detail
-        : {};
-    const leftMessageCount = Array.isArray(leftThreadDetail.messages)
-        ? (leftThreadDetail.messages as unknown[]).length
-        : 0;
-    const rightMessageCount = Array.isArray(rightThreadDetail.messages)
-        ? (rightThreadDetail.messages as unknown[]).length
-        : 0;
+    const leftMessageCount = childArrayLength(leftMessages, 'thread_detail', 'messages');
+    const rightMessageCount = childArrayLength(rightMessages, 'thread_detail', 'messages');
     if (leftMessageCount !== rightMessageCount) {
         out.push({
             section: 'messages',
@@ -295,12 +290,8 @@ function addInternetDiff(
         }
     }
 
-    const leftForms = Array.isArray(leftInternet?.forms)
-        ? (leftInternet.forms as unknown[]).length
-        : 0;
-    const rightForms = Array.isArray(rightInternet?.forms)
-        ? (rightInternet.forms as unknown[]).length
-        : 0;
+    const leftForms = arrayLength(leftInternet?.forms);
+    const rightForms = arrayLength(rightInternet?.forms);
     if (leftForms !== rightForms) {
         out.push({
             section: 'internet',
@@ -316,28 +307,12 @@ function addHomeDiff(
 ): void {
     const leftHome = left.home as Record<string, unknown> | undefined;
     const rightHome = right.home as Record<string, unknown> | undefined;
-    const leftWidgets = Array.isArray(leftHome?.widgets)
-        ? (leftHome.widgets as unknown[]).length
-        : 0;
-    const rightWidgets = Array.isArray(rightHome?.widgets)
-        ? (rightHome.widgets as unknown[]).length
-        : 0;
-    const leftStoreApps =
-        isRecord(leftHome?.store) && Array.isArray(leftHome.store.featured_apps)
-            ? (leftHome.store.featured_apps as unknown[]).length
-            : 0;
-    const rightStoreApps =
-        isRecord(rightHome?.store) && Array.isArray(rightHome.store.featured_apps)
-            ? (rightHome.store.featured_apps as unknown[]).length
-            : 0;
-    const leftSettingsSections =
-        isRecord(leftHome?.settings) && Array.isArray(leftHome.settings.sections)
-            ? (leftHome.settings.sections as unknown[]).length
-            : 0;
-    const rightSettingsSections =
-        isRecord(rightHome?.settings) && Array.isArray(rightHome.settings.sections)
-            ? (rightHome.settings.sections as unknown[]).length
-            : 0;
+    const leftWidgets = arrayLength(leftHome?.widgets);
+    const rightWidgets = arrayLength(rightHome?.widgets);
+    const leftStoreApps = childArrayLength(leftHome, 'store', 'featured_apps');
+    const rightStoreApps = childArrayLength(rightHome, 'store', 'featured_apps');
+    const leftSettingsSections = childArrayLength(leftHome, 'settings', 'sections');
+    const rightSettingsSections = childArrayLength(rightHome, 'settings', 'sections');
 
     if (
         leftWidgets !== rightWidgets ||

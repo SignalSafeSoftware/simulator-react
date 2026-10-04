@@ -5,7 +5,7 @@ import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
  */
 import { useEffect, useRef, type ReactNode } from 'react';
 import type { SimulatorAction, SimulatorBrowserPayload } from '../types/session.js';
-import { SimulatorActions } from '../actions/index.js';
+import { SimulatorActions } from '../actions/simulatorActions.js';
 import BrowserPageRenderer from './BrowserPageRenderer.js';
 import type {
     SimulatorChoiceRenderProps,

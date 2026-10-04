@@ -70,9 +70,24 @@ export const SIM_SHELL_FRAME = 'simulator-shell__frame';
 export const SIM_SHELL_BODY = 'simulator-shell__body';
 export const SIM_SHELL_NAV = 'simulator-shell__nav';
 
-export function simBtnToneClass(tone?: string): string {
-    const mapped = normalizeSimBtnTone(tone);
-    return `${SIM_BTN} simulator-btn--${mapped}`;
+/** Canonical simulator button appearance values. */
+export const SimulatorButtonTone = Object.freeze({
+    Primary: 'primary',
+    Neutral: 'neutral',
+    Success: 'success',
+    Danger: 'danger',
+    Link: 'link',
+    Light: 'light',
+    Dark: 'dark',
+    PrimaryOutline: 'primary-outline',
+    NeutralOutline: 'neutral-outline',
+    DarkOutline: 'dark-outline',
+} as const);
+
+export type SimulatorButtonTone = (typeof SimulatorButtonTone)[keyof typeof SimulatorButtonTone];
+
+export function simBtnToneClass(tone: SimulatorButtonTone = SimulatorButtonTone.Neutral): string {
+    return `${SIM_BTN} simulator-btn--${tone}`;
 }
 
 export function simAlertToneClass(tone: 'warning' | 'danger' | 'info' = 'warning'): string {
@@ -81,24 +96,6 @@ export function simAlertToneClass(tone: 'warning' | 'danger' | 'info' = 'warning
 
 export function simBadgeToneClass(tone: string): string {
     return `${SIM_BADGE} simulator-badge--${tone}`;
-}
-
-function normalizeSimBtnTone(tone?: string): string {
-    if (!tone) return 'neutral';
-    const map: Record<string, string> = {
-        primary: 'primary',
-        secondary: 'neutral',
-        success: 'success',
-        danger: 'danger',
-        neutral: 'neutral',
-        link: 'link',
-        light: 'light',
-        dark: 'dark',
-        'outline-primary': 'primary-outline',
-        'outline-secondary': 'neutral-outline',
-        'outline-dark': 'dark-outline',
-    };
-    return map[tone] ?? tone.replace(/^outline-/, '');
 }
 
 export function joinClasses(...parts: Array<string | false | null | undefined>): string {

@@ -116,7 +116,6 @@ export const screenEnglish = {
     'screen.homeSimulatorView.no.matching.settings': 'No matching settings.',
     'screen.homeSimulatorView.no.content.on.home': 'No content on home.',
     'screen.messagesThreadListView.no.conversations': 'No conversations.',
-    'screen.messagesThreadListView.no.results.for': 'No results for "',
     'screen.messagesThreadListView.threads': 'Threads',
     'screen.messagesThreadListView.new.thread': 'New thread',
     'screen.messagesThreadListView.search.threads': 'Search threads',

@@ -1,3 +1,4 @@
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 /**
  * Maps simulator actions to normalized interaction events.
  * Single event shape: kind, app, screen, session context, action_key when relevant, metadata.
@@ -12,22 +13,22 @@ import type { SimulatorInteractionEvent, SimulatorEventKind } from '../types/sim
 
 function getCurrentScreen(view: SimulatorViewState, app: string): string {
     switch (app) {
-        case 'phone':
+        case SimulatorApp.Phone:
             return view.phone.screen;
-        case 'email':
+        case SimulatorApp.Email:
             return view.email.screen;
-        case 'messages':
+        case SimulatorApp.Messages:
             return view.messages.screen;
-        case 'internet':
+        case SimulatorApp.Internet:
             return view.internet.screen;
-        case 'home':
+        case SimulatorApp.Home:
             return view.home.screen;
         default:
             return '';
     }
 }
 
-/** Session context from payload (flat fields for compatibility). */
+/** Session identity fields required by the interaction telemetry contract. */
 function getSessionContext(
     payload: SimulatorTemplatePayload | null,
 ): Pick<SimulatorInteractionEvent, 'template_id' | 'template_key' | 'run_id' | 'attempt_id'> {

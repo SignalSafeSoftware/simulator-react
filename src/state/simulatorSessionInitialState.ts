@@ -1,8 +1,10 @@
+import { isEmailScreen, isMessagesScreen } from '@signalsafe/simulator-core/devicePayload';
+import { isHomeScreen, isPhoneScreen } from '@signalsafe/simulator-core/devicePayload';
 /**
  * Build initial session state from payload (entry_point when present).
  */
 
-import type { SimulatorApp } from '../types/portableSimulator.js';
+import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { SimulatorSessionState } from '../types/session.js';
 import { DEFAULT_INTERNET_SCREEN, DEFAULT_HOME_SCREEN } from '../types/session.js';
 import { validateSimulatorPayload } from '../utils/validateSimulatorPayload.js';
@@ -13,8 +15,6 @@ import {
     createInitialPhoneState,
     getDefaultScreen,
     initialViewState,
-    isHomeScreen,
-    isPhoneScreen,
     parseEntryScreen,
 } from './simulatorViewStateHelpers.js';
 
@@ -22,16 +22,16 @@ function getEntryAppFromPayload(payload: SimulatorSessionState['payload']): Simu
     if (payload.entryPoint?.app != null) return payload.entryPoint.app;
     switch (payload.channel) {
         case 'sms':
-            return 'messages';
+            return SimulatorApp.Messages;
         case 'browser':
-            return 'internet';
+            return SimulatorApp.Internet;
         case 'phone':
         case 'contacts':
-            return 'phone';
+            return SimulatorApp.Phone;
         case 'home':
-            return 'home';
+            return SimulatorApp.Home;
         default:
-            return 'email';
+            return SimulatorApp.Email;
     }
 }
 
@@ -40,7 +40,7 @@ function resolveInitialInternetScreen(
     app: SimulatorApp,
     entryScreen: string,
 ): string {
-    if (app !== 'internet') return DEFAULT_INTERNET_SCREEN;
+    if (app !== SimulatorApp.Internet) return DEFAULT_INTERNET_SCREEN;
     const pages = payload.browser?.pages;
     const defaultId = payload.browser?.defaultPageId ?? DEFAULT_INTERNET_SCREEN;
     if (pages?.length === 0 || pages == null) return defaultId;
@@ -59,20 +59,22 @@ export function getInitialSessionState(
     const view: SimulatorSessionState['view'] = {
         ...initialViewState,
         activeApp: app,
-        showPrimaryMenu: app !== 'phone' && app !== 'email',
+        showPrimaryMenu: app !== SimulatorApp.Phone && app !== SimulatorApp.Email,
         phone: createInitialPhoneState(),
         email: {
             ...createInitialEmailState(),
-            screen: app === 'email' && entryScreen === 'detail' ? 'detail' : 'list',
+            screen: app === SimulatorApp.Email && isEmailScreen(entryScreen) ? entryScreen : 'list',
             selectedMessageId:
-                app === 'email' && entryScreen === 'detail'
+                app === SimulatorApp.Email && entryScreen === 'detail'
                     ? (payload.email?.selectedMessageId ?? payload.email?.inbox?.[0]?.id ?? null)
                     : null,
         },
         messages: {
             ...createInitialMessagesState(),
             screen:
-                app === 'messages' && entryScreen === 'thread_detail' ? 'thread_detail' : 'threads',
+                app === SimulatorApp.Messages && isMessagesScreen(entryScreen)
+                    ? entryScreen
+                    : 'threads',
         },
         internet: {
             screen: resolveInitialInternetScreen(payload, app, entryScreen),
@@ -80,10 +82,13 @@ export function getInitialSessionState(
         },
         home: {
             ...createInitialHomeState(),
-            screen: app === 'home' && isHomeScreen(entryScreen) ? entryScreen : DEFAULT_HOME_SCREEN,
+            screen:
+                app === SimulatorApp.Home && isHomeScreen(entryScreen)
+                    ? entryScreen
+                    : DEFAULT_HOME_SCREEN,
         },
     };
-    if (app === 'phone' && isPhoneScreen(entryScreen)) {
+    if (app === SimulatorApp.Phone && isPhoneScreen(entryScreen)) {
         view.phone.screen = entryScreen;
     }
     return { payload, view };

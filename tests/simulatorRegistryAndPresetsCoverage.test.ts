@@ -19,7 +19,7 @@ import {
     PRESET_PACKAGE_DELIVERY_SCAM,
     SIMULATOR_PRESET_CATALOG,
 } from '@workspace-simulator-test-support/simulatorPresets';
-import { getInitialSessionState } from '../src/state/simulatorSessionReducer';
+import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 import { renderActiveScreen, resolveScreen, SCREEN_REGISTRY } from '../src/screenRegistry/registry';
 import type { SimulatorRenderContext } from '../src/screenRegistry/types';
 
@@ -219,10 +219,9 @@ describe('simulator screen registry coverage', () => {
             visibleMessageCount: 0,
         } as never;
         ctx.state.view.messages.screen = 'threads';
-        const threadProps = resolveScreen('messages', ctx)!.getProps(ctx) as Record<
-            string,
-            unknown
-        >;
+        const threadProps: Record<string, unknown> = {
+            ...resolveScreen('messages', ctx)!.getProps(ctx),
+        };
         expect((threadProps.threads as Array<Record<string, unknown>>)[0].preview).toContain('…');
 
         ctx.state.payload.sms = {
@@ -231,10 +230,9 @@ describe('simulator screen registry coverage', () => {
             },
             visibleMessageCount: 0,
         } as never;
-        const defaultPreviewProps = resolveScreen('messages', ctx)!.getProps(ctx) as Record<
-            string,
-            unknown
-        >;
+        const defaultPreviewProps: Record<string, unknown> = {
+            ...resolveScreen('messages', ctx)!.getProps(ctx),
+        };
         expect((defaultPreviewProps.threads as Array<Record<string, unknown>>)[0].preview).toBe(
             'New message',
         );
@@ -243,7 +241,9 @@ describe('simulator screen registry coverage', () => {
         ctx.state.view.showPrimaryMenu = true;
         ctx.state.view.phone.screen = 'contacts';
         ctx.state.view.contactsSearchQuery = '';
-        const contactsProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const contactsProps: Record<string, unknown> = {
+            ...resolveScreen('phone', ctx)!.getProps(ctx),
+        };
         expect(contactsProps.initialSearch).toBe('initial-search');
         expect(contactsProps.searchQuery).toBe('initial-search');
         expect(contactsProps.phoneLocalNavItems).toBeTruthy();
@@ -252,35 +252,37 @@ describe('simulator screen registry coverage', () => {
         ctx.state.view.showPrimaryMenu = false;
         ctx.state.view.activeApp = 'phone';
         ctx.state.view.contactsSearchQuery = 'stored-search';
-        const shellOwnedContactsProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<
-            string,
-            unknown
-        >;
+        const shellOwnedContactsProps: Record<string, unknown> = {
+            ...resolveScreen('phone', ctx)!.getProps(ctx),
+        };
         expect(shellOwnedContactsProps.searchQuery).toBe('stored-search');
         expect(shellOwnedContactsProps.phoneLocalNavItems).toBeUndefined();
         expect(shellOwnedContactsProps.onPhoneNavSelect).toBeUndefined();
 
         ctx.state.view.phone.screen = 'directory';
-        const directoryProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<
-            string,
-            unknown
-        >;
+        const directoryProps: Record<string, unknown> = {
+            ...resolveScreen('phone', ctx)!.getProps(ctx),
+        };
         expect(directoryProps.phoneLocalNavItems).toBeUndefined();
         expect(typeof directoryProps.onViewEntry).toBe('function');
 
         ctx.state.view.phone.screen = 'history';
-        const phoneProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const phoneProps: Record<string, unknown> = {
+            ...resolveScreen('phone', ctx)!.getProps(ctx),
+        };
         expect(phoneProps.navRenderedByShell).toBe(true);
 
         ctx.state.view.activeApp = 'email';
         ctx.state.view.showPrimaryMenu = false;
         ctx.state.view.email.screen = 'detail';
-        const emailProps = resolveScreen('email', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const emailProps: Record<string, unknown> = {
+            ...resolveScreen('email', ctx)!.getProps(ctx),
+        };
         expect(emailProps.navRenderedByShell).toBe(true);
 
         ctx.state.view.activeApp = 'home';
         ctx.state.view.home.screen = 'settings';
-        const homeProps = resolveScreen('home', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const homeProps: Record<string, unknown> = { ...resolveScreen('home', ctx)!.getProps(ctx) };
         expect(homeProps.screen).toBe('settings');
 
         ctx.initialContactsSearch = undefined;
@@ -288,10 +290,9 @@ describe('simulator screen registry coverage', () => {
         ctx.state.view.phone.screen = 'contacts';
         ctx.state.view.showPrimaryMenu = true;
         ctx.state.view.contactsSearchQuery = '';
-        const emptySearchProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<
-            string,
-            unknown
-        >;
+        const emptySearchProps: Record<string, unknown> = {
+            ...resolveScreen('phone', ctx)!.getProps(ctx),
+        };
         expect(emptySearchProps.searchQuery).toBe('');
     });
 
@@ -304,40 +305,44 @@ describe('simulator screen registry coverage', () => {
         ctx.state.view.activeApp = 'email';
         ctx.state.view.showPrimaryMenu = false;
         ctx.state.view.email.screen = 'detail';
-        const emailProps = resolveScreen('email', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const emailProps: Record<string, unknown> = {
+            ...resolveScreen('email', ctx)!.getProps(ctx),
+        };
         (emailProps.onNavigate as (screen: string) => void)('trash');
 
         ctx.state.view.messages.screen = 'threads';
-        const messageProps = resolveScreen('messages', ctx)!.getProps(ctx) as Record<
-            string,
-            unknown
-        >;
+        const messageProps: Record<string, unknown> = {
+            ...resolveScreen('messages', ctx)!.getProps(ctx),
+        };
         (messageProps.onCompose as () => void)();
 
         ctx.state.view.activeApp = 'phone';
         ctx.state.view.showPrimaryMenu = true;
         ctx.state.view.phone.screen = 'contacts';
-        const contactsProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const contactsProps: Record<string, unknown> = {
+            ...resolveScreen('phone', ctx)!.getProps(ctx),
+        };
         (contactsProps.onSearchSubmit as (query: string) => void)('help');
         (contactsProps.onSearchChange as (query: string) => void)('desk');
         (contactsProps.onAddContact as () => void)();
         (contactsProps.onPhoneNavSelect as (id: string) => void)('dial');
 
         ctx.state.view.phone.screen = 'directory';
-        const directoryProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<
-            string,
-            unknown
-        >;
+        const directoryProps: Record<string, unknown> = {
+            ...resolveScreen('phone', ctx)!.getProps(ctx),
+        };
         (directoryProps.onViewEntry as (id: string) => void)('d1');
         (directoryProps.onPhoneNavSelect as (id: string) => void)('history');
 
         ctx.state.view.phone.screen = 'history';
-        const phoneProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const phoneProps: Record<string, unknown> = {
+            ...resolveScreen('phone', ctx)!.getProps(ctx),
+        };
         (phoneProps.onNavigate as (id: string) => void)('voicemail');
 
         ctx.state.view.activeApp = 'home';
         ctx.state.view.home.screen = 'home';
-        const homeProps = resolveScreen('home', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const homeProps: Record<string, unknown> = { ...resolveScreen('home', ctx)!.getProps(ctx) };
         (homeProps.onNavigate as (id: string) => void)('store');
 
         expect(ctx.dispatch).toHaveBeenCalledWith({
@@ -388,10 +393,9 @@ describe('simulator screen registry coverage', () => {
             { id: 'second' },
         ];
         ctx.state.view.phone.screen = 'directory';
-        const directoryProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<
-            string,
-            unknown
-        >;
+        const directoryProps: Record<string, unknown> = {
+            ...resolveScreen('phone', ctx)!.getProps(ctx),
+        };
         expect(directoryProps.initialSelectedDirectoryId).toBe('first-entry');
     });
 
@@ -400,10 +404,9 @@ describe('simulator screen registry coverage', () => {
         ctx.state.payload.templateKey = 'harness-phone-directory-entry';
         (ctx.state.payload as { directory?: Array<{ id: string }> }).directory = [];
         ctx.state.view.phone.screen = 'directory';
-        const directoryProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<
-            string,
-            unknown
-        >;
+        const directoryProps: Record<string, unknown> = {
+            ...resolveScreen('phone', ctx)!.getProps(ctx),
+        };
         expect(directoryProps.initialSelectedDirectoryId).toBeNull();
     });
 
@@ -411,7 +414,9 @@ describe('simulator screen registry coverage', () => {
         const ctx = createRenderContext();
         ctx.state.payload.templateKey = 'harness-phone-contact-it-helpdesk';
         ctx.state.view.phone.screen = 'contacts';
-        const contactsProps = resolveScreen('phone', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const contactsProps: Record<string, unknown> = {
+            ...resolveScreen('phone', ctx)!.getProps(ctx),
+        };
         expect(contactsProps.initialSelectedContactId).toBe('it-helpdesk');
         expect(contactsProps.contactDetailTitleOnly).toBe(true);
     });
@@ -437,17 +442,18 @@ describe('simulator screen registry coverage', () => {
         const smsPayload = ctx.state.payload.sms as {
             threads: Array<{ id: string; preview: string }>;
         };
-        const threadedProps = resolveScreen('messages', ctx)!.getProps(ctx) as Record<
-            string,
-            unknown
-        >;
+        const threadedProps: Record<string, unknown> = {
+            ...resolveScreen('messages', ctx)!.getProps(ctx),
+        };
         expect((threadedProps.threads as Array<Record<string, unknown>>)[0].preview).toBe(
             'Preset preview',
         );
         expect(threadedProps.threads).toBe(smsPayload.threads);
 
         ctx.state.payload.sms = null as never;
-        const emptyProps = resolveScreen('messages', ctx)!.getProps(ctx) as Record<string, unknown>;
+        const emptyProps: Record<string, unknown> = {
+            ...resolveScreen('messages', ctx)!.getProps(ctx),
+        };
         expect(emptyProps.threads).toEqual([]);
     });
 });
