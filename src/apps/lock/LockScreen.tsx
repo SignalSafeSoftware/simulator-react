@@ -9,6 +9,7 @@ import { DevicePage } from '../shared/DevicePage.js';
 import { useEffect, useRef, useState } from 'react';
 import { LockKeyhole } from 'lucide-react';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
+import type { DeviceMetadata } from '@signalsafe/simulator-core/apps/deviceData';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 export function LockScreen({
@@ -120,29 +121,31 @@ function useLockChange(store: DeviceStore) {
         setPassword('');
         setConfirm('');
     }
+    async function change(data: DeviceMetadata, remove: boolean, isLatest: () => boolean) {
+        if (!(await checkLock(current, data.lock))) throw new Error(t('app.lock.currentIncorrect'));
+        if (!remove && password !== confirm) throw new Error(t('app.lock.mismatch'));
+        const lock = remove ? null : await createLock(password);
+        return isLatest() && (await store.save({ ...data, lock })) && isLatest();
+    }
     async function apply(remove: boolean) {
-        if (!store.data || store.busy || saving.current) return;
+        const data = store.data;
+        if (!data || store.busy || saving.current) return;
         saving.current = true;
         const request = ++generation.current;
+        const isLatest = () => request === generation.current;
         setBusy(true);
         setMessage('');
         try {
-            if (!(await checkLock(current, store.data.lock)))
-                throw new Error(t('app.lock.currentIncorrect'));
-            if (!remove && password !== confirm) throw new Error(t('app.lock.mismatch'));
-            const lock = remove ? null : await createLock(password);
-            if (request !== generation.current) return;
-            if (await store.save({ ...store.data, lock })) {
-                if (request !== generation.current) return;
+            if (await change(data, remove, isLatest)) {
                 clearFields();
                 setMessage(remove ? t('app.lock.removed') : t('app.lock.saved'));
             }
         } catch (reason) {
-            if (request !== generation.current) return;
-            setMessage(reason instanceof Error ? reason.message : t('app.lock.changeFailed'));
+            if (isLatest())
+                setMessage(reason instanceof Error ? reason.message : t('app.lock.changeFailed'));
         } finally {
             saving.current = false;
-            if (request === generation.current) setBusy(false);
+            if (isLatest()) setBusy(false);
         }
     }
     return {
