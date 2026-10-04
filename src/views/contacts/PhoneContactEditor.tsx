@@ -60,9 +60,7 @@ export default function PhoneContactEditor({
                         label: t('action.cancel'),
                         icon: '↩',
                         disabled: saving,
-                        onClick: () => {
-                            if (!saving) onCancel();
-                        },
+                        onClick: onCancel,
                     },
                 ]}
             />

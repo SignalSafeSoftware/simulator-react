@@ -86,9 +86,7 @@ function reachableBrowserPagesTyped(
     let hasCycle = false;
     // Iterative DFS avoids call-stack overflow for large authored graphs.
     const pending = [{ id: startPageId, exiting: false }];
-    while (pending.length > 0) {
-        const frame = pending.pop();
-        if (!frame) break;
+    for (let frame = pending.pop(); frame; frame = pending.pop()) {
         if (frame.exiting) {
             active.delete(frame.id);
             continue;

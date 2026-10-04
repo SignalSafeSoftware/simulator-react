@@ -53,9 +53,7 @@ export default class SimulatorErrorBoundary extends Component<SimulatorErrorBoun
 
     componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
         this.setState({ errorInfo });
-        if (typeof console !== 'undefined' && console.error) {
-            console.error('[Simulator] Render error:', error, errorInfo.componentStack);
-        }
+        console.error('[Simulator] Render error:', error, errorInfo.componentStack);
     }
 
     render(): ReactNode {
@@ -97,11 +95,10 @@ function ErrorFallback({
     fallbackTitle,
     onRetry,
     showDiagnostics,
-}: Readonly<State & Omit<SimulatorErrorBoundaryProps, 'children'>>) {
+}: Readonly<
+    Pick<State, 'errorInfo'> & { error: Error } & Omit<SimulatorErrorBoundaryProps, 'children'>
+>) {
     const locale = useSimulatorLocale();
-    if (!error) {
-        return null;
-    }
     const title =
         fallbackTitle ??
         (showDiagnostics

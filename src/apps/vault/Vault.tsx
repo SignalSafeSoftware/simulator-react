@@ -98,19 +98,18 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
     const folders = [
         ...new Set([...data.vaultFolders, ...Object.keys(store.counts?.secrets ?? {})]),
     ].sort((a, b) => a.localeCompare(b));
+    const activeFolder = folder ?? '';
     const deletionDestination =
         folder === DEFAULT_VAULT_FOLDER ? 'Recovered secrets' : DEFAULT_VAULT_FOLDER;
     const visibleSecrets = secrets.records;
     const folderFilter = folderQuery.trim().toLowerCase();
     const matchingFolders = folders.filter((name) => name.toLowerCase().includes(folderFilter));
     function back() {
-        if (store.busy) return;
         if (folderPage) {
             setFolderPage(null);
             setFolderName(null);
             setMessage('');
-        } else if (draft) discard();
-        else if (folder !== null) {
+        } else if (folder !== null) {
             setFolder(null);
             setFolderName(null);
             setQuery('');
@@ -118,24 +117,16 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
         } else onBack();
     }
     async function saveFolder() {
-        if (!data || store.busy || folderPage === FolderPage.Delete) return;
-        const editing = folderPage !== FolderPage.Create;
-        if (editing && !folder) return;
-        const name = (folderName ?? (editing ? folder : '') ?? '').trim();
+        const name = (folderName ?? folder ?? '').trim();
         if (!name || name.length > 200) {
             setMessage(t('app.vault.folderNameInvalid'));
             return;
         }
-        if (
-            folders.some(
-                (item) =>
-                    (!editing || item !== folder) && item.toLowerCase() === name.toLowerCase(),
-            )
-        ) {
+        if (folders.some((item) => item !== folder && item.toLowerCase() === name.toLowerCase())) {
             setMessage(t('app.vault.folderExists'));
             return;
         }
-        if (await store.folder(editing ? folder : null, name, DEFAULT_VAULT_FOLDER)) {
+        if (await store.folder(folder, name, DEFAULT_VAULT_FOLDER)) {
             setFolder(name);
             setFolderPage(null);
             setFolderName(null);
@@ -144,7 +135,6 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
         }
     }
     async function deleteFolder() {
-        if (!data || store.busy || !folder) return;
         if (await store.folder(folder, null, deletionDestination)) {
             setFolder(null);
             setFolderPage(null);
@@ -165,7 +155,6 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
         setMessage('');
     }
     function discard() {
-        if (store.busy) return;
         if (
             JSON.stringify(draft) === JSON.stringify(baseline.current) ||
             window.confirm(t('app.vault.discardConfirm'))
@@ -178,7 +167,6 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
         setMessage('');
     }
     async function save() {
-        if (!data || store.busy) return;
         const parsed = secretSchema.safeParse({
             ...draft,
             updatedAt: new Date().toISOString(),
@@ -262,8 +250,8 @@ export default function Vault({ store, onBack }: { store: DeviceStore; onBack: (
             {folderPage === FolderPage.Delete ? (
                 <p>
                     {t('app.vault.deleteFolderNotice', {
-                        folder: folder ?? '',
-                        count: store.counts?.secrets[folder ?? ''] ?? 0,
+                        folder: activeFolder,
+                        count: store.counts?.secrets[activeFolder] ?? 0,
                         destination: deletionDestination,
                     })}
                 </p>

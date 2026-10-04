@@ -107,7 +107,7 @@ function buildReachableNodes(
 ): SimulatorNavGraphNode[] {
     const nodes: SimulatorNavGraphNode[] = [];
     for (const app of APPS) {
-        for (const screen of reachableScreens[app] ?? []) {
+        for (const screen of reachableScreens[app]) {
             nodes.push({
                 id: nodeId(app, screen),
                 app,
@@ -215,7 +215,7 @@ function addContentLinkEdges(
                 from: nodeId(from.app, from.screen),
                 to: nodeId(SimulatorApp.Internet, pageId),
                 action: SimulatorActionType.ClickLink,
-                label: link.href ?? undefined,
+                label: link.href,
             });
         }
     }

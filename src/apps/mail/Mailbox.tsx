@@ -89,8 +89,8 @@ export default function Mailbox({
     );
     const visibleMail = page.records.map(displayMail);
     if (!data) return null;
+    const { identity } = data;
     async function persist(next: Mail, close = true, edited = false) {
-        if (!data) return;
         const parsed = mailSchema.safeParse({
             ...next,
             updatedAt: edited ? new Date().toISOString() : next.updatedAt,
@@ -112,7 +112,6 @@ export default function Mailbox({
         setError('');
     }
     function leaveDraft() {
-        if (busy) return;
         if (
             JSON.stringify(draft) === JSON.stringify(baseline.current) ||
             window.confirm(t('app.mail.discardConfirm'))
@@ -120,12 +119,10 @@ export default function Mailbox({
             setDraft(null);
     }
     function compose(source?: Mail, kind: 'reply' | 'reply-all' | 'forward' = 'reply') {
-        if (!data) return;
         setError('');
-        edit(source ? replyMail(source, data.identity, kind) : newMail(data.identity));
+        edit(source ? replyMail(source, identity, kind) : newMail(identity));
     }
     const back = () => {
-        if (busy) return;
         if (draft) {
             leaveDraft();
         } else if (source) setSource(null);
@@ -156,9 +153,7 @@ export default function Mailbox({
                   label: t('app.mail.saveDraft'),
                   icon: '✓',
                   disabled: busy,
-                  onClick: () => {
-                      if (!busy) void persist(draft, true, true);
-                  },
+                  onClick: () => void persist(draft, true, true),
               },
           ]
         : [
@@ -418,10 +413,7 @@ export default function Mailbox({
                                 onClick={() =>
                                     void persist({
                                         ...message,
-                                        previousFolder:
-                                            message.folder === mailFolderSchema.enum.trash
-                                                ? message.previousFolder
-                                                : message.folder,
+                                        previousFolder: message.folder as Mail['previousFolder'],
                                         folder: mailFolderSchema.enum.trash,
                                     })
                                 }
@@ -487,7 +479,6 @@ export default function Mailbox({
                                             )}
                                             disabled={busy}
                                             onClick={async () => {
-                                                if (busy) return;
                                                 if (item.read) setSelected(item.id);
                                                 else {
                                                     await persist({ ...item, read: true }, false);

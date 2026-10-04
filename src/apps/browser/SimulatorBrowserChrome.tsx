@@ -65,7 +65,6 @@ function renderUrlWithHighlights(
         }
     }
     if (lastEnd < s.length) parts.push({ text: s.slice(lastEnd), highlight: false });
-    if (parts.length === 0) return s;
     const keyedParts = withStableKeys(
         parts,
         (p) => `${p.highlight ? 'highlight' : 'plain'}:${p.text}`,

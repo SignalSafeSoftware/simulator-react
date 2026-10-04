@@ -81,19 +81,19 @@ export function installBrowserBridge(config: BrowserBridgeConfig) {
         for (const field of Array.from(form.elements)) {
             if (!capture(field) || !field.name) continue;
             for (const value of valuesFor(field)) {
-                const previous = values[field.name];
-                if (Object.prototype.hasOwnProperty.call(values, field.name)) {
-                    values[field.name] =
-                        typeof previous === 'string'
-                            ? [previous, value]
-                            : [...(previous ?? []), value];
-                } else {
+                const previous = Object.prototype.hasOwnProperty.call(values, field.name)
+                    ? values[field.name]
+                    : undefined;
+                if (previous === undefined) {
                     Object.defineProperty(values, field.name, {
                         value,
                         writable: true,
                         enumerable: true,
                         configurable: true,
                     });
+                } else {
+                    values[field.name] =
+                        typeof previous === 'string' ? [previous, value] : [...previous, value];
                 }
             }
         }
@@ -106,7 +106,7 @@ export function installBrowserBridge(config: BrowserBridgeConfig) {
         emit(
             'change',
             field,
-            values.length ? { value: values.length === 1 ? (values[0] ?? '') : values } : {},
+            values.length ? { value: values.length === 1 ? values.join('') : values } : {},
         );
     }
     document.addEventListener('click', click);

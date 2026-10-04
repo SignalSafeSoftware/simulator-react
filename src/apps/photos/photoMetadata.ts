@@ -51,11 +51,11 @@ function readTiff(view: DataView): PhotoMetadata {
         if (count > 100 || count < 1) return '';
         const offset = count <= 4 ? entry + 8 : u32(entry + 8);
         if (offset + count > view.byteLength) return '';
-        return (
-            new TextDecoder()
-                .decode(new Uint8Array(view.buffer, view.byteOffset + offset, count))
-                .split(String.fromCharCode(0))[0] ?? ''
+        const text = new TextDecoder().decode(
+            new Uint8Array(view.buffer, view.byteOffset + offset, count),
         );
+        const end = text.indexOf('\0');
+        return end < 0 ? text : text.slice(0, end);
     }
     function coordinate(entry: number | undefined): number | null {
         if (entry === undefined || u16(entry + 2) !== 5 || u32(entry + 4) !== 3) return null;

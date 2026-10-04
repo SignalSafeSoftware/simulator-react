@@ -147,15 +147,15 @@ export default function BrowserWorkbench({
     const [history, setHistory] = useState<MockPage[]>([sample]);
     const [position, setPosition] = useState(0);
     const [last, setLast] = useState('');
+    const previousPage = history[position - 1];
+    const nextPage = history[position + 1];
     function navigate(next: MockPage) {
         setHistory((previous) => [...previous.slice(0, position + 1), next].slice(-100));
         setPosition(Math.min(position + 1, 99));
         setPage(next);
         setAddress(next.url);
     }
-    function goTo(index: number) {
-        const target = history[index];
-        if (!target) return;
+    function goTo(index: number, target: MockPage) {
         setPosition(index);
         setPage(target);
         setAddress(target.url);
@@ -218,8 +218,8 @@ export default function BrowserWorkbench({
                             type="button"
                             aria-label={t('app.browser.back')}
                             title={t('app.browser.back')}
-                            disabled={position === 0}
-                            onClick={() => goTo(position - 1)}
+                            disabled={!previousPage}
+                            onClick={() => previousPage && goTo(position - 1, previousPage)}
                         >
                             <ArrowLeft size={18} aria-hidden="true" />
                         </button>
@@ -228,8 +228,8 @@ export default function BrowserWorkbench({
                             type="button"
                             aria-label={t('app.browser.forward')}
                             title={t('app.browser.forward')}
-                            disabled={position === history.length - 1}
-                            onClick={() => goTo(position + 1)}
+                            disabled={!nextPage}
+                            onClick={() => nextPage && goTo(position + 1, nextPage)}
                         >
                             <ArrowRight size={18} aria-hidden="true" />
                         </button>

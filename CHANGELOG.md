@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Enforce 100% statement, branch, function and line coverage in CI, with jsdom tests for the browser, lock, mail, photos and vault apps.
+- Make `PhoneCallView` `onMute` and `onDigit` optional; they are only used while a call is connected.
+- Remove unreachable guards (disabled controls already prevent them) and tighten keyboard app switching to exact `Alt+1`–`Alt+5` keys.
+
 ## 0.19.1 — October 4, 2026
 
 The 0.19.0 tag failed the packed-runtime gate on stale subpaths and was not published; its tag is retained unchanged.
@@ -170,8 +176,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed Bootstrap-specific runtime styling assumptions from the React simulator components.
 - Replaced Bootstrap class coupling with UI-kit-agnostic `simulator-*` class hooks.
 - Updated internal SignalSafe dependency ranges for the current package release line:
-  - `@signalsafe/tree-spec@^0.3.3`
-  - `@signalsafe/simulator-core@^0.1.7`
+    - `@signalsafe/tree-spec@^0.3.3`
+    - `@signalsafe/simulator-core@^0.1.7`
 - Raised the supported Node.js baseline to Node 22.12+.
 
 ### Added

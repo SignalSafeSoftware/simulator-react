@@ -54,7 +54,7 @@ export default function SimulatorDeveloperControlsBar({
     const screenLocale = useSimulatorLocale();
 
     const showBar = showSnapshotExport || showNavGraph || enableKeyboardShortcuts;
-    if (!showBar && !(enableKeyboardShortcuts && shortcutsHelpOpen)) {
+    if (!showBar) {
         return null;
     }
 

@@ -276,7 +276,7 @@ function addInternetDiff(
                 ...diff.added.map((id) => `+${id}`),
                 ...diff.removed.map((id) => `-${id}`),
             ].join(', ');
-            return details || undefined;
+            return details;
         },
     );
 

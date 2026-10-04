@@ -10,13 +10,13 @@ import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { SimulatorChannel, channelToApp } from '../../types/session.js';
 
 /** Channel order in shell nav (index 0 = first tab). Alt+1..5 switches to these. */
-const CHANNEL_ORDER: SimulatorChannel[] = [
-    SimulatorChannel.Contacts,
-    SimulatorChannel.Email,
-    SimulatorChannel.Browser,
-    SimulatorChannel.Sms,
-    SimulatorChannel.Home,
-];
+const CHANNEL_BY_KEY = {
+    '1': SimulatorChannel.Contacts,
+    '2': SimulatorChannel.Email,
+    '3': SimulatorChannel.Browser,
+    '4': SimulatorChannel.Sms,
+    '5': SimulatorChannel.Home,
+} as const;
 
 export interface SimulatorKeyboardCommandHandlers {
     onBack: () => void;
@@ -86,12 +86,8 @@ function hasBlockedModifier(e: KeyboardEvent): boolean {
     return e.ctrlKey === true || e.metaKey === true;
 }
 
-function isAppSwitchKey(key: string, alt: boolean): boolean {
-    return alt && key >= '1' && key <= '5';
-}
-
-function getChannelIndex(key: string): number {
-    return (key.codePointAt(0) ?? 49) - ('1'.codePointAt(0) ?? 49);
+function isAppSwitchKey(key: string, alt: boolean): key is keyof typeof CHANNEL_BY_KEY {
+    return alt && Object.hasOwn(CHANNEL_BY_KEY, key);
 }
 
 function handleAppSwitch(
@@ -102,13 +98,8 @@ function handleAppSwitch(
     if (!isAppSwitchKey(key, e.altKey === true)) {
         return null;
     }
-    const channelIndex = getChannelIndex(key);
-    const channel = CHANNEL_ORDER[channelIndex];
-    if (channel == null) {
-        return null;
-    }
     e.preventDefault();
-    handlers.onSwitchApp(channelToApp(channel));
+    handlers.onSwitchApp(channelToApp(CHANNEL_BY_KEY[key]));
     return { handled: true };
 }
 

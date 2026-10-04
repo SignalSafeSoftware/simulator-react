@@ -97,10 +97,8 @@ function normalizeSections(
     };
 }
 
-function hasEnabledSections(
-    sections: Required<SimulatorDeveloperSections> | null | undefined,
-): boolean {
-    return Object.values(sections ?? EMPTY_DEVELOPER_SECTIONS).some(Boolean);
+function hasEnabledSections(sections: Required<SimulatorDeveloperSections>): boolean {
+    return Object.values(sections).some(Boolean);
 }
 
 export function reconcileVisibleDeveloperSections(

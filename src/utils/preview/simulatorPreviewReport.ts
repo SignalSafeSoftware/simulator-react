@@ -103,7 +103,7 @@ function hasBrowserFormAction(payload: SimulatorTemplatePayload): boolean {
             (page) =>
                 (page?.formFields?.length ?? 0) > 0 ||
                 (page as { submitTargetPageId?: string }).submitTargetPageId != null,
-        ) ?? false
+        ) === true
     );
 }
 
@@ -265,6 +265,6 @@ export function buildSimulatorPreviewReport(
         validationOk,
         lintWarningCount: lint.warnings.length,
         unreachableCount,
-        browserHasCycle: report.browserHasCycle ?? false,
+        browserHasCycle: report.browserHasCycle,
     };
 }

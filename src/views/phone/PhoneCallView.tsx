@@ -24,8 +24,10 @@ export interface PhoneCallViewProps {
     digits: string;
     onAnswer: () => void;
     onHangup: () => void;
-    onMute: () => void;
-    onDigit: (digit: PhoneKeypadDigit) => void;
+    /** Used only while connected. */
+    onMute?: () => void;
+    /** Used only while connected. */
+    onDigit?: (digit: PhoneKeypadDigit) => void;
     avatar?: ReactNode;
     answerIcon?: ReactNode;
     hangupIcon?: ReactNode;
@@ -76,7 +78,7 @@ export default function PhoneCallView(props: Readonly<PhoneCallViewProps>) {
                         </div>
                         <PhoneKeypad
                             appearance="call"
-                            onDigit={props.onDigit}
+                            onDigit={(digit) => props.onDigit?.(digit)}
                             digitLabel={(digit) => `Dial ${digit}`}
                         />
                     </>

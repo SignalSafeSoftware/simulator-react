@@ -294,7 +294,7 @@ export default function SmsSimulatorView({
                         {content.links?.map((link, idx) =>
                             link.title != null && link.title !== '' ? (
                                 <div
-                                    key={`link-${idx}-${link.href ?? ''}-${link.title ?? ''}`}
+                                    key={`link-${idx}-${link.href ?? ''}-${link.title}`}
                                     className={joinClasses(
                                         simBorder.block,
                                         simSpacing.blockPaddingCompact,

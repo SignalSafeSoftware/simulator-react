@@ -106,7 +106,7 @@ export function isInternetScreen(s: string): s is string {
 }
 
 export function parseEntryScreen(app: SimulatorApp, screen: string): string {
-    const lower = screen?.toLowerCase() ?? '';
+    const lower = screen.toLowerCase();
     switch (app) {
         case SimulatorApp.Phone:
             return isPhoneScreen(lower) ? lower : DEFAULT_PHONE_SCREEN;

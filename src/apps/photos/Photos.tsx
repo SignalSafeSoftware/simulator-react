@@ -52,7 +52,6 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
         setError('');
     };
     const back = () => {
-        if (store.busy) return;
         if (
             editing &&
             JSON.stringify(draft) !== JSON.stringify(baseline.current) &&
@@ -93,7 +92,6 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
         }
     }
     async function save() {
-        if (!data) return;
         setError('');
         const parsed = photoSchema.safeParse({
             ...draft,
@@ -151,11 +149,8 @@ export default function Photos({ store, onBack }: { store: DeviceStore; onBack: 
             listLayout={draft !== null}
             navigation={draft ? <AppSecondaryNav actions={navActions(draft)} /> : undefined}
             onBack={() => {
-                if (draft) back();
-                else {
-                    close();
-                    onBack();
-                }
+                close();
+                onBack();
             }}
         >
             {error && <p role="alert">{error}</p>}

@@ -42,13 +42,6 @@ function previewKeyBase(value: React.ReactNode): string {
         }
         return String(value.key);
     }
-    if (typeof value === 'object') {
-        try {
-            return JSON.stringify(value) ?? 'object';
-        } catch {
-            return 'object';
-        }
-    }
     return 'unknown';
 }
 

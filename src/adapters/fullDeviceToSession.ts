@@ -1,7 +1,6 @@
 import {
     BrowserLayout,
     CallHistoryEntryKind,
-    DEFAULT_INTERNET_SCREEN,
     MessageSender,
     SimulatorChannel,
     type SimulatorInboxRow,
@@ -401,7 +400,6 @@ export function mapInternet(
     if (internet == null) return null;
     const rawPages = internet.pages ?? [];
     const forms = internet.forms ?? [];
-    if (rawPages.length === 0) return null;
 
     const pages: SimulatorBrowserPage[] = rawPages.map((p) => {
         const pageId = stringOr(p.id, 'page');
@@ -434,16 +432,17 @@ export function mapInternet(
             logoUrl: p.logo_url,
             warningBanner: p.warning_banner,
             showMediaPlaceholder: p.show_media_placeholder,
-            formFields: formFields.length > 0 ? formFields : undefined,
+            formFields,
             submitTargetPageId: submitTargetPageId ?? undefined,
         };
     });
 
-    const firstUrl = pages[0]?.url ?? 'https://page/';
+    const [firstPage] = pages;
+    if (!firstPage) return null;
     if (!pages.some((p) => p.id === DEFAULT_BROWSER_SUBMIT_TARGET)) {
         pages.push({
             id: DEFAULT_BROWSER_SUBMIT_TARGET,
-            url: firstUrl + DEFAULT_BROWSER_SUBMIT_TARGET,
+            url: firstPage.url + DEFAULT_BROWSER_SUBMIT_TARGET,
             title: 'Result',
             layout: DEFAULT_BROWSER_SUBMIT_TARGET,
             content: englishLocale.t('copy.fullDeviceToSession.simulation.complete'),
@@ -452,7 +451,7 @@ export function mapInternet(
 
     return {
         pages,
-        defaultPageId: pages[0]?.id ?? DEFAULT_INTERNET_SCREEN,
+        defaultPageId: firstPage.id,
     };
 }
 

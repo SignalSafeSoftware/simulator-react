@@ -34,8 +34,6 @@ export default function PhoneIncomingScene({
                 digits=""
                 onAnswer={onAnswer}
                 onHangup={onIgnore}
-                onMute={() => undefined}
-                onDigit={() => undefined}
                 renderChoice={
                     renderChoice
                         ? (choice) =>
