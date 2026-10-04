@@ -48,6 +48,7 @@ export function LockScreen({ store, onUnlock }: { store: DeviceStore; onUnlock: 
                     />
                 </label>
                 <button
+                    type="submit"
                     className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
                     disabled={busy}
                 >
@@ -154,6 +155,7 @@ export function LockSettings({ store, onLock }: { store: DeviceStore; onLock: ()
                     </label>
                     <div className="prototype-actions">
                         <button
+                            type="submit"
                             className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
                             disabled={busy || store.busy}
                         >
