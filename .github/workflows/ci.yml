@@ -119,6 +119,12 @@ jobs:
               env:
                   SONAR_TOKEN: ${{ secrets.PACKAGES_SONAR_TOKEN }}
 
+            - name: Report SonarCloud new-code issues
+              if: always()
+              run: |
+                  curl -sS -u "$SONAR_TOKEN:" "https://sonarcloud.io/api/issues/search?componentKeys=signalsafe-package-simulator-react&branch=main&sinceLeakPeriod=true&resolved=false&ps=100" \
+                      | jq -r '.issues[]? | "\(.severity) \(.type) \(.rule) \(.component | sub("^[^:]*:";"")):\(.line // 0) \(.message)"'
+
             - name: Sonar PR comment
               if: github.event_name == 'pull_request'
               uses: actions/github-script@v9
