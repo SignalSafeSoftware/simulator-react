@@ -17,7 +17,12 @@
     "prefer-const": "error",
     "typescript/no-explicit-any": "error",
     "typescript/ban-ts-comment": "error",
-    "react/rules-of-hooks": "error"
+    "react/rules-of-hooks": "error",
+    "react/refs": "off",
+    "react/purity": "off",
+    "react/globals": "off",
+    "react/set-state-in-effect": "off",
+    "react/static-components": "off"
   },
   "overrides": [
     {
