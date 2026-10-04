@@ -34,10 +34,10 @@ assert.equal(datasource.contacts[0].id, 'c1');
 assert.throws(() => createSimulatorDatasource('{invalid'));
 assert.throws(() => createSimulatorDatasource({ schema_version: 999 }));
 for (const subpath of [
-    'validateSimulatorPayload',
-    'simulatorPreviewReport',
-    'simulatorRealismChecks',
-    'previewFallbackWorld',
+    'payload/validateSimulatorPayload',
+    'preview/simulatorPreviewReport',
+    'payload/simulatorRealismChecks',
+    'preview/previewFallbackWorld',
 ]) {
     assert.ok(Object.keys(await import(`@signalsafe/simulator-react/utils/${subpath}`)).length > 0);
 }

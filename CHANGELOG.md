@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.19.0 — October 4, 2026
+## 0.19.1 — October 4, 2026
+
+The 0.19.0 tag failed the packed-runtime gate on stale subpaths and was not published; its tag is retained unchanged.
 
 - Group `utils` into `navigation`, `payload`, `preview`, `telemetry` and `lists`, `views` by app, and class-name modules under `ui/styles`. Public subpaths moved with them; see MIGRATION.md.
 - Replace repeated string literals with typed constants (`SimulatorActionType`, `SimulatorEventKind`, `SimulatorChannel` usage, `BrowserLayout`, `CallHistoryEntryKind`, `SimulatorLintCode`, tones, presets and others), shared class-name constants, and English catalog keys for device-app text.
