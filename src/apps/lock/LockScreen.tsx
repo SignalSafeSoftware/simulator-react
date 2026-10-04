@@ -99,10 +99,7 @@ function LockSettingsActions({
         </div>
     );
 }
-export function LockSettings({
-    store,
-    onLock,
-}: Readonly<{ store: DeviceStore; onLock: () => void }>) {
+function useLockChange(store: DeviceStore) {
     const { checkLock, createLock } = useSimulatorAppsHost();
     const { t } = useSimulatorLocale();
     const [current, setCurrent] = useState('');
@@ -118,7 +115,6 @@ export function LockSettings({
         },
         [],
     );
-    const disabled = busy || store.busy;
     function clearFields() {
         setCurrent('');
         setPassword('');
@@ -149,6 +145,40 @@ export function LockSettings({
             if (request === generation.current) setBusy(false);
         }
     }
+    return {
+        current,
+        setCurrent,
+        password,
+        setPassword,
+        confirm,
+        setConfirm,
+        message,
+        setMessage,
+        busy,
+        apply,
+        clearFields,
+    };
+}
+
+export function LockSettings({
+    store,
+    onLock,
+}: Readonly<{ store: DeviceStore; onLock: () => void }>) {
+    const { t } = useSimulatorLocale();
+    const {
+        current,
+        setCurrent,
+        password,
+        setPassword,
+        confirm,
+        setConfirm,
+        message,
+        setMessage,
+        busy,
+        apply,
+        clearFields,
+    } = useLockChange(store);
+    const disabled = busy || store.busy;
     return (
         <section className={SIM_APP_PAGE_CONTENT}>
             <h3>{t('app.lock.password')}</h3>
