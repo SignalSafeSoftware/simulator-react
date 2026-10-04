@@ -16,14 +16,14 @@ export function DevicePage({
     children,
     navigation,
     listLayout = false,
-}: {
+}: Readonly<{
     title: string;
     icon?: string;
     onBack?: () => void;
     children: ReactNode;
     navigation?: ReactNode;
     listLayout?: boolean;
-}) {
+}>) {
     const { Shell: SimulatorPhoneShell } = useSimulatorAppsHost();
     const { t } = useSimulatorLocale();
     const content = (

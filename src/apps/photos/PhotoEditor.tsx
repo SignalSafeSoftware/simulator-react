@@ -9,12 +9,12 @@ export default function PhotoEditor({
     disabled,
     onChange,
     onReplace,
-}: {
+}: Readonly<{
     photo: Photo;
     disabled: boolean;
     onChange: (photo: Photo) => void;
     onReplace: (file: File) => void;
-}) {
+}>) {
     const { formatCaptureDate: captureDateLabel } = useSimulatorAppsHost();
     const { t } = useSimulatorLocale();
     return (

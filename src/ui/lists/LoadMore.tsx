@@ -8,7 +8,8 @@ export function LoadMore({
     onLoadMore,
     label,
     automatic = true,
-}: {
+    count,
+}: Readonly<{
     hasMore: boolean;
     loading: boolean;
     error: string;
@@ -16,7 +17,7 @@ export function LoadMore({
     label: string;
     automatic?: boolean;
     count: number;
-}) {
+}>) {
     const target = useRef<HTMLButtonElement>(null);
     const callback = useRef(onLoadMore);
     const blocked = useRef(loading || Boolean(error));
@@ -48,8 +49,11 @@ export function LoadMore({
             requested = true;
             observer.disconnect();
         };
-    }, [automatic, hasMore]);
+    }, [automatic, hasMore, count]);
     if (!hasMore && !error) return null;
+    let text = label;
+    if (loading) text = 'Loading…';
+    else if (error) text = 'Retry';
     return (
         <button
             ref={target}
@@ -59,7 +63,7 @@ export function LoadMore({
             disabled={loading}
             onClick={() => void onLoadMore()}
         >
-            {loading ? 'Loading…' : error ? 'Retry' : label}
+            {text}
         </button>
     );
 }

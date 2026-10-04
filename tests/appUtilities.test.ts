@@ -320,6 +320,35 @@ describe('extractPhotoMetadata', () => {
         expect(metadata.longitude).toBeCloseTo(20.51);
     });
 
+    it('ignores valid coordinates whose hemisphere reference is not recognised', () => {
+        const buffer = tiff({
+            root: [{ tag: 0x8825, type: 4, count: 1, value: 200 }],
+            gps: [
+                { tag: 1, type: 2, count: 2, value: 0x58 },
+                { tag: 2, type: 5, count: 3, value: 360 },
+                { tag: 3, type: 2, count: 2, value: 0x58 },
+                { tag: 4, type: 5, count: 3, value: 400 },
+            ],
+            blobs: [
+                ...blobsFrom(
+                    rational(360, [
+                        [1, 1],
+                        [0, 1],
+                        [0, 1],
+                    ]),
+                ),
+                ...blobsFrom(
+                    rational(400, [
+                        [2, 1],
+                        [0, 1],
+                        [0, 1],
+                    ]),
+                ),
+            ],
+        });
+        expect(extractPhotoMetadata(jpeg(buffer))).toEqual(empty);
+    });
+
     it('ignores malformed ASCII, coordinate and reference values', () => {
         const blobs = [
             { at: 300, bytes: ascii('not a date at all!!') },

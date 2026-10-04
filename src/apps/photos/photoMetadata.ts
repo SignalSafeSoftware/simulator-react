@@ -29,6 +29,16 @@ export function extractPhotoMetadata(buffer: ArrayBuffer): PhotoMetadata {
     }
     return { ...emptyMetadata };
 }
+function signedCoordinate(
+    value: number | null,
+    reference: string,
+    positive: string,
+    negative: string,
+): number | null {
+    if (value === null || reference === positive) return value;
+    return reference === negative ? -value : null;
+}
+
 function readTiff(view: DataView): PhotoMetadata {
     const little = view.getUint16(0) === 0x4949;
     if ((!little && view.getUint16(0) !== 0x4d4d) || view.getUint16(2, little) !== 42)
@@ -61,7 +71,7 @@ function readTiff(view: DataView): PhotoMetadata {
         if (entry === undefined || u16(entry + 2) !== 5 || u32(entry + 4) !== 3) return null;
         const offset = u32(entry + 8);
         const values = [0, 8, 16].map((shift) => u32(offset + shift) / u32(offset + shift + 4));
-        const [degrees = NaN, minutes = NaN, seconds = NaN] = values;
+        const [degrees = Number.NaN, minutes = Number.NaN, seconds = Number.NaN] = values;
         if (degrees < 0 || minutes < 0 || minutes >= 60 || seconds < 0 || seconds >= 60)
             return null;
         const value = degrees + minutes / 60 + seconds / 3600;
@@ -85,17 +95,9 @@ function readTiff(view: DataView): PhotoMetadata {
         timeZone: fields.timeZone.catch('').parse(ascii(exif.get(0x9011))),
         latitude: fields.latitude
             .catch(null)
-            .parse(
-                latitude === null || !['N', 'S'].includes(ascii(gps.get(1)))
-                    ? null
-                    : latitude * (ascii(gps.get(1)) === 'S' ? -1 : 1),
-            ),
+            .parse(signedCoordinate(latitude, ascii(gps.get(1)), 'N', 'S')),
         longitude: fields.longitude
             .catch(null)
-            .parse(
-                longitude === null || !['E', 'W'].includes(ascii(gps.get(3)))
-                    ? null
-                    : longitude * (ascii(gps.get(3)) === 'W' ? -1 : 1),
-            ),
+            .parse(signedCoordinate(longitude, ascii(gps.get(3)), 'E', 'W')),
     };
 }

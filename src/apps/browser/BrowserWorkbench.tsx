@@ -26,11 +26,11 @@ export function HtmlMockPage({
     page,
     onAction,
     themeCss = '',
-}: {
+}: Readonly<{
     themeCss?: string;
     page: MockPage;
     onAction: (action: BrowserAction) => void;
-}) {
+}>) {
     const frame = useRef<HTMLIFrameElement>(null);
     const { t } = useSimulatorLocale();
     const callback = useRef(onAction);
@@ -93,11 +93,11 @@ export function ReactMockPage({
     pageId,
     render,
     onAction,
-}: {
+}: Readonly<{
     pageId: string;
     render: (emit: (action: string, values?: Record<string, string>) => void) => ReactNode;
     onAction: (event: BrowserAction) => void;
-}) {
+}>) {
     return (
         <div className="prototype-react-page">
             {render((action, values = {}) => {
@@ -118,7 +118,7 @@ export function ReactMockPage({
 type Translate = ReturnType<typeof useSimulatorLocale>['t'];
 
 function escapeHtml(value: string): string {
-    return value.replace(/[&<>"']/g, (character) => `&#${character.charCodeAt(0)};`);
+    return value.replace(/[&<>"']/g, (character) => `&#${character.codePointAt(0)};`);
 }
 
 function samplePage(t: Translate): MockPage {
@@ -135,11 +135,11 @@ export default function BrowserWorkbench({
     templates,
     mode = 'html',
     themeCss = '',
-}: {
+}: Readonly<{
     themeCss?: string;
     templates: ReactNode;
     mode?: 'html' | 'react' | 'templates';
-}) {
+}>) {
     const { t } = useSimulatorLocale();
     const [sample] = useState(() => samplePage(t));
     const [page, setPage] = useState(sample);

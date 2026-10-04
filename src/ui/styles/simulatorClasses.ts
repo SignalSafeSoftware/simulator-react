@@ -105,7 +105,7 @@ export function simAlertToneClass(tone: SimulatorAlertTone = SimulatorAlertTone.
     return `${SIM_ALERT} simulator-alert--${tone}`;
 }
 
-export function simBadgeToneClass(tone: SimulatorBadgeTone | string): string {
+export function simBadgeToneClass(tone: string): string {
     return `${SIM_BADGE} simulator-badge--${tone}`;
 }
 

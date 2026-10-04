@@ -309,6 +309,21 @@ describe('Mailbox messages', () => {
         expect(store().state().mail[0]).toMatchObject({ folder: 'sent' });
     });
 
+    it('keeps the message open when the store rejects a move to trash', async () => {
+        const { store } = setup({
+            mails: [mail('m')],
+            prepare: (created) => {
+                created.put = async () => false;
+            },
+        });
+        await openFolder(/^Inbox/);
+        await openMessage('Subject m');
+        fireEvent.click(screen.getByText('Move to trash'));
+        await settle();
+        expect(store().state().mail[0]!.folder).toBe('inbox');
+        expect(screen.getByRole('heading', { name: 'Subject m' })).toBeTruthy();
+    });
+
     it('permanently deletes only after confirmation and success', async () => {
         const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
         const { store } = setup({ mails: [mail('t', { folder: 'trash' })] });

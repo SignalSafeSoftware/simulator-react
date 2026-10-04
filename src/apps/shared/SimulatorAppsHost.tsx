@@ -1,5 +1,5 @@
 import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
-import { createContext, useContext, type ComponentType, type ReactNode } from 'react';
+import { createContext, useContext, useMemo, type ComponentType, type ReactNode } from 'react';
 import type { PhotoMetadata } from '@signalsafe/simulator-core/apps/contracts';
 import { checkLock, createLock } from '../lock/lock.js';
 import { readAsset } from './assets.js';
@@ -55,12 +55,13 @@ const Context = createContext<SimulatorAppsHost>(defaults);
 export function SimulatorAppsProvider({
     value,
     children,
-}: {
+}: Readonly<{
     value: Partial<SimulatorAppsHost>;
     children: ReactNode;
-}) {
+}>) {
     const inherited = useContext(Context);
-    return <Context.Provider value={{ ...inherited, ...value }}>{children}</Context.Provider>;
+    const merged = useMemo(() => ({ ...inherited, ...value }), [inherited, value]);
+    return <Context.Provider value={merged}>{children}</Context.Provider>;
 }
 export function useSimulatorAppsHost(): SimulatorAppsHost {
     return useContext(Context);

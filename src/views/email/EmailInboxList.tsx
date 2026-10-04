@@ -86,6 +86,17 @@ export default function EmailInboxList({
     );
     let content: ReactNode;
     if (inbox.length === 0 || filtered.length === 0) {
+        let emptyMessage: ReactNode = screenLocale.t('screen.emailInboxList.no.emails');
+        if (inbox.length > 0) {
+            emptyMessage = (
+                <>
+                    {screenLocale.t('screen.emailInboxList.no.results.for')}
+                    {searchQuery}&quot;.
+                </>
+            );
+        } else if (folder === 'trash') {
+            emptyMessage = screenLocale.t('screen.emailInboxList.no.emails.in.trash');
+        }
         content = (
             <p
                 className={joinClasses(
@@ -95,16 +106,7 @@ export default function EmailInboxList({
                     SIM_TEXT_START,
                 )}
             >
-                {inbox.length > 0 ? (
-                    <>
-                        {screenLocale.t('screen.emailInboxList.no.results.for')}
-                        {searchQuery}&quot;.
-                    </>
-                ) : folder === 'trash' ? (
-                    screenLocale.t('screen.emailInboxList.no.emails.in.trash')
-                ) : (
-                    screenLocale.t('screen.emailInboxList.no.emails')
-                )}
+                {emptyMessage}
             </p>
         );
     } else {

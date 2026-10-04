@@ -9,7 +9,7 @@ import BrowserWorkbench, {
     HtmlMockPage,
     ReactMockPage,
 } from '../src/apps/browser/BrowserWorkbench';
-import { installBrowserBridge } from '../src/apps/browser/browserBridge';
+import { browserBridgeSource, installBrowserBridge } from '../src/apps/browser/browserBridge';
 import { buildBrowserDocument, defaultBrowserCss } from '../src/apps/browser/browserDocument';
 
 const config = {
@@ -178,6 +178,21 @@ describe('installBrowserBridge', () => {
         change('silent');
         document.dispatchEvent(new Event('change', { bubbles: true }));
         expect(post).not.toHaveBeenCalled();
+    });
+
+    it('runs as serialized sandbox script text', () => {
+        dispose();
+        // eslint-disable-next-line no-new-func -- evaluates the sandbox script as the iframe would
+        const stop = new Function(
+            `return ${browserBridgeSource(JSON.stringify(config))}`,
+        )() as () => void;
+        mount(
+            '<form id="f" data-simulator-action="save"><input name="a" value="1" data-simulator-capture="true"></form>',
+        );
+        document.getElementById('f')!.dispatchEvent(new Event('submit', { bubbles: true }));
+        expect(lastMessage()).toMatchObject({ event: 'submit', values: { a: '1' } });
+        stop();
+        dispose = installBrowserBridge(config);
     });
 
     it('removes its listeners on dispose', () => {

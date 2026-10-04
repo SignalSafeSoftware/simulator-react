@@ -4,10 +4,10 @@ import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 export default function PhotoLocation({
     latitude,
     longitude,
-}: {
+}: Readonly<{
     latitude: number | null;
     longitude: number | null;
-}) {
+}>) {
     const { renderPhotoMap } = useSimulatorAppsHost();
     const { t } = useSimulatorLocale();
     const hasLocation = latitude !== null && longitude !== null;

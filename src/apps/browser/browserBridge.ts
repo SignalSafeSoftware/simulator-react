@@ -10,13 +10,59 @@ export interface BrowserBridgeConfig {
     parentOrigin: string;
 }
 
-/** Self-contained: serialized into the sandbox, so never close over host values. */
+type CaptureField = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+type FormValues = Record<string, string | string[]>;
+
+/* The helpers below are serialized into the sandbox, so none may close over host values. */
+function capture(field: Element): field is CaptureField {
+    return (
+        (field instanceof HTMLInputElement ||
+            field instanceof HTMLSelectElement ||
+            field instanceof HTMLTextAreaElement) &&
+        field.dataset.simulatorCapture === 'true' &&
+        !field.disabled &&
+        field.type !== 'password' &&
+        field.type !== 'hidden' &&
+        field.type !== 'submit' &&
+        field.type !== 'button' &&
+        (!(field instanceof HTMLInputElement) ||
+            !['radio', 'checkbox'].includes(field.type) ||
+            field.checked)
+    );
+}
+
+function valuesFor(field: CaptureField): string[] {
+    return field instanceof HTMLSelectElement && field.multiple
+        ? Array.from(field.selectedOptions, (option) => option.value)
+        : [field.value];
+}
+
+function appendFormValue(values: FormValues, name: string, value: string): void {
+    const previous = Object.hasOwn(values, name) ? values[name] : undefined;
+    if (previous === undefined) {
+        Object.defineProperty(values, name, {
+            value,
+            writable: true,
+            enumerable: true,
+            configurable: true,
+        });
+    } else {
+        values[name] = typeof previous === 'string' ? [previous, value] : [...previous, value];
+    }
+}
+
+function collectFormValues(form: HTMLFormElement): FormValues {
+    const values: FormValues = {};
+    for (const field of Array.from(form.elements)) {
+        if (!capture(field) || !field.name) continue;
+        for (const value of valuesFor(field)) appendFormValue(values, field.name, value);
+    }
+    return values;
+}
+
+/** Self-contained: serialized into the sandbox together with the helpers above. */
 export function installBrowserBridge(config: BrowserBridgeConfig) {
-    function emit(
-        event: string,
-        element: HTMLElement,
-        values: Record<string, string | string[]> = {},
-    ) {
+    function emit(event: string, element: HTMLElement, values: FormValues = {}) {
         const action = element.dataset.simulatorAction;
         if (!action) return;
         window.parent.postMessage(
@@ -31,31 +77,6 @@ export function installBrowserBridge(config: BrowserBridgeConfig) {
             },
             config.parentOrigin,
         );
-    }
-    function capture(
-        field: Element,
-    ): field is HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement {
-        return (
-            (field instanceof HTMLInputElement ||
-                field instanceof HTMLSelectElement ||
-                field instanceof HTMLTextAreaElement) &&
-            field.dataset.simulatorCapture === 'true' &&
-            !field.disabled &&
-            field.type !== 'password' &&
-            field.type !== 'hidden' &&
-            field.type !== 'submit' &&
-            field.type !== 'button' &&
-            (!(field instanceof HTMLInputElement) ||
-                !['radio', 'checkbox'].includes(field.type) ||
-                field.checked)
-        );
-    }
-    function valuesFor(
-        field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
-    ): string[] {
-        return field instanceof HTMLSelectElement && field.multiple
-            ? Array.from(field.selectedOptions, (option) => option.value)
-            : [field.value];
     }
     function click(event: MouseEvent) {
         if (!(event.target instanceof Element)) return;
@@ -76,28 +97,7 @@ export function installBrowserBridge(config: BrowserBridgeConfig) {
     function submit(event: SubmitEvent) {
         event.preventDefault();
         const form = event.target;
-        if (!(form instanceof HTMLFormElement)) return;
-        const values: Record<string, string | string[]> = {};
-        for (const field of Array.from(form.elements)) {
-            if (!capture(field) || !field.name) continue;
-            for (const value of valuesFor(field)) {
-                const previous = Object.prototype.hasOwnProperty.call(values, field.name)
-                    ? values[field.name]
-                    : undefined;
-                if (previous === undefined) {
-                    Object.defineProperty(values, field.name, {
-                        value,
-                        writable: true,
-                        enumerable: true,
-                        configurable: true,
-                    });
-                } else {
-                    values[field.name] =
-                        typeof previous === 'string' ? [previous, value] : [...previous, value];
-                }
-            }
-        }
-        emit('submit', form, values);
+        if (form instanceof HTMLFormElement) emit('submit', form, collectFormValues(form));
     }
     function change(event: Event) {
         const field = event.target;
@@ -117,4 +117,10 @@ export function installBrowserBridge(config: BrowserBridgeConfig) {
         document.removeEventListener('submit', submit);
         document.removeEventListener('change', change);
     };
+}
+
+/** Script text for the sandboxed page: the helpers and installer, run once with the page config. */
+export function browserBridgeSource(config: string): string {
+    const helpers = [capture, valuesFor, appendFormValue, collectFormValues].join('\n');
+    return `(function(){${helpers}\nreturn (${installBrowserBridge})(${config});})();`;
 }
