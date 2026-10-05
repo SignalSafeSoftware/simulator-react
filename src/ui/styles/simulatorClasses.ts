@@ -26,6 +26,7 @@ export const SIM_MODAL_BODY = 'simulator-modal__body';
 
 export const SIM_FLEX = 'simulator-flex';
 export const SIM_FLEX_COL = 'simulator-flex simulator-flex--column';
+export const SIM_FLEX_ALIGN_CENTER = 'simulator-flex--align-center';
 export const SIM_FLEX_ROW = 'simulator-flex simulator-flex--row';
 export const SIM_FLEX_BETWEEN = 'simulator-flex simulator-flex--between';
 export const SIM_FLEX_CENTER = 'simulator-flex simulator-flex--center';

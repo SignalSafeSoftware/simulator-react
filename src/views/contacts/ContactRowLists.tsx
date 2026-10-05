@@ -9,6 +9,7 @@ import {
     SIM_TEXT_SM,
     SIM_TEXT_TRUNCATE,
     joinClasses,
+    SIM_FLEX_ALIGN_CENTER,
 } from '../../ui/styles/simulatorClasses.js';
 import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
 import { PhoneNumberText } from '../../ui/contacts/PhoneNumberText.js';
@@ -116,7 +117,7 @@ export function renderCompactContactList(
                             SIM_FLEX_GROW_1,
                             SIM_MIN_W_0,
                             'simulator-flex--between',
-                            'simulator-flex--align-center',
+                            SIM_FLEX_ALIGN_CENTER,
                         )}
                     >
                         <span className={joinClasses(SIM_PHONE_CONTACT_ROW_NAME, SIM_TEXT_MEDIUM)}>

@@ -13,6 +13,7 @@ import {
     SimulatorButtonTone,
     joinClasses,
     simBtnToneClass,
+    SIM_FLEX_ALIGN_CENTER,
 } from '../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
@@ -77,7 +78,7 @@ export default function SimulatorDeveloperControlsBar({
                             simSpacing.mb1,
                             'simulator-spacing--px-1',
                             SIM_FLEX,
-                            'simulator-flex--align-center',
+                            SIM_FLEX_ALIGN_CENTER,
                             simSpacing.gap2,
                             SIM_FLEX_WRAP,
                         )}

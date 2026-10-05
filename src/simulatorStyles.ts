@@ -31,6 +31,7 @@ import {
     SIM_TEXT_SM,
     SIM_W_FULL,
     joinClasses,
+    SIM_FLEX_ALIGN_CENTER,
 } from './ui/styles/simulatorClasses.js';
 import { SIM_SCREEN_HEADER } from './ui/styles/semanticSimulatorClasses.js';
 
@@ -73,7 +74,7 @@ export const simScreen = {
         'simulator-text--center',
         SIM_BORDER_SECONDARY,
         SIM_SCREEN_HEADER,
-        'simulator-text--sm',
+        SIM_TEXT_SM,
         'simulator-text--semibold',
     ),
 } as const;
@@ -88,25 +89,16 @@ export const simBorder = {
 /** Typography: aligned with wireframe labels and hierarchy. */
 export const simTypo = {
     subheading: 'simulator-heading simulator-heading--sub',
-    secondary: joinClasses('simulator-text--sm', SIM_MUTED),
-    secondaryTight: joinClasses(
-        'simulator-text--sm',
-        SIM_MUTED,
-        'simulator-spacing--section-tight',
-    ),
-    bodySmall: joinClasses('simulator-text--sm', 'simulator-text--body'),
-    emptyState: joinClasses(SIM_MUTED, 'simulator-text--sm', 'simulator-text--empty'),
-    backBarTitle: joinClasses('simulator-text--medium', SIM_MUTED, 'simulator-text--sm'),
+    secondary: joinClasses(SIM_TEXT_SM, SIM_MUTED),
+    secondaryTight: joinClasses(SIM_TEXT_SM, SIM_MUTED, 'simulator-spacing--section-tight'),
+    bodySmall: joinClasses(SIM_TEXT_SM, 'simulator-text--body'),
+    emptyState: joinClasses(SIM_MUTED, SIM_TEXT_SM, 'simulator-text--empty'),
+    backBarTitle: joinClasses('simulator-text--medium', SIM_MUTED, SIM_TEXT_SM),
 } as const;
 
 /** Back bar (detail views). */
 export const simBackBar = {
-    container: joinClasses(
-        SIM_FLEX,
-        'simulator-flex--align-center',
-        simSpacing.gap2,
-        simSpacing.sectionGap,
-    ),
+    container: joinClasses(SIM_FLEX, SIM_FLEX_ALIGN_CENTER, simSpacing.gap2, simSpacing.sectionGap),
     title: simTypo.backBarTitle,
 } as const;
 
@@ -115,7 +107,7 @@ export const simActionsBar = joinClasses(
     SIM_FLEX_ROW,
     'simulator-flex--wrap',
     simSpacing.gap2,
-    'simulator-flex--align-center',
+    SIM_FLEX_ALIGN_CENTER,
 );
 
 /** List row density. */
@@ -143,13 +135,13 @@ export const simStatus = {
         SIM_BORDER,
         'simulator-border--danger',
         'simulator-surface--light',
-        'simulator-text--sm',
+        SIM_TEXT_SM,
     ),
     warningBox: joinClasses(
         SIM_BORDER,
         'simulator-border--warning',
         'simulator-surface--light',
-        'simulator-text--sm',
+        SIM_TEXT_SM,
     ),
 } as const;
 
@@ -157,14 +149,14 @@ export const simStatus = {
 export const simLayout = {
     screenColumn: joinClasses(SIM_FLEX_COL, SIM_FLEX_GROW_1, SIM_MIN_H_0),
     scrollBody: joinClasses(SIM_FLEX_GROW_1, SIM_MIN_H_0, 'simulator-overflow-auto'),
-    row: joinClasses(SIM_FLEX_ROW, 'simulator-flex--align-center'),
-    rowBetween: joinClasses(SIM_FLEX_BETWEEN, 'simulator-flex--align-center'),
+    row: joinClasses(SIM_FLEX_ROW, SIM_FLEX_ALIGN_CENTER),
+    rowBetween: joinClasses(SIM_FLEX_BETWEEN, SIM_FLEX_ALIGN_CENTER),
     stack: joinClasses(SIM_FLEX_COL, simSpacing.stackGap),
     actionsRow: joinClasses(
         SIM_FLEX_ROW,
         simSpacing.gap2,
         'simulator-flex--wrap',
-        'simulator-flex--align-center',
+        SIM_FLEX_ALIGN_CENTER,
     ),
     footerActions: joinClasses(
         'simulator-spacing--p-2',
@@ -175,7 +167,7 @@ export const simLayout = {
     ),
     headerRowBetween: joinClasses(
         SIM_FLEX_BETWEEN,
-        'simulator-flex--align-center',
+        SIM_FLEX_ALIGN_CENTER,
         SIM_BORDER_BOTTOM,
         simSpacing.py2,
         simSpacing.sectionGap,
@@ -205,7 +197,7 @@ export const simShell = {
     headerBetween: joinClasses(
         SIM_FLEX,
         SIM_FLEX_BETWEEN,
-        'simulator-flex--align-center',
+        SIM_FLEX_ALIGN_CENTER,
         simSpacing.px2,
         simSpacing.py2,
         SIM_SURFACE_WHITE,
@@ -215,7 +207,7 @@ export const simShell = {
     headerEnd: joinClasses(
         SIM_FLEX,
         'simulator-flex--end',
-        'simulator-flex--align-center',
+        SIM_FLEX_ALIGN_CENTER,
         simSpacing.px2,
         simSpacing.py2,
         SIM_SURFACE_WHITE,

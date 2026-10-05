@@ -215,7 +215,7 @@ export function lintSimulatorPayload(payload: SimulatorTemplatePayload): Simulat
     const app = ep?.app ?? null;
     const screen = getEntryScreen(ep);
 
-    lintEntryAppContent(payload, app, screen, ep, warnings);
+    lintEntryAppContent(payload, app, screen, ep, warnings, SimulatorLintCode);
     lintBrowserActionTargets(payload.browser?.pages, warnings);
     lintBareBrowserPages(payload.browser?.pages, warnings);
     lintMessagesSenderIdentity(payload, warnings);

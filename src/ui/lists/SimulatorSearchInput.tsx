@@ -1,19 +1,21 @@
 /**
  * Search input for simulator list screens.
  */
+import type { InputHTMLAttributes } from 'react';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { INPUT_TYPE_SEARCH } from '../../constants.js';
 import { SimulatorInput } from '../primitives.js';
 import { simInput } from '../../simulatorStyles.js';
 import { joinClasses } from '../styles/simulatorClasses.js';
 
-export interface SimulatorSearchInputProps {
+export interface SimulatorSearchInputProps extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    'value' | 'onChange' | 'onSubmit' | 'type'
+> {
     value: string;
     onChange: (value: string) => void;
     onSubmit?: (query: string) => void;
-    placeholder?: string;
     ariaLabel?: string;
-    className?: string;
     /** Marks the field for simulator keyboard focus helpers. */
     dataSimulatorSearch?: boolean;
 }
@@ -26,10 +28,12 @@ function SimulatorSearchInput({
     ariaLabel,
     className = '',
     dataSimulatorSearch,
+    ...rest
 }: Readonly<SimulatorSearchInputProps>) {
     const locale = useSimulatorLocale();
     return (
         <SimulatorInput
+            {...rest}
             type={INPUT_TYPE_SEARCH}
             value={value}
             onChange={(event) => onChange(event.target.value)}

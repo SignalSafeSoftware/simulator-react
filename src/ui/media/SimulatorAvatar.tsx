@@ -1,16 +1,18 @@
-import { useState } from 'react';
+import { useState, type HTMLAttributes } from 'react';
 import { UserRound } from 'lucide-react';
 
 /** Shared identity treatment for simulator lists, conversations, and calls. */
 export function SimulatorAvatar({
     avatarUrl,
     className = '',
-}: Readonly<{ avatarUrl?: string; className?: string }>) {
+    ...rest
+}: Readonly<{ avatarUrl?: string } & HTMLAttributes<HTMLSpanElement>>) {
     const [failedUrl, setFailedUrl] = useState<string>();
     return (
         <span
-            className={`simulator-avatar simulator-profile-avatar ${className}`}
             aria-hidden='true'
+            {...rest}
+            className={`simulator-avatar simulator-profile-avatar ${className}`}
         >
             {avatarUrl && avatarUrl !== failedUrl ? (
                 <img src={avatarUrl} alt='' onError={() => setFailedUrl(avatarUrl)} />
