@@ -15,9 +15,9 @@ import { SimulatorActions } from '../actions/simulatorActions.js';
 import type { HostSimulatorEventHandler } from '../contract/hostContractTypes.js';
 import {
     type SimulatorSessionState,
-    type SimulatorChannel,
     type SimulatorAction,
     channelToApp,
+    isSimulatorChannel,
 } from '../types/session.js';
 import {
     actionToInteractionEvent,
@@ -84,8 +84,9 @@ export function useSimulatorSessionHandlers({
 
     const handleChannelChange = useCallback(
         (channel: string) => {
-            const newApp = channelToApp(channel as SimulatorChannel);
-            dispatch(switchChannelAction(channel as SimulatorChannel));
+            if (!isSimulatorChannel(channel)) return;
+            const newApp = channelToApp(channel);
+            dispatch(switchChannelAction(channel));
             const s = stateRef.current;
             if (onSimulatorEvent && s) {
                 onSimulatorEvent(appOpenedEvent(newApp, s.view, s.payload));

@@ -228,6 +228,19 @@ describe('transition logging gaps', () => {
         return vi.spyOn(console, 'log').mockImplementation(() => {});
     };
 
+    it.each([
+        ['missing process', undefined],
+        ['process without env', {}],
+        ['env without NODE_ENV', { env: {} }],
+        ['non-string NODE_ENV', { env: { NODE_ENV: 1 } }],
+    ])('logs when the runtime reports %s', (_name, processValue) => {
+        const log = enable();
+        vi.stubGlobal('process', processValue);
+        const state = getInitialSessionState(createPayload());
+        logSimulatorTransition(state, { type: 'BACK' }, state);
+        expect(log).toHaveBeenCalled();
+    });
+
     it('omits message and stack details when they did not change', () => {
         const log = enable();
         const state = getInitialSessionState(createPayload());

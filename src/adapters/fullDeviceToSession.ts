@@ -19,6 +19,7 @@ import {
     type SimulatorHomeStoreApp,
     type SimulatorHomeSettingsSection,
 } from '../types/session.js';
+import { isRecord } from '@signalsafe/tree-spec';
 import { ownValue } from '../utils/lookup.js';
 import { englishLocale } from '../i18n/englishLocale.js';
 /**
@@ -75,7 +76,7 @@ export function mapDevice(device: SimulatorDevicePayload['device']): SimulatorSe
         .map((item) => ({
             ...item,
             id: stringOr(item.id),
-            label: stringOr((item as { label?: unknown }).label, stringOr(item.id)),
+            label: stringOr(item.label, stringOr(item.id)),
             app: typeof item.app === 'string' ? item.app : undefined,
         }));
     if (mainMenuItems.length === 0 && Object.keys(device.secondary_defaults ?? {}).length === 0)
@@ -88,10 +89,10 @@ export function mapDevice(device: SimulatorDevicePayload['device']): SimulatorSe
 
 /** Map directory (official/trusted sources) to session directory entries. */
 function mapDirectoryEntry(raw: unknown): SimulatorDirectoryEntry | null {
-    if (raw == null || typeof raw !== 'object') {
+    if (!isRecord(raw)) {
         return null;
     }
-    const o = raw as Record<string, unknown>;
+    const o = raw;
     const id = optionalString(o.id);
     const label = optionalString(o.label);
     if (id == null || label == null) {
@@ -456,26 +457,24 @@ export function mapInternet(
 /** Map home app section to session home payload. */
 export function mapHome(home: SimulatorDevicePayload['home']): SimulatorHomePayload | null {
     if (home == null || typeof home !== 'object') return null;
-    const homeScreen = (home as { home?: { widgets?: unknown[] } }).home;
+    const homeScreen = home.home;
     const widgets: SimulatorHomeWidget[] = Array.isArray(homeScreen?.widgets)
-        ? (homeScreen.widgets as Array<{ id?: string; type?: string; label?: string }>).map(
-              (w, i) => ({
-                  id: typeof w.id === 'string' ? w.id : `w-${i}`,
-                  type: typeof w.type === 'string' ? w.type : undefined,
-                  label: typeof w.label === 'string' ? w.label : 'Widget',
-              }),
-          )
+        ? homeScreen.widgets.map((w, i) => ({
+              id: typeof w.id === 'string' ? w.id : `w-${i}`,
+              type: typeof w.type === 'string' ? w.type : undefined,
+              label: typeof w.label === 'string' ? w.label : 'Widget',
+          }))
         : [];
-    const store = (home as { store?: { featured_apps?: unknown[] } }).store;
+    const store = home.store;
     const featuredApps: SimulatorHomeStoreApp[] = Array.isArray(store?.featured_apps)
-        ? (store.featured_apps as Array<{ id?: string; name?: string }>).map((a, i) => ({
+        ? store.featured_apps.map((a, i) => ({
               id: typeof a.id === 'string' ? a.id : `app-${i}`,
               name: typeof a.name === 'string' ? a.name : 'App',
           }))
         : [];
-    const settings = (home as { settings?: { sections?: unknown[] } }).settings;
+    const settings = home.settings;
     const settingsSections: SimulatorHomeSettingsSection[] = Array.isArray(settings?.sections)
-        ? (settings.sections as Array<{ id?: string; title?: string }>).map((s, i) => ({
+        ? settings.sections.map((s, i) => ({
               id: typeof s.id === 'string' ? s.id : `s-${i}`,
               title: typeof s.title === 'string' ? s.title : 'Section',
           }))

@@ -60,11 +60,11 @@ export default function EmailSimulatorView({
     const inbox = payload?.inbox ?? [];
     const outbox = payload?.outbox ?? [];
     const trash = payload?.trash ?? [];
-    const handleNavSelect = (id: string) => {
+    const handleNavSelect = (id: ReturnType<typeof getEmailSecondaryItems>[number]['id']) => {
         if (id === 'back') {
             onBack?.();
         } else {
-            onNavigate?.(id as EmailScreenId);
+            onNavigate?.(id);
         }
     };
 

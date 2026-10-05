@@ -11,6 +11,7 @@ import {
     SIM_TEXT_WARNING,
     joinClasses,
 } from '../ui/styles/simulatorClasses.js';
+import { isRecord } from '@signalsafe/tree-spec';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 import { Fragment, isValidElement } from 'react';
 import { simSpacing } from '../simulatorStyles.js';
@@ -69,10 +70,9 @@ function formatPreviewValue(value: React.ReactNode): React.ReactNode {
             </>
         );
     }
-    if (typeof value === 'object') {
-        const maybeEntryPoint = value as { app?: unknown; screen?: unknown };
-        const app = typeof maybeEntryPoint.app === 'string' ? maybeEntryPoint.app : '';
-        const screen = typeof maybeEntryPoint.screen === 'string' ? maybeEntryPoint.screen : '';
+    if (isRecord(value)) {
+        const app = typeof value.app === 'string' ? value.app : '';
+        const screen = typeof value.screen === 'string' ? value.screen : '';
         if (app !== '' || screen !== '') {
             return `${app} / ${screen}`.trim();
         }

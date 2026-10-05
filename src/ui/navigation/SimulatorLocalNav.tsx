@@ -12,26 +12,26 @@ import {
     joinClasses,
 } from '../styles/simulatorClasses.js';
 
-export interface SimulatorLocalNavItem {
-    id: string;
+export interface SimulatorLocalNavItem<Id extends string = string> {
+    id: Id;
     label: string;
 }
 
-export interface SimulatorLocalNavProps {
-    items: SimulatorLocalNavItem[];
+export interface SimulatorLocalNavProps<Id extends string = string> {
+    items: SimulatorLocalNavItem<Id>[];
     activeId: string;
-    onSelect: (id: string) => void;
+    onSelect: (id: Id) => void;
     className?: string;
     'aria-label': string;
 }
 
-export function SimulatorLocalNav({
+export function SimulatorLocalNav<Id extends string = string>({
     items,
     activeId,
     onSelect,
     className = '',
     'aria-label': ariaLabel,
-}: Readonly<SimulatorLocalNavProps>) {
+}: Readonly<SimulatorLocalNavProps<Id>>) {
     if (items.length === 0) return null;
     return (
         <div

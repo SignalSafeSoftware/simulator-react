@@ -46,7 +46,10 @@ import PhoneDialView from './PhoneDialView.js';
 import PhoneVoicemailView from './PhoneVoicemailView.js';
 import PhoneIncomingScene from './PhoneIncomingScene.js';
 import type { SimulatorCapabilities } from '../../utils/payload/simulatorCapabilities.js';
-import { getPhoneLocalNavItems } from '../../utils/navigation/phoneLocalNavItems.js';
+import {
+    getPhoneLocalNavItems,
+    type PhoneLocalNavItem,
+} from '../../utils/navigation/phoneLocalNavItems.js';
 import { simLayout, simScreen, simSpacing, simTypo } from '../../simulatorStyles.js';
 import { SimulatorButton, SimulatorList, SimulatorListItem } from '../../ui/primitives.js';
 import {
@@ -138,11 +141,11 @@ export default function PhoneSimulatorView({
 
     const localNavItems = getPhoneLocalNavItems(phoneCapabilities, screenLocale);
     const contactList = contacts ?? [];
-    const handleNavSelect = (id: string) => {
+    const handleNavSelect = (id: PhoneLocalNavItem['id']) => {
         if (id === 'back') {
             onBack?.();
         } else {
-            onNavigate(id as PhoneScreenId);
+            onNavigate(id);
         }
     };
     const localNav = (activeId: string) =>

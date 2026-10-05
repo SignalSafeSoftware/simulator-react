@@ -209,6 +209,7 @@ it.each([false, true])('session handlers work with event reporting enabled=%s', 
     act(() => {
         handlers?.onToggleContactsPanel();
         handlers?.handleChannelChange('phone');
+        handlers?.handleChannelChange('unknown-channel');
         handlers?.handleSelectEmail('one');
         handlers?.handleSelectThread('thread');
         handlers?.handleOpenContactFromPhone('contact');
@@ -217,6 +218,9 @@ it.each([false, true])('session handlers work with event reporting enabled=%s', 
     });
     expect(dispatch).toHaveBeenCalledWith({ type: 'SELECT_EMAIL', messageId: 'one' });
     expect(dispatch).toHaveBeenCalledWith({ type: 'SMS_REVEAL_NEXT' });
+    expect(dispatch).not.toHaveBeenCalledWith(
+        expect.objectContaining({ channel: 'unknown-channel' }),
+    );
     if (onSimulatorEvent) expect(onSimulatorEvent).toHaveBeenCalled();
     view.unmount();
 });

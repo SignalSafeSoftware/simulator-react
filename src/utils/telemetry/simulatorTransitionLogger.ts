@@ -1,4 +1,5 @@
 import { SimulatorActionType } from './simulatorActionTaxonomy.js';
+import { isRecord } from '@signalsafe/tree-spec';
 import { SimulatorDispatchActionType } from '../../state/simulatorDispatchActions.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 /**
@@ -42,8 +43,10 @@ const STORAGE_KEY = 'simulator_log_transitions';
 const PREFIX = '[Simulator]';
 
 function getNodeEnv(): string | undefined {
-    const processValue = (globalThis as { process?: { env?: { NODE_ENV?: string } } }).process;
-    return processValue?.env?.NODE_ENV;
+    const processValue: unknown = Reflect.get(globalThis, 'process');
+    const env = isRecord(processValue) ? processValue.env : undefined;
+    const nodeEnv = isRecord(env) ? env.NODE_ENV : undefined;
+    return typeof nodeEnv === 'string' ? nodeEnv : undefined;
 }
 
 function getEnabled(): boolean {

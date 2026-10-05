@@ -116,6 +116,7 @@ function MailboxScreen({
         moveToTrash: (target) =>
             void commit({
                 ...target,
+                // Move to trash is only offered outside the trash folder.
                 previousFolder: target.folder as Mail['previousFolder'],
                 folder: mailFolderSchema.enum.trash,
             }),

@@ -11,6 +11,7 @@ import {
     SIM_TEXT_WARNING,
     joinClasses,
 } from '../ui/styles/simulatorClasses.js';
+import { isRecord } from '@signalsafe/tree-spec';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 import { simSpacing } from '../simulatorStyles.js';
 import { type ReachabilityReport } from '../utils/navigation/simulatorReachability.js';
@@ -63,10 +64,11 @@ function trimSlashes(value: string): string {
 }
 
 function formatScreenRef(value: unknown): string {
-    if (value != null && typeof value === 'object') {
-        const ref = value as { app?: unknown; screen?: unknown };
-        if (typeof ref.app === 'string' || typeof ref.screen === 'string') {
-            return trimSlashes(`${formatUnknownValue(ref.app)}/${formatUnknownValue(ref.screen)}`);
+    if (isRecord(value)) {
+        if (typeof value.app === 'string' || typeof value.screen === 'string') {
+            return trimSlashes(
+                `${formatUnknownValue(value.app)}/${formatUnknownValue(value.screen)}`,
+            );
         }
         try {
             return JSON.stringify(value);

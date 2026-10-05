@@ -10,9 +10,9 @@ import { createTranslator, simulatorEnglish } from '../../i18n/catalog.js';
 import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../../constants.js';
 
 const emailItems = [
-    { id: 'list', labelKey: 'nav.inbox', icon: '📥' },
-    { id: 'outbox', labelKey: 'nav.outbox', icon: '📤' },
-    { id: 'trash', labelKey: 'nav.trash', icon: '🗑️' },
+    { id: SimulatorEmailScreenId.List, labelKey: 'nav.inbox', icon: '📥' },
+    { id: SimulatorEmailScreenId.Outbox, labelKey: 'nav.outbox', icon: '📤' },
+    { id: SimulatorEmailScreenId.Trash, labelKey: 'nav.trash', icon: '🗑️' },
     { id: 'back', labelKey: 'nav.back', icon: '↩' },
 ] as const;
 

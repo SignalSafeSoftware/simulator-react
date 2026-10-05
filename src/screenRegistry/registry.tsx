@@ -299,6 +299,7 @@ export function renderActiveScreen(app: SimulatorApp, ctx: SimulatorRenderContex
         return null;
     }
     const props = entry.getProps(ctx);
+    // Entries are authored per screen with exact props; the registry erases them to render dynamically.
     const Component = entry.component as unknown as ComponentType<Record<string, unknown>>;
     return <Component {...props} />;
 }
