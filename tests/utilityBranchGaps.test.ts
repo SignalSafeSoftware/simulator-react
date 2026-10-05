@@ -1,3 +1,4 @@
+import { DEFAULT_PHONE_SCREEN } from '../src/types/session.js';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getInitialSessionState } from '../src/state/simulatorSessionInitialState';
 import { parseEntryScreen } from '../src/state/simulatorViewStateHelpers';
@@ -158,14 +159,14 @@ describe('payload analysis fallbacks', () => {
         const pages = runSimulatorRealismChecks(
             payloadOf({ browser: { pages: [{ id: 'p', content: 'x' }] } }),
         );
-        expect(pages).toBeDefined();
+        expect(pages).toHaveProperty('blockers');
         const call = runSimulatorRealismChecks(
             payloadOf({
                 entryPoint: { app: 'phone', screen: 'incoming_call' },
                 phone: { content: { phone_number: '555-0100' } },
             }),
         );
-        expect(call).toBeDefined();
+        expect(call).toHaveProperty('blockers');
     });
 
     it('ignores unchanged defaults and removals-only when diffing', () => {
@@ -275,7 +276,7 @@ describe('transition logging gaps', () => {
 describe('simplified helpers', () => {
     it('parses entry screens case-insensitively and falls back to defaults', () => {
         expect(parseEntryScreen('email' as never, 'DETAIL')).toBe('detail');
-        expect(parseEntryScreen('phone' as never, 'nope')).toBeTruthy();
+        expect(parseEntryScreen('phone' as never, 'nope')).toBe(DEFAULT_PHONE_SCREEN);
     });
 
     it('enables developer tools from presets and explicit sections', () => {

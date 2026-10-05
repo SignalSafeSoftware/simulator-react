@@ -102,7 +102,7 @@ describe('error boundary and lint banner', () => {
         });
         expect(
             bannerRenderer!.root.findByProps({ 'data-testid': 'simulator-lint-banner' }),
-        ).toBeTruthy();
+        ).toHaveProperty('props');
         let emptyBanner: ReactTestRenderer | null = null;
         await act(async () => {
             emptyBanner = TestRenderer.create(

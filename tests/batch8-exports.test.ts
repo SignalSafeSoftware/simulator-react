@@ -77,7 +77,7 @@ describe('Batch 8 owner module exports', () => {
             expect(typeof publicValues[name]).toBe('function');
         }
         for (const name of BARREL_COMPONENTS) {
-            expect(publicValues[name]).toBeTruthy();
+            expect(typeof publicValues[name]).toMatch(/^(function|object)$/);
         }
     });
 });

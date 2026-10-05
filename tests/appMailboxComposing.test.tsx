@@ -49,7 +49,7 @@ describe('Mailbox composing', () => {
     it('composes and sends a message, moving to the sent folder', async () => {
         const { store } = setup();
         await composeNew();
-        expect(screen.getByText(`From: ${ME}`)).toBeTruthy();
+        expect(screen.getByText(`From: ${ME}`)).toBeInstanceOf(HTMLElement);
         fillValid();
         nav('Send');
         await settle();
@@ -58,7 +58,7 @@ describe('Mailbox composing', () => {
             to: 'friend@example.test',
             subject: 'Hello',
         });
-        expect(screen.getByLabelText('Search email')).toBeTruthy();
+        expect(screen.getByLabelText('Search email')).toBeInstanceOf(HTMLElement);
     });
 
     it('reports invalid recipients and keeps the draft', async () => {
@@ -68,7 +68,7 @@ describe('Mailbox composing', () => {
         nav('Send');
         await settle();
         expect(alertText()).toBe('Enter valid email recipients separated by commas.');
-        expect(screen.getByLabelText('TO')).toBeTruthy();
+        expect(screen.getByLabelText('TO')).toBeInstanceOf(HTMLElement);
     });
 
     it('uses a fallback message for non-Error send failures and ignores repeated submits', async () => {
@@ -100,7 +100,7 @@ describe('Mailbox composing', () => {
             folder: 'drafts',
             subject: 'Draft subject',
         });
-        expect(screen.getByRole('button', { name: 'Drafts' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'Drafts' })).toBeInstanceOf(HTMLElement);
     });
 
     it('does not close the draft when the store rejects the save', async () => {
@@ -112,7 +112,7 @@ describe('Mailbox composing', () => {
         await composeNew();
         nav('Save draft');
         await settle();
-        expect(screen.getByLabelText('TO')).toBeTruthy();
+        expect(screen.getByLabelText('TO')).toBeInstanceOf(HTMLElement);
     });
 
     it('asks before discarding changed drafts but not unchanged ones', async () => {
@@ -127,7 +127,7 @@ describe('Mailbox composing', () => {
         field('Subject', 'Changed');
         nav('Back');
         expect(confirm).toHaveBeenCalledWith('Discard unsaved draft changes?');
-        expect(screen.getByLabelText('TO')).toBeTruthy();
+        expect(screen.getByLabelText('TO')).toBeInstanceOf(HTMLElement);
         confirm.mockReturnValue(true);
         nav('Back');
         expect(screen.queryByLabelText('TO')).toBeNull();
@@ -158,7 +158,7 @@ describe('Mailbox composing', () => {
 
         fireEvent.click(screen.getByText('Forward'));
         expect((screen.getByLabelText('TO') as HTMLInputElement).value).toBe('');
-        expect(screen.getByText('keep.txt')).toBeTruthy();
+        expect(screen.getByText('keep.txt')).toBeInstanceOf(HTMLElement);
     });
 
     it('edits stored drafts without reply actions', async () => {
@@ -175,9 +175,9 @@ describe('Mailbox composing', () => {
         setup();
         await openFolder(/^Trash/);
         nav('Trash');
-        expect(screen.getByLabelText('Search email')).toBeTruthy();
+        expect(screen.getByLabelText('Search email')).toBeInstanceOf(HTMLElement);
         nav('Compose');
-        expect(screen.getByRole('heading', { name: 'New email' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'New email' })).toBeInstanceOf(HTMLElement);
     });
 
     describe('attachments', () => {
@@ -193,7 +193,7 @@ describe('Mailbox composing', () => {
             setup();
             await composeNew();
             await attach(file('doc.txt'));
-            expect(screen.getByText('doc.txt')).toBeTruthy();
+            expect(screen.getByText('doc.txt')).toBeInstanceOf(HTMLElement);
             fireEvent.click(screen.getByRole('button', { name: 'Remove doc.txt' }));
             expect(screen.queryByText('doc.txt')).toBeNull();
         });
@@ -272,6 +272,6 @@ describe('Mailbox host defaults', () => {
         );
         render(node);
         await openFolder(/^Inbox/);
-        expect(screen.getByText('Subject 1')).toBeTruthy();
+        expect(screen.getByText('Subject 1')).toBeInstanceOf(HTMLElement);
     });
 });

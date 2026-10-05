@@ -127,11 +127,13 @@ describe('useDevicePage', () => {
             .mockResolvedValue(pageOf(0, 1, 1));
         const { result } = renderHook(() => useDevicePage(store({ page }), 'mail', {}, 20));
         await waitFor(() => expect(result.current.error).toBe('down'));
+        expect(page).toHaveBeenCalledTimes(1);
         act(() => result.current.retry());
-        await waitFor(() => expect(result.current.error).not.toBe('down'));
-        expect(result.current.error).not.toBe('');
+        await waitFor(() => expect(page).toHaveBeenCalledTimes(2));
+        await waitFor(() => expect(result.current.error).toBe('Could not load saved records.'));
         act(() => result.current.retry());
         await waitFor(() => expect(result.current.records).toHaveLength(1));
+        expect(page).toHaveBeenCalledTimes(3);
         expect(result.current.error).toBe('');
     });
 

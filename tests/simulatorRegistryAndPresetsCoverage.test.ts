@@ -246,8 +246,8 @@ describe('simulator screen registry coverage', () => {
         };
         expect(contactsProps.initialSearch).toBe('initial-search');
         expect(contactsProps.searchQuery).toBe('initial-search');
-        expect(contactsProps.phoneLocalNavItems).toBeTruthy();
-        expect(contactsProps.onPhoneNavSelect).toBeTruthy();
+        expect(contactsProps.phoneLocalNavItems).toBeInstanceOf(Array);
+        expect(contactsProps.onPhoneNavSelect).toBeTypeOf('function');
 
         ctx.state.view.showPrimaryMenu = false;
         ctx.state.view.activeApp = 'phone';

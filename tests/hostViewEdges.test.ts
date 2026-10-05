@@ -355,6 +355,6 @@ it('keeps existing list rows mounted while announcing continuation', async () =>
     );
     expect(view.root.findByType('button')).toBe(row);
     expect(view.root.findByType('section').props['aria-busy']).toBe(true);
-    expect(view.root.findByType('output')).toBeTruthy();
+    expect(view.root.findByType('output')).toHaveProperty('props');
     view.unmount();
 });

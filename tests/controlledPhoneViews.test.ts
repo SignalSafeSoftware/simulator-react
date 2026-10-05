@@ -120,8 +120,8 @@ it('supports host identity fields without duplicating the shared form or save co
     const root = create(createElement(PhoneContactEditor, props));
     expect(root.root.findAllByType('form')).toHaveLength(1);
     expect(root.root.findAllByProps({ name: 'name' })).toHaveLength(0);
-    expect(root.root.findByProps({ name: 'company' })).toBeDefined();
-    expect(root.root.findByProps({ name: 'phoneNumbers' })).toBeDefined();
+    expect(root.root.findByProps({ name: 'company' })).toHaveProperty('props');
+    expect(root.root.findByProps({ name: 'phoneNumbers' })).toHaveProperty('props');
     expect(root.root.findByType('output').children).toEqual(['Review the current revision']);
     expect(root.root.findAllByProps({ 'aria-label': 'Save contact' })).toHaveLength(1);
     act(() => root.root.findByType('form').props.onSubmit({ preventDefault: vi.fn() }));

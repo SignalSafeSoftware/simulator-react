@@ -45,9 +45,9 @@ describe('empty entry content diagnostics', () => {
         const realism = runSimulatorRealismChecks(payload);
         expect(realism.pass).toBe(realism.blockers.length === 0);
         const fallback = applyPreviewFallback(payload);
-        expect(fallback.payload).toBeDefined();
+        expect(fallback.payload).toBeTypeOf('object');
         expect(payload).toEqual(before);
-        expect(buildSimulatorNavGraph(payload)).toBeDefined();
+        expect(buildSimulatorNavGraph(payload)).toHaveProperty('nodes');
     });
     it('accepts empty optional home arrays and reports an incomplete caller', () => {
         const home = lintSimulatorPayload({
@@ -79,11 +79,11 @@ it('keeps detail snippets when supplied and accepts omitted ones', () => {
     const withSnippet = mapEmail({
         detail: { id: 'one', subject: 'Hello', from: 'ada', body: 'Body', snippet: 'Preview' },
     });
-    expect(withSnippet?.selectedMessage).toBeDefined();
+    expect(withSnippet?.selectedMessage).toMatchObject({ subject: 'Hello' });
     const withoutSnippet = mapEmail({
         detail: { id: 'one', subject: 'Hello', from: 'ada', body: 'Body' },
     });
-    expect(withoutSnippet?.selectedMessage).toBeDefined();
+    expect(withoutSnippet?.selectedMessage).toMatchObject({ subject: 'Hello' });
 });
 it('normalizes default and custom button tones and rejects unknown action names', () => {
     expect(simBtnToneClass()).toContain('neutral');

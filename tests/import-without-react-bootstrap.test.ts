@@ -6,8 +6,8 @@ import { describe, expect, it } from 'vitest';
 
 describe('package imports without react-bootstrap', () => {
     it('loads the public modules without react-bootstrap installed', async () => {
-        expect(SimulatorWithSession).toBeTruthy();
-        expect(PhoneSimulatorShell).toBeTruthy();
+        expect(typeof SimulatorWithSession).toMatch(/^(function|object)$/);
+        expect(typeof PhoneSimulatorShell).toMatch(/^(function|object)$/);
         expect(typeof simulatorSessionReducer).toBe('function');
         expect(typeof lintSimulatorPayload).toBe('function');
     });

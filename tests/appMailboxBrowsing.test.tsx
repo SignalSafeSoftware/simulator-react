@@ -31,16 +31,16 @@ describe('Mailbox folders', () => {
         const { onBack } = setup({
             mails: [mail('1'), mail('2'), mail('3', { folder: 'sent' })],
         });
-        expect(screen.getByRole('button', { name: 'Inbox2' })).toBeTruthy();
-        expect(screen.getByRole('button', { name: 'Sent1' })).toBeTruthy();
-        expect(screen.getByRole('button', { name: 'Trash0' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'Inbox2' })).toBeInstanceOf(HTMLElement);
+        expect(screen.getByRole('button', { name: 'Sent1' })).toBeInstanceOf(HTMLElement);
+        expect(screen.getByRole('button', { name: 'Trash0' })).toBeInstanceOf(HTMLElement);
         nav('Back');
         expect(onBack).toHaveBeenCalledTimes(1);
     });
 
     it('treats missing counts as zero', () => {
         setup({ prepare: (store) => Object.defineProperty(store, 'counts', { value: undefined }) });
-        expect(screen.getByRole('button', { name: 'Inbox0' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'Inbox0' })).toBeInstanceOf(HTMLElement);
     });
 
     it('lists folder messages with the right counterpart and unread markers', async () => {
@@ -52,28 +52,28 @@ describe('Mailbox folders', () => {
             ],
         });
         await openFolder(/^Inbox/);
-        expect(screen.getByText('● (No subject)')).toBeTruthy();
-        expect(screen.getByText('sender@example.test')).toBeTruthy();
+        expect(screen.getByText('● (No subject)')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText('sender@example.test')).toBeInstanceOf(HTMLElement);
         nav('Back');
         await openFolder(/^Sent/);
-        expect(screen.getByText('them@example.test')).toBeTruthy();
+        expect(screen.getByText('them@example.test')).toBeInstanceOf(HTMLElement);
         nav('Back');
         await openFolder(/^Drafts/);
-        expect(screen.getByText('draft@example.test')).toBeTruthy();
+        expect(screen.getByText('draft@example.test')).toBeInstanceOf(HTMLElement);
     });
 
     it('searches and reports empty folders and empty searches', async () => {
         setup({ mails: [mail('1', { subject: 'Invoice' })] });
         await openFolder(/^Sent/);
-        expect(screen.getByText('No messages in this folder.')).toBeTruthy();
+        expect(screen.getByText('No messages in this folder.')).toBeInstanceOf(HTMLElement);
         nav('Back');
         await openFolder(/^Inbox/);
         fireEvent.change(screen.getByLabelText('Search email'), { target: { value: 'nothing' } });
         await settle();
-        expect(screen.getByText('No messages match your search.')).toBeTruthy();
+        expect(screen.getByText('No messages match your search.')).toBeInstanceOf(HTMLElement);
         fireEvent.change(screen.getByLabelText('Search email'), { target: { value: 'invoice' } });
         await settle();
-        expect(screen.getByText('Invoice')).toBeTruthy();
+        expect(screen.getByText('Invoice')).toBeInstanceOf(HTMLElement);
     });
 
     it('resets the search when returning to the folder list', async () => {
@@ -130,9 +130,9 @@ describe('Mailbox folders', () => {
         ];
         setup({ sources });
         fireEvent.click(screen.getByRole('button', { name: 'Imported' }));
-        expect(screen.getByRole('button', { name: 'Imported' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'Imported' })).toBeInstanceOf(HTMLElement);
         nav('Back');
-        expect(screen.getByRole('button', { name: 'Inbox0' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'Inbox0' })).toBeInstanceOf(HTMLElement);
 
         fireEvent.click(screen.getByRole('button', { name: 'Imported' }));
         fireEvent.click(screen.getByText('compose-from-source'));
@@ -159,10 +159,12 @@ describe('Mailbox messages', () => {
         setup({ mails: thread() });
         await openFolder(/^Inbox/);
         await openMessage('Original');
-        expect(screen.getByText('From: sender@example.test')).toBeTruthy();
-        expect(screen.getByText('CC: cc@example.test')).toBeTruthy();
-        expect(screen.getByText('BCC: bcc@example.test')).toBeTruthy();
-        expect(screen.getByText(/Based on imported source record src-1/)).toBeTruthy();
+        expect(screen.getByText('From: sender@example.test')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText('CC: cc@example.test')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText('BCC: bcc@example.test')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText(/Based on imported source record src-1/)).toBeInstanceOf(
+            HTMLElement,
+        );
         expect(screen.getByRole('link', { name: 'notes.txt' }).getAttribute('download')).toBe(
             'notes.txt',
         );
@@ -170,7 +172,9 @@ describe('Mailbox messages', () => {
         expect(within(details).queryByText('Gone')).toBeNull();
         fireEvent.click(within(details).getByText('Reply to original'));
         await settle();
-        expect(screen.getByRole('heading', { name: 'Reply to original' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'Reply to original' })).toBeInstanceOf(
+            HTMLElement,
+        );
     });
 
     it('hides optional headers and uses a fallback subject', async () => {
@@ -180,7 +184,7 @@ describe('Mailbox messages', () => {
         expect(screen.queryByText(/^CC:/)).toBeNull();
         expect(screen.queryByText(/^BCC:/)).toBeNull();
         expect(screen.queryByText(/imported source/)).toBeNull();
-        expect(screen.getByRole('heading', { name: '(No subject)' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: '(No subject)' })).toBeInstanceOf(HTMLElement);
     });
 
     it('marks unread messages read when opened and toggles the state', async () => {
@@ -191,7 +195,7 @@ describe('Mailbox messages', () => {
         fireEvent.click(screen.getByText('Mark unread'));
         await settle();
         expect(store().state().mail[0]!.read).toBe(false);
-        expect(screen.getByText('Mark read')).toBeTruthy();
+        expect(screen.getByText('Mark read')).toBeInstanceOf(HTMLElement);
     });
 
     it('does not rewrite messages that are already read', async () => {
@@ -227,7 +231,7 @@ describe('Mailbox messages', () => {
         fireEvent.click(screen.getByText('Move to trash'));
         await settle();
         expect(store().state().mail[0]!.folder).toBe('inbox');
-        expect(screen.getByRole('heading', { name: 'Subject m' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'Subject m' })).toBeInstanceOf(HTMLElement);
     });
 
     it('permanently deletes only after confirmation and success', async () => {
@@ -245,7 +249,7 @@ describe('Mailbox messages', () => {
         store().remove = async () => false;
         fireEvent.click(screen.getByText('Delete permanently'));
         await settle();
-        expect(screen.getByText('Restore')).toBeTruthy();
+        expect(screen.getByText('Restore')).toBeInstanceOf(HTMLElement);
 
         store().remove = remove;
         fireEvent.click(screen.getByText('Delete permanently'));
@@ -259,9 +263,9 @@ describe('Mailbox messages', () => {
             displayMail: (item) => ({ ...item, subject: item.subject.toUpperCase() }),
         });
         await openFolder(/^Inbox/);
-        expect(screen.getByText('SUBJECT 1')).toBeTruthy();
+        expect(screen.getByText('SUBJECT 1')).toBeInstanceOf(HTMLElement);
         await openMessage('SUBJECT 1');
-        expect(screen.getByRole('heading', { name: 'SUBJECT 1' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'SUBJECT 1' })).toBeInstanceOf(HTMLElement);
     });
 
     it('returns from a message to its folder and then the folder list', async () => {
@@ -269,9 +273,9 @@ describe('Mailbox messages', () => {
         await openFolder(/^Inbox/);
         await openMessage('Subject 1');
         nav('Back');
-        expect(screen.getByLabelText('Search email')).toBeTruthy();
+        expect(screen.getByLabelText('Search email')).toBeInstanceOf(HTMLElement);
         nav('Back');
-        expect(screen.getByRole('button', { name: 'Inbox1' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'Inbox1' })).toBeInstanceOf(HTMLElement);
     });
 
     it('reports record load failures and retries', async () => {
@@ -296,7 +300,7 @@ describe('Mailbox messages', () => {
         expect(alertText()).toContain('could not be loaded');
         fireEvent.click(screen.getByText('Retry'));
         await settle();
-        expect(screen.getByRole('heading', { name: 'Subject 1' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'Subject 1' })).toBeInstanceOf(HTMLElement);
     });
 
     it('pages long threads and reports thread load errors', async () => {

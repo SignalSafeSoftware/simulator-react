@@ -58,7 +58,7 @@ describe('contactMatchesSearch', () => {
 describe('ContactsView header', () => {
     it('uses the localised title next to the add button when none is given', () => {
         render(<ContactsView contacts={[]} onBack={() => {}} onAddContact={() => {}} />);
-        expect(screen.getByText('Contacts')).toBeTruthy();
+        expect(screen.getByText('Contacts')).toBeInstanceOf(HTMLElement);
     });
 });
 
@@ -116,8 +116,8 @@ describe('PhoneHistoryList', () => {
                 onSelectVoicemail={() => {}}
             />,
         );
-        expect(screen.getByText('Unknown')).toBeTruthy();
-        expect(screen.getByText(/2/)).toBeTruthy();
+        expect(screen.getByText('Unknown')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText(/2/)).toBeInstanceOf(HTMLElement);
     });
 });
 
@@ -157,7 +157,7 @@ describe('PhoneSimulatorView without call history', () => {
             />,
         );
         expect(extra).toHaveBeenCalled();
-        expect(screen.getByText('extra 0 null')).toBeTruthy();
+        expect(screen.getByText('extra 0 null')).toBeInstanceOf(HTMLElement);
     });
 });
 
@@ -212,8 +212,8 @@ describe('SmsSimulatorView', () => {
                 )}
             />,
         );
-        expect(screen.getByText('Open bare')).toBeTruthy();
-        expect(screen.getByText('Open other')).toBeTruthy();
+        expect(screen.getByText('Open bare')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText('Open other')).toBeInstanceOf(HTMLElement);
     });
 
     it('offers a way back from read-only threads', () => {

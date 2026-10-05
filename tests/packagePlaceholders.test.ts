@@ -132,6 +132,6 @@ describe('reusable screen placeholders', () => {
             renderer!.root.findByProps({
                 children: 'Contact creation is not configured for this scenario.',
             }),
-        ).toBeDefined();
+        ).toHaveProperty('props');
     });
 });

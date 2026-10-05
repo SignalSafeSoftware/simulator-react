@@ -95,7 +95,7 @@ describe('Photos', () => {
     it('shows an empty state and returns to the previous app', async () => {
         const { onBack } = setup();
         await act(flush);
-        expect(screen.getByText('No photos saved.')).toBeTruthy();
+        expect(screen.getByText('No photos saved.')).toBeInstanceOf(HTMLElement);
         nav('Back');
         expect(onBack).toHaveBeenCalledTimes(1);
     });
@@ -118,8 +118,8 @@ describe('Photos', () => {
         await act(flush);
         expect(screen.getAllByRole('img')).toHaveLength(25);
         fireEvent.click(screen.getByAltText('Sunset').closest('button')!);
-        expect(screen.getByLabelText('Photo details')).toBeTruthy();
-        expect(screen.getByText('image/png')).toBeTruthy();
+        expect(screen.getByLabelText('Photo details')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText('image/png')).toBeInstanceOf(HTMLElement);
         expect(screen.getAllByText('Unknown').length).toBeGreaterThan(0);
     });
 
@@ -141,7 +141,7 @@ describe('Photos', () => {
         expect(screen.getAllByText('offline').length).toBeGreaterThan(0);
         fireEvent.click(screen.getByText('Retry'));
         await act(flush);
-        expect(screen.getByAltText('Photo 1')).toBeTruthy();
+        expect(screen.getByAltText('Photo 1')).toBeInstanceOf(HTMLElement);
         expect(store().error).toBe('');
     });
 
@@ -152,8 +152,8 @@ describe('Photos', () => {
         Object.defineProperty(image, 'naturalWidth', { value: 640 });
         Object.defineProperty(image, 'naturalHeight', { value: 480 });
         fireEvent.load(image);
-        expect(screen.getByText('640 px')).toBeTruthy();
-        expect(screen.getByText('480 px')).toBeTruthy();
+        expect(screen.getByText('640 px')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText('480 px')).toBeInstanceOf(HTMLElement);
         fireEvent.error(image);
         expect(screen.queryByText('640 px')).toBeNull();
     });
@@ -180,7 +180,7 @@ describe('Photos', () => {
                 longitude: -0.1,
             },
         });
-        expect(screen.getByText('Add photo')).toBeTruthy();
+        expect(screen.getByText('Add photo')).toBeInstanceOf(HTMLElement);
     });
 
     it('keeps the draft open when the store refuses the save', async () => {
@@ -194,7 +194,7 @@ describe('Photos', () => {
         nav('Edit photo');
         nav('Save photo');
         await act(flush);
-        expect(screen.getByLabelText('Photo details')).toBeTruthy();
+        expect(screen.getByLabelText('Photo details')).toBeInstanceOf(HTMLElement);
     });
 
     it('explains validation failures, including without a specific issue', async () => {
@@ -221,7 +221,7 @@ describe('Photos', () => {
         await open('Photo 1');
         nav('Edit photo');
         nav('Back');
-        expect(screen.getByText('Add photo')).toBeTruthy();
+        expect(screen.getByText('Add photo')).toBeInstanceOf(HTMLElement);
         expect(confirm).not.toHaveBeenCalled();
 
         await open('Photo 1');
@@ -229,17 +229,17 @@ describe('Photos', () => {
         field('Title', 'Changed');
         nav('Back');
         expect(confirm).toHaveBeenCalledWith('Discard unsaved photo changes?');
-        expect(screen.getByLabelText('Photo details')).toBeTruthy();
+        expect(screen.getByLabelText('Photo details')).toBeInstanceOf(HTMLElement);
         confirm.mockReturnValue(true);
         nav('Back');
-        expect(screen.getByText('Add photo')).toBeTruthy();
+        expect(screen.getByText('Add photo')).toBeInstanceOf(HTMLElement);
     });
 
     it('closes details without confirmation when not editing', async () => {
         setup({ photos: [photo('1')] });
         await open('Photo 1');
         nav('Back');
-        expect(screen.getByText('Add photo')).toBeTruthy();
+        expect(screen.getByText('Add photo')).toBeInstanceOf(HTMLElement);
     });
 
     it('deletes after confirmation only', async () => {
@@ -255,13 +255,13 @@ describe('Photos', () => {
         store().remove = async () => false;
         nav('Delete photo');
         await act(flush);
-        expect(screen.getByLabelText('Photo details')).toBeTruthy();
+        expect(screen.getByLabelText('Photo details')).toBeInstanceOf(HTMLElement);
 
         store().remove = remove;
         nav('Delete photo');
         await act(flush);
         expect(store().state().photos).toHaveLength(0);
-        expect(screen.getByText('No photos saved.')).toBeTruthy();
+        expect(screen.getByText('No photos saved.')).toBeInstanceOf(HTMLElement);
     });
 
     it('imports a new photo, extracting metadata, and saves it', async () => {
@@ -330,7 +330,7 @@ describe('Photos', () => {
         const { onBack } = setup({ readAsset: () => gate.promise });
         await act(flush);
         await choose();
-        expect(screen.getByText('Reading image…')).toBeTruthy();
+        expect(screen.getByText('Reading image…')).toBeInstanceOf(HTMLElement);
         nav('Back');
         expect(onBack).toHaveBeenCalled();
         await act(async () => gate.resolve(asset('late.png')));
@@ -372,7 +372,7 @@ describe('PhotoEditor', () => {
         expect(onChange.mock.calls[0]![0].metadata.latitude).toBeNull();
         fireEvent.change(screen.getByLabelText('Longitude'), { target: { value: '45.5' } });
         expect(onChange.mock.calls[1]![0].metadata.longitude).toBe(45.5);
-        expect(screen.getByText('Latitude: 1; Longitude: 2')).toBeTruthy();
+        expect(screen.getByText('Latitude: 1; Longitude: 2')).toBeInstanceOf(HTMLElement);
     });
 
     it('reports unknown original coordinates and ignores empty replacement selections', () => {
@@ -385,10 +385,14 @@ describe('PhotoEditor', () => {
                 onReplace={onReplace}
             />,
         );
-        expect(screen.getByText('Latitude: Unknown; Longitude: Unknown')).toBeTruthy();
+        expect(screen.getByText('Latitude: Unknown; Longitude: Unknown')).toBeInstanceOf(
+            HTMLElement,
+        );
         fireEvent.change(screen.getByLabelText('Replace image'), { target: { files: [] } });
         expect(onReplace).not.toHaveBeenCalled();
-        expect(within(screen.getByRole('group')).getByLabelText('Title')).toBeTruthy();
+        expect(within(screen.getByRole('group')).getByLabelText('Title')).toBeInstanceOf(
+            HTMLElement,
+        );
     });
 });
 
@@ -401,14 +405,16 @@ describe('PhotoLocation', () => {
                 <PhotoLocation latitude={1.5} longitude={2.5} />
             </SimulatorAppsProvider>,
         );
-        expect(screen.getByText('map 1.5,2.5')).toBeTruthy();
+        expect(screen.getByText('map 1.5,2.5')).toBeInstanceOf(HTMLElement);
     });
 
     it('renders no map without a host renderer or coordinates', () => {
         const { rerender } = render(<PhotoLocation latitude={1} longitude={2} />);
         expect(screen.queryByText('No location recorded for this photo.')).toBeNull();
         rerender(<PhotoLocation latitude={null} longitude={2} />);
-        expect(screen.getByText('No location recorded for this photo.')).toBeTruthy();
+        expect(screen.getByText('No location recorded for this photo.')).toBeInstanceOf(
+            HTMLElement,
+        );
         rerender(<PhotoLocation latitude={1} longitude={null} />);
         expect(screen.getAllByText('Unknown')).toHaveLength(1);
     });

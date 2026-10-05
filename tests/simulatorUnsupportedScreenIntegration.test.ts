@@ -61,6 +61,6 @@ describe('SimulatorWithSession unsupported screen fallback', () => {
         expect(text).not.toContain('incoming_call');
         expect(
             renderer!.root.findByProps({ 'data-testid': 'simulator-unsupported-screen' }),
-        ).toBeTruthy();
+        ).toHaveProperty('props');
     });
 });

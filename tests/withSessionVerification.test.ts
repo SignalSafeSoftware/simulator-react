@@ -256,7 +256,7 @@ describe('SimulatorWithSession verification contexts', () => {
         });
         expect(dispatch).toHaveBeenCalledWith({ type: 'BACK' });
 
-        expect(mockState.latestDeveloperPanelProps?.payload).toBeTruthy();
+        expect(mockState.latestDeveloperPanelProps?.payload).toBeTypeOf('object');
         expect(mockState.latestDeveloperPanelProps?.timelineEntries).toBeUndefined();
     });
 

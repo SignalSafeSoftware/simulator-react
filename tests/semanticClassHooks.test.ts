@@ -109,11 +109,11 @@ describe('semantic simulator class hooks', () => {
                 React.createElement(SimulatorWithSession, { state, dispatch }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_RUNTIME)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_RUNTIME_APP_ROOT)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_RUNTIME_SCREEN)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_CHANNEL)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_CHANNEL_PHONE)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_RUNTIME)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_RUNTIME_APP_ROOT)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_RUNTIME_SCREEN)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_CHANNEL)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_CHANNEL_PHONE)).toHaveProperty('props');
     });
     it('renders runtime app root without diagnostics band when developer tools are disabled', async () => {
         const dispatch = vi.fn();
@@ -123,7 +123,7 @@ describe('semantic simulator class hooks', () => {
                 React.createElement(SimulatorWithSession, { state, dispatch }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_RUNTIME_APP_ROOT)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_RUNTIME_APP_ROOT)).toHaveProperty('props');
         expect(findWithClass(renderer!.root, SIM_RUNTIME_DIAGNOSTICS_BAND)).toBeUndefined();
     });
     it('renders diagnostics band when developer tools are enabled', async () => {
@@ -138,8 +138,8 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_RUNTIME_DIAGNOSTICS_BAND)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_RUNTIME_APP_ROOT)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_RUNTIME_DIAGNOSTICS_BAND)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_RUNTIME_APP_ROOT)).toHaveProperty('props');
     });
     it('renders email channel modifier when email app is active', async () => {
         const dispatch = vi.fn();
@@ -164,7 +164,7 @@ describe('semantic simulator class hooks', () => {
                 React.createElement(SimulatorWithSession, { state, dispatch }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_CHANNEL_EMAIL)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_CHANNEL_EMAIL)).toHaveProperty('props');
     });
     it('renders phone semantic classes on phone views', async () => {
         await act(async () => {
@@ -182,13 +182,15 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_PHONE)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_PHONE_INCOMING_CALL_HISTORY)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_PHONE_INCOMING_CALL_HISTORY)).toHaveProperty(
+            'props',
+        );
         await act(async () => {
             renderer!.update(React.createElement(PhoneDialView, { onDial: vi.fn() }));
         });
-        expect(findWithClass(renderer!.root, SIM_PHONE_DIALER)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_PHONE_DIALER_CALL_BUTTON)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_DIALER)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_PHONE_DIALER_CALL_BUTTON)).toHaveProperty('props');
     });
     it('renders phone contact list and row classes', async () => {
         await act(async () => {
@@ -203,10 +205,10 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_LIST)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_MAIN)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NAME)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_LIST)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_MAIN)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NAME)).toHaveProperty('props');
     });
     it('renders contact row avatar class in ContactsView', async () => {
         await act(async () => {
@@ -219,10 +221,10 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_AVATAR)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_MAIN)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NAME)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NUMBER)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_AVATAR)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_MAIN)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NAME)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NUMBER)).toHaveProperty('props');
     });
     it('renders compact contact row main/name/number classes without phone local nav', async () => {
         await act(async () => {
@@ -233,10 +235,10 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_MAIN)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NAME)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NUMBER)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_MAIN)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NAME)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_NUMBER)).toHaveProperty('props');
     });
     it('renders contact detail class in ContactsView', async () => {
         await act(async () => {
@@ -250,7 +252,7 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_DETAIL)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_DETAIL)).toHaveProperty('props');
     });
     it('renders email semantic classes', async () => {
         await act(async () => {
@@ -271,10 +273,10 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_EMAIL_INBOX)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_EMAIL_MESSAGE_ROW)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_EMAIL_STATUS_BADGE)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_SCREEN_HEADER_ROW)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_EMAIL_INBOX)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_EMAIL_MESSAGE_ROW)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_EMAIL_STATUS_BADGE)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_SCREEN_HEADER_ROW)).toHaveProperty('props');
         expect(findWithClass(renderer!.root, SIM_EMAIL_COMPOSE_ACTION)?.props['aria-label']).toBe(
             'Compose email',
         );
@@ -290,8 +292,10 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_EMAIL_MESSAGE_DETAIL)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_EMAIL_MESSAGE_DETAIL_BODY)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_EMAIL_MESSAGE_DETAIL)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_EMAIL_MESSAGE_DETAIL_BODY)).toHaveProperty(
+            'props',
+        );
     });
     it('renders messages semantic classes', async () => {
         await act(async () => {
@@ -303,10 +307,10 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_MESSAGES)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_MESSAGES_THREAD_LIST)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_MESSAGES_THREAD_ROW)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_SCREEN_HEADER_ROW)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_MESSAGES)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_MESSAGES_THREAD_LIST)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_MESSAGES_THREAD_ROW)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_SCREEN_HEADER_ROW)).toHaveProperty('props');
         expect(
             findWithClass(renderer!.root, SIM_MESSAGES_COMPOSE_ACTION)?.props['aria-label'],
         ).toBe('New thread');
@@ -326,7 +330,7 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_MESSAGES_THREAD_DETAIL)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_MESSAGES_THREAD_DETAIL)).toHaveProperty('props');
     });
     it('renders explicit Home Settings chrome hooks without changing the back button name', async () => {
         await act(async () => {
@@ -341,9 +345,11 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_HOME_SETTINGS_BACK_BAR)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_HOME_SETTINGS_HEADER)).toBeTruthy();
-        expect(renderer!.root.findByProps({ 'aria-label': 'Back to Home' })).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_HOME_SETTINGS_BACK_BAR)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_HOME_SETTINGS_HEADER)).toHaveProperty('props');
+        expect(renderer!.root.findByProps({ 'aria-label': 'Back to Home' })).toHaveProperty(
+            'props',
+        );
     });
     it('renders incoming call history wrapper on PhoneHistoryList', async () => {
         await act(async () => {
@@ -362,7 +368,9 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_PHONE_INCOMING_CALL_HISTORY)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_INCOMING_CALL_HISTORY)).toHaveProperty(
+            'props',
+        );
     });
     it('renders messages channel modifier when messages app is active', async () => {
         const dispatch = vi.fn();
@@ -385,7 +393,7 @@ describe('semantic simulator class hooks', () => {
                 React.createElement(SimulatorWithSession, { state, dispatch }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_CHANNEL_MESSAGES)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_CHANNEL_MESSAGES)).toHaveProperty('props');
     });
     it('renders incoming call scene semantic classes', async () => {
         await act(async () => {
@@ -402,11 +410,13 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_PHONE_INCOMING_CALL_SCENE)).toBeTruthy();
-        expect(findWithClass(renderer!.root, 'simulator-caller-avatar')).toBeTruthy();
-        expect(findWithClass(renderer!.root, 'simulator-screen__header')).toBeTruthy();
-        expect(findWithClass(renderer!.root, 'simulator-call-number')).toBeTruthy();
-        expect(findWithClass(renderer!.root, 'simulator-call-actions')).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_INCOMING_CALL_SCENE)).toHaveProperty(
+            'props',
+        );
+        expect(findWithClass(renderer!.root, 'simulator-caller-avatar')).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, 'simulator-screen__header')).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, 'simulator-call-number')).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, 'simulator-call-actions')).toHaveProperty('props');
     });
     it('renders screen-back class on SimulatorDetailBackBar', async () => {
         await act(async () => {
@@ -434,7 +444,7 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_AVATAR)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_ROW_AVATAR)).toHaveProperty('props');
     });
     it('renders history incoming row and status badge classes', async () => {
         await act(async () => {
@@ -453,15 +463,19 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_PHONE_HISTORY_INCOMING_ROW)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_CALL_STATUS_BADGE_INCOMING)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_HISTORY_INCOMING_ROW)).toHaveProperty(
+            'props',
+        );
+        expect(findWithClass(renderer!.root, SIM_CALL_STATUS_BADGE_INCOMING)).toHaveProperty(
+            'props',
+        );
     });
     it('renders dialer number and backspace semantic classes', async () => {
         await act(async () => {
             renderer = TestRenderer.create(React.createElement(PhoneDialView, { onDial: vi.fn() }));
         });
-        expect(findWithClass(renderer!.root, SIM_PHONE_DIALER_NUMBER)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_PHONE_DIALER_BACKSPACE)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_DIALER_NUMBER)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_PHONE_DIALER_BACKSPACE)).toHaveProperty('props');
     });
     it('renders messages timeline and bubble semantic classes', async () => {
         await act(async () => {
@@ -480,9 +494,11 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_MESSAGES_MESSAGE_TIMELINE)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_MESSAGES_BUBBLE)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_MESSAGES_BUBBLE_THEM)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_MESSAGES_MESSAGE_TIMELINE)).toHaveProperty(
+            'props',
+        );
+        expect(findWithClass(renderer!.root, SIM_MESSAGES_BUBBLE)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_MESSAGES_BUBBLE_THEM)).toHaveProperty('props');
     });
     it('renders error and unsupported semantic classes', async () => {
         function Boom(): JSX.Element {
@@ -496,8 +512,8 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_ERROR)).toBeTruthy();
-        expect(findWithClass(renderer!.root, SIM_ERROR_DIAGNOSTICS)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_ERROR)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, SIM_ERROR_DIAGNOSTICS)).toHaveProperty('props');
         await act(async () => {
             renderer!.update(
                 React.createElement(UnsupportedScreenFallback, {
@@ -507,6 +523,6 @@ describe('semantic simulator class hooks', () => {
                 }),
             );
         });
-        expect(findWithClass(renderer!.root, SIM_UNSUPPORTED)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_UNSUPPORTED)).toHaveProperty('props');
     });
 });

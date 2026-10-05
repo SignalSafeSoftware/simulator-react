@@ -265,7 +265,7 @@ describe('simulator accessible list views', () => {
         const rowButton = renderer!.root
             .findAllByType('button')
             .find((node) => node.props.className?.includes('simulator-border--top-none'));
-        expect(rowButton).toBeDefined();
+        expect(rowButton).toHaveProperty('props');
 
         await act(async () => {
             rowButton!.props.onClick();

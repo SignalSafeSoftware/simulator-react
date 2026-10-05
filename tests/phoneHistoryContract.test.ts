@@ -59,7 +59,7 @@ describe('native history consumer contract', () => {
             root.findByType('input').props.onChange({ target: { value: 'sam' } });
         });
         expect(rows(root)).toHaveLength(1);
-        expect(rows(root)[0]!.findByProps({ children: 'Sam' })).toBeDefined();
+        expect(rows(root)[0]!.findByProps({ children: 'Sam' })).toHaveProperty('props');
     });
 
     it('reports controlled search without overwriting the host value', async () => {
@@ -157,6 +157,6 @@ describe('native history consumer contract', () => {
         await act(async () => {
             root.findByType('input').props.onChange({ target: { value: 'absent' } });
         });
-        expect(root.findByProps({ children: 'No results for "absent".' })).toBeDefined();
+        expect(root.findByProps({ children: 'No results for "absent".' })).toHaveProperty('props');
     });
 });

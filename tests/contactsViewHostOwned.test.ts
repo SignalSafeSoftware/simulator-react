@@ -75,7 +75,7 @@ describe('ContactsView host-owned phone contact detail', () => {
         clickContactRow(renderer!.root, 'Alex Chen');
 
         expect(onOpenContact).toHaveBeenCalledWith('c1');
-        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_DETAIL)).toBeTruthy();
+        expect(findWithClass(renderer!.root, SIM_PHONE_CONTACT_DETAIL)).toHaveProperty('props');
     });
 
     it('host-owned: clicking a row calls onPhoneContactOpen and does not render contact detail', async () => {

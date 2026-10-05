@@ -53,7 +53,7 @@ describe('DevicePage', () => {
                 <p>content</p>
             </DevicePage>,
         );
-        expect(screen.getByText('custom nav')).toBeTruthy();
+        expect(screen.getByText('custom nav')).toBeInstanceOf(HTMLElement);
         expect(screen.queryByRole('button', { name: 'Back' })).toBeNull();
     });
 });
@@ -162,7 +162,7 @@ describe('LockSettings', () => {
         await act(flush);
         expect(createLock).toHaveBeenCalledWith('secret');
         expect(store().state().lock).toEqual(lock);
-        expect(screen.getByText('Screen password saved.')).toBeTruthy();
+        expect(screen.getByText('Screen password saved.')).toBeInstanceOf(HTMLElement);
         expect((screen.getByLabelText('New password') as HTMLInputElement).value).toBe('');
     });
 
@@ -173,12 +173,12 @@ describe('LockSettings', () => {
         fillNew();
         submitForm('Save screen password');
         await act(flush);
-        expect(screen.getByText('Incorrect current screen password.')).toBeTruthy();
+        expect(screen.getByText('Incorrect current screen password.')).toBeInstanceOf(HTMLElement);
 
         fillNew('secret', 'different');
         submitForm('Save screen password');
         await act(flush);
-        expect(screen.getByText('The new passwords do not match.')).toBeTruthy();
+        expect(screen.getByText('The new passwords do not match.')).toBeInstanceOf(HTMLElement);
 
         fireEvent.click(screen.getByText('Cancel'));
         expect((screen.getByLabelText('New password') as HTMLInputElement).value).toBe('');
@@ -190,7 +190,7 @@ describe('LockSettings', () => {
         fireEvent.click(screen.getByText('Remove password'));
         await act(flush);
         expect(store().state().lock).toBeNull();
-        expect(screen.getByText('Screen password removed.')).toBeTruthy();
+        expect(screen.getByText('Screen password removed.')).toBeInstanceOf(HTMLElement);
         expect(screen.queryByText('Lock now')).toBeNull();
         expect(onLock).not.toHaveBeenCalled();
     });
@@ -222,11 +222,11 @@ describe('LockSettings', () => {
         fillNew();
         submitForm('Save screen password');
         await act(flush);
-        expect(screen.getByText('Too short')).toBeTruthy();
+        expect(screen.getByText('Too short')).toBeInstanceOf(HTMLElement);
         createLock.mockImplementationOnce(() => Promise.reject('nope'));
         submitForm('Save screen password');
         await act(flush);
-        expect(screen.getByText('Password could not be changed.')).toBeTruthy();
+        expect(screen.getByText('Password could not be changed.')).toBeInstanceOf(HTMLElement);
     });
 
     it('ignores changes while busy or without data', async () => {
@@ -235,7 +235,7 @@ describe('LockSettings', () => {
         const { store } = setup({ checkLock });
         fillNew();
         submitForm('Save screen password');
-        expect(screen.getByText('Saving screen password…')).toBeTruthy();
+        expect(screen.getByText('Saving screen password…')).toBeInstanceOf(HTMLElement);
         fireEvent.submit(screen.getByText('Save screen password').closest('form')!);
         expect(checkLock).toHaveBeenCalledTimes(1);
         await act(async () => gate.resolve(true));

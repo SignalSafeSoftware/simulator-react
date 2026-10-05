@@ -96,7 +96,7 @@ describe('PhoneSimulatorShell', () => {
         const header = root
             .findAllByType('div')
             .find((node) => node.props.className?.includes('simulator-flex--end'));
-        expect(header).toBeDefined();
+        expect(header).toHaveProperty('props');
 
         const shellBody = root
             .findAllByType('div')

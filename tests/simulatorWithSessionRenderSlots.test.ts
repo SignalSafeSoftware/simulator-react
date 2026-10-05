@@ -94,7 +94,9 @@ describe('SimulatorWithSession render slots', () => {
         expect(renderFeedback).toHaveBeenCalledWith(
             expect.objectContaining({ message: 'Verify the sender before clicking.' }),
         );
-        expect(renderer!.root.findByProps({ 'data-testid': 'host-feedback' })).toBeTruthy();
+        expect(renderer!.root.findByProps({ 'data-testid': 'host-feedback' })).toHaveProperty(
+            'props',
+        );
     });
     it('uses renderContactsOverlay instead of the default contacts view', async () => {
         const renderContactsOverlay = vi.fn(({ contacts, onClose }) =>
@@ -123,7 +125,9 @@ describe('SimulatorWithSession render slots', () => {
                 onClose: expect.any(Function),
             }),
         );
-        expect(renderer!.root.findByProps({ 'data-testid': 'host-contacts-overlay' })).toBeTruthy();
+        expect(
+            renderer!.root.findByProps({ 'data-testid': 'host-contacts-overlay' }),
+        ).toHaveProperty('props');
         expect(
             renderer!.root.findAllByProps({ 'data-testid': 'default-contacts-view' }),
         ).toHaveLength(0);
@@ -181,9 +185,9 @@ describe('SimulatorWithSession render slots', () => {
         );
         expect(
             renderer!.root.findByProps({ 'data-testid': 'host-incoming-call-extra' }),
-        ).toBeTruthy();
+        ).toHaveProperty('props');
         expect(
             renderer!.root.findByProps({ 'data-testid': 'phone-incoming-call-extra' }),
-        ).toBeTruthy();
+        ).toHaveProperty('props');
     });
 });

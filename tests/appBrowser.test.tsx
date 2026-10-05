@@ -392,7 +392,7 @@ describe('BrowserWorkbench', () => {
 
     it('renders only the supplied templates in templates mode', () => {
         render(<BrowserWorkbench mode='templates' templates={<p>templates here</p>} />);
-        expect(screen.getByText('templates here')).toBeTruthy();
+        expect(screen.getByText('templates here')).toBeInstanceOf(HTMLElement);
         expect(document.querySelector('form')).toBeNull();
     });
 

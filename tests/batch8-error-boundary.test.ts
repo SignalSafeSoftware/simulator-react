@@ -23,12 +23,12 @@ describe('SimulatorErrorBoundary', () => {
             }),
         );
         const fallback = renderer.root.findByProps({ 'data-testid': 'simulator-error-fallback' });
-        expect(fallback).toBeTruthy();
+        expect(fallback).toHaveProperty('props');
         expect(flattenText(renderer.toJSON())).not.toContain('render failed');
         const dismiss = renderer.root.find(
             (node) => node.type === 'button' && node.children?.includes('Dismiss'),
         );
-        expect(dismiss).toBeTruthy();
+        expect(dismiss).toHaveProperty('props');
         await act(async () => {
             dismiss!.props.onClick();
         });

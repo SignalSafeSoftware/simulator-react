@@ -40,7 +40,7 @@ describe('learner-safe simulator errors', () => {
         expect(text).toContain('internal reducer dispatch failed');
         expect(
             renderer.root.findByProps({ 'data-testid': 'simulator-error-diagnostics-stack' }),
-        ).toBeTruthy();
+        ).toHaveProperty('props');
         renderer.unmount();
     });
     it('UnsupportedScreenFallback hides app/screen ids by default', () => {

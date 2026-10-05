@@ -91,12 +91,12 @@ describe('Vault folders', () => {
         field('Search folders', 'wor');
         expect(screen.queryByText('Orphan')).toBeNull();
         field('Search folders', 'zzz');
-        expect(screen.getByText('No matching folders.')).toBeTruthy();
+        expect(screen.getByText('No matching folders.')).toBeInstanceOf(HTMLElement);
     });
 
     it('treats missing counts as empty', () => {
         setup({ prepare: (store) => Object.defineProperty(store, 'counts', { value: undefined }) });
-        expect(screen.getByText('Work')).toBeTruthy();
+        expect(screen.getByText('Work')).toBeInstanceOf(HTMLElement);
         expect(document.querySelectorAll('.vault-folder-count')[0]!.textContent).toBe('0');
     });
 
@@ -109,12 +109,12 @@ describe('Vault folders', () => {
     it('creates a folder and opens it', async () => {
         const { store } = setup();
         nav('New folder');
-        expect(screen.getByRole('heading', { name: 'Create folder' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'Create folder' })).toBeInstanceOf(HTMLElement);
         field('Folder name', 'Banking');
         nav('Save folder');
         await settle();
         expect(store().state().vaultFolders).toContain('Banking');
-        expect(screen.getByRole('heading', { name: 'Banking' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'Banking' })).toBeInstanceOf(HTMLElement);
     });
 
     it('validates folder names', async () => {
@@ -141,7 +141,7 @@ describe('Vault folders', () => {
         field('Folder name', 'Rejected');
         nav('Save folder');
         await settle();
-        expect(screen.getByRole('heading', { name: 'Create folder' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'Create folder' })).toBeInstanceOf(HTMLElement);
     });
 
     it('returns from the create page to the folder list', () => {
@@ -149,7 +149,7 @@ describe('Vault folders', () => {
         nav('New folder');
         field('Folder name', 'Draft');
         nav('Back');
-        expect(screen.getByLabelText('Search folders')).toBeTruthy();
+        expect(screen.getByLabelText('Search folders')).toBeInstanceOf(HTMLElement);
     });
 
     it('renames a folder, allowing its own name, and rejects duplicates', async () => {
@@ -167,7 +167,7 @@ describe('Vault folders', () => {
         field('Folder name', 'Renamed');
         fireEvent.click(screen.getByRole('button', { name: 'Save folder' }));
         await settle();
-        expect(screen.getByRole('heading', { name: 'Renamed' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'Renamed' })).toBeInstanceOf(HTMLElement);
         expect(store().state().secrets[0]!.folder).toBe('Renamed');
     });
 
@@ -175,16 +175,16 @@ describe('Vault folders', () => {
         const { store } = setup({ secrets: [secret('1')] });
         await openFolder('Work');
         fireEvent.click(screen.getByRole('button', { name: 'Delete folder' }));
-        expect(screen.getByRole('heading', { name: 'Delete folder' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'Delete folder' })).toBeInstanceOf(HTMLElement);
         expect(document.querySelector('p')!.textContent).toContain('Work');
         nav('Back');
-        expect(screen.getByRole('heading', { name: 'Work' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'Work' })).toBeInstanceOf(HTMLElement);
 
         fireEvent.click(screen.getByRole('button', { name: 'Delete folder' }));
         nav('Delete folder');
         await settle();
         expect(store().state().secrets[0]!.folder).toBe('Unfiled');
-        expect(screen.getByLabelText('Search folders')).toBeTruthy();
+        expect(screen.getByLabelText('Search folders')).toBeInstanceOf(HTMLElement);
     });
 
     it('recovers secrets from a deleted default folder into a new folder', async () => {
@@ -207,7 +207,7 @@ describe('Vault folders', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Delete folder' }));
         nav('Delete folder');
         await settle();
-        expect(screen.getByRole('heading', { name: 'Delete folder' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'Delete folder' })).toBeInstanceOf(HTMLElement);
     });
 
     it('returns from a folder to the folder list', async () => {
@@ -215,7 +215,7 @@ describe('Vault folders', () => {
         await openFolder('Work');
         field('Search secrets', 'abc');
         nav('Back');
-        expect(screen.getByLabelText('Search folders')).toBeTruthy();
+        expect(screen.getByLabelText('Search folders')).toBeInstanceOf(HTMLElement);
         await openFolder('Work');
         expect((screen.getByLabelText('Search secrets') as HTMLInputElement).value).toBe('');
     });
@@ -242,20 +242,20 @@ describe('Vault secrets', () => {
                 secret('2', { title: 'Bank', type: 'credentials' }),
             ],
         });
-        expect(screen.getByText('Note')).toBeTruthy();
-        expect(screen.getByText('Credentials')).toBeTruthy();
+        expect(screen.getByText('Note')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText('Credentials')).toBeInstanceOf(HTMLElement);
         field('Search secrets', 'bank');
         await settle();
         expect(screen.queryByText('Secret 1')).toBeNull();
         field('Search secrets', 'nothing-here');
         await settle();
-        expect(screen.getByText('No matching secrets.')).toBeTruthy();
+        expect(screen.getByText('No matching secrets.')).toBeInstanceOf(HTMLElement);
     });
 
     it('shows an empty folder message', async () => {
         setup({ secrets: [] });
         await openFolder('Work');
-        expect(screen.getByText('No secrets in this folder.')).toBeTruthy();
+        expect(screen.getByText('No secrets in this folder.')).toBeInstanceOf(HTMLElement);
     });
 
     it('pages long folders and retries failed loads', async () => {
@@ -286,7 +286,7 @@ describe('Vault secrets', () => {
     it('creates a secret in the current folder', async () => {
         const { store } = await setupFolder();
         nav('New secret');
-        expect(screen.getByRole('heading', { name: 'New secret' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'New secret' })).toBeInstanceOf(HTMLElement);
         field('Title', 'Wi-Fi');
         field('Secret', 'swordfish');
         field('Folder', 'Unfiled');
@@ -297,7 +297,7 @@ describe('Vault secrets', () => {
             value: 'swordfish',
             folder: 'Unfiled',
         });
-        expect(screen.getByRole('heading', { name: 'Unfiled' })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'Unfiled' })).toBeInstanceOf(HTMLElement);
     });
 
     it('does not offer deletion for a new secret', async () => {
@@ -313,7 +313,7 @@ describe('Vault secrets', () => {
         fireEvent.change(screen.getByLabelText('Type'), { target: { value: 'credentials' } });
         field('Username', 'ada');
         field('Site', 'https://example.test');
-        expect(screen.getByLabelText('Secret')).toBeTruthy();
+        expect(screen.getByLabelText('Secret')).toBeInstanceOf(HTMLElement);
         fireEvent.change(screen.getByLabelText('Type'), { target: { value: 'note' } });
         expect(screen.queryByLabelText('Secret')).toBeNull();
         expect(screen.queryByLabelText('Site')).toBeNull();
@@ -348,7 +348,7 @@ describe('Vault secrets', () => {
         field('Secret', 'x');
         nav('Save secret');
         await settle();
-        expect(screen.getByLabelText('Title')).toBeTruthy();
+        expect(screen.getByLabelText('Title')).toBeInstanceOf(HTMLElement);
     });
 
     it('reveals and hides the secret value', async () => {
@@ -413,13 +413,13 @@ describe('Vault secrets', () => {
         store().remove = async () => false;
         nav('Delete secret');
         await settle();
-        expect(screen.getByLabelText('Title')).toBeTruthy();
+        expect(screen.getByLabelText('Title')).toBeInstanceOf(HTMLElement);
 
         store().remove = remove;
         nav('Delete secret');
         await settle();
         expect(store().state().secrets).toHaveLength(0);
-        expect(screen.getByText('No secrets in this folder.')).toBeTruthy();
+        expect(screen.getByText('No secrets in this folder.')).toBeInstanceOf(HTMLElement);
     });
 
     it('asks before discarding changed drafts only', async () => {
@@ -434,7 +434,7 @@ describe('Vault secrets', () => {
         field('Title', 'Changed');
         nav('Back');
         expect(confirm).toHaveBeenCalledWith('Discard unsaved secret changes?');
-        expect(screen.getByLabelText('Title')).toBeTruthy();
+        expect(screen.getByLabelText('Title')).toBeInstanceOf(HTMLElement);
         confirm.mockReturnValue(true);
         nav('Back');
         expect(screen.queryByLabelText('Title')).toBeNull();
