@@ -269,7 +269,7 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
     // Cross-app: click_link from email:detail or messages:thread_detail to internet:pageId
     const browserPages = payload.browser?.pages ?? [];
     const emailDetail = payload.email?.selectedMessage ?? payload.email?.inbox?.[0];
-    const emailLinks = (emailDetail as { links?: HrefLink[] } | undefined)?.links;
+    const emailLinks: HrefLink[] | undefined = emailDetail?.links;
     if (reachableScreens.email.includes(SimulatorEmailScreenId.Detail)) {
         addContentLinkEdges(
             edges,
@@ -281,7 +281,7 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
     }
 
     const smsThread = payload.sms?.thread;
-    const threadLinks = (smsThread as { links?: HrefLink[] } | undefined)?.links;
+    const threadLinks: HrefLink[] | undefined = smsThread?.links;
     if (reachableScreens.messages.includes(SimulatorMessagesScreenId.ThreadDetail)) {
         addContentLinkEdges(
             edges,

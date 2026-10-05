@@ -21,6 +21,7 @@ import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { SimulatorActionType } from '../utils/telemetry/simulatorActionTaxonomy.js';
 import {
     type EmailTemplateContent,
+    type EmailTemplateLink,
     type PhoneSimulatorContent,
     type SmsThreadContent,
 } from './template.js';
@@ -138,6 +139,8 @@ export interface SimulatorInboxRow {
     unread?: boolean;
     /** Index into template messages or run message id */
     messageIndex?: number;
+    attachment_name?: string;
+    links?: EmailTemplateLink[];
 }
 
 /** Email payload slice for the unified template. */

@@ -72,18 +72,14 @@ function hasEmailAccess(
 function hasBrowserFormAction(payload: SimulatorTemplatePayload): boolean {
     return (
         payload.browser?.pages?.some(
-            (page) =>
-                (page?.formFields?.length ?? 0) > 0 ||
-                (page as { submitTargetPageId?: string }).submitTargetPageId != null,
+            (page) => (page?.formFields?.length ?? 0) > 0 || page?.submitTargetPageId != null,
         ) === true
     );
 }
 
 function hasEmailLinks(payload: SimulatorTemplatePayload): boolean {
-    const detailLinks =
-        (payload.email?.selectedMessage as { links?: unknown[] } | undefined)?.links?.length ?? 0;
-    const inboxHasLinks =
-        payload.email?.inbox?.some((row) => (row as { links?: unknown }).links != null) ?? false;
+    const detailLinks = payload.email?.selectedMessage?.links?.length ?? 0;
+    const inboxHasLinks = payload.email?.inbox?.some((row) => row.links != null) ?? false;
     return detailLinks > 0 || inboxHasLinks;
 }
 

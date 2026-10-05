@@ -221,7 +221,7 @@ function lintBrowserActionTargets(
     pages.forEach((page, i) => {
         const buttons = page?.buttons ?? [];
         buttons.forEach((btn) => {
-            const target = (btn as { targetPageId?: string }).targetPageId;
+            const target = btn.targetPageId;
             if (target != null && target !== '' && !browserPageIds.has(target)) {
                 add(
                     warnings,

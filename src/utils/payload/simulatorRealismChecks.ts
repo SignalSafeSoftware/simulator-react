@@ -72,11 +72,8 @@ function checkVerificationSources(
     blockers: SimulatorRealismIssue[],
     suggestions: SimulatorRealismIssue[],
 ): void {
-    const detailLinks =
-        (payload.email?.selectedMessage as { links?: Array<{ href?: string }> } | undefined)?.links
-            ?.length ?? 0;
-    const inboxHasLinks =
-        payload.email?.inbox?.some((row) => (row as { links?: unknown }).links != null) ?? false;
+    const detailLinks = payload.email?.selectedMessage?.links?.length ?? 0;
+    const inboxHasLinks = payload.email?.inbox?.some((row) => row.links != null) ?? false;
     const emailHasLinks = detailLinks > 0 || inboxHasLinks;
     const browserHasPages = (payload.browser?.pages?.length ?? 0) > 0;
     const hasContacts = (payload.contacts?.length ?? 0) > 0;
@@ -209,8 +206,8 @@ function checkSenderMetadata(
     suggestions: SimulatorRealismIssue[],
 ): void {
     const syntheticSenderPattern = /^(test|sender|user|unknown|n\/?a)$/i;
-    const detail = payload.email?.selectedMessage as { from_display_name?: string } | undefined;
-    const firstRow = payload.email?.inbox?.[0] as { from_display_name?: string } | undefined;
+    const detail = payload.email?.selectedMessage;
+    const firstRow = payload.email?.inbox?.[0];
     const fromDisplay = detail?.from_display_name ?? firstRow?.from_display_name;
     if (fromDisplay == null || String(fromDisplay).trim() === '') return;
 

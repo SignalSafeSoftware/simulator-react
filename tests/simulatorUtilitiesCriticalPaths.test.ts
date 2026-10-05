@@ -340,7 +340,6 @@ describe('getSimulatorCapabilities', () => {
                         id: 'message-1',
                         subject: 'Invoice',
                         from: 'billing@example.test',
-                        // @ts-expect-error Exercise capability detection for untyped attachment metadata on an inbox row.
                         attachment_name: 'invoice.pdf',
                     },
                 ],

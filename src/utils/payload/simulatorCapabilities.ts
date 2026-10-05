@@ -34,11 +34,7 @@ function hasNonEmptyString(value: unknown): boolean {
 }
 
 function hasSelectedMessageAttachment(payload: SimulatorTemplatePayload): boolean {
-    const selectedMessage = payload.email?.selectedMessage;
-    if (selectedMessage == null || !('attachment_name' in selectedMessage)) {
-        return false;
-    }
-    return hasNonEmptyString((selectedMessage as { attachment_name?: string }).attachment_name);
+    return hasNonEmptyString(payload.email?.selectedMessage?.attachment_name);
 }
 
 function hasInboxAttachment(payload: SimulatorTemplatePayload): boolean {
@@ -46,12 +42,7 @@ function hasInboxAttachment(payload: SimulatorTemplatePayload): boolean {
     if (!Array.isArray(inbox)) {
         return false;
     }
-    return inbox.some((row) => {
-        if (!('attachment_name' in row)) {
-            return false;
-        }
-        return hasNonEmptyString((row as { attachment_name?: string }).attachment_name);
-    });
+    return inbox.some((row) => hasNonEmptyString(row.attachment_name));
 }
 
 function hasEmailAttachments(payload: SimulatorTemplatePayload): boolean {
@@ -64,7 +55,7 @@ function hasBrowserForms(payload: SimulatorTemplatePayload): boolean {
         return false;
     }
     return pages.some((page) => {
-        const fields = (page as { formFields?: unknown[] }).formFields;
+        const fields = page.formFields;
         return Array.isArray(fields) && fields.length > 0;
     });
 }
