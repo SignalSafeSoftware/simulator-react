@@ -2,17 +2,12 @@ import type { SimulatorDevicePayload } from '@signalsafe/simulator-core/devicePa
 import type { TopicTag } from '../types/shapes.js';
 import { isSimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { SimulatorTemplatePayload } from '../types/session.js';
-import {
-    appToChannel,
-    mapDevice,
-    mapContacts,
-    mapDirectory,
-    mapEmail,
-    mapMessages,
-    mapPhone,
-    mapInternet,
-    mapHome,
-} from './fullDeviceToSession.js';
+import { appToChannel, mapDevice, mapContacts, mapDirectory } from './fullDeviceToSession.js';
+import { mapEmail } from './device/emailMapper.js';
+import { mapMessages } from './device/messagesMapper.js';
+import { mapPhone } from './device/phoneMapper.js';
+import { mapInternet } from './device/internetMapper.js';
+import { mapHome } from './device/homeMapper.js';
 
 /** Optional template/session identity supplied by the host transport adapter. */
 export interface SimulatorPayloadMetadata {

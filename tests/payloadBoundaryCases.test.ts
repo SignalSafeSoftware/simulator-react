@@ -6,7 +6,8 @@ import { applyPreviewFallback } from '../src/utils/preview/previewFallbackWorld'
 import { buildSimulatorNavGraph } from '../src/utils/navigation/simulatorNavGraph';
 import { simBtnToneClass } from '../src/ui/styles/simulatorClasses';
 import { validateSimulatorAction } from '../src/utils/telemetry/simulatorActionTaxonomy';
-import { mapInternet, mapEmail } from '../src/adapters/fullDeviceToSession';
+import { mapInternet } from '../src/adapters/device/internetMapper';
+import { mapEmail } from '../src/adapters/device/emailMapper';
 
 const base: SimulatorTemplatePayload = {
     templateId: null,

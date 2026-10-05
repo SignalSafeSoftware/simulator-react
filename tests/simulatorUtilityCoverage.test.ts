@@ -5,12 +5,12 @@ import {
     mapContacts,
     mapDevice,
     mapDirectory,
-    mapEmail,
-    mapHome,
-    mapInternet,
-    mapMessages,
-    mapPhone,
 } from '../src/adapters/fullDeviceToSession';
+import { mapEmail } from '../src/adapters/device/emailMapper';
+import { mapHome } from '../src/adapters/device/homeMapper';
+import { mapInternet } from '../src/adapters/device/internetMapper';
+import { mapMessages } from '../src/adapters/device/messagesMapper';
+import { mapPhone } from '../src/adapters/device/phoneMapper';
 import { templateDetailToPayload } from '../src/adapters/templateToSession';
 import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../src/constants';
 import {

@@ -4,16 +4,12 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-    appToChannel,
-    mapContacts,
-    mapDevice,
-    mapEmail,
-    mapHome,
-    mapInternet,
-    mapMessages,
-    mapPhone,
-} from '../src/adapters/fullDeviceToSession';
+import { appToChannel, mapContacts, mapDevice } from '../src/adapters/fullDeviceToSession';
+import { mapEmail } from '../src/adapters/device/emailMapper';
+import { mapHome } from '../src/adapters/device/homeMapper';
+import { mapInternet } from '../src/adapters/device/internetMapper';
+import { mapMessages } from '../src/adapters/device/messagesMapper';
+import { mapPhone } from '../src/adapters/device/phoneMapper';
 import SimulatorErrorBoundary from '../src/SimulatorErrorBoundary';
 import SimulatorLintBanner from '../src/developer-tools/SimulatorLintBanner.js';
 import { SimulatorList, SimulatorListItem } from '../src/ui/lists/SimulatorList.js';

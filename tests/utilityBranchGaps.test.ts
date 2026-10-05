@@ -11,12 +11,10 @@ import { runSimulatorRealismChecks } from '../src/utils/payload/simulatorRealism
 import { applyPreviewFallback } from '../src/utils/preview/previewFallbackWorld';
 import { buildSimulatorPreviewReport } from '../src/utils/preview/simulatorPreviewReport';
 import { logSimulatorTransition } from '../src/utils/telemetry/simulatorTransitionLogger';
-import {
-    mapDirectory,
-    mapEmail,
-    mapInternet,
-    mapMessages,
-} from '../src/adapters/fullDeviceToSession';
+import { mapDirectory } from '../src/adapters/fullDeviceToSession';
+import { mapEmail } from '../src/adapters/device/emailMapper';
+import { mapInternet } from '../src/adapters/device/internetMapper';
+import { mapMessages } from '../src/adapters/device/messagesMapper';
 import { createPayload } from './support/createPayload';
 
 const payloadOf = (overrides: Record<string, unknown>) => createPayload(overrides as never);

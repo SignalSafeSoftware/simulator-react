@@ -22,7 +22,15 @@
     "react/purity": "off",
     "react/globals": "off",
     "react/set-state-in-effect": "off",
-    "react/static-components": "off"
+    "react/static-components": "off",
+    "max-lines": [
+      "error",
+      {
+        "max": 300,
+        "skipBlankLines": true,
+        "skipComments": true
+      }
+    ]
   },
   "overrides": [
     {
@@ -30,7 +38,15 @@
         "tests/**"
       ],
       "rules": {
-        "react/no-children-prop": "off"
+        "react/no-children-prop": "off",
+        "max-lines": [
+          "error",
+          {
+            "max": 600,
+            "skipBlankLines": true,
+            "skipComments": true
+          }
+        ]
       }
     }
   ]
