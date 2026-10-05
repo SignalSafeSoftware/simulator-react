@@ -1,19 +1,19 @@
 import {
     SIM_INPUT,
-    SIM_LIST_ERROR,
     SimulatorButtonTone,
     simBtnToneClass,
 } from '../../ui/styles/simulatorClasses.js';
 import { useDevicePage } from '../../hooks/device/useDevicePage.js';
 import { useVisiblePage } from '../../hooks/device/useVisiblePage.js';
-import { LoadMore } from '../../ui/lists/LoadMore.js';
+import { PagedListFooter } from '../shared/PagedListFooter.js';
 import PhotoLocation from './PhotoLocation.js';
 import PhotoEditor from './PhotoEditor.js';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useDraftBaseline } from '../shared/useDraftBaseline.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { createSimulatorId } from '@signalsafe/simulator-core/apps/id';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import { useLatestRequest } from '../../hooks/useLatestRequest.js';
 import { DevicePage } from '../shared/DevicePage.js';
 import { AppSecondaryNav, type AppNavAction } from '../shared/AppSecondaryNav.js';
 import { photoSchema, type Photo } from '@signalsafe/simulator-core/apps/contracts';
@@ -42,15 +42,9 @@ export default function Photos({
     } | null>(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const generation = useRef(0);
-    useEffect(
-        () => () => {
-            generation.current += 1;
-        },
-        [],
-    );
+    const latest = useLatestRequest();
     const close = () => {
-        generation.current += 1;
+        latest.cancel();
         setLoading(false);
         setDraft(null);
         setEditing(false);
@@ -63,13 +57,13 @@ export default function Photos({
     const data = store.data;
     if (!data) return null;
     async function choose(file: File, replacing: Photo | null) {
-        const request = ++generation.current;
+        const isLatest = latest.begin();
         setLoading(true);
         setError('');
         try {
             const asset = await readAsset(file, true);
             const original = extractPhotoMetadata(await file.arrayBuffer());
-            if (request !== generation.current) return;
+            if (!isLatest()) return;
             const now = new Date().toISOString();
             setExisting(replacing !== null && hasBaseline());
             setEditing(true);
@@ -85,10 +79,10 @@ export default function Photos({
                 metadata: original,
             });
         } catch (reason) {
-            if (request !== generation.current) return;
+            if (!isLatest()) return;
             setError(reason instanceof Error ? reason.message : t('app.photos.importFailed'));
         } finally {
-            if (request === generation.current) setLoading(false);
+            if (isLatest()) setLoading(false);
         }
     }
     async function save() {
@@ -251,17 +245,9 @@ export default function Photos({
                             </button>
                         ))}
                     </div>
-                    {photos.error && (
-                        <p className={SIM_LIST_ERROR} role="alert">
-                            {photos.error}
-                        </p>
-                    )}
-                    <LoadMore
-                        count={visiblePage.count}
-                        hasMore={visiblePage.count < photos.total}
-                        loading={photos.loading}
-                        error={photos.error}
-                        onLoadMore={photos.error ? photos.retry : visiblePage.loadMore}
+                    <PagedListFooter
+                        page={photos}
+                        visible={visiblePage}
                         label={t('app.photos.loadMore')}
                     />
                     {!photos.loading && !photos.error && !photos.total && (

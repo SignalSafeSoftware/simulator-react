@@ -1,6 +1,5 @@
 import { ChevronRight } from 'lucide-react';
-import { SIM_LIST_ERROR } from '../../ui/styles/simulatorClasses.js';
-import { LoadMore } from '../../ui/lists/LoadMore.js';
+import { PagedListFooter } from '../shared/PagedListFooter.js';
 import type { Secret } from '@signalsafe/simulator-core/apps/contracts';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { SearchBox } from './VaultFolders.js';
@@ -40,19 +39,7 @@ export function SecretList({
                     </li>
                 ))}
             </ul>
-            {secrets.error && (
-                <p className={SIM_LIST_ERROR} role="alert">
-                    {secrets.error}
-                </p>
-            )}
-            <LoadMore
-                count={visiblePage.count}
-                hasMore={visiblePage.count < secrets.total}
-                loading={secrets.loading}
-                error={secrets.error}
-                onLoadMore={secrets.error ? secrets.retry : visiblePage.loadMore}
-                label={t('app.vault.loadMore')}
-            />
+            <PagedListFooter page={secrets} visible={visiblePage} label={t('app.vault.loadMore')} />
             {!secrets.loading && !secrets.error && secrets.records.length === 0 && (
                 <p>{query ? t('app.vault.noMatchingSecrets') : t('app.vault.noSecrets')}</p>
             )}

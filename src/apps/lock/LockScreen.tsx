@@ -6,7 +6,8 @@ import {
 } from '../../ui/styles/simulatorClasses.js';
 import { SIM_APP_PAGE_CONTENT } from '../../ui/styles/semanticSimulatorClasses.js';
 import { DevicePage } from '../shared/DevicePage.js';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useLatestRequest } from '../../hooks/useLatestRequest.js';
 import { LockKeyhole } from 'lucide-react';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
 import type { DeviceMetadata } from '@signalsafe/simulator-core/apps/deviceData';
@@ -108,14 +109,8 @@ function useLockChange(store: DeviceStore) {
     const [confirm, setConfirm] = useState('');
     const [message, setMessage] = useState('');
     const [busy, setBusy] = useState(false);
-    const generation = useRef(0);
+    const latest = useLatestRequest();
     const saving = useRef(false);
-    useEffect(
-        () => () => {
-            generation.current += 1;
-        },
-        [],
-    );
     function clearFields() {
         setCurrent('');
         setPassword('');
@@ -131,8 +126,7 @@ function useLockChange(store: DeviceStore) {
         const data = store.data;
         if (!data || store.busy || saving.current) return;
         saving.current = true;
-        const request = ++generation.current;
-        const isLatest = () => request === generation.current;
+        const isLatest = latest.begin();
         setBusy(true);
         setMessage('');
         try {

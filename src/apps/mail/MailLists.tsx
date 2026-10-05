@@ -1,6 +1,6 @@
-import { SIM_INPUT, SIM_LIST_ERROR } from '../../ui/styles/simulatorClasses.js';
+import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
 import { UserRound, Search } from 'lucide-react';
-import { LoadMore } from '../../ui/lists/LoadMore.js';
+import { PagedListFooter } from '../shared/PagedListFooter.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
 import { mailFolderSchema, type Mail } from '@signalsafe/simulator-core/apps/contracts';
@@ -139,19 +139,7 @@ export function MailList({
                     />
                 ))}
             </ul>
-            {page.error && (
-                <p className={SIM_LIST_ERROR} role="alert">
-                    {page.error}
-                </p>
-            )}
-            <LoadMore
-                count={visiblePage.count}
-                hasMore={visiblePage.count < page.total}
-                loading={page.loading}
-                error={page.error}
-                onLoadMore={page.error ? page.retry : visiblePage.loadMore}
-                label={t('app.mail.loadMore')}
-            />
+            <PagedListFooter page={page} visible={visiblePage} label={t('app.mail.loadMore')} />
             {!page.loading && !page.error && mails.length === 0 && (
                 <p className="simulator-list-group__empty">
                     {query ? t('app.mail.noSearchResults') : t('app.mail.noMessages')}

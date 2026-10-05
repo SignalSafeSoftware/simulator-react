@@ -1,5 +1,4 @@
-import { SIM_LIST_ERROR } from '../../ui/styles/simulatorClasses.js';
-import { LoadMore } from '../../ui/lists/LoadMore.js';
+import { PagedListFooter } from '../shared/PagedListFooter.js';
 import { mailFolderSchema, type Asset, type Mail } from '@signalsafe/simulator-core/apps/contracts';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { OUTLINE, type MailPage, type ReplyKind, type VisiblePage } from './mailShared.js';
@@ -52,17 +51,9 @@ function MailThread({
                         {item.subject || t('app.mail.noSubject')}
                     </button>
                 ))}
-            {thread.error && (
-                <p className={SIM_LIST_ERROR} role="alert">
-                    {thread.error}
-                </p>
-            )}
-            <LoadMore
-                count={threadPage.count}
-                hasMore={threadPage.count < thread.total}
-                loading={thread.loading}
-                error={thread.error}
-                onLoadMore={thread.error ? thread.retry : threadPage.loadMore}
+            <PagedListFooter
+                page={thread}
+                visible={threadPage}
                 label={t('app.mail.loadMoreThread')}
             />
         </details>
