@@ -21,6 +21,16 @@ const allowedInputTypes = new Set(
 );
 const safeImageSource = /^data:image\/(png|jpeg|webp);base64,[a-z0-9+/]+=*$/i;
 
+function stripStyleClose(css: string): string {
+    let current = css;
+    let previous: string;
+    do {
+        previous = current;
+        current = previous.replaceAll(/<\/style/gi, '');
+    } while (current !== previous);
+    return current;
+}
+
 function sanitizeAttributes(element: Element): void {
     for (const attribute of Array.from(element.attributes)) {
         if (!allowedAttributes.has(attribute.name)) element.removeAttribute(attribute.name);
@@ -66,7 +76,7 @@ export function buildBrowserDocument(
         version: BROWSER_ACTION_VERSION,
     }).replaceAll('<', String.raw`\u003c`);
     const bridge = browserBridgeSource(config);
-    const safeCss = css.replace(/<\/style/gi, '');
+    const safeCss = stripStyleClose(css);
     return `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'; img-src data:; form-action 'none'; connect-src 'none'; base-uri 'none'"><style>${themeCss}\n${defaultBrowserCss}\n${safeCss}</style>${Array.from(
         document.head.querySelectorAll('style'),
     )

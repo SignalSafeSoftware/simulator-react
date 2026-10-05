@@ -8,6 +8,7 @@ import {
     type SimulatorEntryPoint,
     type SimulatorMainMenuItem,
 } from '@signalsafe/simulator-core/devicePayload';
+import type { BrowserPageButton, TopicTag } from './shapes.js';
 /**
  * Unified simulator session state and payload contract.
  * Full-device: entry_point, device defaults, contacts, and per-app slices.
@@ -192,7 +193,7 @@ export interface SimulatorBrowserPage {
     /** Optional body text / content. */
     content?: string;
     /** Optional buttons (e.g. "Log in", "Download"). targetPageId navigates to that page when clicked. */
-    buttons?: Array<{ label: string; href?: string; targetPageId?: string }>;
+    buttons?: BrowserPageButton[];
     /** Form fields when layout is login or has form. */
     formFields?: BrowserFormField[];
     /** Optional page id to navigate to after form submit (e.g. "result", "warning"). When absent, defaults to "result". */
@@ -331,7 +332,7 @@ export interface SimulatorTemplatePayload {
     templateKey: string;
     name: string;
     channel: SimulatorChannel;
-    topicTags: Array<{ key: string; name: string }>;
+    topicTags: TopicTag[];
     runId: number | null;
     attemptId: number | null;
     /** From full-device entry_point when present; else derived from channel. */

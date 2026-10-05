@@ -39,28 +39,16 @@ export type SimulatorWorldPartial = Partial<
     >
 >;
 
-const SECTION_KEY_SET = new Set<string>(SIMULATOR_WORLD_SECTION_KEYS);
-
-function deepClone<T>(value: T): T {
-    if (value == null || typeof value !== 'object') return value;
-    if (Array.isArray(value)) return value.map((item) => deepClone(item)) as T;
-    const out: Record<string, unknown> = {};
-    for (const key of Object.keys(value)) {
-        out[key] = deepClone((value as Record<string, unknown>)[key]);
-    }
-    return out as T;
-}
-
 /** Recursive merge: overlay wins; dicts merged recursively; arrays/other replaced. */
 function deepMergeValue(baseVal: unknown, overlayVal: unknown): unknown {
     if (isRecord(baseVal) && isRecord(overlayVal)) {
         const result = { ...baseVal };
         for (const key of Object.keys(overlayVal)) {
-            result[key] = deepMergeValue((result as Record<string, unknown>)[key], overlayVal[key]);
+            result[key] = deepMergeValue(result[key], overlayVal[key]);
         }
         return result;
     }
-    return deepClone(overlayVal);
+    return structuredClone(overlayVal);
 }
 
 /**
@@ -74,18 +62,15 @@ export function deepMergeSections(
     base: SimulatorWorldPartial,
     overlay: SimulatorWorldPartial,
 ): SimulatorWorldPartial {
-    const result = deepClone(
-        Object.fromEntries(Object.entries(base).filter(([k]) => SECTION_KEY_SET.has(k))),
-    ) as SimulatorWorldPartial;
-
+    const merged: Record<string, unknown> = {};
     for (const key of SIMULATOR_WORLD_SECTION_KEYS) {
+        const baseVal = base[key];
         const overlayVal = overlay[key];
-        if (overlayVal === undefined) continue;
-
-        const baseVal = result[key];
-        (result as Record<string, unknown>)[key] = deepMergeValue(baseVal, overlayVal);
+        if (overlayVal !== undefined) merged[key] = deepMergeValue(baseVal, overlayVal);
+        else if (baseVal !== undefined) merged[key] = structuredClone(baseVal);
     }
-    return result;
+    // Only canonical section keys are copied, each as a deep copy of a section value.
+    return merged as SimulatorWorldPartial;
 }
 
 /**

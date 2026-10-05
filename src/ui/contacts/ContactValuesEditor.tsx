@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 export interface EditableContactValue {
@@ -19,7 +19,7 @@ export interface ContactValuesEditorProps {
     values: readonly Value[];
     preferredId: string | null;
     createId: () => string;
-    label?: Exclude<import('react').ReactNode, undefined>;
+    label?: Exclude<ReactNode, undefined>;
     onChange: (values: Value[], preferred: string | null) => void;
 }
 export function ContactValuesEditor({

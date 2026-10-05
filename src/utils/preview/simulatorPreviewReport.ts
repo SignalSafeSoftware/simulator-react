@@ -1,5 +1,6 @@
 import { DEFAULT_INTERNET_SCREEN, type SimulatorTemplatePayload } from '../../types/session.js';
 import { SimulatorActionType } from '../telemetry/simulatorActionTaxonomy.js';
+import type { AppScreenRef } from '../../types/shapes.js';
 import {
     SimulatorEmailScreenId,
     SimulatorHomeScreenId,
@@ -22,7 +23,7 @@ import { validateSimulatorPayload } from '../payload/validateSimulatorPayload.js
 
 export interface SimulatorPreviewReport {
     /** Entry app and screen (from entry_point or channel default). */
-    entryPoint: { app: string; screen: string };
+    entryPoint: AppScreenRef;
     /** Apps that are used (reachable) in this template. */
     appsUsed: string[];
     /** Number of contacts. */
@@ -68,10 +69,7 @@ function getDefaultEntryScreen(entryApp: SimulatorApp, payload: SimulatorTemplat
     }
 }
 
-function getEntryPoint(
-    payload: SimulatorTemplatePayload,
-    entryApp: SimulatorApp,
-): { app: string; screen: string } {
+function getEntryPoint(payload: SimulatorTemplatePayload, entryApp: SimulatorApp): AppScreenRef {
     const defaultScreen = getDefaultEntryScreen(entryApp, payload);
     const secondaryDefault = payload.device?.secondaryDefaults?.[entryApp];
     const entryScreen =

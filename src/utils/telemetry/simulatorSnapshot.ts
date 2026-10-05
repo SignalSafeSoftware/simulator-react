@@ -6,6 +6,7 @@
 
 import type { SimulatorSessionState, SimulatorAction } from '../../types/session.js';
 import { getScreenMetadata } from '../navigation/screenMetadata.js';
+import type { AppScreenRef } from '../../types/shapes.js';
 
 /** Serializable snapshot of current simulator session for export/debug. */
 export interface SimulatorSnapshot {
@@ -19,7 +20,7 @@ export interface SimulatorSnapshot {
         attemptId: number | null;
         name: string;
         channel: string;
-        entryPoint: { app: string; screen: string } | null;
+        entryPoint: AppScreenRef | null;
     };
     /** Current screen context (from screen metadata). */
     screen: {

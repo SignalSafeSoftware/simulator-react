@@ -1,4 +1,5 @@
 import type { SimulatorDevicePayload } from '@signalsafe/simulator-core/devicePayload';
+import type { TopicTag } from '../types/shapes.js';
 import { isSimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { SimulatorTemplatePayload } from '../types/session.js';
 import {
@@ -18,7 +19,7 @@ export interface SimulatorPayloadMetadata {
     templateId?: number | null;
     templateKey?: string;
     name?: string;
-    topicTags?: Array<{ key: string; name: string }>;
+    topicTags?: TopicTag[];
     runId?: number | null;
     attemptId?: number | null;
 }

@@ -6,6 +6,7 @@ import { englishLocale } from '../../i18n/englishLocale.js';
  */
 
 import { isRecord } from '@signalsafe/tree-spec';
+import type { AppScreenRef } from '../../types/shapes.js';
 
 export interface SimulatorDiffItem {
     /** Section that changed (e.g. "entry_point", "contacts", "email"). */
@@ -16,7 +17,7 @@ export interface SimulatorDiffItem {
     detail?: string;
 }
 
-function getEntryPoint(p: Record<string, unknown>): { app: string; screen: string } | null {
+function getEntryPoint(p: Record<string, unknown>): AppScreenRef | null {
     const ep = p?.entry_point;
     if (!isRecord(ep)) return null;
     const app = typeof ep.app === 'string' ? ep.app : '';
@@ -53,7 +54,7 @@ function setDiff(left: string[], right: string[]): { added: string[]; removed: s
     };
 }
 
-function entryPointLabel(entryPoint: { app: string; screen: string } | null): string {
+function entryPointLabel(entryPoint: AppScreenRef | null): string {
     return entryPoint ? `${entryPoint.app}/${entryPoint.screen}` : '(none)';
 }
 

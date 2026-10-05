@@ -31,6 +31,7 @@ import { getFieldInputType } from '../../utils/payload/browserFieldType.js';
 import { joinKeyParts, withStableKeys } from '../../utils/lists/stableKeys.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import type { ReactNode } from 'react';
+import type { TextSpan } from '../../types/shapes.js';
 
 import SimulatorBrowserChrome from '../../apps/browser/SimulatorBrowserChrome.js';
 import { SimulatorActions } from '../../actions/simulatorActions.js';
@@ -57,7 +58,7 @@ export interface BrowserPageRendererProps {
     renderFeedback?: (feedback: SimulatorFeedbackRenderProps) => ReactNode;
 }
 
-function urlHighlight(url: string): { start: number; end: number }[] | undefined {
+function urlHighlight(url: string): TextSpan[] | undefined {
     const suspicious = ['phish', 'evil', 'fake'];
     for (const s of suspicious) {
         const i = url.toLowerCase().indexOf(s);

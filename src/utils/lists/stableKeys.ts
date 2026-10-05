@@ -1,8 +1,14 @@
+export interface KeyedItem<T> {
+    key: string;
+    item: T;
+    index: number;
+}
+
 /** Keys for lists without ids: a content-derived base plus an occurrence counter. */
 export function withStableKeys<T>(
     items: readonly T[],
     getBaseKey: (item: T) => string,
-): Array<{ key: string; item: T; index: number }> {
+): Array<KeyedItem<T>> {
     const counts = new Map<string, number>();
     return items.map((item, index) => {
         const base = getBaseKey(item);

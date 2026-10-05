@@ -30,6 +30,7 @@ import { PhoneNumberText } from '../../ui/contacts/PhoneNumberText.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
 import { useMemo, useState } from 'react';
+import type { LabeledItem } from '../../types/shapes.js';
 import { SimulatorList, SimulatorListItem } from '../../ui/lists/SimulatorList.js';
 import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../../ui/layout/SimulatorDetail.js';
 import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';
@@ -73,7 +74,7 @@ export interface ContactsViewProps {
     /** Called when search input changes (for controlled state restoration). */
     onSearchChange?: (query: string) => void;
     /** When set (phone app context), show phone secondary nav above content. */
-    phoneLocalNavItems?: { id: string; label: string }[];
+    phoneLocalNavItems?: LabeledItem[];
     /** Active phone tab id (e.g. "contacts"). */
     phoneActiveId?: string;
     /** When user selects a phone tab (e.g. History, Dial). */

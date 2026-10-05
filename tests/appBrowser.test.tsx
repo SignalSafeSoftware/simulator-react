@@ -257,6 +257,12 @@ describe('buildBrowserDocument', () => {
         expect(html).toContain('"pageId":"page"');
     });
 
+    it('removes nested style-close sequences that would reassemble after one pass', () => {
+        const html = build('', 'a{}</</stylestyle><script>x</script>');
+        expect(html).not.toContain('a{}</style');
+        expect(html).toContain('a{}><script>x</script></style>');
+    });
+
     it('escapes angle brackets in bridge configuration', () => {
         const html = buildBrowserDocument('', '', '<page>', 's', 'https://h.test');
         expect(html).toContain('\\u003cpage>');

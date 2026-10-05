@@ -39,7 +39,7 @@ import {
     focusSimulatorSearch,
     handleSimulatorKeyboard,
 } from '../utils/navigation/simulatorKeyboardCommands.js';
-import { DEVELOPER_TOOLBAR_LABELS } from './toolbarConfig.js';
+import { DEVELOPER_TOOLBAR_SECTIONS } from './toolbarConfig.js';
 
 export interface UseSimulatorDeveloperControlsOptions {
     state: SimulatorSessionState;
@@ -99,10 +99,7 @@ export function useSimulatorDeveloperControls({
     const showResolvedNavGraph = visibleDeveloperSections.navGraph;
     const enableResolvedKeyboardShortcuts = visibleDeveloperSections.shortcuts;
     const developerToolbarSections = useMemo(
-        () =>
-            (Object.keys(DEVELOPER_TOOLBAR_LABELS) as SimulatorDeveloperSectionKey[]).filter(
-                (key) => resolvedDeveloperTools.sections[key],
-            ),
+        () => DEVELOPER_TOOLBAR_SECTIONS.filter((key) => resolvedDeveloperTools.sections[key]),
         [resolvedDeveloperTools.sections],
     );
     const showDeveloperToolsToolbar =

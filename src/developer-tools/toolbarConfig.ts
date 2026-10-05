@@ -5,6 +5,16 @@ import { englishLocale } from '../i18n/englishLocale.js';
 
 import { type SimulatorDeveloperSectionKey } from './configuration.js';
 
+export const DEVELOPER_TOOLBAR_SECTIONS = [
+    'summary',
+    'reachability',
+    'timeline',
+    'navGraph',
+    'snapshotExport',
+    'shortcuts',
+    'runtimeIssues',
+] as const satisfies readonly SimulatorDeveloperSectionKey[];
+
 export const DEVELOPER_TOOLBAR_LABELS: Record<SimulatorDeveloperSectionKey, string> = {
     summary: 'Summary',
     reachability: 'Reachability',

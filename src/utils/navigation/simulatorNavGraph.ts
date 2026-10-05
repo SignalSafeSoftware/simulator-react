@@ -1,5 +1,6 @@
 import { DEFAULT_INTERNET_SCREEN, type SimulatorTemplatePayload } from '../../types/session.js';
 import { SimulatorActionType } from '../telemetry/simulatorActionTaxonomy.js';
+import type { AppScreenRef, HrefLink, KnownAppScreenRef, PageRef } from '../../types/shapes.js';
 /**
  * Navigation graph for simulator templates: apps, screens, and declarative action transitions.
  * Used for export and debug only; no TreeSpec branching. Semantics are simulator navigation only.
@@ -40,7 +41,7 @@ export interface SimulatorNavGraphEdge {
 
 export interface SimulatorNavGraph {
     /** Entry point (where the scenario starts). */
-    entry: { app: string; screen: string };
+    entry: AppScreenRef;
     /** All reachable (app, screen) nodes. */
     nodes: SimulatorNavGraphNode[];
     /** Transitions between nodes. */
@@ -77,10 +78,7 @@ function getDefaultScreen(app: SimulatorApp, payload: SimulatorTemplatePayload):
 }
 
 /** Resolve link href to browser page id (first page whose url matches or contains href). */
-function resolveLinkTargetPageId(
-    href: string | undefined,
-    pages: Array<{ id?: string; url?: string }>,
-): string | null {
+function resolveLinkTargetPageId(href: string | undefined, pages: PageRef[]): string | null {
     if (href == null || href === '') return null;
     const normalized = href.trim().toLowerCase();
     for (const p of pages) {
@@ -143,8 +141,8 @@ function addMainMenuEdges(
 function addPairedEdge(
     edges: SimulatorNavGraphEdge[],
     reachableScreens: readonly string[],
-    from: { app: SimulatorApp; screen: string },
-    to: { app: SimulatorApp; screen: string },
+    from: KnownAppScreenRef,
+    to: KnownAppScreenRef,
     forwardAction: string,
     backwardAction: string,
 ): void {
@@ -203,8 +201,8 @@ function addTabEdges(
 function addContentLinkEdges(
     edges: SimulatorNavGraphEdge[],
     from: { app: typeof SimulatorApp.Email | typeof SimulatorApp.Messages; screen: string },
-    links: Array<{ href?: string }> | undefined,
-    browserPages: Array<{ id?: string; url?: string }>,
+    links: HrefLink[] | undefined,
+    browserPages: PageRef[],
     reachableBrowserScreens: readonly string[],
 ): void {
     if (!links?.length) return;
@@ -287,7 +285,7 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
     // Cross-app: click_link from email:detail or messages:thread_detail to internet:pageId
     const browserPages = payload.browser?.pages ?? [];
     const emailDetail = payload.email?.selectedMessage ?? payload.email?.inbox?.[0];
-    const emailLinks = (emailDetail as { links?: Array<{ href?: string }> } | undefined)?.links;
+    const emailLinks = (emailDetail as { links?: HrefLink[] } | undefined)?.links;
     if (reachableScreens.email.includes(SimulatorEmailScreenId.Detail)) {
         addContentLinkEdges(
             edges,
@@ -299,7 +297,7 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
     }
 
     const smsThread = payload.sms?.thread;
-    const threadLinks = (smsThread as { links?: Array<{ href?: string }> } | undefined)?.links;
+    const threadLinks = (smsThread as { links?: HrefLink[] } | undefined)?.links;
     if (reachableScreens.messages.includes(SimulatorMessagesScreenId.ThreadDetail)) {
         addContentLinkEdges(
             edges,

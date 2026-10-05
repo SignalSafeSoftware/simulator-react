@@ -11,6 +11,7 @@ import {
     SimulatorPhoneScreenId,
 } from '@signalsafe/simulator-core/devicePayload';
 import { simulatorBrowserEdges } from './simulatorBrowserEdges.js';
+import type { KnownAppScreenRef } from '../../types/shapes.js';
 /**
  * Reachability analysis for full-device simulator templates.
  * Starting from entry_point, computes which screens and entities are reachable
@@ -38,7 +39,7 @@ export interface ReachabilityReport {
     };
     /** Screens/entities defined in payload but not reachable. */
     unreachable: {
-        screens: Array<{ app: SimulatorApp; screen: string }>;
+        screens: KnownAppScreenRef[];
         contacts: string[];
         inboxMessageIds: string[];
         browserPageIds: string[];
@@ -301,7 +302,7 @@ export function analyzeReachability(payload: SimulatorTemplatePayload): Reachabi
     const allContactIds = definedIds(payload.contacts ?? []);
     const allInboxIds = definedIds(payload.email?.inbox ?? []);
 
-    const unreachableScreens: Array<{ app: SimulatorApp; screen: string }> = [];
+    const unreachableScreens: KnownAppScreenRef[] = [];
     reachableApps.forEach((app) => {
         const reachableSet = new Set(reachableScreens[app]);
         for (const screen of getDefinedScreensForApp(app, allBrowserIds)) {

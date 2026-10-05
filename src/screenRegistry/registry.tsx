@@ -8,7 +8,6 @@ import {
 } from '@signalsafe/simulator-core/devicePayload';
 import { SimulatorDispatchActionType } from '../state/simulatorDispatchActions.js';
 import { createTranslator, simulatorEnglish } from '../i18n/catalog.js';
-const defaultLocale = createTranslator(simulatorEnglish);
 import type { ComponentType, ReactNode } from 'react';
 import {
     type PhoneScreenId,
@@ -31,6 +30,8 @@ import ContactsView from '../views/contacts/ContactsView.js';
 import DirectoryView from '../views/contacts/DirectoryView.js';
 import PhoneSimulatorView from '../views/phone/PhoneSimulatorView.js';
 import HomeSimulatorView from '../views/home/HomeSimulatorView.js';
+
+const defaultLocale = createTranslator(simulatorEnglish);
 
 function buildMessagesThreadList(
     payload: SimulatorRenderContext['state']['payload'],

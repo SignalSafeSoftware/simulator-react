@@ -22,6 +22,7 @@ import {
 import { ArrowLeft, ArrowRight, Home, RotateCw } from 'lucide-react';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { type ReactNode } from 'react';
+import type { TextSpan } from '../../types/shapes.js';
 import { withStableKeys } from '../../utils/lists/stableKeys.js';
 
 import { simBorder, simLayout, simScreen, simSpacing } from '../../simulatorStyles.js';
@@ -32,7 +33,7 @@ export interface SimulatorBrowserChromeProps {
     /** URL or placeholder shown in the address bar. */
     url: string;
     /** Optional segments to highlight in the URL (e.g. suspicious domain). */
-    urlHighlightSegments?: { start: number; end: number }[];
+    urlHighlightSegments?: TextSpan[];
     /** Called when user taps Back. */
     onBack?: () => void;
     /** Optional forward; no-op if not provided. */
@@ -47,7 +48,7 @@ export interface SimulatorBrowserChromeProps {
 
 function renderUrlWithHighlights(
     url: string,
-    segments: { start: number; end: number }[] | undefined,
+    segments: TextSpan[] | undefined,
     fallback: string,
 ): React.ReactNode {
     const s = url || fallback;

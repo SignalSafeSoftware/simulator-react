@@ -9,7 +9,7 @@ import type {
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 import type { ComponentType, ReactNode } from 'react';
-import type { SimulatorSessionState } from '../types/session.js';
+import type { SimulatorAction, SimulatorSessionState } from '../types/session.js';
 import { type SimulatorDispatchAction } from '../state/simulatorDispatchActions.js';
 import type { SimulatorCapabilities } from '../utils/payload/simulatorCapabilities.js';
 import type {
@@ -36,7 +36,7 @@ export interface SimulatorRenderContext {
     dispatch: (action: SimulatorDispatchAction) => void;
     /** Derived from payload; controls visibility of Store, Settings, Dial, Directory, voicemail, etc. */
     capabilities: SimulatorCapabilities;
-    onAction: (action: import('../types/session.js').SimulatorAction) => void;
+    onAction: (action: SimulatorAction) => void;
     onSelectEmail: (messageId: string) => void;
     onBack: () => void;
     onSmsRevealNext: () => void;

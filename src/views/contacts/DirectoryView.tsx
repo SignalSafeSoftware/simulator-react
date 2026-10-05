@@ -18,6 +18,7 @@ import {
 } from '../../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { useState } from 'react';
+import type { LabeledItem } from '../../types/shapes.js';
 import type {
     SimulatorAction,
     SimulatorDirectoryEntry,
@@ -38,7 +39,7 @@ export interface DirectoryViewProps {
     /** Called when user opens an entry (before showing detail); emits directory_entry_viewed. */
     onViewEntry?: (entryId: string) => void;
     /** When set (phone app context), show phone secondary nav above content. */
-    phoneLocalNavItems?: { id: string; label: string }[];
+    phoneLocalNavItems?: LabeledItem[];
     phoneActiveId?: string;
     onPhoneNavSelect?: (id: string) => void;
     /** Open with this directory entry selected (README / harness screenshots). */
