@@ -8,6 +8,7 @@ import { englishLocale } from '../../i18n/englishLocale.js';
 
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { SimulatorChannel, channelToApp } from '../../types/session.js';
+import { dispatchDocumentEvent, focusDocumentElement } from '../browser/browserEnvironment.js';
 
 /** Channel order in shell nav (index 0 = first tab). Alt+1..5 switches to these. */
 const CHANNEL_BY_KEY = {
@@ -78,8 +79,7 @@ export type ListNavDirection = (typeof ListNavDirection)[keyof typeof ListNavDir
 
 /** Dispatch a custom event for list nav so list views can optionally handle next/prev focus. */
 function dispatchListNav(direction: ListNavDirection): void {
-    if (typeof document === 'undefined') return;
-    document.dispatchEvent(new CustomEvent(LIST_NAV_EVENT, { detail: { direction } }));
+    dispatchDocumentEvent(new CustomEvent(LIST_NAV_EVENT, { detail: { direction } }));
 }
 
 function hasBlockedModifier(e: KeyboardEvent): boolean {
@@ -208,6 +208,5 @@ export function handleSimulatorKeyboard(
  * Safe to call when element may not exist.
  */
 export function focusSimulatorSearch(): void {
-    const el = document.querySelector<HTMLElement>('[data-simulator-search]');
-    el?.focus();
+    focusDocumentElement('[data-simulator-search]');
 }

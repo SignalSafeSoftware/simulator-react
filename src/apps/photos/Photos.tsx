@@ -14,6 +14,7 @@ import { DevicePage } from '../shared/DevicePage.js';
 import { AppSecondaryNav, type AppNavAction } from '../shared/AppSecondaryNav.js';
 import { photoSchema, type Photo } from '@signalsafe/simulator-core/apps/contracts';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
+import { currentIsoTime } from '../../utils/browser/browserEnvironment.js';
 export default function Photos({
     store,
     onBack,
@@ -60,7 +61,7 @@ export default function Photos({
             const asset = await readAsset(file, true);
             const original = extractPhotoMetadata(await file.arrayBuffer());
             if (!isLatest()) return;
-            const now = new Date().toISOString();
+            const now = currentIsoTime();
             setExisting(replacing !== null && hasBaseline());
             setEditing(true);
             if (!replacing) setBaseline(null);
@@ -85,7 +86,7 @@ export default function Photos({
         setError('');
         const parsed = photoSchema.safeParse({
             ...draft,
-            updatedAt: new Date().toISOString(),
+            updatedAt: currentIsoTime(),
         });
         if (!parsed.success) {
             const issue = parsed.error.issues[0];

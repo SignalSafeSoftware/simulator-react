@@ -40,7 +40,11 @@ import {
     handleSimulatorKeyboard,
 } from '../utils/navigation/simulatorKeyboardCommands.js';
 import { DEVELOPER_TOOLBAR_SECTIONS } from './toolbarConfig.js';
-import { canCopyToClipboard, copyToClipboard } from '../utils/browser/browserEnvironment.js';
+import {
+    canCopyToClipboard,
+    copyToClipboard,
+    listenForDocumentKeydown,
+} from '../utils/browser/browserEnvironment.js';
 
 export interface UseSimulatorDeveloperControlsOptions {
     state: SimulatorSessionState;
@@ -167,8 +171,7 @@ export function useSimulatorDeveloperControls({
                 e.stopPropagation();
             }
         };
-        document.addEventListener('keydown', onKeyDown, true);
-        return () => document.removeEventListener('keydown', onKeyDown, true);
+        return listenForDocumentKeydown(onKeyDown);
     }, [enableResolvedKeyboardShortcuts, dispatch, stateRef]);
 
     const toggleDeveloperSection = useCallback((section: SimulatorDeveloperSectionKey) => {

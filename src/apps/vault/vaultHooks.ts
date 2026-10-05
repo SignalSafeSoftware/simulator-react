@@ -10,9 +10,10 @@ import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useDraftBaseline } from '../shared/useDraftBaseline.js';
 import type { FolderPage } from './vaultShared.js';
+import { currentIsoTime } from '../../utils/browser/browserEnvironment.js';
 
 export function newSecret(folder: string): Secret {
-    const now = new Date().toISOString();
+    const now = currentIsoTime();
     return {
         id: createSimulatorId(),
         title: '',
@@ -169,7 +170,7 @@ export function useVaultDraft({
     async function save() {
         const parsed = secretSchema.safeParse({
             ...draft,
-            updatedAt: new Date().toISOString(),
+            updatedAt: currentIsoTime(),
         });
         if (!parsed.success) {
             setMessage(t('app.vault.secretInvalid'));

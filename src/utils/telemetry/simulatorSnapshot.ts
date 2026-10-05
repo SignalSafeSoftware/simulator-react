@@ -7,6 +7,7 @@
 import type { SimulatorSessionState, SimulatorAction } from '../../types/session.js';
 import { getScreenMetadata } from '../navigation/screenMetadata.js';
 import type { AppScreenRef } from '../../types/shapes.js';
+import { currentIsoTime } from '../browser/browserEnvironment.js';
 
 /** Serializable snapshot of current simulator session for export/debug. */
 export interface SimulatorSnapshot {
@@ -154,7 +155,7 @@ export function captureSimulatorSnapshot(
     const contactCount = payload.contacts?.length ?? 0;
 
     return {
-        capturedAt: new Date().toISOString(),
+        capturedAt: currentIsoTime(),
         template: {
             templateKey: payload.templateKey,
             templateId: payload.templateId,

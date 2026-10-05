@@ -12,6 +12,7 @@ import {
     type SimulatorViewState,
     type SimulatorTemplatePayload,
 } from '../../types/session.js';
+import { currentIsoTime } from '../browser/browserEnvironment.js';
 
 function getCurrentScreen(view: SimulatorViewState, app: string): string {
     return isSimulatorApp(app) ? getCurrentScreenForApp(view, app) : '';
@@ -62,7 +63,7 @@ function baseEvent(
         app,
         screen,
         ...session,
-        timestamp: new Date().toISOString(),
+        timestamp: currentIsoTime(),
         ...overrides,
     };
 }

@@ -6,6 +6,7 @@ import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { useEffect, useState, type ReactNode } from 'react';
 import PhoneKeypad, { type PhoneKeypadDigit } from './PhoneKeypad.js';
+import { currentTimeMs } from '../../utils/browser/browserEnvironment.js';
 
 export function formatPhoneCallDuration(seconds: number): string {
     const safe = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;
@@ -48,9 +49,9 @@ export default function PhoneCallView(props: Readonly<PhoneCallViewProps>) {
     const screenLocale = useSimulatorLocale();
 
     const formatNumber = usePhoneNumberFormatter();
-    const [now, setNow] = useState(Date.now);
+    const [now, setNow] = useState(currentTimeMs);
     useEffect(() => {
-        const timer = setInterval(() => setNow(Date.now()), 1000);
+        const timer = setInterval(() => setNow(currentTimeMs()), 1000);
         return () => clearInterval(timer);
     }, []);
     const ringing = props.incoming && props.phase === PhoneCallPhase.Ringing;

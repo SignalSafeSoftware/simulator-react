@@ -7,6 +7,7 @@ import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useDraftBaseline } from '../shared/useDraftBaseline.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import type { MailFolder, ReplyKind } from './mailShared.js';
+import { currentIsoTime } from '../../utils/browser/browserEnvironment.js';
 
 const MAX_ATTACHMENTS = 20;
 
@@ -16,7 +17,7 @@ export function useMailPersist(store: DeviceStore) {
     async function persist(next: Mail, edited = false): Promise<boolean> {
         const parsed = mailSchema.safeParse({
             ...next,
-            updatedAt: edited ? new Date().toISOString() : next.updatedAt,
+            updatedAt: edited ? currentIsoTime() : next.updatedAt,
         });
         if (!parsed.success) {
             setError(t('app.mail.limits'));
