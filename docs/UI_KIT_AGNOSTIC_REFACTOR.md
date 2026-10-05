@@ -59,7 +59,7 @@
 | `tests/import-without-react-bootstrap.test.ts` | Barrel loads without `react-bootstrap` |
 | `tests/renderSlots.test.ts` | `renderChoice` / `renderFeedback` slot delegation |
 | `tests/bootstrapClassHooks.test.ts` | No Bootstrap CSS tokens in shell/list/dial markup |
-| `tests/simulatorWithSessionInteractions.test.ts` | Removed `react-bootstrap` mock |
+| `tests/simulatorWithSession.test.ts` | Removed `react-bootstrap` mock |
 
 ---
 

@@ -18,7 +18,12 @@ import {
 import { SimulatorActions } from '../actions/simulatorActions.js';
 import { getPhoneLocalNavItems } from '../utils/navigation/phoneLocalNavItems.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
-import type { SimulatorRenderContext, ScreenEntry } from './types.js';
+import type {
+    EntryDefinition,
+    ScreenEntry,
+    ScreenEntryRender,
+    SimulatorRenderContext,
+} from './types.js';
 import EmailSimulatorView from '../views/email/EmailSimulatorView.js';
 import MessagesThreadListView from '../views/messages/MessagesThreadListView.js';
 import { buildMessagesThreadList } from './messagesThreadList.js';
@@ -32,11 +37,25 @@ import HomeSimulatorView from '../views/home/HomeSimulatorView.js';
 
 const defaultLocale = createTranslator(simulatorEnglish);
 
+/** Binds a component to its own props builder, so rendering needs no cast. */
+function bind<P extends object>(
+    component: ComponentType<P>,
+    getProps: (ctx: SimulatorRenderContext) => NoInfer<P>,
+): EntryDefinition<P> & ScreenEntryRender {
+    return {
+        component,
+        getProps,
+        render: (ctx) => {
+            const Component = component;
+            return <Component {...getProps(ctx)} />;
+        },
+    };
+}
+
 const SCREEN_REGISTRY: ScreenEntry[] = [
     {
         app: SimulatorApp.Email,
-        component: EmailSimulatorView,
-        getProps: (ctx) => ({
+        ...bind(EmailSimulatorView, (ctx) => ({
             payload: ctx.state.payload.email,
             screen: ctx.state.view.email.screen,
             selectedMessageId: ctx.state.view.email.selectedMessageId,
@@ -48,13 +67,12 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
                 ctx.hostOwnsScreenActions ||
                 (!ctx.state.view.showPrimaryMenu &&
                     ctx.state.view.activeApp === SimulatorApp.Email),
-        }),
+        })),
     },
     {
         app: SimulatorApp.Messages,
         screen: SimulatorMessagesScreenId.Threads,
-        component: MessagesThreadListView,
-        getProps: (ctx) => ({
+        ...bind(MessagesThreadListView, (ctx) => ({
             threads: buildMessagesThreadList(ctx.state.payload, ctx.locale ?? defaultLocale),
             onSelectThread: ctx.onSelectThread,
             onCompose: () =>
@@ -63,22 +81,20 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
                     app: SimulatorApp.Messages,
                     screen: SimulatorMessagesScreenId.NewThread,
                 }),
-        }),
+        })),
     },
     {
         app: SimulatorApp.Messages,
         screen: SimulatorMessagesScreenId.NewThread,
-        component: MessagesNewThreadView,
-        getProps: (ctx) => ({
+        ...bind(MessagesNewThreadView, (ctx) => ({
             onBack: ctx.onBack,
             navRenderedByShell: ctx.hostOwnsScreenActions ?? false,
-        }),
+        })),
     },
     {
         app: SimulatorApp.Messages,
         screen: SimulatorMessagesScreenId.ThreadDetail,
-        component: SmsSimulatorView,
-        getProps: (ctx) => ({
+        ...bind(SmsSimulatorView, (ctx) => ({
             payload: ctx.state.payload.sms,
             visibleCount: ctx.state.view.messages.visibleCount,
             onAction: ctx.onAction,
@@ -87,12 +103,11 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             showReplyBox: true,
             navRenderedByShell: ctx.hostOwnsScreenActions ?? false,
             renderChoice: ctx.renderChoice,
-        }),
+        })),
     },
     {
         app: SimulatorApp.Internet,
-        component: BrowserSimulatorView,
-        getProps: (ctx) => ({
+        ...bind(BrowserSimulatorView, (ctx) => ({
             payload: ctx.state.payload.browser,
             screen: ctx.state.view.internet.screen,
             stack: ctx.state.view.internet.stack,
@@ -100,13 +115,12 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             onBack: ctx.onBack,
             renderChoice: ctx.renderChoice,
             renderFeedback: ctx.renderFeedback,
-        }),
+        })),
     },
     {
         app: SimulatorApp.Phone,
         screen: SimulatorPhoneScreenId.Contacts,
-        component: ContactsView,
-        getProps: (ctx) => {
+        ...bind(ContactsView, (ctx) => {
             const phoneScreen = ctx.state.view.phone.screen;
             const onPhoneNav = (id: string) => navigateTo(ctx, SimulatorApp.Phone, id);
             const navRenderedByShell = isPhoneNavRenderedByShell(ctx);
@@ -148,13 +162,12 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
                               })
                         : undefined,
             };
-        },
+        }),
     },
     {
         app: SimulatorApp.Phone,
         screen: SimulatorPhoneScreenId.Directory,
-        component: DirectoryView,
-        getProps: (ctx) => {
+        ...bind(DirectoryView, (ctx) => {
             const phoneScreen = ctx.state.view.phone.screen;
             const onPhoneNav = (id: string) => navigateTo(ctx, SimulatorApp.Phone, id);
             const navRenderedByShell = isPhoneNavRenderedByShell(ctx);
@@ -177,12 +190,11 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
                 onPhoneNavSelect: navRenderedByShell ? undefined : onPhoneNav,
                 initialSelectedDirectoryId,
             };
-        },
+        }),
     },
     {
         app: SimulatorApp.Phone,
-        component: PhoneSimulatorView,
-        getProps: (ctx) => ({
+        ...bind(PhoneSimulatorView, (ctx) => ({
             payload: ctx.state.payload.phone,
             directory: ctx.state.payload.directory,
             contacts: ctx.state.payload.contacts,
@@ -197,19 +209,18 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             sessionState: ctx.state,
             sessionDispatch: ctx.dispatch,
             renderIncomingCallExtra: ctx.renderIncomingCallExtra,
-        }),
+        })),
     },
     {
         app: SimulatorApp.Home,
-        component: HomeSimulatorView,
-        getProps: (ctx) => ({
+        ...bind(HomeSimulatorView, (ctx) => ({
             payload: ctx.state.payload.home,
             homeCapabilities: ctx.capabilities.home,
             screen: ctx.state.view.home.screen,
             onNavigate: (screenId: HomeScreenId) => navigateTo(ctx, SimulatorApp.Home, screenId),
             onAction: ctx.onAction,
             onBack: ctx.onBack,
-        }),
+        })),
     },
 ];
 
@@ -260,10 +271,7 @@ export function renderActiveScreen(app: SimulatorApp, ctx: SimulatorRenderContex
     if (entry == null) {
         return null;
     }
-    const props = entry.getProps(ctx);
-    // Entries are authored per screen with exact props; the registry erases them to render dynamically.
-    const Component = entry.component as unknown as ComponentType<Record<string, unknown>>;
-    return <Component {...props} />;
+    return entry.render(ctx);
 }
 
 export { SCREEN_REGISTRY };

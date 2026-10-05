@@ -57,59 +57,72 @@ export interface SimulatorRenderContext {
     onPhoneContactOpen?: (props: SimulatorPhoneContactOpenProps) => void;
 }
 
+/** Renders the entry's component with its own props. */
+export interface ScreenEntryRender {
+    render: (ctx: SimulatorRenderContext) => ReactNode;
+}
+
+/** An entry as authored: a component and the props builder for it. */
+export interface EntryDefinition<P extends object> {
+    component: ComponentType<P>;
+    getProps: (ctx: SimulatorRenderContext) => P;
+}
+
 /** One registry entry: optional screen pin (exact match) or default for app. */
-export type ScreenEntry =
-    | {
-          app: typeof SimulatorApp.Email;
-          screen?: never;
-          component: ComponentType<EmailSimulatorViewProps>;
-          getProps: (ctx: SimulatorRenderContext) => EmailSimulatorViewProps;
-      }
-    | {
-          app: typeof SimulatorApp.Messages;
-          screen: typeof SimulatorMessagesScreenId.Threads;
-          component: ComponentType<MessagesThreadListViewProps>;
-          getProps: (ctx: SimulatorRenderContext) => MessagesThreadListViewProps;
-      }
-    | {
-          app: typeof SimulatorApp.Messages;
-          screen: typeof SimulatorMessagesScreenId.NewThread;
-          component: ComponentType<MessagesNewThreadViewProps>;
-          getProps: (ctx: SimulatorRenderContext) => MessagesNewThreadViewProps;
-      }
-    | {
-          app: typeof SimulatorApp.Messages;
-          screen: typeof SimulatorMessagesScreenId.ThreadDetail;
-          component: ComponentType<SmsSimulatorViewProps>;
-          getProps: (ctx: SimulatorRenderContext) => SmsSimulatorViewProps;
-      }
-    | {
-          app: typeof SimulatorApp.Internet;
-          screen?: never;
-          component: ComponentType<BrowserSimulatorViewProps>;
-          getProps: (ctx: SimulatorRenderContext) => BrowserSimulatorViewProps;
-      }
-    | {
-          app: typeof SimulatorApp.Phone;
-          screen: typeof SimulatorPhoneScreenId.Contacts;
-          component: ComponentType<ContactsViewProps>;
-          getProps: (ctx: SimulatorRenderContext) => ContactsViewProps;
-      }
-    | {
-          app: typeof SimulatorApp.Phone;
-          screen: typeof SimulatorPhoneScreenId.Directory;
-          component: ComponentType<DirectoryViewProps>;
-          getProps: (ctx: SimulatorRenderContext) => DirectoryViewProps;
-      }
-    | {
-          app: typeof SimulatorApp.Phone;
-          screen?: never;
-          component: ComponentType<PhoneSimulatorViewProps>;
-          getProps: (ctx: SimulatorRenderContext) => PhoneSimulatorViewProps;
-      }
-    | {
-          app: typeof SimulatorApp.Home;
-          screen?: never;
-          component: ComponentType<HomeSimulatorViewProps>;
-          getProps: (ctx: SimulatorRenderContext) => HomeSimulatorViewProps;
-      };
+export type ScreenEntry = ScreenEntryRender &
+    (
+        | {
+              app: typeof SimulatorApp.Email;
+              screen?: never;
+              component: ComponentType<EmailSimulatorViewProps>;
+              getProps: (ctx: SimulatorRenderContext) => EmailSimulatorViewProps;
+          }
+        | {
+              app: typeof SimulatorApp.Messages;
+              screen: typeof SimulatorMessagesScreenId.Threads;
+              component: ComponentType<MessagesThreadListViewProps>;
+              getProps: (ctx: SimulatorRenderContext) => MessagesThreadListViewProps;
+          }
+        | {
+              app: typeof SimulatorApp.Messages;
+              screen: typeof SimulatorMessagesScreenId.NewThread;
+              component: ComponentType<MessagesNewThreadViewProps>;
+              getProps: (ctx: SimulatorRenderContext) => MessagesNewThreadViewProps;
+          }
+        | {
+              app: typeof SimulatorApp.Messages;
+              screen: typeof SimulatorMessagesScreenId.ThreadDetail;
+              component: ComponentType<SmsSimulatorViewProps>;
+              getProps: (ctx: SimulatorRenderContext) => SmsSimulatorViewProps;
+          }
+        | {
+              app: typeof SimulatorApp.Internet;
+              screen?: never;
+              component: ComponentType<BrowserSimulatorViewProps>;
+              getProps: (ctx: SimulatorRenderContext) => BrowserSimulatorViewProps;
+          }
+        | {
+              app: typeof SimulatorApp.Phone;
+              screen: typeof SimulatorPhoneScreenId.Contacts;
+              component: ComponentType<ContactsViewProps>;
+              getProps: (ctx: SimulatorRenderContext) => ContactsViewProps;
+          }
+        | {
+              app: typeof SimulatorApp.Phone;
+              screen: typeof SimulatorPhoneScreenId.Directory;
+              component: ComponentType<DirectoryViewProps>;
+              getProps: (ctx: SimulatorRenderContext) => DirectoryViewProps;
+          }
+        | {
+              app: typeof SimulatorApp.Phone;
+              screen?: never;
+              component: ComponentType<PhoneSimulatorViewProps>;
+              getProps: (ctx: SimulatorRenderContext) => PhoneSimulatorViewProps;
+          }
+        | {
+              app: typeof SimulatorApp.Home;
+              screen?: never;
+              component: ComponentType<HomeSimulatorViewProps>;
+              getProps: (ctx: SimulatorRenderContext) => HomeSimulatorViewProps;
+          }
+    );
