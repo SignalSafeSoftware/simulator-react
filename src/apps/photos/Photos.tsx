@@ -172,19 +172,17 @@ export default function Photos({
                     />
                 </>
             ) : (
-                <>
-                    <PhotoGallery
-                        photos={photos}
-                        visiblePage={visiblePage}
-                        onOpen={(item) => {
-                            setError('');
-                            setExisting(true);
-                            setEditing(false);
-                            setBaseline(item);
-                            setDraft(item);
-                        }}
-                    />
-                </>
+                <PhotoGallery
+                    photos={photos}
+                    visiblePage={visiblePage}
+                    onOpen={(item) => {
+                        setError('');
+                        setExisting(true);
+                        setEditing(false);
+                        setBaseline(item);
+                        setDraft(item);
+                    }}
+                />
             )}
         </DevicePage>
     );

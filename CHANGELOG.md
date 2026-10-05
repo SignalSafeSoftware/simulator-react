@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.20.0 — October 4, 2026
 
 - Enforce 100% statement, branch, function and line coverage in CI, with jsdom tests for the browser, lock, mail, photos and vault apps.
 - Make `PhoneCallView` `onMute` and `onDigit` optional; they are only used while a call is connected.
@@ -13,6 +13,9 @@
 - Add catalog keys `app.photos.captureDate`, `app.photos.captureUnknown`, `app.photos.captureZoneUnknown`, `screen.phoneCallView.dial.digit` and `screen.smsSimulatorView.link`.
 - Route clock and document access through `utils/browser/browserEnvironment` (`currentIsoTime`, `currentTimeMs`, `listenForDocumentKeydown`, `dispatchDocumentEvent`, `focusDocumentElement`).
 - Check import cycles and duplicated code in CI (`check:cycles`, `check:duplication`).
+- Use core's `ReplyKind` constant instead of a local type; the values are unchanged.
+- Split long components and wide hooks (photos, SMS thread links, diagnostics band, vault and mail navigation, developer controls) without changing behavior.
+- Require core 0.6.0. See MIGRATION.md.
 
 ## 0.19.1 — October 4, 2026
 

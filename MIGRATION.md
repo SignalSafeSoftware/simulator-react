@@ -11,6 +11,14 @@ This local prerelease removes compatibility paths. Adopt core, React, device and
 
 - Module subpaths now follow their domain: `utils/navigation/*` (nav graph, policy, reachability, deep link, secondary menu, local nav items), `utils/payload/*` (validate, lint, diff, realism checks, world sections, capabilities, contact normalization), `utils/preview/*` (preview report, fallback world), `utils/telemetry/*` (action taxonomy, event mapper), `views/{browser,contacts,email,home,messages,phone,shared}/*`, and `ui/styles/*`. For example, `utils/simulatorDeepLink` is now `utils/navigation/simulatorDeepLink` and `views/PhoneKeypad` is `views/phone/PhoneKeypad`. There are no forwarding paths.
 
+## 0.20.0
+
+- `ScreenEntry` entries now carry a required `render(ctx)`. Entries are created by the package; hosts that only read `SCREEN_REGISTRY` are unaffected.
+- `SimulatorAppsHost.formatCaptureDate(metadata, translate?)` receives the active translator as an optional second argument. Hosts that override it with a one-argument function keep working; the default label now comes from the English catalog keys `app.photos.captureDate`, `app.photos.captureUnknown` and `app.photos.captureZoneUnknown`.
+- `ReplyKind` comes from `@signalsafe/simulator-core/apps/mail` (core 0.6.0); react no longer declares its own.
+- New subpaths: `contract/sessionHostProps`, `views/contacts/contactsViewRoles` and `views/phone/phoneCallViewRoles` expose the role interfaces that `SimulatorWithSessionProps`, `ContactsViewProps` and `PhoneCallViewProps` extend. Prop names and types are unchanged.
+- Add catalog keys `screen.phoneCallView.dial.digit` and `screen.smsSimulatorView.link`; hosts that supply a full catalog should add them.
+
 ## Existing data
 
 The core repository supplies an offline migration tool. Preview an export with `node scripts/migrate-input-json.mjs INPUT.json`. Exit 0 means canonical input, 1 means migration is needed, and 2 means an error or conflicting fields. Write a separate converted file with `node scripts/migrate-input-json.mjs INPUT.json --output NEW.json`. The tool never overwrites existing files and is idempotent. Conflicting old/new values require manual review. Missing device entry points require authoring a real entry point; the tool does not guess a screen from the template channel.

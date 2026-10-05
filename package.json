@@ -1,6 +1,6 @@
 {
   "name": "@signalsafe/simulator-react",
-  "version": "0.19.1",
+  "version": "0.20.0",
   "type": "module",
   "description": "UI-kit agnostic React device simulator shell, session state, and utilities (no routing or API).",
   "license": "MIT",
@@ -516,7 +516,7 @@
     "check:duplication": "jscpd src --min-lines 8 --min-tokens 70 --threshold 0 --reporters console --silent"
   },
   "dependencies": {
-    "@signalsafe/simulator-core": "0.5.0",
+    "@signalsafe/simulator-core": "0.6.0",
     "@signalsafe/tree-spec": "^0.4.1",
     "lucide-react": "^1.31.0"
   },

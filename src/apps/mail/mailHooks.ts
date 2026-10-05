@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
 import { mailSchema, type Mail } from '@signalsafe/simulator-core/apps/contracts';
-import { newMail, replyMail } from '@signalsafe/simulator-core/apps/mail';
+import { ReplyKind, newMail, replyMail } from '@signalsafe/simulator-core/apps/mail';
 import type { SimulatorEmailService } from '@signalsafe/simulator-core/apps/emailService';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useDraftBaseline } from '../shared/useDraftBaseline.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-import type { MailFolder, ReplyKind } from './mailShared.js';
+import type { MailFolder } from './mailShared.js';
 import { currentIsoTime } from '../../utils/browser/browserEnvironment.js';
 
 const MAX_ATTACHMENTS = 20;
@@ -57,7 +57,7 @@ export function useMailDraft({
         setDraft(next);
         setError('');
     }
-    function compose(source?: Mail, kind: ReplyKind = 'reply') {
+    function compose(source?: Mail, kind: ReplyKind = ReplyKind.Reply) {
         setError('');
         edit(source ? replyMail(source, identity, kind) : newMail(identity));
     }

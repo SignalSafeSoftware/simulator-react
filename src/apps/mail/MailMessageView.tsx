@@ -2,7 +2,8 @@ import { PagedListFooter } from '../shared/PagedListFooter.js';
 import { SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import { mailFolderSchema, type Asset, type Mail } from '@signalsafe/simulator-core/apps/contracts';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-import { type MailPage, type ReplyKind, type VisiblePage } from './mailShared.js';
+import { ReplyKind } from '@signalsafe/simulator-core/apps/mail';
+import { type MailPage, type VisiblePage } from './mailShared.js';
 
 function MailHeaders({
     message,
@@ -98,14 +99,14 @@ function MailMessageActions({
                     <button
                         className={SIM_BTN_OUTLINE}
                         disabled={busy}
-                        onClick={() => actions.compose(message, 'reply-all')}
+                        onClick={() => actions.compose(message, ReplyKind.ReplyAll)}
                     >
                         {t('app.mail.replyAll')}
                     </button>
                     <button
                         className={SIM_BTN_OUTLINE}
                         disabled={busy}
-                        onClick={() => actions.compose(message, 'forward')}
+                        onClick={() => actions.compose(message, ReplyKind.Forward)}
                     >
                         {t('app.mail.forward')}
                     </button>

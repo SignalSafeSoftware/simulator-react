@@ -15,6 +15,7 @@
 | `utils/payload` | Payload validation, lint, diff, realism checks, capabilities and normalization |
 | `utils/preview` | Preview report and fallback world |
 | `utils/telemetry` | Action taxonomy, event mapping, snapshots, transition logging and verification context |
+| `utils/browser` | The only module that reads the system clock, dialogs, clipboard and document listeners; tests stub it |
 | `utils/lists` | Stable keys and text matching |
 | `state`, `adapters`, `datasource`, `types` | Session behavior, input mapping, data access and local template types |
 
@@ -28,4 +29,8 @@ Export style: a module that holds one feature screen (apps, views, developer pan
 
 Public modules are exposed by explicit owner subpaths. There is no root forwarding boundary. Internal barrel files, compatibility wrappers and imports through the package's own entry are prohibited. Import canonical device schemas/types from simulator-core, and local template-specific shapes from `types/template.ts`. Do not restore removed `actions/index.ts`, `screenRegistry/index.ts`, or `datasource/validateDeviceJson.ts` shims.
 
-Run `yarn check:modules`, lint, format, types, tests and build. The module check runs in CI and rejects internal re-exports, flat app/component files and unresolved relative source imports. Builds clean generated `dist` first so removed paths cannot survive in published artifacts. Preserve the public entry and declared utility subpaths when reorganizing source; verify the packed package in actual consumers.
+Wide props are split into role interfaces that the public props extend (`contract/sessionHostProps`, `views/contacts/contactsViewRoles`, `views/phone/phoneCallViewRoles`, and the `SimulatorApps*` host interfaces). Add a prop to the role it belongs to, not to a growing flat interface.
+
+Screen registry entries are created with `bind(component, getProps)`, so each entry renders its own component with its own props without a cast.
+
+Run `yarn check:modules`, `yarn check:cycles`, `yarn check:duplication`, lint, format, types, tests and build. The module check runs in CI and rejects internal re-exports, flat app/component files and unresolved relative source imports. Builds clean generated `dist` first so removed paths cannot survive in published artifacts. Preserve the public entry and declared utility subpaths when reorganizing source; verify the packed package in actual consumers.

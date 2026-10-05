@@ -535,10 +535,10 @@
   resolved "https://registry.yarnpkg.com/@rolldown/pluginutils/-/pluginutils-1.0.1.tgz#e3fcee093fbb5ce765e1ad088ff4de2889f6f9be"
   integrity sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==
 
-"@signalsafe/simulator-core@0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@signalsafe/simulator-core/-/simulator-core-0.5.0.tgz#c6ea79e3fcc6c37663548296ae7f95447bb361d4"
-  integrity sha512-/9Y+/lixGnXaWrAjCrQizV6QeQ6gPMmDGNrqnMvBtYENbry08useoocOKikSuJvveNzrcM1PdoRqlMrRe77PgQ==
+"@signalsafe/simulator-core@0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@signalsafe/simulator-core/-/simulator-core-0.6.0.tgz#63ad133e6fab314de5a54a4ebc0d3d2818bbd029"
+  integrity sha512-9OnlfoBzvLnPVe3acdgXsrUrT7K41fn5Vj8lcmGpHpcaA2YPfMeftMIQSLc4Rsm1jH2xVjsqHo4VOCBmdpkVhA==
   dependencies:
     "@signalsafe/tree-spec" "^0.4.1"
     zod "^4.0.0"

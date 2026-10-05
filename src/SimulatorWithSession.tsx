@@ -28,7 +28,6 @@ import { getVerificationContextForApp } from './utils/telemetry/simulatorVerific
 import { useSimulatorSessionHandlers } from './hooks/useSimulatorSessionHandlers.js';
 import { useSimulatorSecondaryMenu } from './hooks/useSimulatorSecondaryMenu.js';
 import { useSimulatorDeveloperControls } from './developer-tools/useSimulatorDeveloperControls.js';
-import {} from './simulatorStyles.js';
 import { SimulatorDialog } from './ui/primitives.js';
 import { joinClasses } from './ui/styles/simulatorClasses.js';
 import {
