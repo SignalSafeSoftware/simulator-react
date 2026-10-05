@@ -34,7 +34,7 @@ export function checkSnapshot(source: SimulatorDatasource) {
     source.context.home.settingsSections.pop();
   }
   const session = simulatorDatasourceToPayload(source);
-  if (session.contacts) session.contacts[0].displayName = 'editable';
+  if (session.contacts) session.contacts[0]!.displayName = 'editable';
   if (session.sms) session.sms.thread.messages.pop();
   if (session.email) session.email.inbox.pop();
   if (session.phone?.content) session.phone.content.transcript = 'editable';

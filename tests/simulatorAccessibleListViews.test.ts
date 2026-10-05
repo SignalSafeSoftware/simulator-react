@@ -97,7 +97,7 @@ describe('simulator accessible list views', () => {
                     (node) =>
                         typeof node.props.onClick === 'function' &&
                         node.props['aria-label'] == null,
-                )[0]
+                )[0]!
                 .props.onClick();
         });
 
@@ -542,7 +542,7 @@ describe('simulator accessible list views', () => {
         const rowButtons = renderer!.root
             .findAllByType('button')
             .filter((node) => node.props['aria-label'] == null);
-        expect(rowButtons[1].props.className).toContain('simulator-border--top-none');
+        expect(rowButtons[1]!.props.className).toContain('simulator-border--top-none');
 
         await act(async () => {
             renderer!.root

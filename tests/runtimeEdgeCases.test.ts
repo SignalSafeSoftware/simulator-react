@@ -97,7 +97,7 @@ it.each(['phone', 'email', 'address'] as const)(
                 onChange,
             }),
         );
-        const field = view.root.findAllByType('textarea')[0];
+        const field = view.root.findAllByType('textarea')[0]!;
         act(() => field.props.onFocus());
         expect(field.props.value).toBe('123');
         act(() => field.props.onChange({ target: { value: 'changed' } }));
@@ -118,9 +118,9 @@ it.each(['phone', 'email', 'address'] as const)(
         expect(onChange.mock.lastCall?.[1]).toBeNull();
         act(() => checkbox?.props.onChange({ target: { checked: true } }));
         expect(onChange.mock.lastCall?.[1]).toBe('one');
-        act(() => view.root.findAllByType('button')[0].props.onClick());
+        act(() => view.root.findAllByType('button')[0]!.props.onClick());
         expect(onChange.mock.lastCall?.[0]).toHaveLength(3);
-        act(() => view.root.findAllByType('button')[2].props.onClick());
+        act(() => view.root.findAllByType('button')[2]!.props.onClick());
         expect(onChange.mock.lastCall).toEqual([[values[0]], 'one']);
         view.unmount();
     },
@@ -140,7 +140,7 @@ it('opens the photo chooser and reports selection, status and validation errors'
         }),
         { createNodeMock: () => ({ click }) },
     );
-    act(() => view.root.findAllByType('button')[0].props.onClick());
+    act(() => view.root.findAllByType('button')[0]!.props.onClick());
     expect(click).toHaveBeenCalledOnce();
     const input = view.root.findByType('input');
     const file = new File(['image'], 'photo.png');

@@ -173,7 +173,7 @@ describe('simulator UI hotspot coverage', () => {
 
         await act(async () => {
             renderer!.root
-                .findAll((node) => typeof node.props.onClick === 'function')[0]
+                .findAll((node) => typeof node.props.onClick === 'function')[0]!
                 .props.onClick();
         });
         expect(flattenText(renderer!.toJSON())).toContain('Email:');
@@ -199,7 +199,7 @@ describe('simulator UI hotspot coverage', () => {
                     (node) =>
                         typeof node.props.onClick === 'function' &&
                         flattenText(node as never).includes('Numbered'),
-                )[0]
+                )[0]!
                 .props.onClick();
         });
         expect(flattenText(renderer!.toJSON())).toContain('Numbered');

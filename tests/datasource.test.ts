@@ -56,19 +56,19 @@ describe('JSON datasource conversion', () => {
         const ds = createSimulatorDatasource(JSON.stringify(json));
         expect(simulatorDatasourceToPayload(ds)).toEqual(fullDeviceToPayload(json));
         expect(ds.calls?.content?.transcript).toBe('Scenario content');
-        expect(ds.calls?.callHistory?.[0].number).toBe('');
-        expect(ds.contacts?.[0].id).toBe('c1');
-        expect(ds.sms?.thread.messages[0].text).toBe('Sample SMS');
-        expect(ds.email?.inbox[0].id).toBe('e1');
-        expect(ds.context.home?.settingsSections[0].id).toBe('s1');
-        expect(ds.context.browser?.pages[0].id).toBe('landing');
+        expect(ds.calls?.callHistory?.[0]!.number).toBe('');
+        expect(ds.contacts?.[0]!.id).toBe('c1');
+        expect(ds.sms?.thread.messages[0]!.text).toBe('Sample SMS');
+        expect(ds.email?.inbox[0]!.id).toBe('e1');
+        expect(ds.context.home?.settingsSections[0]!.id).toBe('s1');
+        expect(ds.context.browser?.pages[0]!.id).toBe('landing');
     });
     it('copies and freezes content and does not invent missing collections', () => {
         const ds = createSimulatorDatasource(json);
         expect(Object.isFrozen(ds.contacts?.[0])).toBe(true);
         const payload = simulatorDatasourceToPayload(ds);
-        if (payload.contacts) payload.contacts[0].displayName = 'Changed';
-        expect(ds.contacts?.[0].displayName).toBe('Sample');
+        if (payload.contacts) payload.contacts[0]!.displayName = 'Changed';
+        expect(ds.contacts?.[0]!.displayName).toBe('Sample');
         const empty = createSimulatorDatasource({
             entry_point: { app: 'home', screen: 'home' },
         });

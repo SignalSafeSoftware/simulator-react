@@ -538,7 +538,7 @@ describe('simulator view coverage', () => {
         });
         const threadInputs = threadRenderer!.root.findAllByType('input');
         await act(async () => {
-            threadInputs[0].props.onChange({ target: { value: '+15551230000' } });
+            threadInputs[0]!.props.onChange({ target: { value: '+15551230000' } });
             threadRenderer!.root
                 .findByProps({ 'aria-label': 'Message body' })
                 .props.onChange({ target: { value: 'Hello' } });
@@ -704,7 +704,7 @@ describe('simulator view coverage', () => {
         });
         await act(async () => {
             directoryRenderer!.root
-                .findAll((node) => typeof node.props.onClick === 'function')[0]
+                .findAll((node) => typeof node.props.onClick === 'function')[0]!
                 .props.onClick();
         });
         await act(async () => {

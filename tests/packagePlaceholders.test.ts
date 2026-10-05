@@ -31,7 +31,7 @@ describe('reusable screen placeholders', () => {
             expect(send.props.disabled).toBe(true);
             await act(async () => {
                 const forms = renderer!.root.findAllByType('form');
-                if (forms.length) forms[0].props.onSubmit({ preventDefault() {} });
+                if (forms.length) forms[0]!.props.onSubmit({ preventDefault() {} });
                 else send.props.onClick();
             });
             expect(onBack).not.toHaveBeenCalled();

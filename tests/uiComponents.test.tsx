@@ -58,7 +58,7 @@ describe('LoadMore', () => {
         vi.stubGlobal('IntersectionObserver', FakeObserver);
         const onLoadMore = vi.fn();
         const { rerender, unmount } = render(<LoadMore {...props} onLoadMore={onLoadMore} />);
-        const observer = FakeObserver.instances[0];
+        const observer = FakeObserver.instances[0]!;
         act(() => observer.callback([{ isIntersecting: true }]));
         act(() => observer.callback([{ isIntersecting: true }]));
         expect(onLoadMore).toHaveBeenCalledTimes(1);

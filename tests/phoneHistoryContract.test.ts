@@ -59,7 +59,7 @@ describe('native history consumer contract', () => {
             root.findByType('input').props.onChange({ target: { value: 'sam' } });
         });
         expect(rows(root)).toHaveLength(1);
-        expect(rows(root)[0].findByProps({ children: 'Sam' })).toBeDefined();
+        expect(rows(root)[0]!.findByProps({ children: 'Sam' })).toBeDefined();
     });
 
     it('reports controlled search without overwriting the host value', async () => {
@@ -92,15 +92,15 @@ describe('native history consumer contract', () => {
         expect(groups).toHaveLength(2);
         expect(groups.every((group) => group.findAllByType('button').length === 2)).toBe(true);
         const nativeRows = rows(root);
-        expect(nativeRows[0].props['aria-current']).toBeUndefined();
-        expect(nativeRows[1].props['aria-current']).toBe(true);
+        expect(nativeRows[0]!.props['aria-current']).toBeUndefined();
+        expect(nativeRows[1]!.props['aria-current']).toBe(true);
         expect(
             nativeRows.every((row) =>
                 row.findAllByType('button').every((button) => button === row),
             ),
         ).toBe(true);
         await act(async () => {
-            nativeRows[1].props.onClick();
+            nativeRows[1]!.props.onClick();
         });
         expect(onSelectEntry).toHaveBeenCalledWith('sam');
         expect(action).not.toHaveBeenCalled();

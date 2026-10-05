@@ -94,7 +94,7 @@ describe('phone and panel coverage', () => {
                     (node) =>
                         typeof node.props.onClick === 'function' &&
                         node.props['aria-label'] == null,
-                )[0]
+                )[0]!
                 .props.onClick();
             historyRenderer!.root
                 .findByProps({ 'aria-label': 'Search calls' })
@@ -249,7 +249,7 @@ describe('phone and panel coverage', () => {
         });
         await act(async () => {
             phoneRenderer!.root.findByProps({ 'aria-label': 'Add contact' }).props.onClick();
-            phoneRenderer!.root.findAllByProps({ children: 'Call' })[0].props.onClick();
+            phoneRenderer!.root.findAllByProps({ children: 'Call' })[0]!.props.onClick();
         });
         expect(onNavigate).toHaveBeenCalledWith('add_contact');
         expect(onAction).toHaveBeenCalledWith(

@@ -222,7 +222,7 @@ describe('simulator screen registry coverage', () => {
         const threadProps: Record<string, unknown> = {
             ...resolveScreen('messages', ctx)!.getProps(ctx),
         };
-        expect((threadProps.threads as Array<Record<string, unknown>>)[0].preview).toContain('…');
+        expect((threadProps.threads as Array<Record<string, unknown>>)[0]!.preview).toContain('…');
 
         ctx.state.payload.sms = {
             thread: {
@@ -233,7 +233,7 @@ describe('simulator screen registry coverage', () => {
         const defaultPreviewProps: Record<string, unknown> = {
             ...resolveScreen('messages', ctx)!.getProps(ctx),
         };
-        expect((defaultPreviewProps.threads as Array<Record<string, unknown>>)[0].preview).toBe(
+        expect((defaultPreviewProps.threads as Array<Record<string, unknown>>)[0]!.preview).toBe(
             'New message',
         );
 
@@ -445,7 +445,7 @@ describe('simulator screen registry coverage', () => {
         const threadedProps: Record<string, unknown> = {
             ...resolveScreen('messages', ctx)!.getProps(ctx),
         };
-        expect((threadedProps.threads as Array<Record<string, unknown>>)[0].preview).toBe(
+        expect((threadedProps.threads as Array<Record<string, unknown>>)[0]!.preview).toBe(
             'Preset preview',
         );
         expect(threadedProps.threads).toBe(smsPayload.threads);
