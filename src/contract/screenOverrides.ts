@@ -7,6 +7,7 @@ import type {
     MessagesScreenId,
     PhoneScreenId,
     SimulatorSessionState,
+    SimulatorViewState,
 } from '../types/session.js';
 import type { SimulatorNavigationLocation } from './navigation.js';
 
@@ -33,20 +34,27 @@ export interface SimulatorScreenOverrides {
     home?: Screens<HomeScreenId>;
 }
 
+type OverrideComponent = ComponentType<SimulatorScreenOverrideProps> | undefined;
+
+const OVERRIDE_RESOLVERS: Readonly<
+    Record<
+        SimulatorApp,
+        (
+            overrides: SimulatorScreenOverrides | undefined,
+            view: SimulatorViewState,
+        ) => OverrideComponent
+    >
+> = Object.freeze({
+    [SimulatorApp.Phone]: (overrides, view) => overrides?.phone?.[view.phone.screen],
+    [SimulatorApp.Email]: (overrides, view) => overrides?.email?.[view.email.screen],
+    [SimulatorApp.Messages]: (overrides, view) => overrides?.messages?.[view.messages.screen],
+    [SimulatorApp.Internet]: (overrides, view) => overrides?.internet?.[view.internet.screen],
+    [SimulatorApp.Home]: (overrides, view) => overrides?.home?.[view.home.screen],
+});
+
 export function resolveScreenOverride(
     overrides: SimulatorScreenOverrides | undefined,
     state: SimulatorSessionState,
-): ComponentType<SimulatorScreenOverrideProps> | undefined {
-    switch (state.view.activeApp) {
-        case SimulatorApp.Phone:
-            return overrides?.phone?.[state.view.phone.screen];
-        case SimulatorApp.Email:
-            return overrides?.email?.[state.view.email.screen];
-        case SimulatorApp.Messages:
-            return overrides?.messages?.[state.view.messages.screen];
-        case SimulatorApp.Internet:
-            return overrides?.internet?.[state.view.internet.screen];
-        case SimulatorApp.Home:
-            return overrides?.home?.[state.view.home.screen];
-    }
+): OverrideComponent {
+    return OVERRIDE_RESOLVERS[state.view.activeApp](overrides, state.view);
 }

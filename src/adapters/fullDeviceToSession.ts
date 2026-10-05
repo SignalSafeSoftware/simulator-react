@@ -19,6 +19,7 @@ import {
     type SimulatorHomeStoreApp,
     type SimulatorHomeSettingsSection,
 } from '../types/session.js';
+import { ownValue } from '../utils/lookup.js';
 import { englishLocale } from '../i18n/englishLocale.js';
 /**
  * Maps full-device payload (simulator) sections to unified session slice types.
@@ -49,19 +50,16 @@ function nullableString(value: unknown): string | null {
 }
 
 /** Map backend app id to shell channel (messages→sms, internet→browser). */
+const CHANNEL_BY_BACKEND_APP: Readonly<Record<SimulatorApp, SimulatorChannel>> = Object.freeze({
+    [SimulatorApp.Messages]: SimulatorChannel.Sms,
+    [SimulatorApp.Internet]: SimulatorChannel.Browser,
+    [SimulatorApp.Phone]: SimulatorChannel.Phone,
+    [SimulatorApp.Email]: SimulatorChannel.Email,
+    [SimulatorApp.Home]: SimulatorChannel.Home,
+});
+
 export function appToChannel(app: SimulatorApp): SimulatorChannel {
-    switch (app) {
-        case SimulatorApp.Messages:
-            return SimulatorChannel.Sms;
-        case SimulatorApp.Internet:
-            return SimulatorChannel.Browser;
-        case SimulatorApp.Phone:
-        case SimulatorApp.Email:
-        case SimulatorApp.Home:
-            return app;
-        default:
-            return SimulatorChannel.Email;
-    }
+    return ownValue(CHANNEL_BY_BACKEND_APP, app) ?? SimulatorChannel.Email;
 }
 
 /** Map device section to session device (main menu + secondary defaults). */

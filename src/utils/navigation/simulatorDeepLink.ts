@@ -7,6 +7,7 @@ import {
     isMessagesScreen,
     isPhoneScreen,
 } from '@signalsafe/simulator-core/devicePayload';
+import { ownValue } from '../lookup.js';
 /**
  * Deep-link parsing and application for the unified simulator.
  * Query params allow opening a specific app/screen/context (preview, QA, debugging).
@@ -42,19 +43,17 @@ function normalizeQueryValue(value: string | null): string | undefined {
     return value != null && value !== '' ? value : undefined;
 }
 
+const SCREEN_VALIDATORS: Readonly<Record<SimulatorApp, (screen: string) => boolean>> =
+    Object.freeze({
+        [SimulatorApp.Phone]: isPhoneScreen,
+        [SimulatorApp.Email]: isEmailScreen,
+        [SimulatorApp.Messages]: isMessagesScreen,
+        [SimulatorApp.Internet]: (screen) => screen.length > 0,
+        [SimulatorApp.Home]: isHomeScreen,
+    });
+
 function isValidScreenForApp(app: SimulatorApp, screen: string): boolean {
-    switch (app) {
-        case SimulatorApp.Phone:
-            return isPhoneScreen(screen);
-        case SimulatorApp.Email:
-            return isEmailScreen(screen);
-        case SimulatorApp.Messages:
-            return isMessagesScreen(screen);
-        case SimulatorApp.Internet:
-            return screen.length > 0;
-        case SimulatorApp.Home:
-            return isHomeScreen(screen);
-    }
+    return SCREEN_VALIDATORS[app](screen);
 }
 
 function buildEmailView(
@@ -184,6 +183,27 @@ export function parseSimulatorSearchParams(params: URLSearchParams): SimulatorDe
     };
 }
 
+const VIEW_BUILDERS: Readonly<
+    Record<
+        SimulatorApp,
+        (
+            view: SimulatorViewState,
+            payload: SimulatorSessionState['payload'],
+            link: SimulatorDeepLink,
+        ) => Partial<SimulatorViewState>
+    >
+> = Object.freeze({
+    [SimulatorApp.Email]: (view, payload, link) => ({ email: buildEmailView(view, payload, link) }),
+    [SimulatorApp.Messages]: (view, payload, link) => ({
+        messages: buildMessagesView(view, payload, link),
+    }),
+    [SimulatorApp.Internet]: (view, payload, link) => ({
+        internet: buildInternetView(view, payload, link),
+    }),
+    [SimulatorApp.Phone]: (view, _payload, link) => ({ phone: buildPhoneView(view, link) }),
+    [SimulatorApp.Home]: (view, _payload, link) => ({ home: buildHomeView(view, link) }),
+});
+
 /**
  * Apply a validated deep-link to session state. Only overrides view when the target exists in payload.
  * Returns a new state; does not mutate. If link is invalid for payload (e.g. messageId not in inbox), leaves state unchanged for that part.
@@ -193,27 +213,11 @@ export function applyDeepLinkToState(
     link: SimulatorDeepLink,
 ): SimulatorSessionState {
     const { payload, view } = state;
-    let nextView: SimulatorViewState = { ...view, activeApp: link.app };
-
-    switch (link.app) {
-        case SimulatorApp.Email:
-            nextView = { ...nextView, email: buildEmailView(view, payload, link) };
-            break;
-        case SimulatorApp.Messages:
-            nextView = { ...nextView, messages: buildMessagesView(view, payload, link) };
-            break;
-        case SimulatorApp.Internet:
-            nextView = { ...nextView, internet: buildInternetView(view, payload, link) };
-            break;
-        case SimulatorApp.Phone:
-            nextView = { ...nextView, phone: buildPhoneView(view, link) };
-            break;
-        case SimulatorApp.Home:
-            nextView = { ...nextView, home: buildHomeView(view, link) };
-            break;
-        default:
-            break;
-    }
+    const nextView: SimulatorViewState = {
+        ...view,
+        activeApp: link.app,
+        ...ownValue(VIEW_BUILDERS, link.app)?.(view, payload, link),
+    };
 
     return { ...state, view: nextView };
 }

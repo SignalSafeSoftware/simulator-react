@@ -3,6 +3,7 @@ import {
     SimulatorHomeScreenId,
     SimulatorMessagesScreenId,
 } from '@signalsafe/simulator-core/devicePayload';
+import { ownValue } from '../lookup.js';
 import { englishLocale } from '../../i18n/englishLocale.js';
 /**
  * Structured screen metadata for the simulator: current app/screen, list-detail relationship,
@@ -173,6 +174,19 @@ function getFallbackScreen(_view: SimulatorViewState, _app: SimulatorApp): strin
     return '';
 }
 
+const METADATA_BUILDERS: Readonly<
+    Record<
+        SimulatorApp,
+        (view: SimulatorViewState, payload: SimulatorTemplatePayload) => SimulatorScreenMetadata
+    >
+> = Object.freeze({
+    [SimulatorApp.Email]: (view) => buildEmailMetadata(view.email),
+    [SimulatorApp.Messages]: (view) => buildMessagesMetadata(view.messages),
+    [SimulatorApp.Internet]: (view, payload) => buildInternetMetadata(view.internet, payload),
+    [SimulatorApp.Phone]: (view) => buildPhoneMetadata(view.phone),
+    [SimulatorApp.Home]: (view) => buildHomeMetadata(view.home),
+});
+
 /**
  * Derive structured screen metadata from current view state and payload.
  * Declarative: no side effects; safe to call on every render or log.
@@ -182,32 +196,19 @@ export function getScreenMetadata(
     payload: SimulatorTemplatePayload,
 ): SimulatorScreenMetadata {
     const app = view.activeApp;
-
-    switch (app) {
-        case SimulatorApp.Email:
-            return buildEmailMetadata(view.email);
-        case SimulatorApp.Messages:
-            return buildMessagesMetadata(view.messages);
-        case SimulatorApp.Internet:
-            return buildInternetMetadata(view.internet, payload);
-        case SimulatorApp.Phone:
-            return buildPhoneMetadata(view.phone);
-        case SimulatorApp.Home:
-            return buildHomeMetadata(view.home);
-        default: {
-            const screen = getFallbackScreen(view, app);
-            return {
-                app,
-                screen: String(screen),
-                parentScreen: null,
-                showBack: false,
-                showCancel: true,
-                label: `${APP_LABELS[app] ?? app} / ${screen}`,
-                source: 'list',
-                pageTitle: null,
-            };
-        }
-    }
+    const build = ownValue(METADATA_BUILDERS, app);
+    if (build) return build(view, payload);
+    const screen = getFallbackScreen(view, app);
+    return {
+        app,
+        screen: String(screen),
+        parentScreen: null,
+        showBack: false,
+        showCancel: true,
+        label: `${APP_LABELS[app] ?? app} / ${screen}`,
+        source: 'list',
+        pageTitle: null,
+    };
 }
 
 /**

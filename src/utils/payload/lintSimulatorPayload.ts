@@ -1,4 +1,5 @@
 import { DEFAULT_INTERNET_SCREEN, type SimulatorTemplatePayload } from '../../types/session.js';
+import { ownValue } from '../lookup.js';
 import { PayloadSection } from './payloadSections.js';
 import {
     SimulatorEmailScreenId,
@@ -182,6 +183,25 @@ function lintHomeEntry(payload: SimulatorTemplatePayload, warnings: SimulatorLin
     }
 }
 
+type EntryLinter = (
+    payload: SimulatorTemplatePayload,
+    screen: string | null,
+    entryPoint: SimulatorTemplatePayload['entryPoint'],
+    warnings: SimulatorLintWarning[],
+) => void;
+
+const ENTRY_LINTERS: Readonly<Record<SimulatorApp, EntryLinter>> = Object.freeze({
+    [SimulatorApp.Email]: (payload, screen, _entryPoint, warnings) =>
+        lintEmailEntry(payload, screen, warnings),
+    [SimulatorApp.Messages]: (payload, screen, _entryPoint, warnings) =>
+        lintMessagesEntry(payload, screen, warnings),
+    [SimulatorApp.Internet]: lintInternetEntry,
+    [SimulatorApp.Phone]: (payload, screen, _entryPoint, warnings) =>
+        lintPhoneEntry(payload, screen, warnings),
+    [SimulatorApp.Home]: (payload, _screen, _entryPoint, warnings) =>
+        lintHomeEntry(payload, warnings),
+});
+
 function lintEntryAppContent(
     payload: SimulatorTemplatePayload,
     app: string | null,
@@ -189,25 +209,7 @@ function lintEntryAppContent(
     entryPoint: SimulatorTemplatePayload['entryPoint'],
     warnings: SimulatorLintWarning[],
 ): void {
-    switch (app) {
-        case SimulatorApp.Email:
-            lintEmailEntry(payload, screen, warnings);
-            return;
-        case SimulatorApp.Messages:
-            lintMessagesEntry(payload, screen, warnings);
-            return;
-        case SimulatorApp.Internet:
-            lintInternetEntry(payload, screen, entryPoint, warnings);
-            return;
-        case SimulatorApp.Phone:
-            lintPhoneEntry(payload, screen, warnings);
-            return;
-        case SimulatorApp.Home:
-            lintHomeEntry(payload, warnings);
-            return;
-        default:
-            return;
-    }
+    ownValue(ENTRY_LINTERS, app ?? '')?.(payload, screen, entryPoint, warnings);
 }
 
 function lintBrowserActionTargets(
