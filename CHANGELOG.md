@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.20.2 — October 5, 2026
+
+- Fix `LoadMore` re-creating its `IntersectionObserver` whenever `count` changed, which requested another page immediately while the sentinel was still visible. Automatic loading again requests once per visibility transition. `count` is exposed as `data-loaded-count`. Use 0.20.2 instead of 0.20.0 and 0.20.1.
+
 ## 0.20.1 — October 4, 2026
 
 - Fix `resolveScreenOverride` throwing when `state.view.activeApp` is not a known app, as 0.20.0 did for malformed state from untyped hosts. Unknown apps again resolve no override. Use 0.20.1 instead of 0.20.0.

@@ -49,7 +49,7 @@ export function LoadMore({
             requested = true;
             observer.disconnect();
         };
-    }, [automatic, hasMore, count]);
+    }, [automatic, hasMore]);
     if (!hasMore && !error) return null;
     let text = label;
     if (loading) text = 'Loading…';
@@ -60,6 +60,7 @@ export function LoadMore({
             type='button'
             className='simulator-load-more'
             aria-busy={loading}
+            data-loaded-count={count}
             disabled={loading}
             onClick={() => void onLoadMore()}
         >
