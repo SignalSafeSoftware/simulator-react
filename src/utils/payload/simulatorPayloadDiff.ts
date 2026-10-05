@@ -18,6 +18,10 @@ export interface SimulatorDiffItem {
     detail?: string;
 }
 
+function recordOrUndefined(value: unknown): Record<string, unknown> | undefined {
+    return isRecord(value) ? value : undefined;
+}
+
 function getEntryPoint(p: Record<string, unknown>): AppScreenRef | null {
     const ep = p?.entry_point;
     if (!isRecord(ep)) return null;
@@ -174,8 +178,8 @@ function addPhoneDiff(
     left: Record<string, unknown>,
     right: Record<string, unknown>,
 ): void {
-    const leftPhone = left.phone as Record<string, unknown> | undefined;
-    const rightPhone = right.phone as Record<string, unknown> | undefined;
+    const leftPhone = recordOrUndefined(left.phone);
+    const rightPhone = recordOrUndefined(right.phone);
     const leftHasIncoming = isRecord(leftPhone?.incoming_call);
     const rightHasIncoming = isRecord(rightPhone?.incoming_call);
     if (leftHasIncoming !== rightHasIncoming) {
@@ -202,8 +206,8 @@ function addEmailDiff(
     left: Record<string, unknown>,
     right: Record<string, unknown>,
 ): void {
-    const leftEmail = left.email as Record<string, unknown> | undefined;
-    const rightEmail = right.email as Record<string, unknown> | undefined;
+    const leftEmail = recordOrUndefined(left.email);
+    const rightEmail = recordOrUndefined(right.email);
     const leftInbox = idsFromArray(leftEmail?.messages ?? []);
     const rightInbox = idsFromArray(rightEmail?.messages ?? []);
 
@@ -237,8 +241,8 @@ function addMessagesDiff(
     left: Record<string, unknown>,
     right: Record<string, unknown>,
 ): void {
-    const leftMessages = left.messages as Record<string, unknown> | undefined;
-    const rightMessages = right.messages as Record<string, unknown> | undefined;
+    const leftMessages = recordOrUndefined(left.messages);
+    const rightMessages = recordOrUndefined(right.messages);
     const leftThreads = arrayLength(leftMessages?.threads);
     const rightThreads = arrayLength(rightMessages?.threads);
     if (leftThreads !== rightThreads) {
@@ -263,8 +267,8 @@ function addInternetDiff(
     left: Record<string, unknown>,
     right: Record<string, unknown>,
 ): void {
-    const leftInternet = left.internet as Record<string, unknown> | undefined;
-    const rightInternet = right.internet as Record<string, unknown> | undefined;
+    const leftInternet = recordOrUndefined(left.internet);
+    const rightInternet = recordOrUndefined(right.internet);
     const leftPages = idsFromArray(leftInternet?.pages ?? []);
     const rightPages = idsFromArray(rightInternet?.pages ?? []);
     addCollectionDiff(
@@ -307,8 +311,8 @@ function addHomeDiff(
     left: Record<string, unknown>,
     right: Record<string, unknown>,
 ): void {
-    const leftHome = left.home as Record<string, unknown> | undefined;
-    const rightHome = right.home as Record<string, unknown> | undefined;
+    const leftHome = recordOrUndefined(left.home);
+    const rightHome = recordOrUndefined(right.home);
     const leftWidgets = arrayLength(leftHome?.widgets);
     const rightWidgets = arrayLength(rightHome?.widgets);
     const leftStoreApps = childArrayLength(leftHome, 'store', 'featured_apps');
