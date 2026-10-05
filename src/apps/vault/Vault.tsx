@@ -51,13 +51,13 @@ function VaultScreen({
         credentials: t('app.vault.type.credentials'),
     } satisfies TypeLabels;
     const nav = useVaultNav(onBack);
-    const { folder, folderPage } = nav;
+    const { folder, folderPage } = nav.state;
     const folderFormRef = useRef<HTMLFormElement>(null);
-    const visiblePage = useVisiblePage(JSON.stringify([folder, nav.query]));
+    const visiblePage = useVisiblePage(JSON.stringify([folder, nav.state.query]));
     const secrets = useDevicePage(
         store,
         'secrets',
-        { folder: folder ?? '', search: nav.query },
+        { folder: folder ?? '', search: nav.state.query },
         visiblePage.count,
         folder !== null,
     );
@@ -68,7 +68,7 @@ function VaultScreen({
         store,
         folders,
         folder,
-        folderName: nav.folderName,
+        folderName: nav.state.folderName,
         setMessage: nav.setMessage,
         onRenamed: nav.renamed,
         onDeleted: nav.deleted,
@@ -128,7 +128,7 @@ function VaultScreen({
             return (
                 <FolderNameForm
                     formRef={folderFormRef}
-                    value={nav.folderName ?? ''}
+                    value={nav.state.folderName ?? ''}
                     busy={store.busy}
                     onChange={nav.setFolderName}
                     onSubmit={() => void folderActions.saveFolder()}
@@ -157,7 +157,7 @@ function VaultScreen({
                 <FolderList
                     folders={folders}
                     counts={store.counts}
-                    query={nav.folderQuery}
+                    query={nav.state.folderQuery}
                     onQuery={nav.setFolderQuery}
                     busy={store.busy}
                     onOpen={nav.selectFolder}
@@ -166,7 +166,7 @@ function VaultScreen({
         return (
             <>
                 <FolderEditor
-                    value={nav.folderName ?? folder}
+                    value={nav.state.folderName ?? folder}
                     busy={store.busy}
                     onChange={nav.setFolderName}
                     onSubmit={() => void folderActions.saveFolder()}
@@ -175,7 +175,7 @@ function VaultScreen({
                 <SecretList
                     secrets={secrets}
                     visiblePage={visiblePage}
-                    query={nav.query}
+                    query={nav.state.query}
                     onQuery={nav.setQuery}
                     busy={store.busy}
                     typeLabels={typeLabels}
@@ -196,7 +196,7 @@ function VaultScreen({
                 />
             }
         >
-            {nav.message && <output>{nav.message}</output>}
+            {nav.state.message && <output>{nav.state.message}</output>}
             {renderBody()}
         </DevicePage>
     );

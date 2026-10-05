@@ -1,50 +1,23 @@
-import {
-    SimulatorDispatchActionType,
-    type SimulatorDispatchAction,
-    switchChannelAction,
-} from '../state/simulatorDispatchActions.js';
+import { type SimulatorDispatchAction } from '../state/simulatorDispatchActions.js';
 /**
  * Developer tools state, keyboard shortcuts, and clipboard export for SimulatorWithSession.
  */
 
-import {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-    type Dispatch,
-    type MutableRefObject,
-    type SetStateAction,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState, type MutableRefObject } from 'react';
 import {
     reconcileVisibleDeveloperSections,
     resolveSimulatorDeveloperTools,
     type SimulatorDeveloperSectionKey,
     type SimulatorDeveloperTools,
 } from './configuration.js';
-import { SNAPSHOT_COPY_FEEDBACK_MS } from '../constants.js';
-import {
-    type SimulatorSessionState,
-    getCurrentScreenForApp,
-    viewStateToActiveChannel,
-} from '../types/session.js';
+import { type SimulatorSessionState } from '../types/session.js';
 import {
     buildSimulatorNavGraph,
-    simulatorNavGraphToJson,
     type SimulatorNavGraph,
 } from '../utils/navigation/simulatorNavGraph.js';
-import { captureSimulatorSnapshot, snapshotToJson } from '../utils/telemetry/simulatorSnapshot.js';
-import {
-    focusSimulatorSearch,
-    handleSimulatorKeyboard,
-} from '../utils/navigation/simulatorKeyboardCommands.js';
+import { useSimulatorDeveloperExports } from './useSimulatorDeveloperExports.js';
+import { useSimulatorKeyboardShortcuts } from './useSimulatorKeyboardShortcuts.js';
 import { DEVELOPER_TOOLBAR_SECTIONS } from './toolbarConfig.js';
-import {
-    canCopyToClipboard,
-    copyToClipboard,
-    listenForDocumentKeydown,
-} from '../utils/browser/browserEnvironment.js';
 
 export interface UseSimulatorDeveloperControlsOptions {
     state: SimulatorSessionState;
@@ -55,22 +28,15 @@ export interface UseSimulatorDeveloperControlsOptions {
 
 export interface UseSimulatorDeveloperControlsResult {
     resolvedDeveloperTools: ReturnType<typeof resolveSimulatorDeveloperTools>;
+    renderedDeveloperTools: SimulatorDeveloperTools | undefined;
     visibleDeveloperSections: Record<SimulatorDeveloperSectionKey, boolean>;
     developerToolbarSections: SimulatorDeveloperSectionKey[];
+    toggleDeveloperSection: (section: SimulatorDeveloperSectionKey) => void;
     showDeveloperToolsToolbar: boolean;
     showParentDeveloperControls: boolean;
-    showResolvedSnapshotExport: boolean;
-    showResolvedNavGraph: boolean;
-    enableResolvedKeyboardShortcuts: boolean;
     navGraph: SimulatorNavGraph | null;
-    snapshotCopied: boolean;
-    graphCopied: boolean;
-    shortcutsHelpOpen: boolean;
-    setShortcutsHelpOpen: Dispatch<SetStateAction<boolean>>;
-    toggleDeveloperSection: (section: SimulatorDeveloperSectionKey) => void;
-    handleCopySnapshot: () => void;
-    handleCopyNavGraph: () => void;
-    renderedDeveloperTools: SimulatorDeveloperTools | undefined;
+    exports: ReturnType<typeof useSimulatorDeveloperExports>;
+    shortcuts: ReturnType<typeof useSimulatorKeyboardShortcuts>;
 }
 
 export function useSimulatorDeveloperControls({
@@ -79,12 +45,6 @@ export function useSimulatorDeveloperControls({
     stateRef,
     developerTools,
 }: UseSimulatorDeveloperControlsOptions): UseSimulatorDeveloperControlsResult {
-    const [snapshotCopied, setSnapshotCopied] = useState(false);
-    const [graphCopied, setGraphCopied] = useState(false);
-    const [shortcutsHelpOpen, setShortcutsHelpOpen] = useState(false);
-    const shortcutsHelpOpenRef = useRef(shortcutsHelpOpen);
-    shortcutsHelpOpenRef.current = shortcutsHelpOpen;
-
     const payload = state.payload;
     const resolvedDeveloperTools = useMemo(
         () => resolveSimulatorDeveloperTools(developerTools),
@@ -117,62 +77,12 @@ export function useSimulatorDeveloperControls({
         return buildSimulatorNavGraph(payload);
     }, [showResolvedNavGraph, payload]);
 
-    const handleCopySnapshot = useCallback(() => {
-        const snapshot = captureSimulatorSnapshot(state);
-        const json = snapshotToJson(snapshot);
-        if (canCopyToClipboard()) {
-            copyToClipboard(json).then(
-                () => {
-                    setSnapshotCopied(true);
-                    setTimeout(() => setSnapshotCopied(false), SNAPSHOT_COPY_FEEDBACK_MS);
-                },
-                () => {},
-            );
-        }
-    }, [state]);
-
-    const handleCopyNavGraph = useCallback(() => {
-        const graph = buildSimulatorNavGraph(state.payload);
-        const json = simulatorNavGraphToJson(graph);
-        if (canCopyToClipboard()) {
-            copyToClipboard(json).then(
-                () => {
-                    setGraphCopied(true);
-                    setTimeout(() => setGraphCopied(false), SNAPSHOT_COPY_FEEDBACK_MS);
-                },
-                () => {},
-            );
-        }
-    }, [state.payload]);
-
-    useEffect(() => {
-        if (!enableResolvedKeyboardShortcuts) return;
-        const onKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape' && shortcutsHelpOpenRef.current) {
-                setShortcutsHelpOpen(false);
-                e.preventDefault();
-                return;
-            }
-            const s = stateRef.current;
-            const activeScreen = getCurrentScreenForApp(s.view);
-            const result = handleSimulatorKeyboard(
-                e,
-                {
-                    onBack: () => dispatch({ type: SimulatorDispatchActionType.Back }),
-                    onSwitchApp: (app) =>
-                        dispatch(switchChannelAction(viewStateToActiveChannel(app))),
-                    onFocusSearch: focusSimulatorSearch,
-                },
-                { activeApp: s.view.activeApp, activeScreen },
-            );
-            if (result.showHelp) setShortcutsHelpOpen(true);
-            if (result.handled) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        };
-        return listenForDocumentKeydown(onKeyDown);
-    }, [enableResolvedKeyboardShortcuts, dispatch, stateRef]);
+    const exportControls = useSimulatorDeveloperExports(state);
+    const shortcuts = useSimulatorKeyboardShortcuts({
+        enabled: enableResolvedKeyboardShortcuts,
+        dispatch,
+        stateRef,
+    });
 
     const toggleDeveloperSection = useCallback((section: SimulatorDeveloperSectionKey) => {
         setVisibleDeveloperSections((prev) => ({
@@ -198,21 +108,14 @@ export function useSimulatorDeveloperControls({
 
     return {
         resolvedDeveloperTools,
+        renderedDeveloperTools,
         visibleDeveloperSections,
         developerToolbarSections,
+        toggleDeveloperSection,
         showDeveloperToolsToolbar,
         showParentDeveloperControls,
-        showResolvedSnapshotExport,
-        showResolvedNavGraph,
-        enableResolvedKeyboardShortcuts,
         navGraph,
-        snapshotCopied,
-        graphCopied,
-        shortcutsHelpOpen,
-        setShortcutsHelpOpen,
-        toggleDeveloperSection,
-        handleCopySnapshot,
-        handleCopyNavGraph,
-        renderedDeveloperTools,
+        exports: exportControls,
+        shortcuts,
     };
 }

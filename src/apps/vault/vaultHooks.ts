@@ -28,71 +28,50 @@ export function newSecret(folder: string): Secret {
     };
 }
 
+export interface VaultNavState {
+    folder: string | null;
+    folderPage: FolderPage | null;
+    folderName: string | null;
+    folderQuery: string;
+    query: string;
+    message: string;
+}
+
+const INITIAL_NAV: VaultNavState = {
+    folder: null,
+    folderPage: null,
+    folderName: null,
+    folderQuery: '',
+    query: '',
+    message: '',
+};
+
 export function useVaultNav(onBack: () => void) {
-    const [folder, setFolder] = useState<string | null>(null);
-    const [folderPage, setFolderPage] = useState<FolderPage | null>(null);
-    const [folderName, setFolderName] = useState<string | null>(null);
-    const [folderQuery, setFolderQuery] = useState('');
-    const [query, setQuery] = useState('');
-    const [message, setMessage] = useState('');
+    const [state, setState] = useState<VaultNavState>(INITIAL_NAV);
+    function update(patch: Partial<VaultNavState>) {
+        setState((current) => ({ ...current, ...patch }));
+    }
     function back() {
-        if (folderPage) {
-            setFolderPage(null);
-            setFolderName(null);
-            setMessage('');
-        } else if (folder !== null) {
-            setFolder(null);
-            setFolderName(null);
-            setQuery('');
-            setMessage('');
-        } else onBack();
-    }
-    function openFolderPage(page: FolderPage) {
-        setFolderPage(page);
-        setFolderName(null);
-        setMessage('');
-    }
-    function selectFolder(name: string) {
-        setFolder(name);
-        setFolderName(name);
-        setQuery('');
-        setMessage('');
-    }
-    function renamed(name: string) {
-        setFolder(name);
-        setFolderPage(null);
-        setFolderName(null);
-        setQuery('');
-        setMessage('');
-    }
-    function deleted() {
-        setFolder(null);
-        setFolderPage(null);
-        setQuery('');
-        setMessage('');
-    }
-    function secretSaved(name: string) {
-        setFolder(name);
-        setFolderName(null);
-        setQuery('');
+        if (state.folderPage) update({ folderPage: null, folderName: null, message: '' });
+        else if (state.folder !== null)
+            update({ folder: null, folderName: null, query: '', message: '' });
+        else onBack();
     }
     return {
-        folder,
-        folderPage,
-        folderName,
-        setFolderName,
-        folderQuery,
-        setFolderQuery,
-        query,
-        setQuery,
-        message,
-        setMessage,
+        state,
+        setFolderName: (folderName: string | null) => update({ folderName }),
+        setFolderQuery: (folderQuery: string) => update({ folderQuery }),
+        setQuery: (query: string) => update({ query }),
+        setMessage: (message: string) => update({ message }),
         back,
-        openFolderPage,
-        selectFolder,
-        renamed,
-        deleted,
-        secretSaved,
+        openFolderPage: (folderPage: FolderPage) =>
+            update({ folderPage, folderName: null, message: '' }),
+        selectFolder: (name: string) =>
+            update({ folder: name, folderName: name, query: '', message: '' }),
+        renamed: (name: string) =>
+            update({ folder: name, folderPage: null, folderName: null, query: '', message: '' }),
+        deleted: () => update({ folder: null, folderPage: null, query: '', message: '' }),
+        secretSaved: (name: string) => update({ folder: name, folderName: null, query: '' }),
     };
 }
 

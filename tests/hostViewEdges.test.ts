@@ -243,11 +243,11 @@ it('does not report copied state when clipboard support is absent or writing is 
         const view = create(React.createElement(Harness));
         try {
             await act(async () => {
-                controls?.handleCopySnapshot();
-                controls?.handleCopyNavGraph();
+                controls?.exports.handleCopySnapshot();
+                controls?.exports.handleCopyNavGraph();
             });
-            expect(controls?.snapshotCopied).toBe(false);
-            expect(controls?.graphCopied).toBe(false);
+            expect(controls?.exports.snapshotCopied).toBe(false);
+            expect(controls?.exports.graphCopied).toBe(false);
         } finally {
             view.unmount();
             vi.unstubAllGlobals();

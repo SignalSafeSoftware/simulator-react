@@ -223,19 +223,23 @@ export default function SimulatorWithSession({
                         )}
                         {developerControls.showParentDeveloperControls && (
                             <SimulatorDeveloperControlsBar
-                                showSnapshotExport={developerControls.showResolvedSnapshotExport}
-                                showNavGraph={developerControls.showResolvedNavGraph}
-                                enableKeyboardShortcuts={
-                                    developerControls.enableResolvedKeyboardShortcuts
+                                showSnapshotExport={
+                                    developerControls.visibleDeveloperSections.snapshotExport
                                 }
-                                snapshotCopied={developerControls.snapshotCopied}
-                                graphCopied={developerControls.graphCopied}
-                                shortcutsHelpOpen={developerControls.shortcutsHelpOpen}
+                                showNavGraph={developerControls.visibleDeveloperSections.navGraph}
+                                enableKeyboardShortcuts={
+                                    developerControls.visibleDeveloperSections.shortcuts
+                                }
+                                snapshotCopied={developerControls.exports.snapshotCopied}
+                                graphCopied={developerControls.exports.graphCopied}
+                                shortcutsHelpOpen={developerControls.shortcuts.shortcutsHelpOpen}
                                 navGraph={developerControls.navGraph}
-                                onCopySnapshot={developerControls.handleCopySnapshot}
-                                onCopyNavGraph={developerControls.handleCopyNavGraph}
+                                onCopySnapshot={developerControls.exports.handleCopySnapshot}
+                                onCopyNavGraph={developerControls.exports.handleCopyNavGraph}
                                 onToggleShortcutsHelp={() =>
-                                    developerControls.setShortcutsHelpOpen((prev) => !prev)
+                                    developerControls.shortcuts.setShortcutsHelpOpen(
+                                        (prev) => !prev,
+                                    )
                                 }
                             />
                         )}
