@@ -1,6 +1,5 @@
 import { type SimulatorTemplatePayload } from '../../types/session.js';
 import { PayloadSection } from './payloadSections.js';
-import {} from '@signalsafe/simulator-core/devicePayload';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { englishLocale } from '../../i18n/englishLocale.js';
 /**

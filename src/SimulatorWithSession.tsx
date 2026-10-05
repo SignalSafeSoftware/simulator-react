@@ -3,35 +3,28 @@
  */
 import { shouldHideSimulatorNavigation } from './utils/navigation/simulatorNavigationPolicy.js';
 import { useSimulatorLocale } from './i18n/SimulatorLocale.js';
-import {
-    resolveScreenOverride,
-    type SimulatorScreenOverrides,
-} from './contract/screenOverrides.js';
-import {
-    createSimulatorNavigationDispatch,
-    type SimulatorNavigationOptions,
-} from './contract/navigation.js';
+import { resolveScreenOverride } from './contract/screenOverrides.js';
+import { createSimulatorNavigationDispatch } from './contract/navigation.js';
 import { type ReactNode, useCallback, useMemo, useRef } from 'react';
 import PhoneSimulatorShell from './shell/PhoneSimulatorShell.js';
 import SimulatorDeveloperToolsPanel from './developer-tools/SimulatorDeveloperToolsPanel.js';
-import { type SimulatorDispatchAction } from './state/simulatorDispatchActions.js';
 import {
     type SimulatorSessionState,
     viewStateToActiveChannel,
     getCurrentScreenForApp,
 } from './types/session.js';
-import type { HostSimulatorEventHandler } from './contract/hostContractTypes.js';
+import type {
+    SimulatorDeveloperToolsProps,
+    SimulatorExitProps,
+    SimulatorPhoneContactHostProps,
+    SimulatorSessionBindingProps,
+} from './contract/sessionHostProps.js';
 import ContactsView from './views/contacts/ContactsView.js';
 import { renderActiveScreen } from './screenRegistry/registry.js';
 import SimulatorErrorBoundary from './SimulatorErrorBoundary.js';
 import UnsupportedScreenFallback from './UnsupportedScreenFallback.js';
 import { getScreenMetadata } from './utils/navigation/screenMetadata.js';
 import { getVerificationContextForApp } from './utils/telemetry/simulatorVerificationContext.js';
-import { type TimelineEntry } from './developer-tools/SimulatorSessionTimeline.js';
-import {
-    type SimulatorDeveloperTools,
-    type SimulatorRuntimeIssue,
-} from './developer-tools/configuration.js';
 import { useSimulatorSessionHandlers } from './hooks/useSimulatorSessionHandlers.js';
 import { useSimulatorSecondaryMenu } from './hooks/useSimulatorSecondaryMenu.js';
 import { useSimulatorDeveloperControls } from './developer-tools/useSimulatorDeveloperControls.js';
@@ -51,7 +44,6 @@ import {
 import type {
     SimulatorChoiceRenderProps,
     SimulatorFeedbackRenderProps,
-    SimulatorPhoneContactOpenProps,
     SimulatorPhoneIncomingCallExtraRenderProps,
 } from './ui/renderSlots.js';
 
@@ -61,24 +53,16 @@ export interface SimulatorContactsOverlayRenderProps {
     onClose: () => void;
 }
 
-export interface SimulatorWithSessionProps {
+export interface SimulatorWithSessionProps
+    extends
+        SimulatorSessionBindingProps,
+        SimulatorExitProps,
+        SimulatorDeveloperToolsProps,
+        SimulatorPhoneContactHostProps {
     /** The surrounding device renders the detail and compose actions. */
     hostOwnsScreenActions?: boolean;
-    state: SimulatorSessionState;
-    dispatch: (action: SimulatorDispatchAction) => void;
-    onSimulatorEvent?: HostSimulatorEventHandler;
-    onNavigation?: NonNullable<SimulatorNavigationOptions['onNavigation']>;
-    onNavigationEvent?: NonNullable<SimulatorNavigationOptions['onNavigationEvent']>;
-    /** Host content for explicit app/screen destinations, inside the existing shell. */
-    screenOverrides?: SimulatorScreenOverrides;
-    exitLink?: ReactNode;
-    exitTo?: string;
-    exitLabel?: string;
     compact?: boolean;
     initialContactsSearch?: string;
-    developerTools?: SimulatorDeveloperTools;
-    developerToolsTimelineEntries?: TimelineEntry[];
-    developerToolsRuntimeIssues?: SimulatorRuntimeIssue[];
     /** Host-owned overlay for the contacts verification panel. */
     renderContactsOverlay?: (props: SimulatorContactsOverlayRenderProps) => ReactNode;
     /** Host-owned choice button rendering (Answer, Send, page actions, etc.). */
@@ -87,10 +71,6 @@ export interface SimulatorWithSessionProps {
     renderFeedback?: (feedback: SimulatorFeedbackRenderProps) => ReactNode;
     /** Host-owned content below incoming-call Answer/Ignore actions. */
     renderIncomingCallExtra?: (props: SimulatorPhoneIncomingCallExtraRenderProps) => ReactNode;
-    /** When true, phone contact row clicks invoke {@link onPhoneContactOpen} instead of package detail view. */
-    hostOwnsPhoneContactDetail?: boolean;
-    /** Host callback when a phone contact row is opened (requires {@link hostOwnsPhoneContactDetail}). */
-    onPhoneContactOpen?: (props: SimulatorPhoneContactOpenProps) => void;
 }
 
 export default function SimulatorWithSession({

@@ -5,7 +5,8 @@ import type { SimulatorChoiceRenderProps } from '../../ui/renderSlots.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { useEffect, useState, type ReactNode } from 'react';
-import PhoneKeypad, { type PhoneKeypadDigit } from './PhoneKeypad.js';
+import PhoneKeypad from './PhoneKeypad.js';
+import type { PhoneCallActionProps, PhoneCallSlotProps } from './phoneCallViewRoles.js';
 import { currentTimeMs } from '../../utils/browser/browserEnvironment.js';
 
 export function formatPhoneCallDuration(seconds: number): string {
@@ -23,7 +24,7 @@ export const PhoneCallPhase = Object.freeze({
 } as const);
 export type PhoneCallPhase = (typeof PhoneCallPhase)[keyof typeof PhoneCallPhase];
 
-export interface PhoneCallViewProps {
+export interface PhoneCallViewProps extends PhoneCallActionProps, PhoneCallSlotProps {
     callerName: string;
     number?: string;
     label?: string;
@@ -32,17 +33,6 @@ export interface PhoneCallViewProps {
     connectedAt: number | null;
     muted: boolean;
     digits: string;
-    onAnswer: () => void;
-    onHangup: () => void;
-    /** Used only while connected. */
-    onMute?: () => void;
-    /** Used only while connected. */
-    onDigit?: (digit: PhoneKeypadDigit) => void;
-    avatar?: ReactNode;
-    answerIcon?: ReactNode;
-    hangupIcon?: ReactNode;
-    muteIcon?: ReactNode;
-    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
 }
 /** Optional controlled call view. Does not drive or replace the scenario engine. */
 export default function PhoneCallView(props: Readonly<PhoneCallViewProps>) {

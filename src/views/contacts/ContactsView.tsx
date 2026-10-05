@@ -21,7 +21,11 @@ import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
 import { useMemo, useState } from 'react';
-import type { LabeledItem } from '../../types/shapes.js';
+import type {
+    ContactsHostDetailProps,
+    ContactsPhoneNavProps,
+    ContactsSearchProps,
+} from './contactsViewRoles.js';
 import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../../ui/layout/SimulatorDetail.js';
 import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';
 import { SimulatorLocalNav } from '../../ui/navigation/SimulatorLocalNav.js';
@@ -41,7 +45,8 @@ import {
     namesMatch,
 } from '../../utils/payload/contactNormalization.js';
 
-export interface ContactsViewProps {
+export interface ContactsViewProps
+    extends ContactsSearchProps, ContactsPhoneNavProps, ContactsHostDetailProps {
     contacts: SimulatorSessionContact[] | null;
     onBack: () => void;
     /** When opened from "Check contact", pass the name/number being verified so we can show match status. */
@@ -50,30 +55,12 @@ export interface ContactsViewProps {
     title?: string;
     /** Called when user opens a contact (navigates to detail). */
     onOpenContact?: (contactId: string) => void;
-    /** Called when user performs a search (e.g. Enter in search field). Emits search_performed when provided. */
-    onSearchSubmit?: (query: string) => void;
-    /** Optional initial search query (e.g. from deep-link). When provided with onSearchChange, search is controlled (state stored in shell). */
-    initialSearch?: string;
-    /** Controlled search query (e.g. from view state); when set, use with onSearchChange. */
-    searchQuery?: string;
-    /** Called when search input changes (for controlled state restoration). */
-    onSearchChange?: (query: string) => void;
-    /** When set (phone app context), show phone secondary nav above content. */
-    phoneLocalNavItems?: LabeledItem[];
-    /** Active phone tab id (e.g. "contacts"). */
-    phoneActiveId?: string;
-    /** When user selects a phone tab (e.g. History, Dial). */
-    onPhoneNavSelect?: (id: string) => void;
     /** When set, show a plus button in the header to add a contact (e.g. navigate to Add Contact screen). */
     onAddContact?: () => void;
     /** Open with this contact id selected (detail view) — e.g. README / harness screenshots. */
     initialSelectedContactId?: string | null;
     /** When true, contact detail shows title only (no ← Back) for tight wireframe captures. */
     contactDetailTitleOnly?: boolean;
-    /** When true, row clicks invoke {@link onPhoneContactOpen} instead of internal detail view. */
-    hostOwnsPhoneContactDetail?: boolean;
-    /** Called when host owns contact detail; shell injects state/dispatch before invoking host callback. */
-    onPhoneContactOpen?: (contactId: string, contact: SimulatorSessionContact) => void;
 }
 
 function matchesPrimaryEmail(email: string | undefined, emailQuery: string): boolean {
