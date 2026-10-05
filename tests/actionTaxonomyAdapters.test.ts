@@ -1,8 +1,4 @@
-import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import path from 'node:path';
-import React from 'react';
+import {} from 'node:os';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { appToChannel, mapContacts, mapDevice } from '../src/adapters/fullDeviceToSession';
 import { mapEmail } from '../src/adapters/device/emailMapper';
@@ -10,50 +6,31 @@ import { mapHome } from '../src/adapters/device/homeMapper';
 import { mapInternet } from '../src/adapters/device/internetMapper';
 import { mapMessages } from '../src/adapters/device/messagesMapper';
 import { mapPhone } from '../src/adapters/device/phoneMapper';
-import SimulatorErrorBoundary from '../src/SimulatorErrorBoundary';
-import SimulatorLintBanner from '../src/developer-tools/SimulatorLintBanner.js';
-import { SimulatorList, SimulatorListItem } from '../src/ui/lists/SimulatorList.js';
 import {
     getSimulatorActionCategory,
     isSimulatorActionType,
     SIMULATOR_ACTION_CATEGORY,
     validateSimulatorAction,
 } from '../src/utils/telemetry/simulatorActionTaxonomy';
-import {
-    focusSimulatorSearch,
-    handleSimulatorKeyboard,
-    isTypingTarget,
-    LIST_NAV_EVENT,
-} from '../src/utils/navigation/simulatorKeyboardCommands';
-import { TestRenderer, act } from './reactTestRenderer';
+
 const originalArgv = [...process.argv];
+
 const originalCwd = process.cwd();
+
 const originalDocument = globalThis.document;
+
 const originalCustomEvent = (
     globalThis as {
         CustomEvent?: unknown;
     }
 ).CustomEvent;
+
 const originalHTMLElement = (
     globalThis as {
         HTMLElement?: unknown;
     }
 ).HTMLElement;
-async function importFixNodeScript() {
-    vi.resetModules();
-    return import('../scripts/fix-node-esm-relative-imports.js');
-}
-function flattenText(node: ReactTestRendererJSON | ReactTestRendererJSON[] | null): string {
-    if (node == null) {
-        return '';
-    }
-    if (Array.isArray(node)) {
-        return node.map((child) => flattenText(child)).join('');
-    }
-    return (node.children ?? [])
-        .map((child) => (typeof child === 'string' ? child : flattenText(child)))
-        .join('');
-}
+
 afterEach(() => {
     process.argv = [...originalArgv];
     process.chdir(originalCwd);
@@ -74,288 +51,8 @@ afterEach(() => {
     ).HTMLElement = originalHTMLElement;
     vi.restoreAllMocks();
 });
-describe('remaining tail coverage', () => {
-    it('covers the ESM relative import fixer script success and error paths', async () => {
-        const dir = mkdtempSync(path.join(tmpdir(), 'simreact-esm-'));
-        const nestedDir = path.join(dir, 'nested');
-        const indexDir = path.join(dir, 'utils');
-        const { mkdirSync } = await import('node:fs');
-        mkdirSync(nestedDir, { recursive: true });
-        mkdirSync(indexDir, { recursive: true });
-        writeFileSync(path.join(indexDir, 'index.js'), 'export const value = 1;\n');
-        writeFileSync(path.join(dir, 'helper.js'), 'export const helper = 1;\n');
-        writeFileSync(
-            path.join(dir, 'entry.js'),
-            'import { helper } from "./helper";\nimport "./utils";\nconsole.log(helper);\n',
-        );
-        writeFileSync(path.join(nestedDir, 'types.d.ts'), 'export * from "../helper";\n');
-        const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-        process.argv = ['node', 'fix-node-esm-relative-imports.ts', dir];
-        await importFixNodeScript();
-        const updatedEntry = readFileSync(path.join(dir, 'entry.js'), 'utf8');
-        const updatedTypes = readFileSync(path.join(nestedDir, 'types.d.ts'), 'utf8');
-        expect(updatedEntry).toContain('./helper.js');
-        expect(updatedEntry).toContain('./utils/index.js');
-        expect(updatedTypes).toContain('../helper.js');
-        expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('updated 2 file(s)'));
-        process.argv = ['node', 'fix-node-esm-relative-imports.ts'];
-        await expect(importFixNodeScript()).rejects.toThrow(
-            'Usage: tsx scripts/fix-node-esm-relative-imports.ts <dist-dir>',
-        );
-        process.argv = ['node', 'fix-node-esm-relative-imports.ts', 'does-not-exist'];
-        await expect(importFixNodeScript()).rejects.toThrow('Target dist directory does not exist');
-        rmSync(dir, { recursive: true, force: true });
-    });
-    it('covers keyboard helpers, typing guards, and search focus', () => {
-        class FakeHTMLElement {
-            tagName = 'DIV';
-            isContentEditable = false;
-            roleValue: string | null = null;
-            focus = vi.fn();
-            getAttribute(name: string): string | null {
-                return name === 'role' ? this.roleValue : null;
-            }
-        }
-        (
-            globalThis as {
-                HTMLElement?: unknown;
-            }
-        ).HTMLElement = FakeHTMLElement;
-        const dispatchEvent = vi.fn();
-        const querySelector = vi.fn(() => new FakeHTMLElement());
-        (
-            globalThis as {
-                document?: unknown;
-            }
-        ).document = {
-            dispatchEvent,
-            querySelector,
-        } as never;
-        (
-            globalThis as {
-                CustomEvent?: unknown;
-            }
-        ).CustomEvent = class {
-            type: string;
-            detail: unknown;
-            constructor(
-                type: string,
-                init?: {
-                    detail?: unknown;
-                },
-            ) {
-                this.type = type;
-                this.detail = init?.detail;
-            }
-        };
-        const input = new FakeHTMLElement();
-        input.tagName = 'INPUT';
-        const textarea = new FakeHTMLElement();
-        textarea.tagName = 'TEXTAREA';
-        const textbox = new FakeHTMLElement();
-        textbox.roleValue = 'textbox';
-        const searchbox = new FakeHTMLElement();
-        searchbox.roleValue = 'searchbox';
-        const contentEditable = new FakeHTMLElement();
-        contentEditable.isContentEditable = true;
-        expect(isTypingTarget(input as never)).toBe(true);
-        expect(isTypingTarget(textarea as never)).toBe(true);
-        expect(isTypingTarget(textbox as never)).toBe(true);
-        expect(isTypingTarget(searchbox as never)).toBe(true);
-        expect(isTypingTarget(contentEditable as never)).toBe(true);
-        expect(isTypingTarget(new FakeHTMLElement() as never)).toBe(false);
-        const onBack = vi.fn();
-        const onSwitchApp = vi.fn();
-        const onFocusSearch = vi.fn();
-        const onListNav = vi.fn();
-        const altDown = {
-            key: 'ArrowDown',
-            altKey: true,
-            ctrlKey: false,
-            metaKey: false,
-            target: null,
-            preventDefault: vi.fn(),
-        } as unknown as KeyboardEvent;
-        const altUp = {
-            key: 'ArrowUp',
-            altKey: true,
-            ctrlKey: false,
-            metaKey: false,
-            target: null,
-            preventDefault: vi.fn(),
-        } as unknown as KeyboardEvent;
-        const blocked = {
-            key: '1',
-            altKey: true,
-            ctrlKey: true,
-            metaKey: false,
-            target: null,
-            preventDefault: vi.fn(),
-        } as unknown as KeyboardEvent;
-        expect(
-            handleSimulatorKeyboard(
-                altDown,
-                { onBack, onSwitchApp, onFocusSearch, onListNav },
-                { activeApp: 'email', activeScreen: 'list' },
-            ),
-        ).toEqual({ handled: true });
-        expect(onListNav).toHaveBeenCalledWith('next');
-        expect(
-            handleSimulatorKeyboard(
-                altUp,
-                { onBack, onSwitchApp, onFocusSearch },
-                { activeApp: 'email', activeScreen: 'list' },
-            ),
-        ).toEqual({ handled: true });
-        expect(dispatchEvent).toHaveBeenCalledWith(
-            expect.objectContaining({ type: LIST_NAV_EVENT }),
-        );
-        expect(
-            handleSimulatorKeyboard(
-                blocked,
-                { onBack, onSwitchApp, onFocusSearch },
-                { activeApp: 'email', activeScreen: 'list' },
-            ),
-        ).toEqual({ handled: false });
-        const escapeEvent = {
-            key: 'Escape',
-            altKey: false,
-            ctrlKey: false,
-            metaKey: false,
-            target: null,
-            preventDefault: vi.fn(),
-        } as unknown as KeyboardEvent;
-        expect(
-            handleSimulatorKeyboard(
-                escapeEvent,
-                { onBack, onSwitchApp, onFocusSearch },
-                { activeApp: 'email', activeScreen: 'list' },
-            ),
-        ).toEqual({ handled: true });
-        expect(onBack).toHaveBeenCalledTimes(1);
-        const switchEvent = {
-            key: '4',
-            altKey: true,
-            ctrlKey: false,
-            metaKey: false,
-            target: null,
-            preventDefault: vi.fn(),
-        } as unknown as KeyboardEvent;
-        expect(
-            handleSimulatorKeyboard(
-                switchEvent,
-                { onBack, onSwitchApp, onFocusSearch },
-                { activeApp: 'email', activeScreen: 'list' },
-            ),
-        ).toEqual({ handled: true });
-        expect(onSwitchApp).toHaveBeenCalledWith('messages');
-        const searchEvent = {
-            key: '/',
-            altKey: false,
-            ctrlKey: false,
-            metaKey: false,
-            target: null,
-            preventDefault: vi.fn(),
-        } as unknown as KeyboardEvent;
-        expect(
-            handleSimulatorKeyboard(
-                searchEvent,
-                { onBack, onSwitchApp, onFocusSearch },
-                { activeApp: 'phone', activeScreen: 'contacts' },
-            ),
-        ).toEqual({ handled: true });
-        expect(onFocusSearch).toHaveBeenCalledTimes(1);
-        const helpEvent = {
-            key: '?',
-            altKey: false,
-            ctrlKey: false,
-            metaKey: false,
-            target: null,
-            preventDefault: vi.fn(),
-        } as unknown as KeyboardEvent;
-        expect(
-            handleSimulatorKeyboard(
-                helpEvent,
-                { onBack, onSwitchApp, onFocusSearch },
-                { activeApp: 'email', activeScreen: 'list' },
-            ),
-        ).toEqual({ handled: true, showHelp: true });
-        focusSimulatorSearch();
-        expect(querySelector).toHaveBeenCalledWith('[data-simulator-search]');
-    });
-    it('covers simulator error boundary fallback rendering and retry', async () => {
-        const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-        const onRetry = vi.fn();
-        const Boom = () => {
-            throw new Error('Boom');
-        };
-        let renderer: ReactTestRenderer | null = null;
-        await act(async () => {
-            renderer = TestRenderer.create(
-                React.createElement(SimulatorErrorBoundary, {
-                    fallbackTitle: 'Custom error',
-                    onRetry,
-                    showDiagnostics: true,
-                    children: React.createElement(Boom),
-                }),
-            );
-        });
-        const text = flattenText(renderer!.toJSON());
-        expect(text).toContain('Custom error');
-        expect(text).toContain('Boom');
-        expect(consoleSpy).toHaveBeenCalled();
-        await act(async () => {
-            renderer!.root.findByProps({ children: 'Dismiss' }).props.onClick();
-        });
-        expect(onRetry).toHaveBeenCalledTimes(1);
-    });
-    it('covers lint banner and simulator list components', async () => {
-        let bannerRenderer: ReactTestRenderer | null = null;
-        await act(async () => {
-            bannerRenderer = TestRenderer.create(
-                React.createElement(SimulatorLintBanner, {
-                    warnings: [
-                        { code: 'one', message: 'First warning', path: 'entry_point' },
-                        { code: 'two', message: 'Second warning' },
-                    ],
-                }),
-            );
-        });
-        expect(flattenText(bannerRenderer!.toJSON())).toContain('Template suggestions (2)');
-        await act(async () => {
-            bannerRenderer!.root.findByType('button').props.onClick();
-        });
-        expect(
-            bannerRenderer!.root.findByProps({ 'data-testid': 'simulator-lint-banner' }),
-        ).toBeTruthy();
-        let emptyBanner: ReactTestRenderer | null = null;
-        await act(async () => {
-            emptyBanner = TestRenderer.create(
-                React.createElement(SimulatorLintBanner, {
-                    warnings: [],
-                }),
-            );
-        });
-        expect(emptyBanner!.toJSON()).toBeNull();
-        let listRenderer: ReactTestRenderer | null = null;
-        await act(async () => {
-            listRenderer = TestRenderer.create(
-                React.createElement(SimulatorList, {
-                    className: 'extra',
-                    children: React.createElement(SimulatorListItem, {
-                        onClick: vi.fn(),
-                        active: true,
-                        variant: 'compact',
-                        className: 'row-extra',
-                        children: 'List entry',
-                    }),
-                }),
-            );
-        });
-        expect(listRenderer!.root.findByType('ul').props.className).toContain('extra');
-        expect(listRenderer!.root.findByType('li').props.className).toContain('row-extra');
-        expect(listRenderer!.root.findByType('button').children).toEqual(['List entry']);
-    });
+
+describe('action taxonomy and adapters', () => {
     it('covers simulator action taxonomy helpers and remaining adapter branches', () => {
         expect(getSimulatorActionCategory('open_store')).toBe(
             SIMULATOR_ACTION_CATEGORY.HOME_NAVIGATION,
