@@ -3,12 +3,13 @@
  * Back returns to primary menu; Directory is not in the strip (can be reached from Contacts if needed).
  */
 import { SimulatorPhoneScreenId } from '@signalsafe/simulator-core/devicePayload';
+import { NAV_BACK_ID } from '../../constants.js';
 import { createTranslator, simulatorEnglish } from '../../i18n/catalog.js';
 import type { PhoneScreenId } from '../../types/session.js';
 import type { SimulatorCapabilities } from '../payload/simulatorCapabilities.js';
 
 export interface PhoneLocalNavItem {
-    id: PhoneScreenId | 'back';
+    id: PhoneScreenId | typeof NAV_BACK_ID;
     label: string;
     icon: string;
 }
@@ -18,7 +19,7 @@ const SECONDARY_STRIP = [
     { id: SimulatorPhoneScreenId.History, labelKey: 'nav.history', icon: '🕐' },
     { id: SimulatorPhoneScreenId.Contacts, labelKey: 'nav.contacts', icon: '👤' },
     { id: SimulatorPhoneScreenId.Dial, labelKey: 'nav.dial', icon: '📞' },
-    { id: 'back', labelKey: 'nav.back', icon: '↩' },
+    { id: NAV_BACK_ID, labelKey: 'nav.back', icon: '↩' },
 ] as const;
 
 export function getPhoneLocalNavItems(

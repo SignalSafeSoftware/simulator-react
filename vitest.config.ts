@@ -1,6 +1,6 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { defineConfig } from "vitest/config";
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { defineConfig } from 'vitest/config';
 
 const packageRoot = path.dirname(fileURLToPath(import.meta.url));
 
@@ -9,29 +9,29 @@ export default defineConfig({
         alias: [
             {
                 find: /^@signalsafe\/simulator-react\/(.+)$/,
-                replacement: path.resolve(packageRoot, "src") + "/$1",
+                replacement: path.resolve(packageRoot, 'src') + '/$1',
             },
             {
-                find: "@workspace-simulator-test-support",
-                replacement: path.resolve(packageRoot, "tests/support"),
+                find: '@workspace-simulator-test-support',
+                replacement: path.resolve(packageRoot, 'tests/support'),
             },
             {
                 find: /^@workspace-simulator-test-support\/(.+)$/,
-                replacement: path.resolve(packageRoot, "tests/support") + "/$1",
+                replacement: path.resolve(packageRoot, 'tests/support') + '/$1',
             },
         ],
     },
     test: {
-        environment: "node",
-        setupFiles: ["tests/support/setupDom.ts"],
-        include: ["tests/**/*.test.{ts,tsx}"],
+        environment: 'node',
+        setupFiles: ['tests/support/setupDom.ts'],
+        include: ['tests/**/*.test.{ts,tsx}'],
         coverage: {
-            provider: "v8",
+            provider: 'v8',
             thresholds: { statements: 100, branches: 100, functions: 100, lines: 100 },
-            include: ["src/**"],
-            exclude: ["src/**/*.d.ts"],
-            reporter: ["text", "lcov"],
-            reportsDirectory: "coverage",
+            include: ['src/**'],
+            exclude: ['src/**/*.d.ts'],
+            reporter: ['text', 'lcov'],
+            reportsDirectory: 'coverage',
         },
     },
 });

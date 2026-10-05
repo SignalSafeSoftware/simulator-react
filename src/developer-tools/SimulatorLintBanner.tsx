@@ -33,12 +33,12 @@ export default function SimulatorLintBanner({
     if (warnings.length === 0) return null;
     return (
         <SimulatorAlert
-            tone="warning"
+            tone='warning'
             className={joinClasses(SIM_TEXT_SM, className)}
-            data-testid="simulator-lint-banner"
+            data-testid='simulator-lint-banner'
         >
             <button
-                type="button"
+                type='button'
                 className={joinClasses(
                     simBtnToneClass(SimulatorButtonTone.Link),
                     SIM_BTN_PLAIN,
@@ -54,7 +54,7 @@ export default function SimulatorLintBanner({
             <span className={joinClasses(SIM_MUTED, 'simulator-inline-gap')}>
                 {screenLocale.t('screen.simulatorLintBanner.advisory.scenario.still.runs')}
             </span>
-            <SimulatorCollapse open={open} id={listId} className="simulator-collapse__body">
+            <SimulatorCollapse open={open} id={listId} className='simulator-collapse__body'>
                 <ul className={SIM_LIST_PLAIN}>
                     {warnings.map((w, i) => (
                         <li key={`${w.code}-${i}`}>

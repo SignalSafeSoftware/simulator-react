@@ -20,7 +20,7 @@ function MailHeaders({
             {message.cc && <p>{t('app.mail.cc', { value: message.cc })}</p>}
             {message.bcc && <p>{t('app.mail.bcc', { value: message.bcc })}</p>}
             <p>{formatDate(new Date(message.createdAt))}</p>
-            <p className="prototype-message-body">{message.body}</p>
+            <p className='prototype-message-body'>{message.body}</p>
         </>
     );
 }
@@ -63,7 +63,7 @@ function MailThread({
 
 function MailAttachmentLinks({ attachments }: Readonly<{ attachments: readonly Asset[] }>) {
     return (
-        <ul className="prototype-list">
+        <ul className='prototype-list'>
             {attachments.map((asset, index) => (
                 <li key={`${index}-${asset.name}`}>
                     <a href={asset.data} download={asset.name}>
@@ -92,7 +92,7 @@ function MailMessageActions({
 }: Readonly<{ message: Mail; busy: boolean; storeBusy: boolean; actions: MessageActions }>) {
     const { t } = useSimulatorLocale();
     return (
-        <div className="prototype-actions">
+        <div className='prototype-actions'>
             {message.folder !== mailFolderSchema.enum.drafts && (
                 <>
                     <button

@@ -1,6 +1,6 @@
 import { type SimulatorTemplatePayload } from '../../types/session.js';
 import { PayloadSection } from './payloadSections.js';
-import { SimulatorPhoneScreenId } from '@signalsafe/simulator-core/devicePayload';
+import {} from '@signalsafe/simulator-core/devicePayload';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { englishLocale } from '../../i18n/englishLocale.js';
 /**
@@ -11,7 +11,7 @@ import { englishLocale } from '../../i18n/englishLocale.js';
  * Kept separate from validateSimulatorPayload (hard validation).
  */
 
-import { keyNamingSuggestion, type KeyFamily } from './simulatorKeyPatterns.js';
+import { KeyFamily, keyNamingSuggestion } from './simulatorKeyPatterns.js';
 import { getEntryScreen, add } from './lintHelpers.js';
 import { lintEntryAppContent } from './lintEntryChecks.js';
 
@@ -189,20 +189,19 @@ function addKeyNamingWarnings(
     };
 
     if (payload.templateKey != null && payload.templateKey !== '') {
-        suggest(payload.templateKey, 'template', 'templateKey');
+        suggest(payload.templateKey, KeyFamily.Template, 'templateKey');
     }
     (payload.contacts ?? []).forEach((contact, i) => {
-        if (contact?.id != null) suggest(contact.id, 'contact', `contacts[${i}].id`);
+        if (contact?.id != null) suggest(contact.id, KeyFamily.Contact, `contacts[${i}].id`);
     });
     (payload.directory ?? []).forEach((entry, i) => {
-        if (entry?.id != null)
-            suggest(entry.id, SimulatorPhoneScreenId.Directory, `directory[${i}].id`);
+        if (entry?.id != null) suggest(entry.id, KeyFamily.Directory, `directory[${i}].id`);
     });
     (payload.email?.inbox ?? []).forEach((row, i) => {
-        if (row?.id != null) suggest(row.id, 'message', `email.inbox[${i}].id`);
+        if (row?.id != null) suggest(row.id, KeyFamily.Message, `email.inbox[${i}].id`);
     });
     (payload.browser?.pages ?? []).forEach((page, i) => {
-        if (page?.id != null) suggest(page.id, 'page', `browser.pages[${i}].id`);
+        if (page?.id != null) suggest(page.id, KeyFamily.Page, `browser.pages[${i}].id`);
     });
 }
 

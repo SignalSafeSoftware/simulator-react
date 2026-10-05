@@ -345,7 +345,7 @@ describe('ReactMockPage', () => {
         const onAction = vi.fn();
         render(
             <ReactMockPage
-                pageId="r1"
+                pageId='r1'
                 onAction={onAction}
                 render={(emit) => (
                     <>
@@ -391,19 +391,19 @@ describe('BrowserWorkbench', () => {
     const output = () => document.querySelector('output')!.textContent;
 
     it('renders only the supplied templates in templates mode', () => {
-        render(<BrowserWorkbench mode="templates" templates={<p>templates here</p>} />);
+        render(<BrowserWorkbench mode='templates' templates={<p>templates here</p>} />);
         expect(screen.getByText('templates here')).toBeTruthy();
         expect(document.querySelector('form')).toBeNull();
     });
 
     it('renders the trusted React example and records its actions', () => {
-        render(<BrowserWorkbench mode="react" templates={null} />);
+        render(<BrowserWorkbench mode='react' templates={null} />);
         fireEvent.click(screen.getByText('My account'));
         expect(output()).toBe('custom: open-account');
     });
 
     it('navigates through searches, history and addresses in html mode', () => {
-        render(<BrowserWorkbench templates={null} themeCss=":root{}" />);
+        render(<BrowserWorkbench templates={null} themeCss=':root{}' />);
         expect(frame().title).toBe('Local search');
         const back = screen.getByLabelText('Back page') as HTMLButtonElement;
         const forward = screen.getByLabelText('Forward page') as HTMLButtonElement;

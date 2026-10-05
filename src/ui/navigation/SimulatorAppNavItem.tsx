@@ -49,7 +49,7 @@ export function SimulatorAppNavItem({
             onClick={onClick}
         >
             {icon != null && icon !== '' && (
-                <span className={cls.navIcon} aria-hidden="true">
+                <span className={cls.navIcon} aria-hidden='true'>
                     <SimulatorNavIcon icon={icon} />
                 </span>
             )}

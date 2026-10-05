@@ -14,6 +14,16 @@ import { englishLocale } from '../../i18n/englishLocale.js';
 import type { SimulatorViewState, SimulatorTemplatePayload } from '../../types/session.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 
+/** Where a screen sits in its app: list, detail, page or new thread. */
+export const SimulatorScreenSource = Object.freeze({
+    List: 'list',
+    Detail: 'detail',
+    Page: 'page',
+    NewThread: 'new_thread',
+} as const);
+export type SimulatorScreenSource =
+    (typeof SimulatorScreenSource)[keyof typeof SimulatorScreenSource];
+
 export interface SimulatorScreenMetadata {
     /** Current app. */
     app: SimulatorApp;
@@ -28,7 +38,7 @@ export interface SimulatorScreenMetadata {
     /** Short human label for tooling/preview (e.g. "Email → Message", "Internet → landing"). */
     label: string;
     /** Source context for structure: list, detail, page, or messages new-thread. */
-    source: 'list' | 'detail' | 'page' | 'new_thread';
+    source: SimulatorScreenSource;
     /** Optional page title when app is internet (from payload). */
     pageTitle: string | null;
 }
@@ -75,7 +85,7 @@ function buildEmailMetadata(view: SimulatorViewState['email']): SimulatorScreenM
         showBack: isDetail && view.stack.length > 0,
         showCancel: !isDetail,
         label: isDetail ? 'Email → Message' : 'Email → Inbox',
-        source: isDetail ? 'detail' : 'list',
+        source: isDetail ? SimulatorScreenSource.Detail : SimulatorScreenSource.List,
         pageTitle: null,
     };
 }
@@ -136,7 +146,7 @@ function buildInternetMetadata(
         showBack: view.stack.length > 0,
         showCancel: view.stack.length === 0,
         label: `Internet → ${pageTitle ?? screen}`,
-        source: 'page',
+        source: SimulatorScreenSource.Page,
         pageTitle,
     };
 }
@@ -150,7 +160,7 @@ function buildPhoneMetadata(view: SimulatorViewState['phone']): SimulatorScreenM
         showBack: view.stack.length > 0,
         showCancel: true,
         label: `Phone → ${PHONE_SCREEN_LABELS[screen] ?? screen}`,
-        source: 'list',
+        source: SimulatorScreenSource.List,
         pageTitle: null,
     };
 }
@@ -161,11 +171,11 @@ function buildHomeMetadata(view: SimulatorViewState['home']): SimulatorScreenMet
     return {
         app: SimulatorApp.Home,
         screen,
-        parentScreen: isHome ? null : 'home',
+        parentScreen: isHome ? null : SimulatorHomeScreenId.Home,
         showBack: !isHome,
         showCancel: isHome,
         label: `Home → ${HOME_SCREEN_LABELS[screen] ?? screen}`,
-        source: isHome ? 'list' : 'detail',
+        source: isHome ? SimulatorScreenSource.List : SimulatorScreenSource.Detail,
         pageTitle: null,
     };
 }
@@ -206,7 +216,7 @@ export function getScreenMetadata(
         showBack: false,
         showCancel: true,
         label: `${APP_LABELS[app] ?? app} / ${screen}`,
-        source: 'list',
+        source: SimulatorScreenSource.List,
         pageTitle: null,
     };
 }

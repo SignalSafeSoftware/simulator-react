@@ -6,7 +6,7 @@ export default function SimulatorScreenTile({
     onClick,
 }: Readonly<{ label: string; icon?: ReactNode; onClick: () => void }>) {
     return (
-        <button type="button" className="simulator-screen-tile" onClick={onClick}>
+        <button type='button' className='simulator-screen-tile' onClick={onClick}>
             {icon}
             <span>{label}</span>
         </button>

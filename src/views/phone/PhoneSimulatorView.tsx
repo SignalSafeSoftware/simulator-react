@@ -3,6 +3,7 @@
  * Wireframe-style segmented local nav; Back from voicemail or secondary Back returns to primary menu.
  */
 import { SimulatorPhoneScreenId } from '@signalsafe/simulator-core/devicePayload';
+import { NAV_BACK_ID } from '../../constants.js';
 import {
     SIM_BORDER_BOTTOM_NONE,
     SIM_BTN_SM,
@@ -121,7 +122,7 @@ export default function PhoneSimulatorView({
     const localNavItems = getPhoneLocalNavItems(phoneCapabilities, screenLocale);
     const contactList = contacts ?? [];
     const handleNavSelect = (id: PhoneLocalNavItem['id']) => {
-        if (id === 'back') {
+        if (id === NAV_BACK_ID) {
             onBack?.();
         } else {
             onNavigate(id);

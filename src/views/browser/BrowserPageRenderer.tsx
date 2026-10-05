@@ -7,6 +7,7 @@ import {
     type SimulatorAction,
     type SimulatorBrowserPage,
 } from '../../types/session.js';
+import { AUTOCOMPLETE_OFF } from '../../constants.js';
 import {
     SIM_BTN_SM,
     SIM_FLEX_WRAP,
@@ -103,7 +104,7 @@ export default function BrowserPageRenderer({
             <SimulatorInput
                 type={getFieldInputType(field.type)}
                 className={SIM_ROUNDED_NONE}
-                autoComplete="off"
+                autoComplete={AUTOCOMPLETE_OFF}
                 aria-label={field.label}
             />
         </SimulatorField>
@@ -145,13 +146,13 @@ export default function BrowserPageRenderer({
                 <>
                     {logoUrl != null && logoUrl !== '' && (
                         <div className={joinClasses(simSpacing.mb3, SIM_TEXT_CENTER)}>
-                            <img src={logoUrl} alt="" style={{ maxHeight: 48 }} />
+                            <img src={logoUrl} alt='' style={{ maxHeight: 48 }} />
                         </div>
                     )}
                     {layoutNorm === BrowserLayout.Content && warning}
                     {layoutNorm === BrowserLayout.Content && showMediaPlaceholder === true && (
                         <>
-                            <MediaPlaceholder minHeight={160} iconSize="2.5rem" />
+                            <MediaPlaceholder minHeight={160} iconSize='2.5rem' />
                             <MediaControlsBar />
                         </>
                     )}
@@ -167,7 +168,7 @@ export default function BrowserPageRenderer({
                             >
                                 {formFieldInputs}
                                 <SimulatorButton
-                                    type="submit"
+                                    type='submit'
                                     tone={SimulatorButtonTone.Primary}
                                     className={SIM_ROUNDED_NONE}
                                 >
@@ -207,7 +208,7 @@ export default function BrowserPageRenderer({
                 <>
                     {warning}
                     {showMediaPlaceholder === true && (
-                        <MediaPlaceholder minHeight={140} iconSize="2rem" />
+                        <MediaPlaceholder minHeight={140} iconSize='2rem' />
                     )}
                     {contentParagraph}
                     <BrowserDownloadActions

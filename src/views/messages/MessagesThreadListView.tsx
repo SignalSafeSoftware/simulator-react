@@ -79,7 +79,7 @@ export default function MessagesThreadListView({
         <div className={joinClasses(SIM_LIST_FLUSH_MOD, simSpacing.mt1, SIM_MESSAGES_THREAD_LIST)}>
             {filtered.map((row, index) => (
                 <button
-                    type="button"
+                    type='button'
                     key={row.id}
                     onClick={() => onSelectThread(row.id)}
                     className={joinClasses(
@@ -100,7 +100,9 @@ export default function MessagesThreadListView({
                             )}
                         >
                             {row.senderName ??
-                                (row.senderNumber ? formatNumber(row.senderNumber) : 'Unknown')}
+                                (row.senderNumber
+                                    ? formatNumber(row.senderNumber)
+                                    : screenLocale.t('value.unknown'))}
                         </span>
                         <span
                             className={joinClasses(

@@ -3,6 +3,7 @@
  * No react-router — pass `exitSlot` for client-side navigation (e.g. <Link>) or rely on `exitTo` as a plain anchor.
  */
 import { SimulatorChannel } from '../types/session.js';
+import { NAV_BACK_ID } from '../constants.js';
 import { SimulatorNavIcon } from '../ui/navigation/SimulatorNavIcon.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 import { type CSSProperties, type ReactNode, memo } from 'react';
@@ -124,18 +125,18 @@ function PhoneSimulatorShell({
         navigation = (
             <div
                 className={simShell.nav}
-                role="tablist"
+                role='tablist'
                 aria-label={screenLocale.t('screen.phoneSimulatorShell.app.secondary.menu')}
             >
                 {resolvedSecondaryMenu.items.map((item, idx) => {
-                    const isBack = item.id === 'back';
+                    const isBack = item.id === NAV_BACK_ID;
                     const isActive = !isBack && resolvedSecondaryMenu.activeId === item.id;
                     const isLast = idx === resolvedSecondaryMenu.items.length - 1;
                     return (
                         <button
                             key={item.id}
-                            type="button"
-                            role="tab"
+                            type='button'
+                            role='tab'
                             aria-selected={isBack ? undefined : isActive}
                             aria-label={item.label}
                             className={getNavTabClass(isLast, isBack || !isActive)}
@@ -160,7 +161,7 @@ function PhoneSimulatorShell({
         navigation = (
             <div
                 className={simShell.nav}
-                role="tablist"
+                role='tablist'
                 aria-label={screenLocale.t('screen.phoneSimulatorShell.simulator.channels')}
             >
                 {PRIMARY_CHANNELS.map((ch, idx) => {
@@ -169,8 +170,8 @@ function PhoneSimulatorShell({
                     return (
                         <button
                             key={ch.id}
-                            type="button"
-                            role="tab"
+                            type='button'
+                            role='tab'
                             aria-selected={isActive}
                             aria-label={screenLocale.t(ch.labelKey)}
                             className={getNavTabClass(isLast, !isActive)}

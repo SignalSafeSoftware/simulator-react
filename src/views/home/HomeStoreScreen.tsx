@@ -42,8 +42,8 @@ export function StoreAppIcon({ className }: Readonly<{ className?: string }>) {
             style={{ width: 48, height: 48 }}
             aria-hidden
         >
-            <span className="simulator-text--primary" style={{ fontSize: '1.5rem' }}>
-                <UserRound size={24} strokeWidth={1.5} aria-hidden="true" />
+            <span className='simulator-text--primary' style={{ fontSize: '1.5rem' }}>
+                <UserRound size={24} strokeWidth={1.5} aria-hidden='true' />
             </span>
         </div>
     );

@@ -145,7 +145,7 @@ export default function SimulatorAuthorPreviewReport({
 
     return (
         <CollapsibleReport
-            testId="simulator-author-preview-report"
+            testId='simulator-author-preview-report'
             title={screenLocale.t('screen.simulatorAuthorPreviewReport.template.summary')}
             summary={<>— {summary}</>}
             className={className}
@@ -190,7 +190,7 @@ export default function SimulatorAuthorPreviewReport({
                     label={screenLocale.t('screen.simulatorAuthorPreviewReport.validation')}
                     value={
                         validationOk ? (
-                            <span className="simulator-text--success">
+                            <span className='simulator-text--success'>
                                 {screenLocale.t('screen.simulatorAuthorPreviewReport.ok')}
                             </span>
                         ) : (

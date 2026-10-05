@@ -1,4 +1,5 @@
 import type { RefObject } from 'react';
+import { INPUT_TYPE_SEARCH } from '../../constants.js';
 import { ChevronRight, Save, Trash2 } from 'lucide-react';
 import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
@@ -14,10 +15,10 @@ export function SearchBox({
     onChange: (value: string) => void;
 }>) {
     return (
-        <div className="vault-folder-search">
+        <div className='vault-folder-search'>
             <input
                 className={SIM_INPUT}
-                type="search"
+                type={INPUT_TYPE_SEARCH}
                 aria-label={label}
                 placeholder={label}
                 value={value}
@@ -83,20 +84,20 @@ export function FolderList({
     const filter = query.trim().toLowerCase();
     const matching = folders.filter((name) => name.toLowerCase().includes(filter));
     return (
-        <div className="vault-folder-group">
+        <div className='vault-folder-group'>
             <SearchBox label={t('app.vault.searchFolders')} value={query} onChange={onQuery} />
-            <ul className="vault-list-group" aria-label={t('app.vault.folders')}>
+            <ul className='vault-list-group' aria-label={t('app.vault.folders')}>
                 {matching.map((name) => (
                     <li key={name}>
-                        <button type="button" disabled={busy} onClick={() => onOpen(name)}>
-                            <span className="vault-folder-name">{name}</span>
+                        <button type='button' disabled={busy} onClick={() => onOpen(name)}>
+                            <span className='vault-folder-name'>{name}</span>
                             <span
-                                className="vault-folder-count"
+                                className='vault-folder-count'
                                 aria-label={t('app.vault.secretsCount')}
                             >
                                 {counts?.secrets[name] ?? 0}
                             </span>
-                            <ChevronRight size={18} aria-hidden="true" />
+                            <ChevronRight size={18} aria-hidden='true' />
                         </button>
                     </li>
                 ))}
@@ -121,7 +122,7 @@ export function FolderEditor({
 }>) {
     const { t } = useSimulatorLocale();
     return (
-        <section className="vault-folder-editor" aria-label={t('app.vault.editFolder')}>
+        <section className='vault-folder-editor' aria-label={t('app.vault.editFolder')}>
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
@@ -139,25 +140,25 @@ export function FolderEditor({
                         onChange={(event) => onChange(event.target.value)}
                     />
                 </label>
-                <div className="prototype-actions">
+                <div className='prototype-actions'>
                     <button
                         className={SIM_BTN_OUTLINE}
-                        type="submit"
+                        type='submit'
                         aria-label={t('app.vault.saveFolder')}
                         title={t('app.vault.saveFolder')}
                         disabled={busy}
                     >
-                        <Save size={20} aria-hidden="true" />
+                        <Save size={20} aria-hidden='true' />
                     </button>
                     <button
                         className={SIM_BTN_OUTLINE}
-                        type="button"
+                        type='button'
                         aria-label={t('app.vault.deleteFolder')}
                         title={t('app.vault.deleteFolder')}
                         disabled={busy}
                         onClick={onDelete}
                     >
-                        <Trash2 size={20} aria-hidden="true" />
+                        <Trash2 size={20} aria-hidden='true' />
                     </button>
                 </div>
             </form>

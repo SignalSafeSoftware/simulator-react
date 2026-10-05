@@ -129,36 +129,36 @@ export default function SimulatorBrowserChrome({
                 style={{ minHeight: 40 }}
             >
                 <button
-                    type="button"
+                    type='button'
                     className={chromeNavBtnClass}
                     onClick={onBack}
                     aria-label={screenLocale.t('screen.simulatorBrowserChrome.back')}
                 >
-                    <ArrowLeft size={18} aria-hidden="true" />
+                    <ArrowLeft size={18} aria-hidden='true' />
                 </button>
                 <button
-                    type="button"
+                    type='button'
                     className={chromeNavBtnClass}
                     onClick={onForward}
                     aria-label={screenLocale.t('screen.simulatorBrowserChrome.forward')}
                 >
-                    <ArrowRight size={18} aria-hidden="true" />
+                    <ArrowRight size={18} aria-hidden='true' />
                 </button>
                 <button
-                    type="button"
+                    type='button'
                     className={chromeNavBtnClass}
                     onClick={onRefresh}
                     aria-label={screenLocale.t('screen.simulatorBrowserChrome.refresh')}
                 >
-                    <RotateCw size={18} aria-hidden="true" />
+                    <RotateCw size={18} aria-hidden='true' />
                 </button>
                 <button
-                    type="button"
+                    type='button'
                     className={chromeNavBtnClass}
                     onClick={onHome}
                     aria-label={screenLocale.t('screen.simulatorBrowserChrome.home')}
                 >
-                    <Home size={18} aria-hidden="true" />
+                    <Home size={18} aria-hidden='true' />
                 </button>
                 <div
                     className={joinClasses(

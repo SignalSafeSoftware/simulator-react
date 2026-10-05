@@ -22,7 +22,7 @@ export function PagedListFooter({
     return (
         <>
             {page.error && (
-                <p className={SIM_LIST_ERROR} role="alert">
+                <p className={SIM_LIST_ERROR} role='alert'>
                     {page.error}
                 </p>
             )}

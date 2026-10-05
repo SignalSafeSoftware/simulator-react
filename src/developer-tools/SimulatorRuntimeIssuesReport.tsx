@@ -54,7 +54,7 @@ export default function SimulatorRuntimeIssuesReport({
 
     return (
         <CollapsibleReport
-            testId="simulator-runtime-issues-report"
+            testId='simulator-runtime-issues-report'
             title={screenLocale.t('screen.simulatorRuntimeIssuesReport.runtime.issues')}
             summary={summary}
             className={className}

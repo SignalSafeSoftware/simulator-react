@@ -84,7 +84,7 @@ export default function SimulatorDeveloperControlsBar({
                     >
                         {showSnapshotExport && (
                             <button
-                                type="button"
+                                type='button'
                                 className={devLinkClass}
                                 onClick={onCopySnapshot}
                                 aria-label={screenLocale.t(
@@ -100,7 +100,7 @@ export default function SimulatorDeveloperControlsBar({
                         )}
                         {showNavGraph && (
                             <button
-                                type="button"
+                                type='button'
                                 className={devLinkClass}
                                 onClick={onCopyNavGraph}
                                 aria-label={screenLocale.t(
@@ -116,7 +116,7 @@ export default function SimulatorDeveloperControlsBar({
                         )}
                         {enableKeyboardShortcuts && (
                             <button
-                                type="button"
+                                type='button'
                                 className={devLinkClass}
                                 onClick={onToggleShortcutsHelp}
                                 aria-label={screenLocale.t(
@@ -136,7 +136,7 @@ export default function SimulatorDeveloperControlsBar({
                                 'simulator-spacing--px-1',
                             )}
                         >
-                            <summary className="simulator-cursor-pointer simulator-user-select-none">
+                            <summary className='simulator-cursor-pointer simulator-user-select-none'>
                                 {screenLocale.t('screen.simulatorDeveloperControlsBar.nav.graph')}
                                 {navGraph.nodes.length}
                                 {screenLocale.t('screen.simulatorDeveloperControlsBar.nodes')}

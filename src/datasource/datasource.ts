@@ -103,7 +103,7 @@ export function updateSimulatorPayload(
                       selectedMessageId: null,
                       screen:
                           state.view.email.screen === SimulatorEmailScreenId.Detail
-                              ? 'list'
+                              ? SimulatorEmailScreenId.List
                               : state.view.email.screen,
                   },
               },

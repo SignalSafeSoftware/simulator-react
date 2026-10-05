@@ -443,10 +443,10 @@ describe('Vault secrets', () => {
     it('ignores initial editor normalisation but keeps real edits', async () => {
         const NotesEditor = ({ onChange }: SimulatorAppNotesProps) => (
             <>
-                <button type="button" onClick={() => onChange('normalised', true)}>
+                <button type='button' onClick={() => onChange('normalised', true)}>
                     normalise
                 </button>
-                <button type="button" onClick={() => onChange('typed')}>
+                <button type='button' onClick={() => onChange('typed')}>
                     type
                 </button>
             </>

@@ -2,6 +2,8 @@ import {
     SIM_PHONE_DIALER_BACKSPACE,
     SIM_PHONE_DIALER_NUMBER,
 } from '../../ui/styles/semanticSimulatorClasses.js';
+import { FieldInputType } from '../../utils/payload/browserFieldType.js';
+import { AUTOCOMPLETE_OFF } from '../../constants.js';
 import { usePhoneDialDraft } from '../../contract/phoneDialContract.js';
 import { CapabilityButton } from '../../ui/controls/CapabilityButton.js';
 import { SimulatorCapabilityState, useSimulatorCapabilities } from '../../contract/capabilities.js';
@@ -61,22 +63,22 @@ export default function PhoneDialView({
     };
     return (
         <form
-            className="simulator-phone__dialer simulator-flex simulator-flex--column"
-            autoComplete="off"
-            data-lpignore="true"
+            className='simulator-phone__dialer simulator-flex simulator-flex--column'
+            autoComplete={AUTOCOMPLETE_OFF}
+            data-lpignore='true'
             onSubmit={(event) => {
                 event.preventDefault();
                 dial();
             }}
         >
-            <div className="simulator-phone__dialer-entry simulator-flex simulator-flex--row">
+            <div className='simulator-phone__dialer-entry simulator-flex simulator-flex--row'>
                 <input
                     ref={input}
                     className={SIM_PHONE_DIALER_NUMBER}
-                    type="text"
-                    inputMode="tel"
-                    autoComplete="off"
-                    data-lpignore="true"
+                    type={FieldInputType.Text}
+                    inputMode='tel'
+                    autoComplete={AUTOCOMPLETE_OFF}
+                    data-lpignore='true'
                     aria-label={t('phone.number')}
                     placeholder={t('phone.enterNumber')}
                     value={value}
@@ -84,7 +86,7 @@ export default function PhoneDialView({
                 />
                 <button
                     className={SIM_PHONE_DIALER_BACKSPACE}
-                    type="button"
+                    type='button'
                     aria-label={t('phone.backspace')}
                     onClick={() => edit()}
                 >
@@ -101,8 +103,8 @@ export default function PhoneDialView({
                           }
                         : capability
                 }
-                className="simulator-btn simulator-phone__dialer-call-button"
-                type="submit"
+                className='simulator-btn simulator-phone__dialer-call-button'
+                type='submit'
                 aria-label={t('phone.call')}
             >
                 {t('phone.call')}

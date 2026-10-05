@@ -104,7 +104,7 @@ export default function SimulatorReachabilityReport({
 
     return (
         <CollapsibleReport
-            testId="simulator-reachability-report"
+            testId='simulator-reachability-report'
             title={
                 <>
                     {screenLocale.t('screen.simulatorReachabilityReport.reachability')}

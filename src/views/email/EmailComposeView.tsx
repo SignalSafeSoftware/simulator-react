@@ -84,9 +84,9 @@ export default function EmailComposeView({
                     <output>{t('email.sending')}</output>
                 </p>
             )}
-            {error && <p role="alert">{error}</p>}
+            {error && <p role='alert'>{error}</p>}
             <form
-                className="simulator-email__composer simulator-flex simulator-flex--column simulator-spacing--gap-3"
+                className='simulator-email__composer simulator-flex simulator-flex--column simulator-spacing--gap-3'
                 onSubmit={(event) => {
                     event.preventDefault();
                     void submit();
@@ -103,7 +103,7 @@ export default function EmailComposeView({
                         <label className={SIM_FIELD} key={key}>
                             <span className={SIM_FIELD_LABEL}>{label}</span>
                             <input
-                                className="simulator-input simulator-rounded--none"
+                                className='simulator-input simulator-rounded--none'
                                 aria-label={label}
                                 value={draft[key]}
                                 disabled={pending || (!onSend && !onDraftChange)}
@@ -116,7 +116,7 @@ export default function EmailComposeView({
                 <label className={SIM_FIELD}>
                     <span className={SIM_FIELD_LABEL}>{t('email.body')}</span>
                     <textarea
-                        className="simulator-input simulator-rounded--none"
+                        className='simulator-input simulator-rounded--none'
                         rows={6}
                         aria-label={t('email.body')}
                         value={draft.body}
@@ -127,7 +127,7 @@ export default function EmailComposeView({
                 {!hideActions && (
                     <div className={SIM_FLEX_ROW}>
                         <button
-                            type="submit"
+                            type='submit'
                             aria-label={t('action.send')}
                             disabled={
                                 Boolean(unavailable) || !onSend || pending || !draft.to.trim()
@@ -136,7 +136,7 @@ export default function EmailComposeView({
                             {t('action.send')}
                         </button>
                         <button
-                            type="button"
+                            type='button'
                             aria-label={t('action.cancel')}
                             disabled={pending}
                             onClick={onCancel}

@@ -42,8 +42,8 @@ export default function PhotoEditor({
                 {t('app.photos.captured')}
                 <input
                     className={SIM_INPUT}
-                    type="datetime-local"
-                    step="1"
+                    type='datetime-local'
+                    step='1'
                     value={photo.metadata.capturedAt}
                     onChange={(event) =>
                         onChange({
@@ -75,8 +75,8 @@ export default function PhotoEditor({
                         : t('app.photos.longitude')}
                     <input
                         className={SIM_INPUT}
-                        type="number"
-                        step="any"
+                        type='number'
+                        step='any'
                         min={coordinate === 'latitude' ? -90 : -180}
                         max={coordinate === 'latitude' ? 90 : 180}
                         value={photo.metadata[coordinate] ?? ''}
@@ -99,8 +99,8 @@ export default function PhotoEditor({
                 {t('app.photos.replace')}
                 <input
                     className={SIM_INPUT}
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp"
+                    type='file'
+                    accept='image/png,image/jpeg,image/webp'
                     onChange={(event) => {
                         const file = event.target.files?.[0];
                         if (file) onReplace(file);

@@ -193,7 +193,7 @@ export function BrowserLoginLayout({
                         {formFieldInputs}
                         <div className={joinClasses(simLayout.actionsRow, simSpacing.mt3)}>
                             <SimulatorButton
-                                type="submit"
+                                type='submit'
                                 tone={SimulatorButtonTone.Primary}
                                 className={joinClasses(SIM_ROUNDED_NONE, SIM_FLEX_GROW_1)}
                             >

@@ -114,7 +114,7 @@ export default function EmailInboxList({
             <div className={joinClasses(SIM_LIST_FLUSH_MOD, simSpacing.mt2)}>
                 {filtered.map((row) => (
                     <button
-                        type="button"
+                        type='button'
                         key={row.id}
                         onClick={() => onSelectMessage(row.id)}
                         className={joinClasses(

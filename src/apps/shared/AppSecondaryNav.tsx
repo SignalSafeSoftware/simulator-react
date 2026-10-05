@@ -15,13 +15,13 @@ export function AppSecondaryNav({ actions }: Readonly<{ actions: readonly AppNav
     const { t } = useSimulatorLocale();
     return (
         <nav
-            className="simulator-device-nav"
+            className='simulator-device-nav'
             aria-label={t('nav.appSecondaryMenu')}
-            data-nav-mode="secondary"
+            data-nav-mode='secondary'
         >
-            <ul className="simulator-device-nav__list">
+            <ul className='simulator-device-nav__list'>
                 {actions.map((action) => (
-                    <li key={action.label} className="simulator-device-nav__item">
+                    <li key={action.label} className='simulator-device-nav__item'>
                         <SimulatorAppNavItem {...action} />
                     </li>
                 ))}

@@ -9,11 +9,11 @@ export function ContactIdentityCard({
     const { t } = useSimulatorLocale();
     return (
         <section
-            className="contact-identity-panel contact-identity-card"
+            className='contact-identity-panel contact-identity-card'
             aria-label={t('contact.identity')}
         >
-            {image != null && <header className="contact-identity-card__header">{image}</header>}
-            <div className="contact-identity-card__body">{children}</div>
+            {image != null && <header className='contact-identity-card__header'>{image}</header>}
+            <div className='contact-identity-card__body'>{children}</div>
         </section>
     );
 }

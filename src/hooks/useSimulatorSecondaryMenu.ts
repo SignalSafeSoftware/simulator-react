@@ -2,6 +2,7 @@ import {
     SimulatorDispatchActionType,
     type SimulatorDispatchAction,
 } from '../state/simulatorDispatchActions.js';
+import { NAV_BACK_ID } from '../constants.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
 /**
@@ -48,7 +49,7 @@ export function useSimulatorSecondaryMenu(
                 items,
                 activeId: getPhoneSecondaryActiveId(view.phone.screen),
                 onSelect: (id: string) => {
-                    if (id !== 'back') {
+                    if (id !== NAV_BACK_ID) {
                         dispatch({
                             type: SimulatorDispatchActionType.NavLocal,
                             app: SimulatorApp.Phone,
@@ -67,7 +68,7 @@ export function useSimulatorSecondaryMenu(
             })),
             activeId: getEmailSecondaryActiveId(view.email.screen, view.email.stack),
             onSelect: (id: string) => {
-                if (id !== 'back') {
+                if (id !== NAV_BACK_ID) {
                     dispatch({
                         type: SimulatorDispatchActionType.NavLocal,
                         app: SimulatorApp.Email,

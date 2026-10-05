@@ -135,7 +135,7 @@ export default function Photos({
     return (
         <DevicePage
             title={t('app.photos.title')}
-            icon="🖼"
+            icon='🖼'
             listLayout={draft !== null}
             navigation={draft ? <AppSecondaryNav actions={navActions(draft)} /> : undefined}
             onBack={() => {
@@ -143,15 +143,15 @@ export default function Photos({
                 onBack();
             }}
         >
-            {error && <p role="alert">{error}</p>}
+            {error && <p role='alert'>{error}</p>}
             {loading && <output>{t('app.photos.reading')}</output>}
             {!draft && (
                 <label>
                     {t('app.photos.add')}
                     <input
                         className={SIM_INPUT}
-                        type="file"
-                        accept="image/png,image/jpeg,image/webp"
+                        type='file'
+                        accept='image/png,image/jpeg,image/webp'
                         disabled={loading || store.busy}
                         onChange={(event) => {
                             const file = event.target.files?.[0];
@@ -163,10 +163,10 @@ export default function Photos({
             )}
             {draft ? (
                 <>
-                    <article className="prototype-photo-card" aria-label={t('app.photos.details')}>
+                    <article className='prototype-photo-card' aria-label={t('app.photos.details')}>
                         {/* oxlint-disable-next-line nextjs/no-img-element -- Vite host displaying bounded local image data. */}
                         <img
-                            className="prototype-photo"
+                            className='prototype-photo'
                             src={draft.asset.data}
                             onLoad={(event) =>
                                 setDimensions({
@@ -178,8 +178,8 @@ export default function Photos({
                             onError={() => setDimensions(null)}
                             alt={draft.caption || draft.title}
                         />
-                        <div className="prototype-photo-card-body">
-                            <dl className="prototype-photo-details">
+                        <div className='prototype-photo-card-body'>
+                            <dl className='prototype-photo-details'>
                                 <dt>{t('app.vault.title')}</dt>
                                 <dd>{draft.title}</dd>
                                 <dt>{t('app.photos.fileType')}</dt>
@@ -216,7 +216,7 @@ export default function Photos({
                 </>
             ) : (
                 <>
-                    <div className="prototype-gallery">
+                    <div className='prototype-gallery'>
                         {photos.records.map((item) => (
                             <button
                                 className={SIM_BTN_OUTLINE}
@@ -231,11 +231,11 @@ export default function Photos({
                             >
                                 {/* oxlint-disable-next-line nextjs/no-img-element -- Vite app with bounded local image assets. */}
                                 <img
-                                    loading="lazy"
+                                    loading='lazy'
                                     src={item.asset.data}
                                     alt={item.caption || item.title}
                                 />
-                                <span className="prototype-photo-date">
+                                <span className='prototype-photo-date'>
                                     {captureDateLabel(item.metadata)}
                                 </span>
                             </button>

@@ -2,6 +2,7 @@
  * Search input for simulator list screens.
  */
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
+import { INPUT_TYPE_SEARCH } from '../../constants.js';
 import { SimulatorInput } from '../primitives.js';
 import { simInput } from '../../simulatorStyles.js';
 import { joinClasses } from '../styles/simulatorClasses.js';
@@ -29,7 +30,7 @@ function SimulatorSearchInput({
     const locale = useSimulatorLocale();
     return (
         <SimulatorInput
-            type="search"
+            type={INPUT_TYPE_SEARCH}
             value={value}
             onChange={(event) => onChange(event.target.value)}
             onKeyDown={(event) => {

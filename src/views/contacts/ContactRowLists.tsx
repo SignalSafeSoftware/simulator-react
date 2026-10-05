@@ -36,7 +36,7 @@ export function renderPhoneContactList(
         <div className={joinClasses(SIM_LIST_FLUSH_MOD, SIM_PHONE_CONTACT_LIST)}>
             {filtered.map((c) => (
                 <button
-                    type="button"
+                    type='button'
                     key={c.id}
                     data-simulator-contact-id={c.id}
                     onClick={() => open(c)}
@@ -106,7 +106,7 @@ export function renderCompactContactList(
                 <SimulatorListItem
                     key={c.id}
                     data-simulator-contact-id={c.id}
-                    variant="compact"
+                    variant='compact'
                     onClick={() => open(c)}
                     className={joinClasses('simulator-flex--between', SIM_PHONE_CONTACT_ROW)}
                 >

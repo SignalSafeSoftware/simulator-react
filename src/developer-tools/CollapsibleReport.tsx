@@ -48,7 +48,7 @@ export function CollapsibleReport({
                 )}
             >
                 <button
-                    type="button"
+                    type='button'
                     className={joinClasses(
                         simBtnToneClass(SimulatorButtonTone.Link),
                         SIM_BTN_PLAIN,

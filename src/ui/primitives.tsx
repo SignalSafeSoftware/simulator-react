@@ -35,7 +35,7 @@ export function SimulatorButton({
     ...rest
 }: Readonly<ButtonHTMLAttributes<HTMLButtonElement> & { tone?: SimulatorButtonTone }>) {
     return (
-        <button type="button" className={joinClasses(simBtnToneClass(tone), className)} {...rest}>
+        <button type='button' className={joinClasses(simBtnToneClass(tone), className)} {...rest}>
             {children}
         </button>
     );
@@ -121,7 +121,7 @@ export function SimulatorAlert({
     ...rest
 }: Readonly<React.HTMLAttributes<HTMLDivElement> & { tone?: SimulatorAlertTone }>) {
     return (
-        <div className={joinClasses(simAlertToneClass(tone), className)} role="alert" {...rest}>
+        <div className={joinClasses(simAlertToneClass(tone), className)} role='alert' {...rest}>
             {children}
         </div>
     );
@@ -187,7 +187,7 @@ export function SimulatorListItem({
     if (onClick != null) {
         return (
             <li className={itemClassName} {...rest}>
-                <button type="button" className={SIM_LIST_ITEM_BUTTON} onClick={onClick}>
+                <button type='button' className={SIM_LIST_ITEM_BUTTON} onClick={onClick}>
                     {children}
                 </button>
             </li>

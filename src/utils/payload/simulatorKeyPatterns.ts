@@ -10,7 +10,15 @@ const TEMPLATE_KEY_MAX_LENGTH = 64;
 /** Max length for entity ids (contact, page, directory, message) — advisory. */
 const ENTITY_ID_MAX_LENGTH = 128;
 
-export type KeyFamily = 'template' | 'contact' | 'page' | 'directory' | 'message' | 'thread';
+export const KeyFamily = Object.freeze({
+    Template: 'template',
+    Contact: 'contact',
+    Page: 'page',
+    Directory: 'directory',
+    Message: 'message',
+    Thread: 'thread',
+} as const);
+export type KeyFamily = (typeof KeyFamily)[keyof typeof KeyFamily];
 
 /**
  * Advisory checks for key naming. Returns a short message if the key could be improved; null if fine or skipped.
@@ -21,7 +29,7 @@ export function keyNamingSuggestion(key: string, family: KeyFamily): string | nu
         return englishLocale.t('copy.simulatorKeyPatterns.key.should.be.non.empty');
     if (key.length > ENTITY_ID_MAX_LENGTH)
         return `Key is longer than ${ENTITY_ID_MAX_LENGTH} chars; consider shortening.`;
-    if (family === 'template' && key.length > TEMPLATE_KEY_MAX_LENGTH) {
+    if (family === KeyFamily.Template && key.length > TEMPLATE_KEY_MAX_LENGTH) {
         return `Template key exceeds ${TEMPLATE_KEY_MAX_LENGTH} chars (backend limit).`;
     }
     if (/\s/.test(key))

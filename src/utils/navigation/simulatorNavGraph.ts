@@ -17,6 +17,8 @@ import {
 import { analyzeReachability } from './simulatorReachability.js';
 import { resolveDefaultEntryScreen } from './simulatorDefaultScreen.js';
 
+const BACK_ACTION = 'back';
+const NEW_THREAD_ACTION = 'new_thread';
 const APPS = Object.values(SimulatorApp);
 const PHONE_SCREENS = Object.values(SimulatorPhoneScreenId);
 const HOME_SCREENS = Object.values(SimulatorHomeScreenId);
@@ -236,7 +238,7 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
         { app: SimulatorApp.Email, screen: SimulatorEmailScreenId.List },
         { app: SimulatorApp.Email, screen: SimulatorEmailScreenId.Detail },
         SimulatorActionType.OpenEmail,
-        'back',
+        BACK_ACTION,
     );
 
     // Messages: threads ↔ thread_detail, threads ↔ new_thread
@@ -246,15 +248,15 @@ export function buildSimulatorNavGraph(payload: SimulatorTemplatePayload): Simul
         { app: SimulatorApp.Messages, screen: SimulatorMessagesScreenId.Threads },
         { app: SimulatorApp.Messages, screen: SimulatorMessagesScreenId.ThreadDetail },
         SimulatorActionType.OpenThread,
-        'back',
+        BACK_ACTION,
     );
     addPairedEdge(
         edges,
         reachableScreens.messages,
         { app: SimulatorApp.Messages, screen: SimulatorMessagesScreenId.Threads },
         { app: SimulatorApp.Messages, screen: SimulatorMessagesScreenId.NewThread },
-        'new_thread',
-        'back',
+        NEW_THREAD_ACTION,
+        BACK_ACTION,
     );
 
     // Internet: button and form_submit edges

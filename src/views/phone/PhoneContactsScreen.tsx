@@ -93,10 +93,10 @@ export function PhoneContactsScreen({
                             aria-hidden
                         >
                             <span
-                                className="simulator-text--primary"
+                                className='simulator-text--primary'
                                 style={{ fontSize: '1.25rem' }}
                             >
-                                <UserRound size={24} strokeWidth={1.5} aria-hidden="true" />
+                                <UserRound size={24} strokeWidth={1.5} aria-hidden='true' />
                             </span>
                         </div>
                         <div

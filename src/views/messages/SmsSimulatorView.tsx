@@ -102,7 +102,8 @@ export default function SmsSimulatorView({
     const visible = payload.mode === SmsMode.History ? messages : messages.slice(0, visibleCount);
     const senderName = content.sender_display_name;
     const senderNumber = content.sender_number;
-    const contactLabel = senderName ?? (senderNumber ? formatNumber(senderNumber) : 'Unknown');
+    const contactLabel =
+        senderName ?? (senderNumber ? formatNumber(senderNumber) : screenLocale.t('value.unknown'));
 
     const renderLinkChoice = (
         link: NonNullable<typeof content.links>[number],
@@ -236,7 +237,7 @@ export default function SmsSimulatorView({
             </div>
 
             {payload.readOnly && onBack && (
-                <button type="button" onClick={onBack}>
+                <button type='button' onClick={onBack}>
                     {screenLocale.t('screen.smsSimulatorView.back.to.threads')}
                 </button>
             )}
@@ -265,9 +266,9 @@ export default function SmsSimulatorView({
                     />
                     {!navRenderedByShell && (
                         <button
-                            type="submit"
+                            type='submit'
                             disabled={Boolean(unavailable) || !replyText.trim()}
-                            className="simulator-messages__inline-send"
+                            className='simulator-messages__inline-send'
                         >
                             {screenLocale.t('screen.smsSimulatorView.send')}
                         </button>

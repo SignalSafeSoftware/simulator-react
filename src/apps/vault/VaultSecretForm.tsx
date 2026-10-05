@@ -1,4 +1,6 @@
 import { useId, type RefObject } from 'react';
+import { FieldInputType } from '../../utils/payload/browserFieldType.js';
+import { AUTOCOMPLETE_OFF } from '../../constants.js';
 import { Copy, Eye, EyeOff } from 'lucide-react';
 import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import {
@@ -29,23 +31,23 @@ function SecretValueField({
     const secretId = useId();
     const toggleLabel = reveal ? t('app.vault.hideSecret') : t('app.vault.revealSecret');
     return (
-        <div className="vault-entry-field">
+        <div className='vault-entry-field'>
             <label htmlFor={secretId}>{t('app.vault.secret')}</label>
-            <div className="vault-secret-group">
+            <div className='vault-secret-group'>
                 <button
                     className={SIM_BTN_OUTLINE}
-                    type="button"
+                    type='button'
                     aria-label={t('app.vault.copySecret')}
                     title={t('app.vault.copySecret')}
                     onClick={onCopy}
                 >
-                    <Copy size={18} aria-hidden="true" />
+                    <Copy size={18} aria-hidden='true' />
                 </button>
                 <input
                     id={secretId}
                     className={SIM_INPUT}
-                    autoComplete="new-password"
-                    type={reveal ? 'text' : 'password'}
+                    autoComplete='new-password'
+                    type={reveal ? FieldInputType.Text : FieldInputType.Password}
                     required
                     disabled={busy}
                     value={draft.value}
@@ -53,16 +55,16 @@ function SecretValueField({
                 />
                 <button
                     className={SIM_BTN_OUTLINE}
-                    type="button"
+                    type='button'
                     aria-label={toggleLabel}
                     title={toggleLabel}
                     aria-pressed={reveal}
                     onClick={onReveal}
                 >
                     {reveal ? (
-                        <EyeOff size={18} aria-hidden="true" />
+                        <EyeOff size={18} aria-hidden='true' />
                     ) : (
-                        <Eye size={18} aria-hidden="true" />
+                        <Eye size={18} aria-hidden='true' />
                     )}
                 </button>
             </div>
@@ -99,7 +101,7 @@ export function SecretForm({
     const { t } = useSimulatorLocale();
     return (
         <form
-            className="vault-entry-form"
+            className='vault-entry-form'
             ref={formRef}
             onSubmit={(event) => {
                 event.preventDefault();
@@ -152,7 +154,7 @@ export function SecretForm({
                     {t('app.vault.username')}
                     <input
                         className={SIM_INPUT}
-                        autoComplete="off"
+                        autoComplete={AUTOCOMPLETE_OFF}
                         disabled={busy}
                         value={draft.username}
                         onChange={(event) => onChange({ ...draft, username: event.target.value })}

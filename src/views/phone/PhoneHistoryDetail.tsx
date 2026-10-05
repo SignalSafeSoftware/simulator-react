@@ -24,21 +24,21 @@ export default function PhoneHistoryDetail({
 }: Readonly<PhoneHistoryDetailProps>) {
     const formatNumber = usePhoneNumberFormatter();
     return (
-        <div className="simulator-history-detail">
-            <div className="simulator-history-detail__body">
-                <h3 className="simulator-history-detail__caller">{caller}</h3>
+        <div className='simulator-history-detail'>
+            <div className='simulator-history-detail__body'>
+                <h3 className='simulator-history-detail__caller'>{caller}</h3>
                 {photo}
                 {number && (
-                    <p className="simulator-history-detail__number">
+                    <p className='simulator-history-detail__number'>
                         {numberLabel && <span>{numberLabel} · </span>}
                         {formatNumber(number)}
                     </p>
                 )}
-                <p className="simulator-history-detail__time">{timestamp}</p>
-                {description && <p className="simulator-history-detail__metadata">{description}</p>}
+                <p className='simulator-history-detail__time'>{timestamp}</p>
+                {description && <p className='simulator-history-detail__metadata'>{description}</p>}
             </div>
-            {actions && <div className="simulator-history-actions">{actions}</div>}
-            {children && <div className="simulator-history-detail__summary">{children}</div>}
+            {actions && <div className='simulator-history-actions'>{actions}</div>}
+            {children && <div className='simulator-history-detail__summary'>{children}</div>}
         </div>
     );
 }
@@ -57,8 +57,8 @@ export function PhoneHistoryPagination({
 
     return hasMore ? (
         <button
-            type="button"
-            className="simulator-history-load-more"
+            type='button'
+            className='simulator-history-load-more'
             disabled={loading || disabled}
             onClick={onLoadMore}
         >

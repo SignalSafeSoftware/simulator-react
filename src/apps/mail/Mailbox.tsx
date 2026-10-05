@@ -218,10 +218,10 @@ function MailboxScreen({
             onBack={back}
             navigation={<AppSecondaryNav actions={navActions} />}
         >
-            {error && <p role="alert">{error}</p>}
+            {error && <p role='alert'>{error}</p>}
             {selectedRecord.error && (
                 <>
-                    <p className={SIM_LIST_ERROR} role="alert">
+                    <p className={SIM_LIST_ERROR} role='alert'>
                         {selectedRecord.error}
                     </p>
                     <LoadMore

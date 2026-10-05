@@ -28,10 +28,10 @@ export default function DeviceHome({
 }: Readonly<DeviceHomeProps>) {
     const { t } = useSimulatorLocale();
     return (
-        <section className="simulator-home-screen">
+        <section className='simulator-home-screen'>
             <h2 className={joinClasses(SIM_SCREEN_HEADER, 'home-banner')}>{t('app.home.title')}</h2>
             {homeHeader}
-            <div className="prototype-home">
+            <div className='prototype-home'>
                 <SimulatorScreenTile
                     label={t('app.home.settings')}
                     onClick={onOpenSettings}
@@ -39,7 +39,7 @@ export default function DeviceHome({
                         <Settings
                             size={TILE_ICON_SIZE}
                             strokeWidth={TILE_ICON_STROKE_WIDTH}
-                            aria-hidden="true"
+                            aria-hidden='true'
                         />
                     }
                 />
@@ -50,7 +50,7 @@ export default function DeviceHome({
                         <VaultIcon
                             size={TILE_ICON_SIZE}
                             strokeWidth={TILE_ICON_STROKE_WIDTH}
-                            aria-hidden="true"
+                            aria-hidden='true'
                         />
                     }
                 />
@@ -61,14 +61,14 @@ export default function DeviceHome({
                         <Images
                             size={TILE_ICON_SIZE}
                             strokeWidth={TILE_ICON_STROKE_WIDTH}
-                            aria-hidden="true"
+                            aria-hidden='true'
                         />
                     }
                 />
             </div>
             {onLock && (
                 <button className={SIM_BTN_OUTLINE} onClick={onLock}>
-                    <LockKeyhole size={18} aria-hidden="true" /> {t('app.home.lock')}
+                    <LockKeyhole size={18} aria-hidden='true' /> {t('app.home.lock')}
                 </button>
             )}
         </section>

@@ -1,4 +1,5 @@
 import { useId, useState, type ReactNode } from 'react';
+import { AUTOCOMPLETE_OFF } from '../../constants.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 export interface EditableContactValue {
@@ -66,11 +67,11 @@ export function ContactValuesEditor({
             preferredId,
         );
     return (
-        <section className="contact-values-panel simulator-list-group" aria-labelledby={titleId}>
-            <header className="contact-values-heading">
+        <section className='contact-values-panel simulator-list-group' aria-labelledby={titleId}>
+            <header className='contact-values-heading'>
                 <h3 id={titleId}>{label ?? title}</h3>
                 <button
-                    type="button"
+                    type='button'
                     aria-label={t('contact.addValue', { kind })}
                     title={t('contact.addValue', { kind })}
                     disabled={values.length >= 100}
@@ -78,7 +79,7 @@ export function ContactValuesEditor({
                         onChange([...values, { id: createId(), label: '', value: '' }], preferredId)
                     }
                 >
-                    <span aria-hidden="true">＋</span>
+                    <span aria-hidden='true'>＋</span>
                 </button>
             </header>
             <datalist id={`${titleId}-labels`}>
@@ -89,7 +90,7 @@ export function ContactValuesEditor({
                 ))}
             </datalist>
             {values.map((value, index) => (
-                <div className="simulator-contact-value-editor" key={value.id}>
+                <div className='simulator-contact-value-editor' key={value.id}>
                     <label>
                         {t('contact.valueLabel', { kind, index: index + 1 })}
                         <input
@@ -97,7 +98,7 @@ export function ContactValuesEditor({
                             maxLength={100}
                             value={value.label}
                             placeholder={t('contact.unlabeled')}
-                            autoComplete="off"
+                            autoComplete={AUTOCOMPLETE_OFF}
                             onChange={(event) => update(value.id, { label: event.target.value })}
                         />
                     </label>
@@ -117,10 +118,10 @@ export function ContactValuesEditor({
                             onChange={(event) => update(value.id, { value: event.target.value })}
                         />
                     </label>
-                    <div className="contact-value-actions">
+                    <div className='contact-value-actions'>
                         <label>
                             <input
-                                type="checkbox"
+                                type='checkbox'
                                 checked={preferredId === value.id}
                                 onChange={(event) =>
                                     onChange([...values], event.target.checked ? value.id : null)
@@ -129,7 +130,7 @@ export function ContactValuesEditor({
                             {t('contact.preferred', { kind })}
                         </label>
                         <button
-                            type="button"
+                            type='button'
                             aria-label={t('contact.removeValue', { kind, index: index + 1 })}
                             title={t('contact.removeValue', { kind, index: index + 1 })}
                             onClick={() =>
@@ -139,7 +140,7 @@ export function ContactValuesEditor({
                                 )
                             }
                         >
-                            <span aria-hidden="true">−</span>
+                            <span aria-hidden='true'>−</span>
                         </button>
                     </div>
                 </div>

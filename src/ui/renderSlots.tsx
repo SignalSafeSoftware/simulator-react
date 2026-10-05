@@ -101,10 +101,10 @@ export function renderPhoneIncomingCallExtra(
         return null;
     }
     return (
-        <div className={SIM_PHONE_INCOMING_CALL_EXTRA} data-testid="phone-incoming-call-extra">
+        <div className={SIM_PHONE_INCOMING_CALL_EXTRA} data-testid='phone-incoming-call-extra'>
             <div
                 className={SIM_PHONE_INCOMING_CALL_AFTER_ACTIONS}
-                data-testid="phone-incoming-call-after-actions"
+                data-testid='phone-incoming-call-after-actions'
             >
                 {content}
             </div>

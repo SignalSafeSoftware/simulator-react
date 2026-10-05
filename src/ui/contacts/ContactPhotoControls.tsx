@@ -39,29 +39,29 @@ export function ContactPhotoControls({
     const input = useRef<HTMLInputElement>(null);
     const titleId = useId();
     return (
-        <section className="simulator-contact-photo" aria-labelledby={titleId}>
+        <section className='simulator-contact-photo' aria-labelledby={titleId}>
             <span id={titleId}>{t('contact.photo')}</span>
-            <div className="contact-identity-fields">
-                <div className="contact-current-image">
+            <div className='contact-identity-fields'>
+                <div className='contact-current-image'>
                     {selectedImageUrl ? (
                         <img src={selectedImageUrl} alt={t('contact.selectedPhoto')} />
                     ) : (
                         (currentImage ??
                         fallback ?? (
-                            <span className="simulator-contact-photo-placeholder">
-                                <UserRound className="contact-photo" aria-hidden="true" />
+                            <span className='simulator-contact-photo-placeholder'>
+                                <UserRound className='contact-photo' aria-hidden='true' />
                                 <span className={SIM_VISUALLY_HIDDEN}>{t('contact.noPhoto')}</span>
                             </span>
                         ))
                     )}
                 </div>
                 <fieldset
-                    className="simulator-contact-photo-actions"
+                    className='simulator-contact-photo-actions'
                     aria-label={t('contact.photo')}
                 >
                     <input
                         ref={input}
-                        type="file"
+                        type='file'
                         hidden
                         disabled={capability.state !== SimulatorCapabilityState.Enabled}
                         accept={accept}
@@ -74,35 +74,35 @@ export function ContactPhotoControls({
                         }}
                     />
                     <CapabilityButton
-                        type="button"
+                        type='button'
                         capability={capability}
                         aria-label={t('contact.changePhoto')}
                         title={t('contact.changePhoto')}
                         onClick={() => input.current?.click()}
                     >
-                        {actionIcons?.change ?? <PhotoActionIcon action="change" />}
+                        {actionIcons?.change ?? <PhotoActionIcon action='change' />}
                     </CapabilityButton>
                     <CapabilityButton
-                        type="button"
+                        type='button'
                         capability={capability}
                         aria-label={t('contact.removePhoto')}
                         title={t('contact.removePhoto')}
                         onClick={onRemove}
                     >
-                        {actionIcons?.remove ?? <PhotoActionIcon action="remove" />}
+                        {actionIcons?.remove ?? <PhotoActionIcon action='remove' />}
                     </CapabilityButton>
                     <CapabilityButton
-                        type="button"
+                        type='button'
                         capability={restoreCapability}
                         aria-label={t('contact.restorePhoto')}
                         title={t('contact.restorePhoto')}
                         onClick={onRestore}
                     >
-                        {actionIcons?.restore ?? <PhotoActionIcon action="restore" />}
+                        {actionIcons?.restore ?? <PhotoActionIcon action='restore' />}
                     </CapabilityButton>
                 </fieldset>
             </div>
-            {error && <p role="alert">{error}</p>}
+            {error && <p role='alert'>{error}</p>}
             {status && (
                 <p>
                     <output>{status}</output>
@@ -115,27 +115,27 @@ export function ContactPhotoControls({
 function PhotoActionIcon({ action }: Readonly<{ action: 'change' | 'remove' | 'restore' }>) {
     return (
         <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
+            width='20'
+            height='20'
+            viewBox='0 0 24 24'
+            fill='none'
+            stroke='currentColor'
+            strokeWidth='2'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            aria-hidden='true'
         >
             {action === 'restore' ? (
                 <>
-                    <path d="M3 11a9 9 0 1 1 2.7 7" />
-                    <path d="M3 3v8h8" />
+                    <path d='M3 11a9 9 0 1 1 2.7 7' />
+                    <path d='M3 3v8h8' />
                 </>
             ) : (
                 <>
-                    <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8" />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <path d="m21 15-5-5L5 21M17 5h6" />
-                    {action === 'change' && <path d="M20 2v6" />}
+                    <path d='M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8' />
+                    <circle cx='8.5' cy='8.5' r='1.5' />
+                    <path d='m21 15-5-5L5 21M17 5h6' />
+                    {action === 'change' && <path d='M20 2v6' />}
                 </>
             )}
         </svg>

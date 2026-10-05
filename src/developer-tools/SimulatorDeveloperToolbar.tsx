@@ -54,7 +54,7 @@ export default function SimulatorDeveloperToolbar({
                     return (
                         <button
                             key={section}
-                            type="button"
+                            type='button'
                             className={joinClasses(
                                 SIM_BORDER_NONE,
                                 'simulator-inline-flex',

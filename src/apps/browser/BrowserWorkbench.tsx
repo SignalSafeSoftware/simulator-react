@@ -1,4 +1,5 @@
 import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
+import { INPUT_TYPE_SEARCH, AUTOCOMPLETE_OFF } from '../../constants.js';
 import {
     BROWSER_ACTION_TYPE,
     BROWSER_ACTION_VERSION,
@@ -71,16 +72,16 @@ export function HtmlMockPage({
         return () => window.removeEventListener('message', receive);
     }, [page.id, document.session]);
     return document.error ? (
-        <p role="alert">{document.error}</p>
+        <p role='alert'>{document.error}</p>
     ) : (
         <iframe
             key={document.session}
             ref={frame}
             title={page.title}
-            sandbox="allow-scripts allow-forms"
-            referrerPolicy="no-referrer"
+            sandbox='allow-scripts allow-forms'
+            referrerPolicy='no-referrer'
             srcDoc={document.html}
-            className="prototype-browser-frame"
+            className='prototype-browser-frame'
         />
     );
 }
@@ -95,7 +96,7 @@ export function ReactMockPage({
     onAction: (event: BrowserAction) => void;
 }>) {
     return (
-        <div className="prototype-react-page">
+        <div className='prototype-react-page'>
             {render((action, values = {}) => {
                 const parsed = browserActionSchema.safeParse({
                     type: BROWSER_ACTION_TYPE,
@@ -117,14 +118,17 @@ function escapeHtml(value: string): string {
     return value.replace(/[&<>"']/g, (character) => `&#${character.codePointAt(0)};`);
 }
 
+const SEARCH_PAGE_ID = 'search';
+const SEARCH_ACTION = 'search';
+
 function samplePage(t: Translate): MockPage {
     const title = escapeHtml(t('app.browser.search.title'));
     const label = escapeHtml(t('app.browser.search.label'));
     return {
-        id: 'search',
+        id: SEARCH_PAGE_ID,
         title: t('app.browser.search.title'),
         url: 'https://example.test/search',
-        html: `<h1>${title}</h1><form data-simulator-action="search"><label>${label}<input name="query" data-simulator-capture="true"></label><button type="submit">${label}</button></form><p>${escapeHtml(t('app.browser.search.stays'))}</p>`,
+        html: `<h1>${title}</h1><form data-simulator-action="${SEARCH_ACTION}"><label>${label}<input name="query" data-simulator-capture="true"></label><button type="submit">${label}</button></form><p>${escapeHtml(t('app.browser.search.stays'))}</p>`,
     };
 }
 export default function BrowserWorkbench({
@@ -166,7 +170,7 @@ export default function BrowserWorkbench({
     }
     function action(event: BrowserAction) {
         setLast(`${event.event}: ${event.action}`);
-        if (event.action === 'search') search(String(event.values.query ?? ''));
+        if (event.action === SEARCH_ACTION) search(String(event.values.query ?? ''));
     }
     function submitAddress() {
         const value = address.trim();
@@ -203,7 +207,7 @@ export default function BrowserWorkbench({
             ) : (
                 <>
                     <form
-                        className="prototype-address-group"
+                        className='prototype-address-group'
                         onSubmit={(event) => {
                             event.preventDefault();
                             submitAddress();
@@ -211,32 +215,32 @@ export default function BrowserWorkbench({
                     >
                         <button
                             className={SIM_BTN_OUTLINE}
-                            type="button"
+                            type='button'
                             aria-label={t('app.browser.back')}
                             title={t('app.browser.back')}
                             disabled={!previousPage}
                             onClick={() => previousPage && goTo(position - 1, previousPage)}
                         >
-                            <ArrowLeft size={18} aria-hidden="true" />
+                            <ArrowLeft size={18} aria-hidden='true' />
                         </button>
                         <button
                             className={SIM_BTN_OUTLINE}
-                            type="button"
+                            type='button'
                             aria-label={t('app.browser.forward')}
                             title={t('app.browser.forward')}
                             disabled={!nextPage}
                             onClick={() => nextPage && goTo(position + 1, nextPage)}
                         >
-                            <ArrowRight size={18} aria-hidden="true" />
+                            <ArrowRight size={18} aria-hidden='true' />
                         </button>
                         <input
                             className={SIM_INPUT}
-                            type="search"
+                            type={INPUT_TYPE_SEARCH}
                             aria-label={t('app.browser.address')}
                             placeholder={t('app.browser.address')}
                             value={address}
                             onChange={(event) => setAddress(event.target.value)}
-                            autoComplete="off"
+                            autoComplete={AUTOCOMPLETE_OFF}
                             spellCheck={false}
                         />
                     </form>
@@ -244,7 +248,7 @@ export default function BrowserWorkbench({
                         <HtmlMockPage page={page} onAction={action} themeCss={themeCss} />
                     ) : (
                         <ReactMockPage
-                            pageId="react-example"
+                            pageId='react-example'
                             onAction={action}
                             render={(emit) => (
                                 <>
@@ -260,7 +264,7 @@ export default function BrowserWorkbench({
                             )}
                         />
                     )}
-                    <output aria-live="polite">{last}</output>
+                    <output aria-live='polite'>{last}</output>
                 </>
             )}
         </DevicePage>

@@ -13,16 +13,16 @@ export default function PhotoLocation({
     const hasLocation = latitude !== null && longitude !== null;
     return (
         <section
-            className="prototype-photo-card prototype-location-card"
+            className='prototype-photo-card prototype-location-card'
             aria-label={t('app.photos.location')}
         >
             {hasLocation ? (
                 renderPhotoMap?.(latitude, longitude)
             ) : (
-                <div className="prototype-location-empty">{t('app.photos.noLocation')}</div>
+                <div className='prototype-location-empty'>{t('app.photos.noLocation')}</div>
             )}
-            <div className="prototype-photo-card-body">
-                <dl className="prototype-photo-details">
+            <div className='prototype-photo-card-body'>
+                <dl className='prototype-photo-details'>
                     <dt>{t('app.photos.latitude')}</dt>
                     <dd>{latitude ?? t('app.unknown')}</dd>
                     <dt>{t('app.photos.longitude')}</dt>

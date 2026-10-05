@@ -2,18 +2,17 @@ import {
     SimulatorEmailScreenId,
     SimulatorPhoneScreenId,
 } from '@signalsafe/simulator-core/devicePayload';
+import { NAV_BACK_ID, DEFAULT_BROWSER_SUBMIT_TARGET } from '../../constants.js';
 import { createTranslator, simulatorEnglish } from '../../i18n/catalog.js';
 /**
  * Secondary menu helpers for phone and email shell navigation.
  */
 
-import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../../constants.js';
-
 const emailItems = [
     { id: SimulatorEmailScreenId.List, labelKey: 'nav.inbox', icon: '📥' },
     { id: SimulatorEmailScreenId.Outbox, labelKey: 'nav.outbox', icon: '📤' },
     { id: SimulatorEmailScreenId.Trash, labelKey: 'nav.trash', icon: '🗑️' },
-    { id: 'back', labelKey: 'nav.back', icon: '↩' },
+    { id: NAV_BACK_ID, labelKey: 'nav.back', icon: '↩' },
 ] as const;
 
 export function getEmailSecondaryItems(locale = createTranslator(simulatorEnglish)) {

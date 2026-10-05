@@ -68,7 +68,7 @@ describe('PhoneContactEditor', () => {
         const onCancel = vi.fn();
         const { container } = render(
             <PhoneContactEditor
-                number=""
+                number=''
                 onNumberChange={() => {}}
                 onSubmit={onSubmit}
                 onCancel={onCancel}
@@ -130,7 +130,7 @@ describe('PhoneSimulatorView without call history', () => {
             <PhoneSimulatorView
                 payload={{ content, chosenIndex: null } as never}
                 phoneCapabilities={capabilities}
-                screen="history"
+                screen='history'
                 onNavigate={() => {}}
                 onAction={() => {}}
             />,
@@ -148,7 +148,7 @@ describe('PhoneSimulatorView without call history', () => {
             <PhoneSimulatorView
                 payload={{ content, chosenIndex: null } as never}
                 phoneCapabilities={capabilities}
-                screen="incoming_call"
+                screen='incoming_call'
                 onNavigate={() => {}}
                 onAction={() => {}}
                 sessionState={{} as never}

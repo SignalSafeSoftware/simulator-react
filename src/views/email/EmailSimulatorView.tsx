@@ -3,6 +3,7 @@
  * Wireframe: top "Email" banner, rectangular bottom nav (Inbox, Outbox, Trash, Back).
  */
 import { SimulatorEmailScreenId } from '@signalsafe/simulator-core/devicePayload';
+import { NAV_BACK_ID } from '../../constants.js';
 import { getEmailSecondaryItems } from '../../utils/navigation/simulatorSecondaryMenuHelpers.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import type { EmailScreenId, SimulatorAction, SimulatorEmailPayload } from '../../types/session.js';
@@ -61,7 +62,7 @@ export default function EmailSimulatorView({
     const outbox = payload?.outbox ?? [];
     const trash = payload?.trash ?? [];
     const handleNavSelect = (id: ReturnType<typeof getEmailSecondaryItems>[number]['id']) => {
-        if (id === 'back') {
+        if (id === NAV_BACK_ID) {
             onBack?.();
         } else {
             onNavigate?.(id);
@@ -91,7 +92,7 @@ export default function EmailSimulatorView({
                         selectedMessageId={selectedMessageId}
                         onSelectMessage={onSelectMessage}
                         onCompose={() => onNavigate?.(SimulatorEmailScreenId.Compose)}
-                        folder="outbox"
+                        folder='outbox'
                         folderLabel={screenLocale.t('nav.outbox')}
                     />
                 )}
@@ -101,7 +102,7 @@ export default function EmailSimulatorView({
                         inbox={trash}
                         selectedMessageId={selectedMessageId}
                         onSelectMessage={onSelectMessage}
-                        folder="trash"
+                        folder='trash'
                         folderLabel={screenLocale.t('nav.trash')}
                     />
                 )}
@@ -166,7 +167,7 @@ export default function EmailSimulatorView({
                     screen === SimulatorEmailScreenId.Trash) && (
                     <SimulatorLocalNav
                         items={getEmailSecondaryItems(screenLocale)}
-                        activeId={screen === SimulatorEmailScreenId.List ? 'list' : screen}
+                        activeId={screen}
                         onSelect={handleNavSelect}
                         className={localNavClass}
                         aria-label={screenLocale.t('screen.emailSimulatorView.email.folder')}

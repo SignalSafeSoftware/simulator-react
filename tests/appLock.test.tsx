@@ -27,7 +27,7 @@ const submitForm = (button: string) => fireEvent.submit(screen.getByText(button)
 describe('DevicePage', () => {
     it('renders bare content without a back handler', () => {
         render(
-            <DevicePage title="Plain" listLayout>
+            <DevicePage title='Plain' listLayout>
                 <p>content</p>
             </DevicePage>,
         );
@@ -38,7 +38,7 @@ describe('DevicePage', () => {
     it('wraps content in the shell with default back navigation', () => {
         const onBack = vi.fn();
         render(
-            <DevicePage title="Mail" icon="M" onBack={onBack}>
+            <DevicePage title='Mail' icon='M' onBack={onBack}>
                 <p>content</p>
             </DevicePage>,
         );
@@ -49,7 +49,7 @@ describe('DevicePage', () => {
 
     it('uses a custom default icon and navigation when provided', () => {
         render(
-            <DevicePage title="Mail" onBack={() => {}} navigation={<nav>custom nav</nav>}>
+            <DevicePage title='Mail' onBack={() => {}} navigation={<nav>custom nav</nav>}>
                 <p>content</p>
             </DevicePage>,
         );

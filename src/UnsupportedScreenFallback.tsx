@@ -27,8 +27,8 @@ export default function UnsupportedScreenFallback({
     return (
         <div
             className={joinClasses(SIM_UNSUPPORTED, simSpacing.blockPadding, simStatus.warningBox)}
-            role="alert"
-            data-testid="simulator-unsupported-screen"
+            role='alert'
+            data-testid='simulator-unsupported-screen'
             data-show-diagnostics={showDiagnostics ? 'true' : 'false'}
         >
             <p className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_WARNING, simSpacing.mb1)}>

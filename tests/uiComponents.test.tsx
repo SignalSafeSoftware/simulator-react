@@ -38,7 +38,7 @@ describe('LoadMore', () => {
     it('renders nothing when finished and offers retry after errors', () => {
         const { container, rerender } = render(<LoadMore {...props} hasMore={false} />);
         expect(container.firstChild).toBeNull();
-        rerender(<LoadMore {...props} hasMore={false} error="failed" />);
+        rerender(<LoadMore {...props} hasMore={false} error='failed' />);
         expect(screen.getByRole('button').textContent).toBe('Retry');
         rerender(<LoadMore {...props} loading />);
         expect(screen.getByRole('button').textContent).toBe('Loading…');
@@ -97,10 +97,10 @@ describe('shared controls', () => {
     it('marks the active nav item', () => {
         const onClick = vi.fn();
         const { rerender } = render(
-            <SimulatorAppNavItem label="Home" icon="home" onClick={onClick} />,
+            <SimulatorAppNavItem label='Home' icon='home' onClick={onClick} />,
         );
         expect(screen.getByRole('button').getAttribute('aria-current')).toBeNull();
-        rerender(<SimulatorAppNavItem label="Home" active ariaLabel="Go home" onClick={onClick} />);
+        rerender(<SimulatorAppNavItem label='Home' active ariaLabel='Go home' onClick={onClick} />);
         expect(screen.getByRole('button', { name: 'Go home' }).getAttribute('aria-current')).toBe(
             'page',
         );
@@ -109,7 +109,7 @@ describe('shared controls', () => {
     it('renders the identity card with and without an image', () => {
         const { container, rerender } = render(<ContactIdentityCard>Body</ContactIdentityCard>);
         expect(container.querySelector('header')).toBeNull();
-        rerender(<ContactIdentityCard image={<img alt="x" />}>Body</ContactIdentityCard>);
+        rerender(<ContactIdentityCard image={<img alt='x' />}>Body</ContactIdentityCard>);
         expect(container.querySelector('header')).not.toBeNull();
     });
 
@@ -185,9 +185,9 @@ describe('SimulatorAppsProvider defaults', () => {
         const onChange = vi.fn();
         render(
             <host.NotesEditor
-                label="Notes"
-                markdown="a"
-                placeholder=""
+                label='Notes'
+                markdown='a'
+                placeholder=''
                 readOnly={false}
                 onChange={onChange}
             />,

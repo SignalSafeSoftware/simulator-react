@@ -28,7 +28,7 @@ export function DevicePage({
     const { t } = useSimulatorLocale();
     const content = (
         <SimulatorPage
-            className="simulator-app-page"
+            className='simulator-app-page'
             header={<h2 className={SIM_SCREEN_HEADER}>{title}</h2>}
         >
             <div className={listLayout ? SIM_APP_LIST_PAGE_CONTENT : SIM_APP_PAGE_CONTENT}>

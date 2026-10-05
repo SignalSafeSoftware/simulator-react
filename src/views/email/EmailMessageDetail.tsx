@@ -15,6 +15,7 @@ import {
     SIM_SURFACE_LIGHT,
     SIM_TEXT_SM,
 } from '../../ui/styles/simulatorClasses.js';
+import { FieldInputType } from '../../utils/payload/browserFieldType.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import type { EmailScreenId, SimulatorAction } from '../../types/session.js';
 import { SimulatorActions } from '../../actions/simulatorActions.js';
@@ -55,7 +56,7 @@ function ReadOnlyField({ label, value }: Readonly<{ label: string; value: string
         <SimulatorField className={joinClasses(simSpacing.mb0, SIM_FLEX_SHRINK_0)}>
             <SimulatorLabel className={simLayout.fieldLabel}>{label}</SimulatorLabel>
             <SimulatorInput
-                type="text"
+                type={FieldInputType.Text}
                 readOnly
                 value={value}
                 className={readOnlyFieldClass}

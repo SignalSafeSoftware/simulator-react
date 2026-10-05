@@ -131,7 +131,7 @@ export default function SimulatorSessionTimeline({
 
     return (
         <CollapsibleReport
-            testId="simulator-session-timeline"
+            testId='simulator-session-timeline'
             title={screenLocale.t('screen.simulatorSessionTimeline.session.timeline')}
             summary={
                 <>

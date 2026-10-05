@@ -19,7 +19,7 @@ export function SimulatorPage({
 }: Readonly<SimulatorPageProps>) {
     const { locale } = useSimulatorLocale();
     return (
-        <Element {...props} lang={lang ?? locale} data-simulator-page="true">
+        <Element {...props} lang={lang ?? locale} data-simulator-page='true'>
             {header}
             {children}
             {footer}

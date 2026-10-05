@@ -36,7 +36,7 @@ export function SimulatorLocalNav<Id extends string = string>({
     return (
         <div
             className={joinClasses(simLocalNav.container, simSpacing.mb3, className)}
-            role="tablist"
+            role='tablist'
             aria-label={ariaLabel}
         >
             {items.map((item, idx) => {
@@ -45,8 +45,8 @@ export function SimulatorLocalNav<Id extends string = string>({
                 return (
                     <button
                         key={item.id}
-                        type="button"
-                        role="tab"
+                        type='button'
+                        role='tab'
                         aria-selected={isActive}
                         aria-label={item.label}
                         className={joinClasses(

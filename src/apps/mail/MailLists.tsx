@@ -1,4 +1,5 @@
 import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
+import { INPUT_TYPE_SEARCH } from '../../constants.js';
 import { UserRound, Search } from 'lucide-react';
 import { PagedListFooter } from '../shared/PagedListFooter.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
@@ -24,21 +25,21 @@ export function MailFolderList({
     const { t } = useSimulatorLocale();
     return (
         <ul
-            className="prototype-list prototype-mail-folders"
+            className='prototype-list prototype-mail-folders'
             aria-label={t('app.mail.foldersList')}
         >
             {sources.map((item) => (
                 <li key={item.id}>
-                    <button type="button" onClick={() => onSource(item.id)}>
+                    <button type='button' onClick={() => onSource(item.id)}>
                         {item.label}
                     </button>
                 </li>
             ))}
             {mailFolderSchema.options.map((value) => (
                 <li key={value}>
-                    <button type="button" onClick={() => onFolder(value)}>
+                    <button type='button' onClick={() => onFolder(value)}>
                         <span>{folderLabels[value]}</span>
-                        <span className="prototype-folder-count">{counts?.mail[value] ?? 0}</span>
+                        <span className='prototype-folder-count'>{counts?.mail[value] ?? 0}</span>
                     </button>
                 </li>
             ))}
@@ -66,13 +67,13 @@ function MailListItem({
         <li>
             <button className={SIM_BTN_OUTLINE} disabled={busy} onClick={() => onOpen(item)}>
                 <span
-                    className="prototype-mail-avatar simulator-avatar simulator-surface--avatar"
-                    aria-hidden="true"
+                    className='prototype-mail-avatar simulator-avatar simulator-surface--avatar'
+                    aria-hidden='true'
                 >
-                    <UserRound size={24} strokeWidth={1.5} aria-hidden="true" />
+                    <UserRound size={24} strokeWidth={1.5} aria-hidden='true' />
                 </span>
-                <span className="prototype-mail-content">
-                    <span className="prototype-mail-heading">
+                <span className='prototype-mail-content'>
+                    <span className='prototype-mail-heading'>
                         <strong>
                             {!item.read && '● '}
                             {item.subject || t('app.mail.noSubject')}
@@ -114,10 +115,10 @@ export function MailList({
     return (
         <SimulatorListGroup
             search={
-                <div className="prototype-mail-search">
-                    <Search size={16} aria-hidden="true" />
+                <div className='prototype-mail-search'>
+                    <Search size={16} aria-hidden='true' />
                     <input
-                        type="search"
+                        type={INPUT_TYPE_SEARCH}
                         className={SIM_INPUT}
                         value={query}
                         onChange={(event) => onQuery(event.target.value)}
@@ -127,7 +128,7 @@ export function MailList({
                 </div>
             }
         >
-            <ul className="prototype-list prototype-mail-list">
+            <ul className='prototype-list prototype-mail-list'>
                 {mails.map((item) => (
                     <MailListItem
                         key={item.id}
@@ -141,7 +142,7 @@ export function MailList({
             </ul>
             <PagedListFooter page={page} visible={visiblePage} label={t('app.mail.loadMore')} />
             {!page.loading && !page.error && mails.length === 0 && (
-                <p className="simulator-list-group__empty">
+                <p className='simulator-list-group__empty'>
                     {query ? t('app.mail.noSearchResults') : t('app.mail.noMessages')}
                 </p>
             )}

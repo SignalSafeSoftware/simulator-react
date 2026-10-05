@@ -48,7 +48,7 @@ export default function PhoneKeypad({
     const keys = KEYS.map(([digit, letters]) => (
         <button
             key={digit}
-            type="button"
+            type='button'
             disabled={disabled}
             className={
                 call ? 'simulator-call-key' : joinClasses(keyClass, 'simulator-phone__dialer-key')
@@ -89,7 +89,7 @@ export default function PhoneKeypad({
         </button>
     ));
     return call ? (
-        <div className="simulator-call-keypad">{keys}</div>
+        <div className='simulator-call-keypad'>{keys}</div>
     ) : (
         <div className={joinClasses(simLayout.stack, simSpacing.mb3)}>
             {[0, 1, 2, 3].map((row) => (

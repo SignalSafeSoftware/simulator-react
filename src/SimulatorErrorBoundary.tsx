@@ -111,8 +111,8 @@ function ErrorFallback({
     return (
         <div
             className={joinClasses(SIM_ERROR, simSpacing.blockPadding, simStatus.errorBox)}
-            role="alert"
-            data-testid="simulator-error-fallback"
+            role='alert'
+            data-testid='simulator-error-fallback'
             data-show-diagnostics={showDiagnostics ? 'true' : 'false'}
         >
             <p className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_DANGER, simSpacing.mb1)}>{title}</p>
@@ -128,7 +128,7 @@ function ErrorFallback({
                         SIM_OVERFLOW_AUTO,
                     )}
                     style={{ whiteSpace: 'pre-wrap', maxHeight: 120 }}
-                    data-testid="simulator-error-diagnostics-stack"
+                    data-testid='simulator-error-diagnostics-stack'
                 >
                     {errorInfo.componentStack}
                 </pre>

@@ -10,12 +10,12 @@ export function SimulatorAvatar({
     return (
         <span
             className={`simulator-avatar simulator-profile-avatar ${className}`}
-            aria-hidden="true"
+            aria-hidden='true'
         >
             {avatarUrl && avatarUrl !== failedUrl ? (
-                <img src={avatarUrl} alt="" onError={() => setFailedUrl(avatarUrl)} />
+                <img src={avatarUrl} alt='' onError={() => setFailedUrl(avatarUrl)} />
             ) : (
-                <UserRound strokeWidth={1.5} aria-hidden="true" />
+                <UserRound strokeWidth={1.5} aria-hidden='true' />
             )}
         </span>
     );

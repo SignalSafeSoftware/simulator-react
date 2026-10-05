@@ -114,25 +114,25 @@ export default function MessagesNewThreadView({
                     <output>{t('messages.sending')}</output>
                 </p>
             )}
-            {error && <p role="alert">{error}</p>}
+            {error && <p role='alert'>{error}</p>}
             <div className={joinClasses(simSpacing.px3, simSpacing.pt3, SIM_FLEX_SHRINK_0)}>
                 <SimulatorField>
                     <SimulatorLabel className={simLayout.fieldLabel}>
                         {t('phone.number')}
                     </SimulatorLabel>
                     <SimulatorInput
-                        type="tel"
+                        type='tel'
                         disabled={pending || (!onSend && !compose)}
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
-                        placeholder=""
+                        placeholder=''
                         className={SIM_ROUNDED_NONE}
                         aria-label={t('phone.number')}
                     />
                 </SimulatorField>
             </div>
             <div className={joinClasses(SIM_FLEX_GROW_1, SIM_MIN_H_0)} aria-hidden />
-            <div className="simulator-new-thread__fields">
+            <div className='simulator-new-thread__fields'>
                 <SimulatorField className={simSpacing.mb0}>
                     <SimulatorLabel className={simLayout.fieldLabel}>
                         {t('messages.message')}
@@ -157,7 +157,7 @@ export default function MessagesNewThreadView({
                         <SimulatorButton
                             tone={SimulatorButtonTone.Primary}
                             className={footerBtnClass}
-                            type="submit"
+                            type='submit'
                             disabled={
                                 Boolean(unavailable) ||
                                 pending ||
@@ -171,7 +171,7 @@ export default function MessagesNewThreadView({
                         <SimulatorButton
                             tone={SimulatorButtonTone.Neutral}
                             className={footerBtnClass}
-                            type="button"
+                            type='button'
                             disabled={pending}
                             onClick={onBack}
                             aria-label={t('action.cancel')}

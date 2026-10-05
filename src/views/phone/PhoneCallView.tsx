@@ -13,11 +13,20 @@ export function formatPhoneCallDuration(seconds: number): string {
         .toString()
         .padStart(2, '0')}:${(safe % 60).toString().padStart(2, '0')}`;
 }
+/** Lifecycle phase of a simulated call. */
+export const PhoneCallPhase = Object.freeze({
+    Dialing: 'dialing',
+    Ringing: 'ringing',
+    Connected: 'connected',
+    Reconnecting: 'reconnecting',
+} as const);
+export type PhoneCallPhase = (typeof PhoneCallPhase)[keyof typeof PhoneCallPhase];
+
 export interface PhoneCallViewProps {
     callerName: string;
     number?: string;
     label?: string;
-    phase: 'dialing' | 'ringing' | 'connected' | 'reconnecting';
+    phase: PhoneCallPhase;
     incoming: boolean;
     connectedAt: number | null;
     muted: boolean;
@@ -44,49 +53,49 @@ export default function PhoneCallView(props: Readonly<PhoneCallViewProps>) {
         const timer = setInterval(() => setNow(Date.now()), 1000);
         return () => clearInterval(timer);
     }, []);
-    const ringing = props.incoming && props.phase === 'ringing';
+    const ringing = props.incoming && props.phase === PhoneCallPhase.Ringing;
     let statusLabel = screenLocale.t('screen.phoneCallView.value1.value2', {
         value1: String(props.phase.charAt(0).toUpperCase()),
         value2: String(props.phase.slice(1)),
     });
     if (ringing) {
         statusLabel = screenLocale.t('screen.phoneCallView.incoming.call');
-    } else if (props.phase === 'connected' && props.connectedAt !== null) {
+    } else if (props.phase === PhoneCallPhase.Connected && props.connectedAt !== null) {
         statusLabel = formatPhoneCallDuration((now - props.connectedAt) / 1000);
     }
     return (
         <section
-            className="simulator-call-view"
+            className='simulator-call-view'
             aria-label={screenLocale.t('screen.phoneCallView.current.call')}
         >
             <h2 className={SIM_SCREEN_HEADER}>{props.callerName}</h2>
-            <div className="simulator-call-view__body">
-                {props.label && <p className="simulator-call-label">{props.label}</p>}
+            <div className='simulator-call-view__body'>
+                {props.label && <p className='simulator-call-label'>{props.label}</p>}
                 <div
-                    className={`simulator-caller-avatar ${props.phase === 'ringing' ? 'ringing' : ''}`}
+                    className={`simulator-caller-avatar ${props.phase === PhoneCallPhase.Ringing ? 'ringing' : ''}`}
                 >
-                    {props.avatar ?? <UserRound size={38} strokeWidth={1.5} aria-hidden="true" />}
+                    {props.avatar ?? <UserRound size={38} strokeWidth={1.5} aria-hidden='true' />}
                 </div>
                 {props.number && (
-                    <p className="simulator-call-number">{formatNumber(props.number)}</p>
+                    <p className='simulator-call-number'>{formatNumber(props.number)}</p>
                 )}
-                <output className="simulator-call-status">{statusLabel}</output>
+                <output className='simulator-call-status'>{statusLabel}</output>
                 {props.connectedAt !== null && (
                     <>
-                        <div className="simulator-sent-digits" aria-live="polite">
+                        <div className='simulator-sent-digits' aria-live='polite'>
                             {props.digits || screenLocale.t('screen.phoneCallView.keypad')}
                         </div>
                         <PhoneKeypad
-                            appearance="call"
+                            appearance='call'
                             onDigit={(digit) => props.onDigit?.(digit)}
                             digitLabel={(digit) => `Dial ${digit}`}
                         />
                     </>
                 )}
-                <div className="simulator-call-actions">
+                <div className='simulator-call-actions'>
                     {props.connectedAt !== null && (
                         <button
-                            type="button"
+                            type='button'
                             className={`simulator-call-round ${props.muted ? 'selected' : ''}`}
                             onClick={props.onMute}
                             aria-label={
@@ -98,9 +107,9 @@ export default function PhoneCallView(props: Readonly<PhoneCallViewProps>) {
                         >
                             {props.muteIcon ??
                                 (props.muted ? (
-                                    <MicOff aria-hidden="true" />
+                                    <MicOff aria-hidden='true' />
                                 ) : (
-                                    <Mic aria-hidden="true" />
+                                    <Mic aria-hidden='true' />
                                 ))}
                         </button>
                     )}
@@ -120,7 +129,7 @@ export default function PhoneCallView(props: Readonly<PhoneCallViewProps>) {
                             tone: SimulatorButtonTone.Danger,
                             onClick: props.onHangup,
                         },
-                        props.hangupIcon ?? <PhoneOff aria-hidden="true" />,
+                        props.hangupIcon ?? <PhoneOff aria-hidden='true' />,
                         props.renderChoice,
                     )}
                     {ringing &&
@@ -132,7 +141,7 @@ export default function PhoneCallView(props: Readonly<PhoneCallViewProps>) {
                                 tone: SimulatorButtonTone.Success,
                                 onClick: props.onAnswer,
                             },
-                            props.answerIcon ?? <Phone aria-hidden="true" />,
+                            props.answerIcon ?? <Phone aria-hidden='true' />,
                             props.renderChoice,
                         )}
                 </div>
@@ -150,7 +159,7 @@ function renderCallAction(
         renderChoice(props)
     ) : (
         <button
-            type="button"
+            type='button'
             className={props.className}
             onClick={props.onClick}
             aria-label={props['aria-label']}

@@ -57,8 +57,8 @@ export function LoadMore({
     return (
         <button
             ref={target}
-            type="button"
-            className="simulator-load-more"
+            type='button'
+            className='simulator-load-more'
             aria-busy={loading}
             disabled={loading}
             onClick={() => void onLoadMore()}

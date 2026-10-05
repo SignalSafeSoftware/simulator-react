@@ -84,7 +84,7 @@ export function PhoneHistoryRowButton({
 }>): JSX.Element {
     return (
         <button
-            type="button"
+            type='button'
             onClick={onClick}
             className={className}
             style={{ cursor: 'pointer' }}

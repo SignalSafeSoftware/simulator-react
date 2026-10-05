@@ -3,6 +3,7 @@ import {
     SIM_VISUALLY_HIDDEN,
     SIM_BTN_OUTLINE,
 } from '../../ui/styles/simulatorClasses.js';
+import { FieldInputType } from '../../utils/payload/browserFieldType.js';
 import { SIM_APP_PAGE_CONTENT } from '../../ui/styles/semanticSimulatorClasses.js';
 import { DevicePage } from '../shared/DevicePage.js';
 import { useRef, useState } from 'react';
@@ -23,7 +24,7 @@ export function LockScreen({
     const [busy, setBusy] = useState(false);
     return (
         <DevicePage title={t('app.lock.title')}>
-            <LockKeyhole size={48} aria-hidden="true" />
+            <LockKeyhole size={48} aria-hidden='true' />
             <form
                 onSubmit={async (event) => {
                     event.preventDefault();
@@ -45,17 +46,17 @@ export function LockScreen({
                     {t('app.lock.password')}
                     <input
                         className={SIM_INPUT}
-                        type="password"
-                        autoComplete="current-password"
+                        type={FieldInputType.Password}
+                        autoComplete='current-password'
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
                     />
                 </label>
-                <button type="submit" className={SIM_BTN_OUTLINE} disabled={busy}>
+                <button type='submit' className={SIM_BTN_OUTLINE} disabled={busy}>
                     {t('app.lock.unlock')}
                 </button>
             </form>
-            {error && <p role="alert">{error}</p>}
+            {error && <p role='alert'>{error}</p>}
             <p>{t('app.lock.recovery')}</p>
         </DevicePage>
     );
@@ -76,19 +77,19 @@ function LockSettingsActions({
     const { t } = useSimulatorLocale();
     const tone = SIM_BTN_OUTLINE;
     return (
-        <div className="prototype-actions">
-            <button type="submit" className={tone} disabled={disabled}>
+        <div className='prototype-actions'>
+            <button type='submit' className={tone} disabled={disabled}>
                 {t('app.lock.save')}
             </button>
-            <button className={tone} type="button" disabled={disabled} onClick={onCancel}>
+            <button className={tone} type='button' disabled={disabled} onClick={onCancel}>
                 {t('action.cancel')}
             </button>
             {hasLock && (
                 <>
-                    <button className={tone} type="button" disabled={disabled} onClick={onRemove}>
+                    <button className={tone} type='button' disabled={disabled} onClick={onRemove}>
                         {t('app.lock.remove')}
                     </button>
-                    <button className={tone} type="button" disabled={disabled} onClick={onLock}>
+                    <button className={tone} type='button' disabled={disabled} onClick={onLock}>
                         {t('app.lock.now')}
                     </button>
                 </>
@@ -187,8 +188,8 @@ export function LockSettings({
                             {t('app.lock.current')}
                             <input
                                 className={SIM_INPUT}
-                                type="password"
-                                autoComplete="current-password"
+                                type={FieldInputType.Password}
+                                autoComplete='current-password'
                                 value={current}
                                 onChange={(event) => setCurrent(event.target.value)}
                             />
@@ -198,8 +199,8 @@ export function LockSettings({
                         {t('app.lock.new')}
                         <input
                             className={SIM_INPUT}
-                            type="password"
-                            autoComplete="new-password"
+                            type={FieldInputType.Password}
+                            autoComplete='new-password'
                             minLength={4}
                             maxLength={128}
                             required
@@ -211,8 +212,8 @@ export function LockSettings({
                         {t('app.lock.confirm')}
                         <input
                             className={SIM_INPUT}
-                            type="password"
-                            autoComplete="new-password"
+                            type={FieldInputType.Password}
+                            autoComplete='new-password'
                             required
                             value={confirm}
                             onChange={(event) => setConfirm(event.target.value)}

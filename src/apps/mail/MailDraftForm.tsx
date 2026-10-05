@@ -17,13 +17,13 @@ function MailDraftAttachments({
             attachments: draft.attachments.filter((_, offset) => index !== offset),
         });
     return (
-        <ul className="prototype-list">
+        <ul className='prototype-list'>
             {draft.attachments.map((asset, index) => (
                 <li key={`${index}-${asset.name}`}>
                     {asset.name}
                     <button
                         className={SIM_BTN_OUTLINE}
-                        type="button"
+                        type='button'
                         disabled={busy}
                         onClick={() => remove(index)}
                     >
@@ -80,7 +80,7 @@ export function MailDraftForm({
             <label>
                 {t('app.mail.body')}
                 <textarea
-                    className="simulator-textarea"
+                    className='simulator-textarea'
                     rows={10}
                     disabled={busy}
                     value={draft.body}
@@ -91,9 +91,9 @@ export function MailDraftForm({
                 {t('app.mail.addAttachment')}
                 <input
                     className={SIM_INPUT}
-                    type="file"
+                    type='file'
                     disabled={busy}
-                    accept="image/png,image/jpeg,image/webp,text/plain,application/pdf"
+                    accept='image/png,image/jpeg,image/webp,text/plain,application/pdf'
                     onChange={(event) => {
                         const file = event.target.files?.[0];
                         event.target.value = '';

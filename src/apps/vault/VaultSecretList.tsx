@@ -24,17 +24,17 @@ export function SecretList({
 }>) {
     const { t } = useSimulatorLocale();
     return (
-        <div className="vault-folder-group">
+        <div className='vault-folder-group'>
             <SearchBox label={t('app.vault.searchSecrets')} value={query} onChange={onQuery} />
-            <ul className="vault-list-group" aria-label={t('app.vault.folderSecrets')}>
+            <ul className='vault-list-group' aria-label={t('app.vault.folderSecrets')}>
                 {secrets.records.map((item) => (
                     <li key={item.id}>
-                        <button type="button" disabled={busy} onClick={() => onEdit(item)}>
+                        <button type='button' disabled={busy} onClick={() => onEdit(item)}>
                             <span>
                                 <strong>{item.title}</strong>
                             </span>
-                            <span className="vault-secret-type">{typeLabels[item.type]}</span>
-                            <ChevronRight size={18} aria-hidden="true" />
+                            <span className='vault-secret-type'>{typeLabels[item.type]}</span>
+                            <ChevronRight size={18} aria-hidden='true' />
                         </button>
                     </li>
                 ))}

@@ -72,7 +72,7 @@ export default function PhoneContactEditor({
         <>
             <form
                 id={formId}
-                className="simulator-contact-editor contact-editor-panels"
+                className='simulator-contact-editor contact-editor-panels'
                 onSubmit={(event) => {
                     if (saving || saveDisabled) event.preventDefault();
                     else onSubmit(event);
@@ -83,11 +83,11 @@ export default function PhoneContactEditor({
                         <label>
                             {t('contact.name')}
                             <input
-                                name="name"
+                                name='name'
                                 defaultValue={defaultName}
                                 maxLength={nameMaxLength}
                                 required
-                                autoComplete="name"
+                                autoComplete='name'
                             />
                         </label>
                     </ContactIdentityCard>
@@ -98,11 +98,11 @@ export default function PhoneContactEditor({
                         <label>
                             {t('phone.number')}
                             <input
-                                name="number"
+                                name='number'
                                 value={number}
                                 onChange={(event) => onNumberChange?.(event.target.value)}
                                 placeholder={numberPlaceholder}
-                                type="tel"
+                                type='tel'
                                 required={numberRequired}
                             />
                             {numberHint}
@@ -110,9 +110,9 @@ export default function PhoneContactEditor({
                         <label>
                             {t('contact.email')}
                             <input
-                                name="email"
-                                type="email"
-                                autoComplete="email"
+                                name='email'
+                                type='email'
+                                autoComplete='email'
                                 defaultValue={defaultEmail}
                             />
                         </label>
