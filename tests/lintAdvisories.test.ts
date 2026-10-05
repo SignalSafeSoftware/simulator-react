@@ -1,8 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {} from '../src/utils/payload/simulatorPayloadDiff';
 import { lintSimulatorPayload } from '../src/utils/payload/lintSimulatorPayload';
-import {} from '../src/state/simulatorSessionInitialState.js';
-import {} from '../src/state/simulatorViewStateHelpers.js';
 import { createPayload } from './support/utilityTailSupport';
 
 const originalNodeEnv = process.env.NODE_ENV;

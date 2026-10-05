@@ -1,7 +1,4 @@
-import {} from '../../src/state/simulatorSessionInitialState.js';
 import { initialViewState } from '../../src/state/simulatorViewStateHelpers.js';
-import {} from '../../src/state/simulatorSessionReducer.js';
-import {} from '../../src/state/simulatorDispatchActions.js';
 import type { SimulatorSessionState } from '../../src/types/session';
 
 export function createPayload(

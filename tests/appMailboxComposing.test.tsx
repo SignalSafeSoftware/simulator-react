@@ -8,7 +8,6 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import Mailbox, { type MailboxSource } from '../src/apps/mail/Mailbox';
-import {} from '../src/apps/shared/SimulatorAppsHost';
 import { StoreHarness, settle } from './support/appHarness';
 import {
     ME,

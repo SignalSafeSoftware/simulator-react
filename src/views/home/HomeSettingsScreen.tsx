@@ -16,7 +16,6 @@ import { SimulatorDetailBackBar } from '../../ui/layout/SimulatorDetail.js';
 import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';
 import type { SimulatorHomeSettingsSection } from '../../types/session.js';
 import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../../simulatorStyles.js';
-import type {} from '../../utils/payload/simulatorCapabilities.js';
 import {
     SIM_HOME_SETTINGS_BACK_BAR,
     SIM_HOME_SETTINGS_HEADER,

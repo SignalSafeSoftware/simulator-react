@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {} from '../src/state/simulatorSessionInitialState.js';
-import {} from '../src/state/simulatorViewStateHelpers.js';
 import { simulatorSessionReducer } from '../src/state/simulatorSessionReducer.js';
-import {} from '../src/state/simulatorDispatchActions.js';
-import type {} from '../src/types/session';
 import { createState } from './support/reducerSupport';
 
 describe('session reducer side effects', () => {

@@ -1,18 +1,13 @@
-import {} from './support/createPayload.js';
 import React from 'react';
 import { act, create } from 'react-test-renderer';
 import { expect, it, vi } from 'vitest';
 import { SimulatorCapabilitiesContext } from '../src/contract/capabilities';
-import {} from '../src/views/phone/PhoneCallView.js';
 import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 import {
     useSimulatorSessionHandlers,
     type UseSimulatorSessionHandlersResult,
 } from '../src/hooks/useSimulatorSessionHandlers';
 import { SimulatorActions } from '../src/actions/simulatorActions.js';
-import {} from '../src/contract/navigation';
-import type {} from '../src/types/session';
-import {} from '../src/datasource/datasource';
 import { payload } from './support/hostEdgesSupport';
 
 it('hides disabled developer controls and returns from contact detail to the list', async () => {

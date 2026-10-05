@@ -1,13 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {} from '../src/utils/payload/simulatorPayloadDiff';
-import {} from '../src/utils/payload/lintSimulatorPayload';
 import {
     actionToInteractionEvent,
     appOpenedEvent,
     screenViewedEvent,
 } from '../src/utils/telemetry/simulatorEventMapper';
-import {} from '../src/state/simulatorSessionInitialState.js';
-import {} from '../src/state/simulatorViewStateHelpers.js';
 import { createPayload, createState } from './support/utilityTailSupport';
 
 const originalNodeEnv = process.env.NODE_ENV;

@@ -1,12 +1,4 @@
-import type {} from '../src/types/session.js';
 import { describe, expect, it } from 'vitest';
-import {} from '../src/adapters/device/emailMapper';
-import {} from '../src/adapters/device/homeMapper';
-import {} from '../src/adapters/device/internetMapper';
-import {} from '../src/adapters/device/messagesMapper';
-import {} from '../src/adapters/device/phoneMapper';
-import {} from '../src/adapters/templateToSession';
-import {} from '../src/constants';
 import { runSimulatorRealismChecks } from '../src/utils/payload/simulatorRealismChecks';
 
 describe('realism checks', () => {

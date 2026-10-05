@@ -6,7 +6,6 @@ import {
     type SimulatorStore,
 } from '@signalsafe/simulator-core/apps/contracts';
 import { fireEvent, render, screen } from '@testing-library/react';
-import type {} from 'react';
 import { vi } from 'vitest';
 import Mailbox, { type MailboxSource } from '../../src/apps/mail/Mailbox';
 import { SimulatorAppsProvider } from '../../src/apps/shared/SimulatorAppsHost';

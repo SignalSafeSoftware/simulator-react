@@ -1,12 +1,6 @@
 import type { ReactTestRendererJSON, ReactTestRenderer } from 'react-test-renderer';
-import {} from 'node:os';
 import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {} from '../src/adapters/device/emailMapper';
-import {} from '../src/adapters/device/homeMapper';
-import {} from '../src/adapters/device/internetMapper';
-import {} from '../src/adapters/device/messagesMapper';
-import {} from '../src/adapters/device/phoneMapper';
 import SimulatorErrorBoundary from '../src/SimulatorErrorBoundary';
 import SimulatorLintBanner from '../src/developer-tools/SimulatorLintBanner.js';
 import { SimulatorList, SimulatorListItem } from '../src/ui/lists/SimulatorList.js';

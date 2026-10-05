@@ -22,7 +22,6 @@ import { getFieldInputType } from '../../utils/payload/browserFieldType.js';
 import { joinKeyParts, withStableKeys } from '../../utils/lists/stableKeys.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import type { ReactNode } from 'react';
-import type {} from '../../types/shapes.js';
 
 import SimulatorBrowserChrome from '../../apps/browser/SimulatorBrowserChrome.js';
 import {

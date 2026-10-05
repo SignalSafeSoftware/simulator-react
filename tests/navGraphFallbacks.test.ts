@@ -1,13 +1,5 @@
-import type {} from '../src/types/session.js';
 import { describe, expect, it } from 'vitest';
-import {} from '../src/adapters/device/emailMapper';
-import {} from '../src/adapters/device/homeMapper';
-import {} from '../src/adapters/device/internetMapper';
-import {} from '../src/adapters/device/messagesMapper';
-import {} from '../src/adapters/device/phoneMapper';
 import { templateDetailToPayload } from '../src/adapters/templateToSession';
-import {} from '../src/constants';
-import {} from '../src/utils/payload/simulatorRealismChecks';
 import {
     buildSimulatorNavGraph,
     simulatorNavGraphToJson,

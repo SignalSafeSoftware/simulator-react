@@ -1,10 +1,8 @@
 // @vitest-environment jsdom
 import { type Mail } from '@signalsafe/simulator-core/apps/contracts';
 import { fireEvent, screen, within } from '@testing-library/react';
-import type {} from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { type MailboxSource } from '../src/apps/mail/Mailbox';
-import {} from '../src/apps/shared/SimulatorAppsHost';
 import { settle } from './support/appHarness';
 import {
     mail,

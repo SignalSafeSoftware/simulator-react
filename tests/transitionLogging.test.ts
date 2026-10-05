@@ -1,12 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {} from '../src/utils/payload/simulatorPayloadDiff';
-import {} from '../src/utils/payload/lintSimulatorPayload';
 import {
     isSimulatorTransitionLoggingEnabled,
     logSimulatorTransition,
 } from '../src/utils/telemetry/simulatorTransitionLogger';
-import {} from '../src/state/simulatorSessionInitialState.js';
-import {} from '../src/state/simulatorViewStateHelpers.js';
 import { createState } from './support/utilityTailSupport';
 
 const originalNodeEnv = process.env.NODE_ENV;

@@ -5,7 +5,6 @@ import { PayloadSection } from './payloadSections.js';
  * Simulator-scoped only; no generic JSON diff.
  */
 
-import type {} from '../../types/shapes.js';
 import {
     idsFromNamedSection,
     summarizeDiffItems,

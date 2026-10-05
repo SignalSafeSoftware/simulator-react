@@ -108,11 +108,7 @@ export function applyNavLocal(
     screen: string,
 ): SimulatorViewState {
     const next = { ...state };
-    const current = state.activeApp;
-    if (app !== current) {
-        return next;
-    }
-    ownValue(NAV_LOCAL_HANDLERS, app)?.(next, state, screen);
+    if (app === state.activeApp) ownValue(NAV_LOCAL_HANDLERS, app)?.(next, state, screen);
     return next;
 }
 

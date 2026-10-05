@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
-import {} from '../src/state/simulatorViewStateHelpers.js';
-import {} from '../src/state/simulatorSessionReducer.js';
 import { switchChannelAction } from '../src/state/simulatorDispatchActions.js';
-import type {} from '../src/types/session';
 import { createPayload } from './support/reducerSupport';
 
 describe('session reducer channels and initial state', () => {

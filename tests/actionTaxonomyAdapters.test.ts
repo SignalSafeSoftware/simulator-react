@@ -1,4 +1,3 @@
-import {} from 'node:os';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { appToChannel, mapContacts, mapDevice } from '../src/adapters/fullDeviceToSession';
 import { mapEmail } from '../src/adapters/device/emailMapper';

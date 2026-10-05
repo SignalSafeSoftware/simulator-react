@@ -1,13 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {} from '../src/adapters/fullDeviceToSession';
-import {} from '../src/state/simulatorSessionInitialState.js';
 import type { SimulatorTemplatePayload } from '../src/types/session';
-import {} from '../src/utils/payload/lintSimulatorPayload';
-import {} from '../src/utils/payload/simulatorKeyPatterns';
 import { getSimulatorCapabilities } from '../src/utils/payload/simulatorCapabilities';
 import { handleSimulatorKeyboard } from '../src/utils/navigation/simulatorKeyboardCommands';
-import {} from '../src/utils/preview/simulatorPreviewReport';
-import {} from '../src/utils/telemetry/simulatorTransitionLogger';
 import { createPayload } from './support/criticalPathsSupport';
 
 const originalNodeEnv = process.env.NODE_ENV;

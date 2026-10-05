@@ -1,12 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { mapDirectory } from '../src/adapters/fullDeviceToSession';
-import {} from '../src/state/simulatorSessionInitialState.js';
 import type { SimulatorSessionState, SimulatorTemplatePayload } from '../src/types/session';
-import {} from '../src/utils/payload/lintSimulatorPayload';
 import { keyNamingSuggestion } from '../src/utils/payload/simulatorKeyPatterns';
-import {} from '../src/utils/payload/simulatorCapabilities';
-import {} from '../src/utils/navigation/simulatorKeyboardCommands';
-import {} from '../src/utils/preview/simulatorPreviewReport';
 import { logSimulatorTransition } from '../src/utils/telemetry/simulatorTransitionLogger';
 import { createPayload, createState } from './support/criticalPathsSupport';
 

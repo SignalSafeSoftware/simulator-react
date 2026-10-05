@@ -1,17 +1,8 @@
-import type {} from '../src/types/session.js';
 import { describe, expect, it } from 'vitest';
-import {} from '../src/adapters/device/emailMapper';
-import {} from '../src/adapters/device/homeMapper';
-import {} from '../src/adapters/device/internetMapper';
-import {} from '../src/adapters/device/messagesMapper';
-import {} from '../src/adapters/device/phoneMapper';
-import {} from '../src/adapters/templateToSession';
-import {} from '../src/constants';
 import {
     applyPreviewFallback,
     PREVIEW_PLACEHOLDER_ID_PREFIX,
 } from '../src/utils/preview/previewFallbackWorld';
-import {} from '../src/utils/payload/simulatorRealismChecks';
 
 describe('preview fallback world', () => {
     it('applies preview fallbacks only when entry targets missing content', () => {

@@ -27,7 +27,6 @@ import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';
 import type { SimulatorAction, SimulatorHomeStoreApp } from '../../types/session.js';
 import { SimulatorActions } from '../../actions/simulatorActions.js';
 import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../../simulatorStyles.js';
-import type {} from '../../utils/payload/simulatorCapabilities.js';
 import { SimulatorButton } from '../../ui/primitives.js';
 
 export function StoreAppIcon({ className }: Readonly<{ className?: string }>) {

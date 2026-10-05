@@ -11,9 +11,7 @@ import { mapHome } from '../src/adapters/device/homeMapper';
 import { mapInternet } from '../src/adapters/device/internetMapper';
 import { mapMessages } from '../src/adapters/device/messagesMapper';
 import { mapPhone } from '../src/adapters/device/phoneMapper';
-import {} from '../src/adapters/templateToSession';
 import { DEFAULT_BROWSER_SUBMIT_TARGET } from '../src/constants';
-import {} from '../src/utils/payload/simulatorRealismChecks';
 import {
     buildSimulatorNavGraph,
     simulatorNavGraphToJson,

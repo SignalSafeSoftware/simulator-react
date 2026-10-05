@@ -1,4 +1,3 @@
-import {} from './support/createPayload.js';
 import React from 'react';
 import { act, create } from 'react-test-renderer';
 import { expect, it, vi } from 'vitest';
@@ -16,7 +15,6 @@ import {
 } from '../src/hooks/useSimulatorSessionHandlers';
 import { SimulatorActions } from '../src/actions/simulatorActions.js';
 import { createSimulatorNavigationDispatch } from '../src/contract/navigation';
-import type {} from '../src/types/session';
 import { updateSimulatorPayload } from '../src/datasource/datasource';
 import { payload } from './support/hostEdgesSupport';
 

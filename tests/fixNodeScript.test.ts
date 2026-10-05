@@ -2,11 +2,6 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {} from '../src/adapters/device/emailMapper';
-import {} from '../src/adapters/device/homeMapper';
-import {} from '../src/adapters/device/internetMapper';
-import {} from '../src/adapters/device/messagesMapper';
-import {} from '../src/adapters/device/phoneMapper';
 
 const originalArgv = [...process.argv];
 

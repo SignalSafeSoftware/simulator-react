@@ -1,6 +1,3 @@
-import {} from '../../src/utils/payload/simulatorPayloadDiff';
-import {} from '../../src/utils/payload/lintSimulatorPayload';
-import {} from '../../src/state/simulatorSessionInitialState.js';
 import { initialViewState } from '../../src/state/simulatorViewStateHelpers.js';
 import type { SimulatorSessionState, SimulatorTemplatePayload } from '../../src/types/session';
 

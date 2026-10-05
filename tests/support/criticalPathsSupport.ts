@@ -1,12 +1,5 @@
-import {} from '../../src/adapters/fullDeviceToSession';
 import { getInitialSessionState } from '../../src/state/simulatorSessionInitialState.js';
 import type { SimulatorSessionState, SimulatorTemplatePayload } from '../../src/types/session';
-import {} from '../../src/utils/payload/lintSimulatorPayload';
-import {} from '../../src/utils/payload/simulatorKeyPatterns';
-import {} from '../../src/utils/payload/simulatorCapabilities';
-import {} from '../../src/utils/navigation/simulatorKeyboardCommands';
-import {} from '../../src/utils/preview/simulatorPreviewReport';
-import {} from '../../src/utils/telemetry/simulatorTransitionLogger';
 
 export function createPayload(): SimulatorTemplatePayload {
     return {
