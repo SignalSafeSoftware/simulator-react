@@ -1,12 +1,7 @@
-import { DEFAULT_INTERNET_SCREEN, type SimulatorTemplatePayload } from '../../types/session.js';
+import type { SimulatorTemplatePayload } from '../../types/session.js';
 import { SimulatorActionType } from '../telemetry/simulatorActionTaxonomy.js';
 import type { AppScreenRef } from '../../types/shapes.js';
-import {
-    SimulatorEmailScreenId,
-    SimulatorHomeScreenId,
-    SimulatorMessagesScreenId,
-    SimulatorPhoneScreenId,
-} from '@signalsafe/simulator-core/devicePayload';
+import { resolveDefaultEntryScreen } from '../navigation/simulatorDefaultScreen.js';
 /**
  * Structured author preview report for simulator templates.
  * Compact summary of entry point, apps, counts, trusted sources, key actions, and lint/validation.
@@ -48,29 +43,8 @@ export interface SimulatorPreviewReport {
     browserHasCycle: boolean;
 }
 
-function getDefaultEntryScreen(entryApp: SimulatorApp, payload: SimulatorTemplatePayload): string {
-    switch (entryApp) {
-        case SimulatorApp.Email:
-            return SimulatorEmailScreenId.List;
-        case SimulatorApp.Messages:
-            return SimulatorMessagesScreenId.Threads;
-        case SimulatorApp.Phone:
-            return SimulatorPhoneScreenId.History;
-        case SimulatorApp.Internet:
-            return (
-                payload.browser?.defaultPageId ??
-                payload.browser?.pages?.[0]?.id ??
-                DEFAULT_INTERNET_SCREEN
-            );
-        case SimulatorApp.Home:
-            return SimulatorHomeScreenId.Home;
-        default:
-            return SimulatorEmailScreenId.List;
-    }
-}
-
 function getEntryPoint(payload: SimulatorTemplatePayload, entryApp: SimulatorApp): AppScreenRef {
-    const defaultScreen = getDefaultEntryScreen(entryApp, payload);
+    const defaultScreen = resolveDefaultEntryScreen(entryApp, payload);
     const secondaryDefault = payload.device?.secondaryDefaults?.[entryApp];
     const entryScreen =
         payload.entryPoint?.app === entryApp && payload.entryPoint?.screen != null

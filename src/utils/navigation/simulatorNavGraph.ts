@@ -1,4 +1,4 @@
-import { DEFAULT_INTERNET_SCREEN, type SimulatorTemplatePayload } from '../../types/session.js';
+import type { SimulatorTemplatePayload } from '../../types/session.js';
 import { SimulatorActionType } from '../telemetry/simulatorActionTaxonomy.js';
 import type { AppScreenRef, HrefLink, KnownAppScreenRef, PageRef } from '../../types/shapes.js';
 /**
@@ -15,6 +15,7 @@ import {
     SimulatorPhoneScreenId,
 } from '@signalsafe/simulator-core/devicePayload';
 import { analyzeReachability } from './simulatorReachability.js';
+import { resolveDefaultEntryScreen } from './simulatorDefaultScreen.js';
 
 const APPS = Object.values(SimulatorApp);
 const PHONE_SCREENS = Object.values(SimulatorPhoneScreenId);
@@ -57,24 +58,7 @@ function nodeId(app: string, screen: string): string {
 function getDefaultScreen(app: SimulatorApp, payload: SimulatorTemplatePayload): string {
     const def = payload.device?.secondaryDefaults?.[app];
     if (def != null && String(def).trim() !== '') return String(def).trim();
-    switch (app) {
-        case SimulatorApp.Email:
-            return SimulatorEmailScreenId.List;
-        case SimulatorApp.Messages:
-            return SimulatorMessagesScreenId.Threads;
-        case SimulatorApp.Phone:
-            return SimulatorPhoneScreenId.History;
-        case SimulatorApp.Internet:
-            return (
-                payload.browser?.defaultPageId ??
-                payload.browser?.pages?.[0]?.id ??
-                DEFAULT_INTERNET_SCREEN
-            );
-        case SimulatorApp.Home:
-            return SimulatorHomeScreenId.Home;
-        default:
-            return SimulatorEmailScreenId.List;
-    }
+    return resolveDefaultEntryScreen(app, payload);
 }
 
 /** Resolve link href to browser page id (first page whose url matches or contains href). */
