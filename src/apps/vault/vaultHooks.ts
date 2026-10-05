@@ -9,7 +9,7 @@ import {
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useDraftBaseline } from '../shared/useDraftBaseline.js';
-import type { FolderPage } from './vaultShared.js';
+import { RECOVERED_VAULT_FOLDER, type FolderPage } from './vaultShared.js';
 import { currentIsoTime } from '../../utils/browser/browserEnvironment.js';
 
 export function newSecret(folder: string): Secret {
@@ -94,7 +94,7 @@ export function useVaultFolderActions({
 }>) {
     const { t } = useSimulatorLocale();
     const destination =
-        folder === DEFAULT_VAULT_FOLDER ? 'Recovered secrets' : DEFAULT_VAULT_FOLDER;
+        folder === DEFAULT_VAULT_FOLDER ? RECOVERED_VAULT_FOLDER : DEFAULT_VAULT_FOLDER;
     async function saveFolder() {
         const name = (folderName ?? folder ?? '').trim();
         if (!name || name.length > 200) {

@@ -200,7 +200,7 @@ export default function Photos({
                                         : t('app.unknown')}
                                 </dd>
                                 <dt>{t('app.photos.captured')}</dt>
-                                <dd>{captureDateLabel(draft.metadata)}</dd>
+                                <dd>{captureDateLabel(draft.metadata, t)}</dd>
                             </dl>
                         </div>
                     </article>
@@ -239,7 +239,7 @@ export default function Photos({
                                     alt={item.caption || item.title}
                                 />
                                 <span className='prototype-photo-date'>
-                                    {captureDateLabel(item.metadata)}
+                                    {captureDateLabel(item.metadata, t)}
                                 </span>
                             </button>
                         ))}

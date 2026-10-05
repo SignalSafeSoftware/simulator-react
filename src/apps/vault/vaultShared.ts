@@ -10,3 +10,6 @@ export type TypeLabels = Record<Secret['type'], string>;
 
 export const FolderPage = Object.freeze({ Create: 'create', Delete: 'delete' } as const);
 export type FolderPage = (typeof FolderPage)[keyof typeof FolderPage];
+
+/** Stored folder name, not UI text: deleted folders move their secrets here. */
+export const RECOVERED_VAULT_FOLDER = 'Recovered secrets';

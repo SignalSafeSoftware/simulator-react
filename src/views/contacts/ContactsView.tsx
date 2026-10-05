@@ -95,13 +95,14 @@ export function contextMatchesContact(
     contact: SimulatorSessionContact,
     ctx: { name?: string; number?: string },
 ): boolean {
+    const { name, number } = ctx;
     if (
-        ctx.number &&
-        contact.phoneNumbers?.some((item) => phonesMatch(item.number || item.value, ctx.number!))
+        number &&
+        contact.phoneNumbers?.some((item) => phonesMatch(item.number || item.value, number))
     )
         return true;
-    if (ctx.number && contact.number && phonesMatch(contact.number, ctx.number)) return true;
-    if (ctx.name && contact.displayName && namesMatch(contact.displayName, ctx.name)) return true;
+    if (number && contact.number && phonesMatch(contact.number, number)) return true;
+    if (name && contact.displayName && namesMatch(contact.displayName, name)) return true;
     return false;
 }
 

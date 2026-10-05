@@ -214,6 +214,7 @@ export const screenEnglish = {
     'screen.phoneCallView.incoming.call': 'Incoming call',
     'screen.phoneCallView.value1.value2': '{value1}{value2}…',
     'screen.phoneCallView.keypad': 'Keypad',
+    'screen.phoneCallView.dial.digit': 'Dial {digit}',
     'screen.phoneCallView.unmute.microphone': 'Unmute microphone',
     'screen.phoneCallView.mute.microphone': 'Mute microphone',
     'screen.phoneCallView.decline.call': 'Decline call',

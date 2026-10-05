@@ -79,7 +79,9 @@ export default function PhoneCallView(props: Readonly<PhoneCallViewProps>) {
                         <PhoneKeypad
                             appearance='call'
                             onDigit={(digit) => props.onDigit?.(digit)}
-                            digitLabel={(digit) => `Dial ${digit}`}
+                            digitLabel={(digit) =>
+                                screenLocale.t('screen.phoneCallView.dial.digit', { digit })
+                            }
                         />
                     </>
                 )}

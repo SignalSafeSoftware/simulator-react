@@ -110,7 +110,7 @@ export default function PhotoEditor({
             </label>
             <section aria-label={t('app.photos.originalMetadata')}>
                 <h3>{t('app.photos.originalMetadata')}</h3>
-                <p>{captureDateLabel(photo.original)}</p>
+                <p>{captureDateLabel(photo.original, t)}</p>
                 <p>
                     {t('app.photos.originalCoordinates', {
                         latitude: photo.original.latitude ?? t('app.unknown'),

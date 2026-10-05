@@ -1,3 +1,5 @@
+import { createTranslator, simulatorEnglish } from '../../i18n/catalog.js';
+import type { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
 import { createContext, useContext, useMemo, type ComponentType, type ReactNode } from 'react';
 import type { PhotoMetadata } from '@signalsafe/simulator-core/apps/contracts';
@@ -5,6 +7,8 @@ import { checkLock, createLock } from '../lock/lock.js';
 import { readAsset } from './assets.js';
 import { extractPhotoMetadata } from '../photos/photoMetadata.js';
 import { confirmInBrowser, copyToClipboard } from '../../utils/browser/browserEnvironment.js';
+type SimulatorTranslate = ReturnType<typeof useSimulatorLocale>['t'];
+const defaultTranslate: SimulatorTranslate = createTranslator(simulatorEnglish).t;
 export interface SimulatorAppNotesProps {
     label: string;
     placeholder: string;
@@ -17,7 +21,8 @@ export interface SimulatorAppsPresentation {
     Shell: ComponentType<{ children: ReactNode; nav: ReactNode }>;
     NotesEditor: ComponentType<SimulatorAppNotesProps>;
     formatDate: (date: Date) => string;
-    formatCaptureDate: (metadata: PhotoMetadata) => string;
+    /** Receives the active locale's translator so the default label follows the host language. */
+    formatCaptureDate: (metadata: PhotoMetadata, translate?: SimulatorTranslate) => string;
     renderPhotoMap?: (latitude: number, longitude: number) => ReactNode;
 }
 /** File and photo metadata reading. */
@@ -61,10 +66,13 @@ const defaults: SimulatorAppsHost = {
         </label>
     ),
     formatDate: (date) => date.toLocaleString(),
-    formatCaptureDate: (metadata) =>
+    formatCaptureDate: (metadata, translate = defaultTranslate) =>
         metadata.capturedAt
-            ? `${metadata.capturedAt.replace('T', ' ')} (${metadata.timeZone || 'capture time zone unknown'})`
-            : 'Unknown capture date',
+            ? translate('app.photos.captureDate', {
+                  when: metadata.capturedAt.replace('T', ' '),
+                  zone: metadata.timeZone || translate('app.photos.captureZoneUnknown'),
+              })
+            : translate('app.photos.captureUnknown'),
     readAsset,
     extractPhotoMetadata,
     checkLock,

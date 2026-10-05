@@ -178,6 +178,11 @@
       "import": "./dist/contract/screenOverrides.js",
       "default": "./dist/contract/screenOverrides.js"
     },
+    "./contract/sessionHostProps": {
+      "types": "./dist/contract/sessionHostProps.d.ts",
+      "import": "./dist/contract/sessionHostProps.js",
+      "default": "./dist/contract/sessionHostProps.js"
+    },
     "./datasource/datasource": {
       "types": "./dist/datasource/datasource.d.ts",
       "import": "./dist/datasource/datasource.js",
@@ -419,6 +424,11 @@
       "import": "./dist/views/contacts/ContactsView.js",
       "default": "./dist/views/contacts/ContactsView.js"
     },
+    "./views/contacts/contactsViewRoles": {
+      "types": "./dist/views/contacts/contactsViewRoles.d.ts",
+      "import": "./dist/views/contacts/contactsViewRoles.js",
+      "default": "./dist/views/contacts/contactsViewRoles.js"
+    },
     "./views/email/EmailComposeView": {
       "types": "./dist/views/email/EmailComposeView.d.ts",
       "import": "./dist/views/email/EmailComposeView.js",
@@ -433,6 +443,11 @@
       "types": "./dist/views/phone/PhoneCallView.d.ts",
       "import": "./dist/views/phone/PhoneCallView.js",
       "default": "./dist/views/phone/PhoneCallView.js"
+    },
+    "./views/phone/phoneCallViewRoles": {
+      "types": "./dist/views/phone/phoneCallViewRoles.d.ts",
+      "import": "./dist/views/phone/phoneCallViewRoles.js",
+      "default": "./dist/views/phone/phoneCallViewRoles.js"
     },
     "./views/contacts/PhoneContactEditor": {
       "types": "./dist/views/contacts/PhoneContactEditor.d.ts",

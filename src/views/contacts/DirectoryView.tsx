@@ -72,6 +72,7 @@ export default function DirectoryView({
     );
     const entries = directory ?? [];
     const selected = entries.find((e) => e.id === selectedId);
+    const dialNumber = selected?.number;
 
     const handleSelect = (entry: SimulatorDirectoryEntry) => {
         setSelectedId(entry.id);
@@ -186,14 +187,14 @@ export default function DirectoryView({
                                 </div>
                             </div>
                         )}
-                        {!selected.contact_id && selected.number && (
+                        {!selected.contact_id && dialNumber && (
                             <div className={simSpacing.mb2}>
-                                <span className={SIM_TEXT_SM}>{selected.number}</span>
+                                <span className={SIM_TEXT_SM}>{dialNumber}</span>
                                 <div className={simSpacing.mt1}>
                                     <SimulatorButton
                                         tone={SimulatorButtonTone.Primary}
                                         className={SIM_BTN_SM}
-                                        onClick={() => handleDial(selected.number!)}
+                                        onClick={() => handleDial(dialNumber)}
                                     >
                                         {screenLocale.t('screen.directoryView.call')}
                                     </SimulatorButton>
