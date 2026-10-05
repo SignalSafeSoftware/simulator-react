@@ -10,7 +10,6 @@ import {
     SimulatorButtonTone,
     joinClasses,
 } from '../../ui/styles/simulatorClasses.js';
-import {} from 'lucide-react';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import type { ReactNode } from 'react';
 import { type SimulatorDispatchAction } from '../../state/simulatorDispatchActions.js';

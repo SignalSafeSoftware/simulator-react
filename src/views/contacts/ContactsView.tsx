@@ -17,9 +17,7 @@ import {
     SimulatorButtonTone,
     joinClasses,
 } from '../../ui/styles/simulatorClasses.js';
-import {} from '../../ui/media/SimulatorAvatar.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-import {} from '../../ui/contacts/PhoneNumberText.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
 import { useMemo, useState } from 'react';

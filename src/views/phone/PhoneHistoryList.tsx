@@ -12,7 +12,6 @@ import { CallHistoryEntryKind, type SimulatorCallHistoryEntry } from '../../type
 import { type PhoneSimulatorContent } from '../../types/template.js';
 import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';
 import { simLayout, simSpacing } from '../../simulatorStyles.js';
-import { matchesAnyField } from '../../utils/lists/textMatch.js';
 import {
     SIM_FLEX_COL,
     SIM_FLEX_GROW_1,
@@ -25,9 +24,7 @@ import {
     SIM_SURFACE_WHITE,
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
-    SIM_TEXT_START,
     SIM_TEXT_TRUNCATE,
-    SIM_W_FULL,
     SimulatorBadgeTone,
     joinClasses,
     simBadgeToneClass,
@@ -35,16 +32,20 @@ import {
 import {
     SIM_PHONE_INCOMING_CALL_HISTORY,
     SIM_PHONE_HISTORY_INCOMING_ROW,
-    SIM_PHONE_HISTORY_ROW,
     SIM_PHONE_HISTORY_ENTRY,
     SIM_PHONE_HISTORY_ACTIONS,
     SIM_PHONE_HISTORY_SEARCH,
     SIM_CALL_STATUS_BADGE,
     SIM_CALL_STATUS_BADGE_INCOMING,
-    SIM_CALL_STATUS_BADGE_MISSED,
-    SIM_CALL_STATUS_BADGE_OUTBOUND,
-    SIM_CALL_STATUS_BADGE_UNKNOWN,
 } from '../../ui/styles/semanticSimulatorClasses.js';
+import {
+    kindStatusBadgeClass,
+    kindBadgeTone,
+    matchesSearch,
+    incomingMatchesSearch,
+    listRowClass,
+    PhoneHistoryRowButton,
+} from './phoneHistoryHelpers.js';
 
 export interface PhoneHistoryListProps {
     entries: SimulatorCallHistoryEntry[];
@@ -65,76 +66,6 @@ export interface PhoneHistoryListProps {
     selectedEntryId?: string | null;
     /** Host actions render beside the native row, never inside its button. */
     renderEntryActions?: (entry: SimulatorCallHistoryEntry) => ReactNode;
-}
-
-function kindStatusBadgeClass(kind: CallHistoryEntryKind): string {
-    switch (kind) {
-        case CallHistoryEntryKind.Missed:
-            return SIM_CALL_STATUS_BADGE_MISSED;
-        case CallHistoryEntryKind.Outgoing:
-            return SIM_CALL_STATUS_BADGE_OUTBOUND;
-        case CallHistoryEntryKind.Incoming:
-            return SIM_CALL_STATUS_BADGE_INCOMING;
-        default:
-            return SIM_CALL_STATUS_BADGE_UNKNOWN;
-    }
-}
-
-function kindBadgeTone(kind: CallHistoryEntryKind): string {
-    switch (kind) {
-        case CallHistoryEntryKind.Missed:
-            return SimulatorBadgeTone.Danger;
-        case CallHistoryEntryKind.Voicemail:
-            return SimulatorBadgeTone.Neutral;
-        case CallHistoryEntryKind.Outgoing:
-            return SimulatorBadgeTone.Primary;
-        case CallHistoryEntryKind.Incoming:
-            return SimulatorBadgeTone.Success;
-        default:
-            return SimulatorBadgeTone.Neutral;
-    }
-}
-
-function matchesSearch(entry: SimulatorCallHistoryEntry, q: string): boolean {
-    return matchesAnyField(q, [entry.name, entry.number, entry.timestamp, entry.label]);
-}
-
-function incomingMatchesSearch(
-    content: PhoneSimulatorContent | null | undefined,
-    q: string,
-): boolean {
-    return !content || matchesAnyField(q, [content.caller_name, content.phone_number]);
-}
-
-const rowButtonBase = joinClasses(simLayout.row, simSpacing.gap2, SIM_TEXT_START, SIM_W_FULL);
-
-const listRowClass = joinClasses(rowButtonBase, SIM_PHONE_HISTORY_ROW);
-
-function PhoneHistoryRowButton({
-    onClick,
-    className,
-    ariaLabel,
-    selected,
-    children,
-}: Readonly<{
-    onClick: () => void;
-    className: string;
-    ariaLabel?: string;
-    selected?: boolean;
-    children: React.ReactNode;
-}>): JSX.Element {
-    return (
-        <button
-            type="button"
-            onClick={onClick}
-            className={className}
-            style={{ cursor: 'pointer' }}
-            aria-label={ariaLabel}
-            aria-current={selected || undefined}
-        >
-            {children}
-        </button>
-    );
 }
 
 export default function PhoneHistoryList({
