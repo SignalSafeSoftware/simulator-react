@@ -1,4 +1,5 @@
 import { SimulatorChannel } from '../../types/session.js';
+import { ownValue } from '../../utils/lookup.js';
 /** Stable semantic class hooks for host styling and DOM targeting (no UI framework). */
 
 export const SIM_RUNTIME = 'simulator-runtime';
@@ -61,18 +62,15 @@ export const SIM_ERROR = 'simulator-error';
 export const SIM_ERROR_DIAGNOSTICS = 'simulator-error__diagnostics';
 export const SIM_UNSUPPORTED = 'simulator-unsupported';
 
+const CHANNEL_MODIFIERS: Readonly<Partial<Record<string, string>>> = Object.freeze({
+    [SimulatorChannel.Contacts]: SIM_CHANNEL_PHONE,
+    [SimulatorChannel.Email]: SIM_CHANNEL_EMAIL,
+    [SimulatorChannel.Sms]: SIM_CHANNEL_MESSAGES,
+});
+
 /** Map shell bottom-nav channel id to a semantic channel modifier class. */
 export function simChannelModifierForShellChannel(channel: string): string | undefined {
-    switch (channel) {
-        case SimulatorChannel.Contacts:
-            return SIM_CHANNEL_PHONE;
-        case SimulatorChannel.Email:
-            return SIM_CHANNEL_EMAIL;
-        case SimulatorChannel.Sms:
-            return SIM_CHANNEL_MESSAGES;
-        default:
-            return undefined;
-    }
+    return ownValue(CHANNEL_MODIFIERS, channel);
 }
 
 /** Native history list consumer hooks. */

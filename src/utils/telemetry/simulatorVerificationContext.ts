@@ -1,4 +1,5 @@
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
+import { ownValue } from '../lookup.js';
 /**
  * Verification context for contacts panel (name/number hints per active app).
  */
@@ -52,18 +53,22 @@ function getEmailVerificationContext(
     return null;
 }
 
+const CONTEXT_BY_APP: Readonly<
+    Partial<
+        Record<
+            SimulatorApp,
+            (payload: SimulatorSessionState['payload']) => SimulatorVerificationContext
+        >
+    >
+> = Object.freeze({
+    [SimulatorApp.Messages]: getMessagesVerificationContext,
+    [SimulatorApp.Phone]: getPhoneVerificationContext,
+    [SimulatorApp.Email]: getEmailVerificationContext,
+});
+
 export function getVerificationContextForApp(
     activeApp: SimulatorSessionState['view']['activeApp'],
     payload: SimulatorSessionState['payload'],
 ): SimulatorVerificationContext {
-    switch (activeApp) {
-        case SimulatorApp.Messages:
-            return getMessagesVerificationContext(payload);
-        case SimulatorApp.Phone:
-            return getPhoneVerificationContext(payload);
-        case SimulatorApp.Email:
-            return getEmailVerificationContext(payload);
-        default:
-            return null;
-    }
+    return ownValue(CONTEXT_BY_APP, activeApp)?.(payload) ?? null;
 }

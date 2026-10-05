@@ -4,6 +4,7 @@ import {
     isMessagesScreen,
     isHomeScreen,
 } from '@signalsafe/simulator-core/devicePayload';
+import { ownValue } from '../utils/lookup.js';
 /**
  * Initial view state builders and screen-id guards for the session reducer.
  */
@@ -84,43 +85,39 @@ export function createInitialHomeState(): SimulatorViewState['home'] {
     return initialHomeState();
 }
 
+const DEFAULT_SCREEN_BY_APP: Readonly<Record<SimulatorApp, string>> = Object.freeze({
+    [SimulatorApp.Phone]: DEFAULT_PHONE_SCREEN,
+    [SimulatorApp.Email]: DEFAULT_EMAIL_SCREEN,
+    [SimulatorApp.Messages]: DEFAULT_MESSAGES_SCREEN,
+    [SimulatorApp.Internet]: DEFAULT_INTERNET_SCREEN,
+    [SimulatorApp.Home]: DEFAULT_HOME_SCREEN,
+});
+
 export function getDefaultScreen(app: SimulatorApp): string {
-    switch (app) {
-        case SimulatorApp.Phone:
-            return DEFAULT_PHONE_SCREEN;
-        case SimulatorApp.Email:
-            return DEFAULT_EMAIL_SCREEN;
-        case SimulatorApp.Messages:
-            return DEFAULT_MESSAGES_SCREEN;
-        case SimulatorApp.Internet:
-            return DEFAULT_INTERNET_SCREEN;
-        case SimulatorApp.Home:
-            return DEFAULT_HOME_SCREEN;
-        default:
-            return DEFAULT_EMAIL_SCREEN;
-    }
+    return ownValue(DEFAULT_SCREEN_BY_APP, app) ?? DEFAULT_EMAIL_SCREEN;
 }
 
 export function isInternetScreen(s: string): s is string {
     return typeof s === 'string' && s.length > 0;
 }
 
-export function parseEntryScreen(app: SimulatorApp, screen: string): string {
+const ENTRY_SCREEN_PARSERS: Readonly<Record<SimulatorApp, (screen: string) => string>> =
+    Object.freeze({
+        [SimulatorApp.Phone]: (screen) => keepIf(isPhoneScreen, screen, DEFAULT_PHONE_SCREEN),
+        [SimulatorApp.Email]: (screen) => keepIf(isEmailScreen, screen, DEFAULT_EMAIL_SCREEN),
+        [SimulatorApp.Messages]: (screen) =>
+            keepIf(isMessagesScreen, screen, DEFAULT_MESSAGES_SCREEN),
+        [SimulatorApp.Internet]: (screen) =>
+            isInternetScreen(screen) ? screen : DEFAULT_INTERNET_SCREEN,
+        [SimulatorApp.Home]: (screen) => keepIf(isHomeScreen, screen, DEFAULT_HOME_SCREEN),
+    });
+
+/** Built-in screen ids are matched case-insensitively and normalized to lower case. */
+function keepIf(isScreen: (value: string) => boolean, screen: string, fallback: string): string {
     const lower = screen.toLowerCase();
-    switch (app) {
-        case SimulatorApp.Phone:
-            return isPhoneScreen(lower) ? lower : DEFAULT_PHONE_SCREEN;
-        case SimulatorApp.Email:
-            if (isEmailScreen(lower)) return lower;
-            return DEFAULT_EMAIL_SCREEN;
-        case SimulatorApp.Messages:
-            if (isMessagesScreen(lower)) return lower;
-            return DEFAULT_MESSAGES_SCREEN;
-        case SimulatorApp.Internet:
-            return isInternetScreen(screen) ? screen : DEFAULT_INTERNET_SCREEN;
-        case SimulatorApp.Home:
-            return isHomeScreen(lower) ? lower : DEFAULT_HOME_SCREEN;
-        default:
-            return getDefaultScreen(app);
-    }
+    return isScreen(lower) ? lower : fallback;
+}
+
+export function parseEntryScreen(app: SimulatorApp, screen: string): string {
+    return ownValue(ENTRY_SCREEN_PARSERS, app)?.(screen) ?? getDefaultScreen(app);
 }

@@ -8,6 +8,7 @@ import {
     type SimulatorEntryPoint,
     type SimulatorMainMenuItem,
 } from '@signalsafe/simulator-core/devicePayload';
+import { ownValue } from '../utils/lookup.js';
 import type { BrowserPageButton, TopicTag } from './shapes.js';
 /**
  * Unified simulator session state and payload contract.
@@ -399,12 +400,12 @@ const SCREEN_OF_APP: Readonly<Record<SimulatorApp, (view: SimulatorViewState) =>
 
 /** Derive shell nav channel from active app (messages→sms, internet→browser, phone→contacts). */
 export function viewStateToActiveChannel(app: SimulatorApp): SimulatorChannel {
-    return CHANNEL_BY_APP[app] ?? SimulatorChannel.Email;
+    return ownValue(CHANNEL_BY_APP, app) ?? SimulatorChannel.Email;
 }
 
 /** Map shell nav channel to app (sms→messages, browser→internet). */
 export function channelToApp(channel: SimulatorChannel): SimulatorApp {
-    return APP_BY_CHANNEL[channel] ?? SimulatorApp.Email;
+    return ownValue(APP_BY_CHANNEL, channel) ?? SimulatorApp.Email;
 }
 
 /** Current screen id for an app (defaults to the active app), for rendering, keyboard shortcuts, metadata. */
@@ -412,7 +413,7 @@ export function getCurrentScreenForApp(
     view: SimulatorViewState,
     app: SimulatorApp = view.activeApp,
 ): string {
-    return SCREEN_OF_APP[app]?.(view) ?? '';
+    return ownValue(SCREEN_OF_APP, app)?.(view) ?? '';
 }
 
 /** Full session state: payload (immutable) + view (mutable). */

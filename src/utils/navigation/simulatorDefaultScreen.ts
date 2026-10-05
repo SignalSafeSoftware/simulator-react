@@ -4,6 +4,7 @@ import {
     SimulatorMessagesScreenId,
     SimulatorPhoneScreenId,
 } from '@signalsafe/simulator-core/devicePayload';
+import { ownValue } from '../lookup.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { DEFAULT_INTERNET_SCREEN, type SimulatorTemplatePayload } from '../../types/session.js';
 
@@ -25,5 +26,5 @@ export function resolveDefaultEntryScreen(
     app: SimulatorApp,
     payload: SimulatorTemplatePayload,
 ): string {
-    return (RESOLVERS[app] ?? RESOLVERS[SimulatorApp.Email])(payload);
+    return (ownValue(RESOLVERS, app) ?? RESOLVERS[SimulatorApp.Email])(payload);
 }
