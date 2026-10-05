@@ -9,6 +9,7 @@ import type {
     SimulatorSessionState,
     SimulatorViewState,
 } from '../types/session.js';
+import { ownValue } from '../utils/lookup.js';
 import type { SimulatorNavigationLocation } from './navigation.js';
 
 /** Screen content only: the package retains its shell, menus and scrolling region. */
@@ -56,5 +57,5 @@ export function resolveScreenOverride(
     overrides: SimulatorScreenOverrides | undefined,
     state: SimulatorSessionState,
 ): OverrideComponent {
-    return OVERRIDE_RESOLVERS[state.view.activeApp](overrides, state.view);
+    return ownValue(OVERRIDE_RESOLVERS, state.view.activeApp)?.(overrides, state.view);
 }

@@ -44,4 +44,13 @@ describe('typed override resolution', () => {
             ),
         ).toBeUndefined();
     });
+
+    it('ignores a malformed active app from an untyped host', () => {
+        const state = getInitialSessionState(createPayload({ channel: 'phone' }));
+        for (const activeApp of [null, 'constructor', 'missing']) {
+            // @ts-expect-error Exercise state received from an untyped host.
+            state.view.activeApp = activeApp;
+            expect(resolveScreenOverride({ phone: {} }, state)).toBeUndefined();
+        }
+    });
 });

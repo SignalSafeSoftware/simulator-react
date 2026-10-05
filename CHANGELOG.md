@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.20.1 — October 4, 2026
+
+- Fix `resolveScreenOverride` throwing when `state.view.activeApp` is not a known app, as 0.20.0 did for malformed state from untyped hosts. Unknown apps again resolve no override. Use 0.20.1 instead of 0.20.0.
+
 ## 0.20.0 — October 4, 2026
 
 - Enforce 100% statement, branch, function and line coverage in CI, with jsdom tests for the browser, lock, mail, photos and vault apps.
