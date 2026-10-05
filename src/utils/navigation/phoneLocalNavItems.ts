@@ -2,6 +2,7 @@
  * Phone app secondary nav items per wireframe: History, Contacts, Dial, Back.
  * Back returns to primary menu; Directory is not in the strip (can be reached from Contacts if needed).
  */
+import { SimulatorPhoneScreenId } from '@signalsafe/simulator-core/devicePayload';
 import { createTranslator, simulatorEnglish } from '../../i18n/catalog.js';
 import type { PhoneScreenId } from '../../types/session.js';
 import type { SimulatorCapabilities } from '../payload/simulatorCapabilities.js';
@@ -14,9 +15,9 @@ export interface PhoneLocalNavItem {
 
 /** Secondary strip order per wireframe: History, Contacts, Dial, Back. */
 const SECONDARY_STRIP = [
-    { id: 'history', labelKey: 'nav.history', icon: '🕐' },
-    { id: 'contacts', labelKey: 'nav.contacts', icon: '👤' },
-    { id: 'dial', labelKey: 'nav.dial', icon: '📞' },
+    { id: SimulatorPhoneScreenId.History, labelKey: 'nav.history', icon: '🕐' },
+    { id: SimulatorPhoneScreenId.Contacts, labelKey: 'nav.contacts', icon: '👤' },
+    { id: SimulatorPhoneScreenId.Dial, labelKey: 'nav.dial', icon: '📞' },
     { id: 'back', labelKey: 'nav.back', icon: '↩' },
 ] as const;
 

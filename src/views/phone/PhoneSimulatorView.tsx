@@ -387,7 +387,11 @@ export default function PhoneSimulatorView({
                         </>
                     )}
             </div>
-            {localNav(screen === SimulatorPhoneScreenId.AddContact ? 'contacts' : screen)}
+            {localNav(
+                screen === SimulatorPhoneScreenId.AddContact
+                    ? SimulatorPhoneScreenId.Contacts
+                    : screen,
+            )}
         </div>
     );
 }
