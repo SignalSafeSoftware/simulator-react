@@ -7,7 +7,7 @@ import { resolveScreenOverride } from './contract/screenOverrides.js';
 import { createSimulatorNavigationDispatch } from './contract/navigation.js';
 import { type ReactNode, useCallback, useMemo, useRef } from 'react';
 import PhoneSimulatorShell from './shell/PhoneSimulatorShell.js';
-import SimulatorDeveloperToolsPanel from './developer-tools/SimulatorDeveloperToolsPanel.js';
+import SimulatorDiagnosticsBand from './developer-tools/SimulatorDiagnosticsBand.js';
 import {
     type SimulatorSessionState,
     viewStateToActiveChannel,
@@ -28,16 +28,13 @@ import { getVerificationContextForApp } from './utils/telemetry/simulatorVerific
 import { useSimulatorSessionHandlers } from './hooks/useSimulatorSessionHandlers.js';
 import { useSimulatorSecondaryMenu } from './hooks/useSimulatorSecondaryMenu.js';
 import { useSimulatorDeveloperControls } from './developer-tools/useSimulatorDeveloperControls.js';
-import SimulatorDeveloperToolbar from './developer-tools/SimulatorDeveloperToolbar.js';
-import SimulatorDeveloperControlsBar from './developer-tools/SimulatorDeveloperControlsBar.js';
-import { simSpacing } from './simulatorStyles.js';
+import {} from './simulatorStyles.js';
 import { SimulatorDialog } from './ui/primitives.js';
 import { joinClasses } from './ui/styles/simulatorClasses.js';
 import {
     SIM_CHANNEL,
     SIM_RUNTIME,
     SIM_RUNTIME_APP_ROOT,
-    SIM_RUNTIME_DIAGNOSTICS_BAND,
     SIM_RUNTIME_SCREEN,
     simChannelModifierForShellChannel,
 } from './ui/styles/semanticSimulatorClasses.js';
@@ -189,21 +186,6 @@ export default function SimulatorWithSession({
         />
     );
 
-    const showDiagnosticsBand =
-        developerControls.showDeveloperToolsToolbar ||
-        developerControls.showParentDeveloperControls ||
-        developerControls.resolvedDeveloperTools.enabled;
-
-    const developerToolsPanel = (
-        <SimulatorDeveloperToolsPanel
-            developerTools={developerControls.renderedDeveloperTools}
-            payload={payload}
-            timelineEntries={developerToolsTimelineEntries}
-            runtimeIssues={developerToolsRuntimeIssues}
-            className={simSpacing.mb3}
-        />
-    );
-
     return (
         <SimulatorErrorBoundary>
             <div
@@ -212,42 +194,12 @@ export default function SimulatorWithSession({
                 data-simulator-screen={screenMeta.screen}
                 data-simulator-label={screenMeta.label}
             >
-                {showDiagnosticsBand ? (
-                    <div className={SIM_RUNTIME_DIAGNOSTICS_BAND}>
-                        {developerControls.showDeveloperToolsToolbar && (
-                            <SimulatorDeveloperToolbar
-                                sections={developerControls.developerToolbarSections}
-                                visibleSections={developerControls.visibleDeveloperSections}
-                                onToggleSection={developerControls.toggleDeveloperSection}
-                            />
-                        )}
-                        {developerControls.showParentDeveloperControls && (
-                            <SimulatorDeveloperControlsBar
-                                showSnapshotExport={
-                                    developerControls.visibleDeveloperSections.snapshotExport
-                                }
-                                showNavGraph={developerControls.visibleDeveloperSections.navGraph}
-                                enableKeyboardShortcuts={
-                                    developerControls.visibleDeveloperSections.shortcuts
-                                }
-                                snapshotCopied={developerControls.exports.snapshotCopied}
-                                graphCopied={developerControls.exports.graphCopied}
-                                shortcutsHelpOpen={developerControls.shortcuts.shortcutsHelpOpen}
-                                navGraph={developerControls.navGraph}
-                                onCopySnapshot={developerControls.exports.handleCopySnapshot}
-                                onCopyNavGraph={developerControls.exports.handleCopyNavGraph}
-                                onToggleShortcutsHelp={() =>
-                                    developerControls.shortcuts.setShortcutsHelpOpen(
-                                        (prev) => !prev,
-                                    )
-                                }
-                            />
-                        )}
-                        {developerToolsPanel}
-                    </div>
-                ) : (
-                    developerToolsPanel
-                )}
+                <SimulatorDiagnosticsBand
+                    controls={developerControls}
+                    payload={payload}
+                    timelineEntries={developerToolsTimelineEntries}
+                    runtimeIssues={developerToolsRuntimeIssues}
+                />
                 <div className={SIM_RUNTIME_APP_ROOT}>
                     <PhoneSimulatorShell
                         activeChannel={activeChannel}
