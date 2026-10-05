@@ -12,19 +12,35 @@ export interface SimulatorAppNotesProps {
     readOnly: boolean;
     onChange: (markdown: string, initialNormalization?: boolean) => void;
 }
-export interface SimulatorAppsHost {
+/** Layout and formatting the host can restyle. */
+export interface SimulatorAppsPresentation {
     Shell: ComponentType<{ children: ReactNode; nav: ReactNode }>;
     NotesEditor: ComponentType<SimulatorAppNotesProps>;
     formatDate: (date: Date) => string;
     formatCaptureDate: (metadata: PhotoMetadata) => string;
+    renderPhotoMap?: (latitude: number, longitude: number) => ReactNode;
+}
+/** File and photo metadata reading. */
+export interface SimulatorAppsAssets {
     readAsset: typeof readAsset;
     extractPhotoMetadata: typeof extractPhotoMetadata;
-    renderPhotoMap?: (latitude: number, longitude: number) => ReactNode;
+}
+/** Device lock hashing and verification. */
+export interface SimulatorAppsLock {
     checkLock: typeof checkLock;
     createLock: typeof createLock;
+}
+/** Browser capabilities the host can replace. */
+export interface SimulatorAppsPlatform {
     confirm: (message: string) => boolean;
     copyText: (text: string) => Promise<void>;
 }
+export interface SimulatorAppsHost
+    extends
+        SimulatorAppsPresentation,
+        SimulatorAppsAssets,
+        SimulatorAppsLock,
+        SimulatorAppsPlatform {}
 const defaults: SimulatorAppsHost = {
     Shell: ({ children, nav }) => (
         <>
