@@ -1,5 +1,5 @@
 import {
-    SimulatorChannel,
+    channelToApp,
     type SimulatorSessionState,
     DEFAULT_INTERNET_SCREEN,
     DEFAULT_HOME_SCREEN,
@@ -29,19 +29,7 @@ import {
 
 function getEntryAppFromPayload(payload: SimulatorSessionState['payload']): SimulatorApp {
     if (payload.entryPoint?.app != null) return payload.entryPoint.app;
-    switch (payload.channel) {
-        case SimulatorChannel.Sms:
-            return SimulatorApp.Messages;
-        case SimulatorChannel.Browser:
-            return SimulatorApp.Internet;
-        case SimulatorChannel.Phone:
-        case SimulatorChannel.Contacts:
-            return SimulatorApp.Phone;
-        case SimulatorChannel.Home:
-            return SimulatorApp.Home;
-        default:
-            return SimulatorApp.Email;
-    }
+    return channelToApp(payload.channel);
 }
 
 function resolveInitialInternetScreen(
