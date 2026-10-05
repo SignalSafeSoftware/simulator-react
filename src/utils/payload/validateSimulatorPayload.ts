@@ -1,4 +1,5 @@
 import { englishLocale } from '../../i18n/englishLocale.js';
+import { isRecord } from '@signalsafe/tree-spec';
 /**
  * Lightweight validation for simulator template shape.
  * Throws with a clear, author-facing message so callers can show an error without crashing the page.
@@ -22,17 +23,16 @@ const HINT = ' See docs/simulator/simulator-authoring.md for schema and allowed 
  * workspace Vitest/Vite SSR has dropped that barrel binding in practice.
  */
 export function validateSimulatorPayload(payload: unknown): void {
-    if (payload == null || typeof payload !== 'object') {
+    if (!isRecord(payload)) {
         throw new Error(
             englishLocale.t(
                 'copy.validateSimulatorPayload.invalid.simulator.payload.payload.is.missing.or.not.an.object',
             ) + HINT,
         );
     }
-    const p = payload as Record<string, unknown>;
-    if (!isSimulatorChannel(p.channel)) {
+    if (!isSimulatorChannel(payload.channel)) {
         throw new Error(
-            `Invalid simulator payload: channel must be one of ${VALID_CHANNELS.join(', ')}. Got: ${String(p.channel)}.` +
+            `Invalid simulator payload: channel must be one of ${VALID_CHANNELS.join(', ')}. Got: ${String(payload.channel)}.` +
                 HINT,
         );
     }

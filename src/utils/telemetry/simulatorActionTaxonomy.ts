@@ -7,6 +7,7 @@
  */
 
 import type { SimulatorAction } from '../../types/session.js';
+import { isRecord } from '@signalsafe/tree-spec';
 
 // -----------------------------------------------------------------------------
 // Canonical action type list (must match SimulatorAction union in session.ts)
@@ -105,9 +106,11 @@ export function getSimulatorActionCategory(type: SimulatorActionType): Simulator
     return SIMULATOR_ACTION_CATEGORIES[type];
 }
 
+const ACTION_TYPE_SET: ReadonlySet<string> = new Set(SIMULATOR_ACTION_TYPES);
+
 /** Type guard: true if string is a canonical action type. */
 export function isSimulatorActionType(s: string): s is SimulatorActionType {
-    return (SIMULATOR_ACTION_TYPES as readonly string[]).includes(s);
+    return ACTION_TYPE_SET.has(s);
 }
 
 // -----------------------------------------------------------------------------
@@ -142,9 +145,8 @@ function hasRequiredPayload(type: SimulatorActionType, obj: Record<string, unkno
  * Use for host boundaries, serialization, or tests. Returns the value typed as SimulatorAction when true.
  */
 export function validateSimulatorAction(obj: unknown): obj is SimulatorAction {
-    if (obj == null || typeof obj !== 'object') return false;
-    const o = obj as Record<string, unknown>;
-    if (typeof o.type !== 'string') return false;
-    if (!isSimulatorActionType(o.type)) return false;
-    return hasRequiredPayload(o.type, o);
+    if (!isRecord(obj)) return false;
+    if (typeof obj.type !== 'string') return false;
+    if (!isSimulatorActionType(obj.type)) return false;
+    return hasRequiredPayload(obj.type, obj);
 }

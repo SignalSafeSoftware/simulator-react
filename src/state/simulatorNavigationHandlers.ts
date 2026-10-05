@@ -13,9 +13,6 @@ import {
 import {
     type SimulatorViewState,
     type PhoneScreenId,
-    type EmailScreenId,
-    type MessagesScreenId,
-    type HomeScreenId,
     DEFAULT_PHONE_SCREEN,
     DEFAULT_EMAIL_SCREEN,
     DEFAULT_MESSAGES_SCREEN,
@@ -23,7 +20,7 @@ import {
     DEFAULT_HOME_SCREEN,
 } from '../types/session.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
-import { getDefaultScreen, isInternetScreen } from './simulatorViewStateHelpers.js';
+import { isInternetScreen } from './simulatorViewStateHelpers.js';
 import { ownValue } from '../utils/lookup.js';
 
 export function applySwitchApp(state: SimulatorViewState, app: SimulatorApp): SimulatorViewState {
@@ -211,38 +208,33 @@ export function applyBack(state: SimulatorViewState): SimulatorViewState {
     return next;
 }
 
-type CancelHandler = (
-    next: SimulatorViewState,
-    state: SimulatorViewState,
-    defaultScreen: string,
-) => void;
+type CancelHandler = (next: SimulatorViewState, state: SimulatorViewState) => void;
 
 const CANCEL_HANDLERS: Readonly<Record<SimulatorApp, CancelHandler>> = Object.freeze({
-    [SimulatorApp.Phone]: (next, state, defaultScreen) => {
-        next.phone = { ...state.phone, screen: defaultScreen as PhoneScreenId, stack: [] };
+    [SimulatorApp.Phone]: (next, state) => {
+        next.phone = { ...state.phone, screen: DEFAULT_PHONE_SCREEN, stack: [] };
     },
-    [SimulatorApp.Email]: (next, state, defaultScreen) => {
+    [SimulatorApp.Email]: (next, state) => {
         next.email = {
             ...state.email,
-            screen: defaultScreen as EmailScreenId,
+            screen: DEFAULT_EMAIL_SCREEN,
             stack: [],
             selectedMessageId: null,
         };
     },
-    [SimulatorApp.Messages]: (next, state, defaultScreen) => {
-        next.messages = { ...state.messages, screen: defaultScreen as MessagesScreenId, stack: [] };
+    [SimulatorApp.Messages]: (next, state) => {
+        next.messages = { ...state.messages, screen: DEFAULT_MESSAGES_SCREEN, stack: [] };
     },
-    [SimulatorApp.Internet]: (next, state, defaultScreen) => {
-        next.internet = { ...state.internet, screen: defaultScreen, stack: [] };
+    [SimulatorApp.Internet]: (next, state) => {
+        next.internet = { ...state.internet, screen: DEFAULT_INTERNET_SCREEN, stack: [] };
     },
-    [SimulatorApp.Home]: (next, state, defaultScreen) => {
-        next.home = { ...state.home, screen: defaultScreen as HomeScreenId };
+    [SimulatorApp.Home]: (next, state) => {
+        next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN };
     },
 });
 
 export function applyCancel(state: SimulatorViewState): SimulatorViewState {
-    const app = state.activeApp;
     const next = { ...state };
-    ownValue(CANCEL_HANDLERS, app)?.(next, state, getDefaultScreen(app));
+    ownValue(CANCEL_HANDLERS, state.activeApp)?.(next, state);
     return next;
 }

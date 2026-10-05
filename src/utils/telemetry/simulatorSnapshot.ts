@@ -113,7 +113,7 @@ function copyNullableNumberField(
 
 function serializeAction(a: SimulatorAction): SerializedSimulatorAction {
     const base: SerializedSimulatorAction = { type: a.type };
-    const source = a as ActionRecord;
+    const source: ActionRecord = { ...a };
     copyTruthyStringFields(base, source, [
         'app',
         'screen',

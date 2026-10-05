@@ -277,10 +277,10 @@ export function analyzeReachability(payload: SimulatorTemplatePayload): Reachabi
         home: [],
     };
 
-    const reachableEntities = {
-        contacts: [] as string[],
-        inboxMessageIds: [] as string[],
-        browserPageIds: [] as string[],
+    const reachableEntities: ReachabilityReport['reachableEntities'] = {
+        contacts: [],
+        inboxMessageIds: [],
+        browserPageIds: [],
     };
 
     let browserHasCycle = false;
