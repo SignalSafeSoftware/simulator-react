@@ -1,4 +1,3 @@
-import { simBtnToneClass, SimulatorButtonTone } from '../../ui/styles/simulatorClasses.js';
 import type { useDevicePage } from '../../hooks/device/useDevicePage.js';
 import type { useVisiblePage } from '../../hooks/device/useVisiblePage.js';
 import type { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
@@ -9,6 +8,5 @@ export type SecretPage = ReturnType<typeof useDevicePage<'secrets'>>;
 export type VisiblePage = ReturnType<typeof useVisiblePage>;
 export type TypeLabels = Record<Secret['type'], string>;
 
-export const OUTLINE = simBtnToneClass(SimulatorButtonTone.NeutralOutline);
 export const FolderPage = Object.freeze({ Create: 'create', Delete: 'delete' } as const);
 export type FolderPage = (typeof FolderPage)[keyof typeof FolderPage];

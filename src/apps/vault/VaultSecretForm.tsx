@@ -1,6 +1,6 @@
 import { useId, type RefObject } from 'react';
 import { Copy, Eye, EyeOff } from 'lucide-react';
-import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
+import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import {
     SECRET_TYPES,
     secretTypeSchema,
@@ -8,7 +8,7 @@ import {
 } from '@signalsafe/simulator-core/apps/contracts';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-import { OUTLINE, type TypeLabels } from './vaultShared.js';
+import { type TypeLabels } from './vaultShared.js';
 
 function SecretValueField({
     draft,
@@ -33,7 +33,7 @@ function SecretValueField({
             <label htmlFor={secretId}>{t('app.vault.secret')}</label>
             <div className="vault-secret-group">
                 <button
-                    className={OUTLINE}
+                    className={SIM_BTN_OUTLINE}
                     type="button"
                     aria-label={t('app.vault.copySecret')}
                     title={t('app.vault.copySecret')}
@@ -52,7 +52,7 @@ function SecretValueField({
                     onChange={(event) => onChange({ ...draft, value: event.target.value })}
                 />
                 <button
-                    className={OUTLINE}
+                    className={SIM_BTN_OUTLINE}
                     type="button"
                     aria-label={toggleLabel}
                     title={toggleLabel}

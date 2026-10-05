@@ -86,6 +86,8 @@ export function simBtnToneClass(tone: SimulatorButtonTone = SimulatorButtonTone.
     return `${SIM_BTN} simulator-btn--${tone}`;
 }
 
+export const SIM_BTN_OUTLINE = simBtnToneClass(SimulatorButtonTone.NeutralOutline);
+
 export const SimulatorAlertTone = Object.freeze({
     Warning: 'warning',
     Danger: 'danger',

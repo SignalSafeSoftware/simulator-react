@@ -1,4 +1,3 @@
-import { simBtnToneClass, SimulatorButtonTone } from '../../ui/styles/simulatorClasses.js';
 import type { useDevicePage } from '../../hooks/device/useDevicePage.js';
 import type { useVisiblePage } from '../../hooks/device/useVisiblePage.js';
 import type { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
@@ -9,5 +8,3 @@ export type MailFolder = Mail['folder'];
 export type Translate = ReturnType<typeof useSimulatorLocale>['t'];
 export type MailPage = ReturnType<typeof useDevicePage<'mail'>>;
 export type VisiblePage = ReturnType<typeof useVisiblePage>;
-
-export const OUTLINE = simBtnToneClass(SimulatorButtonTone.NeutralOutline);

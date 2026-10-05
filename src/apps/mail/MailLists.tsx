@@ -1,4 +1,4 @@
-import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
+import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import { UserRound, Search } from 'lucide-react';
 import { PagedListFooter } from '../shared/PagedListFooter.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
@@ -6,7 +6,7 @@ import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
 import { mailFolderSchema, type Mail } from '@signalsafe/simulator-core/apps/contracts';
 import { mailTime } from '@signalsafe/simulator-core/apps/mail';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-import { OUTLINE, type MailFolder, type MailPage, type VisiblePage } from './mailShared.js';
+import { type MailFolder, type MailPage, type VisiblePage } from './mailShared.js';
 
 export function MailFolderList({
     sources,
@@ -64,7 +64,7 @@ function MailListItem({
         folder === mailFolderSchema.enum.sent || folder === mailFolderSchema.enum.drafts;
     return (
         <li>
-            <button className={OUTLINE} disabled={busy} onClick={() => onOpen(item)}>
+            <button className={SIM_BTN_OUTLINE} disabled={busy} onClick={() => onOpen(item)}>
                 <span
                     className="prototype-mail-avatar simulator-avatar simulator-surface--avatar"
                     aria-hidden="true"

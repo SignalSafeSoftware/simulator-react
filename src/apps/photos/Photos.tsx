@@ -1,8 +1,4 @@
-import {
-    SIM_INPUT,
-    SimulatorButtonTone,
-    simBtnToneClass,
-} from '../../ui/styles/simulatorClasses.js';
+import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import { useDevicePage } from '../../hooks/device/useDevicePage.js';
 import { useVisiblePage } from '../../hooks/device/useVisiblePage.js';
 import { PagedListFooter } from '../shared/PagedListFooter.js';
@@ -223,7 +219,7 @@ export default function Photos({
                     <div className="prototype-gallery">
                         {photos.records.map((item) => (
                             <button
-                                className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
+                                className={SIM_BTN_OUTLINE}
                                 key={item.id}
                                 onClick={() => {
                                     setError('');

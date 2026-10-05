@@ -2,11 +2,7 @@ import type { ReactNode } from 'react';
 import { Vault as VaultIcon, Images, Settings, LockKeyhole } from 'lucide-react';
 import SimulatorScreenTile from '../../views/shared/SimulatorScreenTile.js';
 import { SIM_SCREEN_HEADER } from '../../ui/styles/semanticSimulatorClasses.js';
-import {
-    SimulatorButtonTone,
-    simBtnToneClass,
-    joinClasses,
-} from '../../ui/styles/simulatorClasses.js';
+import { joinClasses, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 
 const TILE_ICON_SIZE = 48;
@@ -71,10 +67,7 @@ export default function DeviceHome({
                 />
             </div>
             {onLock && (
-                <button
-                    className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
-                    onClick={onLock}
-                >
+                <button className={SIM_BTN_OUTLINE} onClick={onLock}>
                     <LockKeyhole size={18} aria-hidden="true" /> {t('app.home.lock')}
                 </button>
             )}

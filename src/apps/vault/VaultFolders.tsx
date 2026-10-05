@@ -1,9 +1,8 @@
 import type { RefObject } from 'react';
 import { ChevronRight, Save, Trash2 } from 'lucide-react';
-import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
+import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-import { OUTLINE } from './vaultShared.js';
 
 export function SearchBox({
     label,
@@ -142,7 +141,7 @@ export function FolderEditor({
                 </label>
                 <div className="prototype-actions">
                     <button
-                        className={OUTLINE}
+                        className={SIM_BTN_OUTLINE}
                         type="submit"
                         aria-label={t('app.vault.saveFolder')}
                         title={t('app.vault.saveFolder')}
@@ -151,7 +150,7 @@ export function FolderEditor({
                         <Save size={20} aria-hidden="true" />
                     </button>
                     <button
-                        className={OUTLINE}
+                        className={SIM_BTN_OUTLINE}
                         type="button"
                         aria-label={t('app.vault.deleteFolder')}
                         title={t('app.vault.deleteFolder')}

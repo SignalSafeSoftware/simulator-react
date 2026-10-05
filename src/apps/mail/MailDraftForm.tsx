@@ -1,8 +1,7 @@
 import type { RefObject } from 'react';
-import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
+import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import type { Mail } from '@signalsafe/simulator-core/apps/contracts';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-import { OUTLINE } from './mailShared.js';
 
 const DRAFT_FIELDS = ['to', 'cc', 'bcc', 'subject'] as const;
 
@@ -23,7 +22,7 @@ function MailDraftAttachments({
                 <li key={`${index}-${asset.name}`}>
                     {asset.name}
                     <button
-                        className={OUTLINE}
+                        className={SIM_BTN_OUTLINE}
                         type="button"
                         disabled={busy}
                         onClick={() => remove(index)}

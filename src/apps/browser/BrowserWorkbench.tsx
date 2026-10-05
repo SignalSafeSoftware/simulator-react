@@ -1,8 +1,4 @@
-import {
-    SIM_INPUT,
-    SimulatorButtonTone,
-    simBtnToneClass,
-} from '../../ui/styles/simulatorClasses.js';
+import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import {
     BROWSER_ACTION_TYPE,
     BROWSER_ACTION_VERSION,
@@ -214,7 +210,7 @@ export default function BrowserWorkbench({
                         }}
                     >
                         <button
-                            className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
+                            className={SIM_BTN_OUTLINE}
                             type="button"
                             aria-label={t('app.browser.back')}
                             title={t('app.browser.back')}
@@ -224,7 +220,7 @@ export default function BrowserWorkbench({
                             <ArrowLeft size={18} aria-hidden="true" />
                         </button>
                         <button
-                            className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
+                            className={SIM_BTN_OUTLINE}
                             type="button"
                             aria-label={t('app.browser.forward')}
                             title={t('app.browser.forward')}
@@ -255,9 +251,7 @@ export default function BrowserWorkbench({
                                     <h3>{t('app.browser.example.title')}</h3>
                                     <p>{t('app.browser.example.body')}</p>
                                     <button
-                                        className={simBtnToneClass(
-                                            SimulatorButtonTone.NeutralOutline,
-                                        )}
+                                        className={SIM_BTN_OUTLINE}
                                         onClick={() => emit('open-account')}
                                     >
                                         {t('app.browser.example.account')}

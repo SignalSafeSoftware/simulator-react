@@ -1,8 +1,7 @@
 import {
     SIM_INPUT,
     SIM_VISUALLY_HIDDEN,
-    SimulatorButtonTone,
-    simBtnToneClass,
+    SIM_BTN_OUTLINE,
 } from '../../ui/styles/simulatorClasses.js';
 import { SIM_APP_PAGE_CONTENT } from '../../ui/styles/semanticSimulatorClasses.js';
 import { DevicePage } from '../shared/DevicePage.js';
@@ -52,11 +51,7 @@ export function LockScreen({
                         onChange={(event) => setPassword(event.target.value)}
                     />
                 </label>
-                <button
-                    type="submit"
-                    className={simBtnToneClass(SimulatorButtonTone.NeutralOutline)}
-                    disabled={busy}
-                >
+                <button type="submit" className={SIM_BTN_OUTLINE} disabled={busy}>
                     {t('app.lock.unlock')}
                 </button>
             </form>
@@ -79,7 +74,7 @@ function LockSettingsActions({
     onLock: () => void;
 }>) {
     const { t } = useSimulatorLocale();
-    const tone = simBtnToneClass(SimulatorButtonTone.NeutralOutline);
+    const tone = SIM_BTN_OUTLINE;
     return (
         <div className="prototype-actions">
             <button type="submit" className={tone} disabled={disabled}>

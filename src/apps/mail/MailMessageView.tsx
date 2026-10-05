@@ -1,7 +1,8 @@
 import { PagedListFooter } from '../shared/PagedListFooter.js';
+import { SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import { mailFolderSchema, type Asset, type Mail } from '@signalsafe/simulator-core/apps/contracts';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-import { OUTLINE, type MailPage, type ReplyKind, type VisiblePage } from './mailShared.js';
+import { type MailPage, type ReplyKind, type VisiblePage } from './mailShared.js';
 
 function MailHeaders({
     message,
@@ -43,7 +44,7 @@ function MailThread({
                 .filter((item) => item.folder !== mailFolderSchema.enum.trash)
                 .map((item) => (
                     <button
-                        className={OUTLINE}
+                        className={SIM_BTN_OUTLINE}
                         key={item.id}
                         disabled={busy}
                         onClick={() => onOpen(item.id)}
@@ -95,14 +96,14 @@ function MailMessageActions({
             {message.folder !== mailFolderSchema.enum.drafts && (
                 <>
                     <button
-                        className={OUTLINE}
+                        className={SIM_BTN_OUTLINE}
                         disabled={busy}
                         onClick={() => actions.compose(message, 'reply-all')}
                     >
                         {t('app.mail.replyAll')}
                     </button>
                     <button
-                        className={OUTLINE}
+                        className={SIM_BTN_OUTLINE}
                         disabled={busy}
                         onClick={() => actions.compose(message, 'forward')}
                     >
@@ -111,7 +112,7 @@ function MailMessageActions({
                 </>
             )}
             <button
-                className={OUTLINE}
+                className={SIM_BTN_OUTLINE}
                 disabled={storeBusy}
                 onClick={() => actions.toggleRead(message)}
             >
@@ -120,14 +121,14 @@ function MailMessageActions({
             {message.folder === mailFolderSchema.enum.trash ? (
                 <>
                     <button
-                        className={OUTLINE}
+                        className={SIM_BTN_OUTLINE}
                         disabled={storeBusy}
                         onClick={() => actions.restore(message)}
                     >
                         {t('app.mail.restore')}
                     </button>
                     <button
-                        className={OUTLINE}
+                        className={SIM_BTN_OUTLINE}
                         disabled={storeBusy}
                         onClick={() => actions.remove(message)}
                     >
@@ -136,7 +137,7 @@ function MailMessageActions({
                 </>
             ) : (
                 <button
-                    className={OUTLINE}
+                    className={SIM_BTN_OUTLINE}
                     disabled={storeBusy}
                     onClick={() => actions.moveToTrash(message)}
                 >
