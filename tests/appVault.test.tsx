@@ -4,14 +4,14 @@ import {
     type Secret,
     type SimulatorStore,
 } from '@signalsafe/simulator-core/apps/contracts';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
     SimulatorAppsProvider,
     type SimulatorAppNotesProps,
 } from '../src/apps/shared/SimulatorAppsHost';
 import Vault from '../src/apps/vault/Vault';
-import { StoreHarness, flush, type HarnessStore } from './support/appHarness';
+import { StoreHarness, settle, type HarnessStore } from './support/appHarness';
 
 const stamp = '2024-01-02T03:04:05.000Z';
 
@@ -59,7 +59,6 @@ function setup({
     return { ...view, store: () => current, onBack };
 }
 
-const settle = () => act(flush);
 const nav = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
 const openFolder = async (name: string) => {
     fireEvent.click(screen.getByText(name).closest('button')!);

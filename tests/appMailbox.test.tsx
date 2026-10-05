@@ -10,7 +10,7 @@ import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import Mailbox, { type MailboxSource } from '../src/apps/mail/Mailbox';
 import { SimulatorAppsProvider } from '../src/apps/shared/SimulatorAppsHost';
-import { StoreHarness, flush, type HarnessStore } from './support/appHarness';
+import { StoreHarness, settle, type HarnessStore } from './support/appHarness';
 
 const ME = 'learner@example.test';
 
@@ -99,7 +99,6 @@ function setup({
     return { ...view, store: () => current, onBack, readAsset };
 }
 
-const settle = () => act(flush);
 const nav = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
 const openFolder = async (name: RegExp) => {
     fireEvent.click(screen.getByRole('button', { name }));

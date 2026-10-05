@@ -1,5 +1,6 @@
 import type { SimulatorStore } from '@signalsafe/simulator-core/apps/contracts';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
+import { act } from '@testing-library/react';
 import { useReducer, useState, type ReactNode } from 'react';
 import { createTestStore } from './deviceStore';
 
@@ -26,3 +27,6 @@ export function StoreHarness({
 
 /** Waits for pending promise callbacks and state updates to settle. */
 export const flush = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
+
+/** Flushes pending work inside `act` so React state updates are applied. */
+export const settle = () => act(flush);
