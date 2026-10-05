@@ -44,6 +44,12 @@ jobs:
             - name: Module boundaries
               run: yarn check:modules
 
+            - name: Import cycles
+              run: yarn check:cycles
+
+            - name: Duplicated code
+              run: yarn check:duplication
+
             - name: Typecheck
               run: yarn typecheck
 
