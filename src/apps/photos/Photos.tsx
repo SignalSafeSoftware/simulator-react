@@ -1,9 +1,11 @@
-import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
+import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
 import { useDevicePage } from '../../hooks/device/useDevicePage.js';
 import { useVisiblePage } from '../../hooks/device/useVisiblePage.js';
-import { PagedListFooter } from '../shared/PagedListFooter.js';
+import {} from '../shared/PagedListFooter.js';
 import PhotoLocation from './PhotoLocation.js';
 import PhotoEditor from './PhotoEditor.js';
+import PhotoDetailsCard from './PhotoDetailsCard.js';
+import PhotoGallery from './PhotoGallery.js';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useDraftBaseline } from '../shared/useDraftBaseline.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
@@ -19,12 +21,7 @@ export default function Photos({
     store,
     onBack,
 }: Readonly<{ store: DeviceStore; onBack: () => void }>) {
-    const {
-        formatCaptureDate: captureDateLabel,
-        readAsset,
-        extractPhotoMetadata,
-        confirm,
-    } = useSimulatorAppsHost();
+    const { readAsset, extractPhotoMetadata, confirm } = useSimulatorAppsHost();
     const { t } = useSimulatorLocale();
     const visiblePage = useVisiblePage('photos');
     const photos = useDevicePage(store, 'photos', {}, visiblePage.count);
@@ -34,11 +31,6 @@ export default function Photos({
     const setEditing = (value: boolean) => setMode((current) => ({ ...current, editing: value }));
     const [draft, setDraft] = useState<Photo | null>(null);
     const { setBaseline, hasBaseline, confirmDiscard } = useDraftBaseline(draft);
-    const [dimensions, setDimensions] = useState<{
-        source: string;
-        width: number;
-        height: number;
-    } | null>(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const latest = useLatestRequest();
@@ -166,44 +158,7 @@ export default function Photos({
             )}
             {draft ? (
                 <>
-                    <article className='prototype-photo-card' aria-label={t('app.photos.details')}>
-                        {/* oxlint-disable-next-line nextjs/no-img-element -- Vite host displaying bounded local image data. */}
-                        <img
-                            className='prototype-photo'
-                            src={draft.asset.data}
-                            onLoad={(event) =>
-                                setDimensions({
-                                    source: event.currentTarget.src,
-                                    width: event.currentTarget.naturalWidth,
-                                    height: event.currentTarget.naturalHeight,
-                                })
-                            }
-                            onError={() => setDimensions(null)}
-                            alt={draft.caption || draft.title}
-                        />
-                        <div className='prototype-photo-card-body'>
-                            <dl className='prototype-photo-details'>
-                                <dt>{t('app.vault.title')}</dt>
-                                <dd>{draft.title}</dd>
-                                <dt>{t('app.photos.fileType')}</dt>
-                                <dd>{draft.asset.mime}</dd>
-                                <dt>{t('app.photos.width')}</dt>
-                                <dd>
-                                    {dimensions?.source === draft.asset.data
-                                        ? t('app.photos.pixels', { value: dimensions.width })
-                                        : t('app.unknown')}
-                                </dd>
-                                <dt>{t('app.photos.height')}</dt>
-                                <dd>
-                                    {dimensions?.source === draft.asset.data
-                                        ? t('app.photos.pixels', { value: dimensions.height })
-                                        : t('app.unknown')}
-                                </dd>
-                                <dt>{t('app.photos.captured')}</dt>
-                                <dd>{captureDateLabel(draft.metadata, t)}</dd>
-                            </dl>
-                        </div>
-                    </article>
+                    <PhotoDetailsCard photo={draft} />
                     {editing && (
                         <PhotoEditor
                             photo={draft}
@@ -219,39 +174,17 @@ export default function Photos({
                 </>
             ) : (
                 <>
-                    <div className='prototype-gallery'>
-                        {photos.records.map((item) => (
-                            <button
-                                className={SIM_BTN_OUTLINE}
-                                key={item.id}
-                                onClick={() => {
-                                    setError('');
-                                    setExisting(true);
-                                    setEditing(false);
-                                    setBaseline(item);
-                                    setDraft(item);
-                                }}
-                            >
-                                {/* oxlint-disable-next-line nextjs/no-img-element -- Vite app with bounded local image assets. */}
-                                <img
-                                    loading='lazy'
-                                    src={item.asset.data}
-                                    alt={item.caption || item.title}
-                                />
-                                <span className='prototype-photo-date'>
-                                    {captureDateLabel(item.metadata, t)}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
-                    <PagedListFooter
-                        page={photos}
-                        visible={visiblePage}
-                        label={t('app.photos.loadMore')}
+                    <PhotoGallery
+                        photos={photos}
+                        visiblePage={visiblePage}
+                        onOpen={(item) => {
+                            setError('');
+                            setExisting(true);
+                            setEditing(false);
+                            setBaseline(item);
+                            setDraft(item);
+                        }}
                     />
-                    {!photos.loading && !photos.error && !photos.total && (
-                        <p>{t('app.photos.none')}</p>
-                    )}
                 </>
             )}
         </DevicePage>
