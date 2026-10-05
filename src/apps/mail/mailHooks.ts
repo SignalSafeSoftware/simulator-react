@@ -4,6 +4,7 @@ import { mailSchema, type Mail } from '@signalsafe/simulator-core/apps/contracts
 import { newMail, replyMail } from '@signalsafe/simulator-core/apps/mail';
 import type { SimulatorEmailService } from '@signalsafe/simulator-core/apps/emailService';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
+import { useDraftBaseline } from '../shared/useDraftBaseline.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import type { MailFolder, ReplyKind } from './mailShared.js';
 
@@ -80,14 +81,14 @@ export function useMailDraft({
     const { readAsset } = useSimulatorAppsHost();
     const { t } = useSimulatorLocale();
     const [draft, setDraft] = useState<Mail | null>(null);
-    const baseline = useRef<Mail | null>(null);
+    const { setBaseline, confirmDiscard } = useDraftBaseline(draft);
     const formRef = useRef<HTMLFormElement>(null);
     const [reading, setReading] = useState(false);
     const [sending, setSending] = useState(false);
     const busy = storeBusy || reading || sending;
 
     function edit(next: Mail) {
-        baseline.current = next;
+        setBaseline(next);
         setDraft(next);
         setError('');
     }
@@ -96,11 +97,7 @@ export function useMailDraft({
         edit(source ? replyMail(source, identity, kind) : newMail(identity));
     }
     function leave() {
-        if (
-            JSON.stringify(draft) === JSON.stringify(baseline.current) ||
-            window.confirm(t('app.mail.discardConfirm'))
-        )
-            setDraft(null);
+        if (confirmDiscard(t('app.mail.discardConfirm'))) setDraft(null);
     }
     async function commit(next: Mail, edited: boolean) {
         if (!(await persist(next, edited))) return;

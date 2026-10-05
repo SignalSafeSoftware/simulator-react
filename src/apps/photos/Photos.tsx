@@ -10,6 +10,7 @@ import { LoadMore } from '../../ui/lists/LoadMore.js';
 import PhotoLocation from './PhotoLocation.js';
 import PhotoEditor from './PhotoEditor.js';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
+import { useDraftBaseline } from '../shared/useDraftBaseline.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { createSimulatorId } from '@signalsafe/simulator-core/apps/id';
 import { useEffect, useRef, useState } from 'react';
@@ -25,6 +26,7 @@ export default function Photos({
         formatCaptureDate: captureDateLabel,
         readAsset,
         extractPhotoMetadata,
+        confirm,
     } = useSimulatorAppsHost();
     const { t } = useSimulatorLocale();
     const visiblePage = useVisiblePage('photos');
@@ -32,7 +34,7 @@ export default function Photos({
     const [existing, setExisting] = useState(false);
     const [draft, setDraft] = useState<Photo | null>(null);
     const [editing, setEditing] = useState(false);
-    const baseline = useRef<Photo | null>(null);
+    const { setBaseline, hasBaseline, confirmDiscard } = useDraftBaseline(draft);
     const [dimensions, setDimensions] = useState<{
         source: string;
         width: number;
@@ -55,12 +57,7 @@ export default function Photos({
         setError('');
     };
     const back = () => {
-        if (
-            editing &&
-            JSON.stringify(draft) !== JSON.stringify(baseline.current) &&
-            !window.confirm(t('app.photos.discardConfirm'))
-        )
-            return;
+        if (editing && !confirmDiscard(t('app.photos.discardConfirm'))) return;
         close();
     };
     const data = store.data;
@@ -74,9 +71,9 @@ export default function Photos({
             const original = extractPhotoMetadata(await file.arrayBuffer());
             if (request !== generation.current) return;
             const now = new Date().toISOString();
-            setExisting(replacing !== null && baseline.current !== null);
+            setExisting(replacing !== null && hasBaseline());
             setEditing(true);
-            if (!replacing) baseline.current = null;
+            if (!replacing) setBaseline(null);
             setDraft({
                 id: replacing?.id ?? createSimulatorId(),
                 title: replacing?.title ?? file.name,
@@ -136,7 +133,7 @@ export default function Photos({
                 disabled: unavailable,
                 onClick: async () => {
                     if (
-                        window.confirm(t('app.photos.deleteConfirm', { title: current.title })) &&
+                        confirm(t('app.photos.deleteConfirm', { title: current.title })) &&
                         (await store.remove('photos', current.id))
                     )
                         close();
@@ -238,7 +235,7 @@ export default function Photos({
                                     setError('');
                                     setExisting(true);
                                     setEditing(false);
-                                    baseline.current = item;
+                                    setBaseline(item);
                                     setDraft(item);
                                 }}
                             >

@@ -4,6 +4,7 @@ import type { PhotoMetadata } from '@signalsafe/simulator-core/apps/contracts';
 import { checkLock, createLock } from '../lock/lock.js';
 import { readAsset } from './assets.js';
 import { extractPhotoMetadata } from '../photos/photoMetadata.js';
+import { confirmInBrowser, copyToClipboard } from '../../utils/browser/browserEnvironment.js';
 export interface SimulatorAppNotesProps {
     label: string;
     placeholder: string;
@@ -21,6 +22,8 @@ export interface SimulatorAppsHost {
     renderPhotoMap?: (latitude: number, longitude: number) => ReactNode;
     checkLock: typeof checkLock;
     createLock: typeof createLock;
+    confirm: (message: string) => boolean;
+    copyText: (text: string) => Promise<void>;
 }
 const defaults: SimulatorAppsHost = {
     Shell: ({ children, nav }) => (
@@ -50,6 +53,8 @@ const defaults: SimulatorAppsHost = {
     extractPhotoMetadata,
     checkLock,
     createLock,
+    confirm: confirmInBrowser,
+    copyText: copyToClipboard,
 };
 const Context = createContext<SimulatorAppsHost>(defaults);
 export function SimulatorAppsProvider({

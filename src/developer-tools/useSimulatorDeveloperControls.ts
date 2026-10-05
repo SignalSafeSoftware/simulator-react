@@ -40,6 +40,7 @@ import {
     handleSimulatorKeyboard,
 } from '../utils/navigation/simulatorKeyboardCommands.js';
 import { DEVELOPER_TOOLBAR_SECTIONS } from './toolbarConfig.js';
+import { canCopyToClipboard, copyToClipboard } from '../utils/browser/browserEnvironment.js';
 
 export interface UseSimulatorDeveloperControlsOptions {
     state: SimulatorSessionState;
@@ -115,8 +116,8 @@ export function useSimulatorDeveloperControls({
     const handleCopySnapshot = useCallback(() => {
         const snapshot = captureSimulatorSnapshot(state);
         const json = snapshotToJson(snapshot);
-        if (typeof navigator?.clipboard?.writeText === 'function') {
-            navigator.clipboard.writeText(json).then(
+        if (canCopyToClipboard()) {
+            copyToClipboard(json).then(
                 () => {
                     setSnapshotCopied(true);
                     setTimeout(() => setSnapshotCopied(false), SNAPSHOT_COPY_FEEDBACK_MS);
@@ -129,8 +130,8 @@ export function useSimulatorDeveloperControls({
     const handleCopyNavGraph = useCallback(() => {
         const graph = buildSimulatorNavGraph(state.payload);
         const json = simulatorNavGraphToJson(graph);
-        if (typeof navigator?.clipboard?.writeText === 'function') {
-            navigator.clipboard.writeText(json).then(
+        if (canCopyToClipboard()) {
+            copyToClipboard(json).then(
                 () => {
                     setGraphCopied(true);
                     setTimeout(() => setGraphCopied(false), SNAPSHOT_COPY_FEEDBACK_MS);

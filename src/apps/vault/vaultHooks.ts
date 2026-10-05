@@ -7,6 +7,8 @@ import {
     type Secret,
 } from '@signalsafe/simulator-core/apps/contracts';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
+import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
+import { useDraftBaseline } from '../shared/useDraftBaseline.js';
 import type { FolderPage } from './vaultShared.js';
 
 export function newSecret(folder: string): Secret {
@@ -144,9 +146,10 @@ export function useVaultDraft({
 }>) {
     const { t } = useSimulatorLocale();
     const formRef = useRef<HTMLFormElement>(null);
-    const baseline = useRef<Secret | null>(null);
     const [existing, setExisting] = useState(false);
     const [draft, setDraft] = useState<Secret | null>(null);
+    const { setBaseline, confirmDiscard } = useDraftBaseline(draft);
+    const { confirm, copyText } = useSimulatorAppsHost();
     const [reveal, setReveal] = useState(false);
     function close() {
         setDraft(null);
@@ -154,18 +157,14 @@ export function useVaultDraft({
         setMessage('');
     }
     function edit(next: Secret) {
-        baseline.current = next;
+        setBaseline(next);
         setExisting(records.some((record) => record.id === next.id));
         setDraft(next);
         setReveal(false);
         setMessage('');
     }
     function discard() {
-        if (
-            JSON.stringify(draft) === JSON.stringify(baseline.current) ||
-            window.confirm(t('app.vault.discardConfirm'))
-        )
-            close();
+        if (confirmDiscard(t('app.vault.discardConfirm'))) close();
     }
     async function save() {
         const parsed = secretSchema.safeParse({
@@ -183,14 +182,14 @@ export function useVaultDraft({
     }
     async function remove(current: Secret) {
         if (
-            window.confirm(t('app.vault.deleteConfirm', { title: current.title })) &&
+            confirm(t('app.vault.deleteConfirm', { title: current.title })) &&
             (await store.remove('secrets', current.id))
         )
             close();
     }
     async function copy(value: string) {
         try {
-            await navigator.clipboard.writeText(value);
+            await copyText(value);
             setMessage(t('app.vault.copied'));
         } catch {
             setMessage(t('app.vault.clipboardUnavailable'));

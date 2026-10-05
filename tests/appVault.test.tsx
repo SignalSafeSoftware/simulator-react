@@ -378,6 +378,22 @@ describe('Vault secrets', () => {
         expect(message()).toBe('Copied.');
     });
 
+    it('uses host confirm and copyText instead of browser globals', async () => {
+        const browserConfirm = vi.spyOn(window, 'confirm');
+        const confirm = vi.fn(() => true);
+        const copyText = vi.fn(async () => undefined);
+        const { store } = await setupFolder({ host: { confirm, copyText } });
+        fireEvent.click(screen.getByText('Secret 1').closest('button')!);
+        nav('Copy secret');
+        await settle();
+        expect(copyText).toHaveBeenCalledWith('hunter2');
+        nav('Delete secret');
+        await settle();
+        expect(confirm).toHaveBeenCalledWith('Delete Secret 1?');
+        expect(browserConfirm).not.toHaveBeenCalled();
+        expect(store().state().secrets).toHaveLength(0);
+    });
+
     it('edits an existing secret and offers deletion', async () => {
         const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
         const { store } = await setupFolder();

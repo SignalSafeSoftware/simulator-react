@@ -58,7 +58,7 @@ function MailboxScreen({
     emailService?: SimulatorEmailService;
     onBack: () => void;
 }>) {
-    const { formatDate } = useSimulatorAppsHost();
+    const { formatDate, confirm } = useSimulatorAppsHost();
     const { t } = useSimulatorLocale();
     const folderLabels = {
         inbox: t('app.mail.folder.inbox'),
@@ -106,7 +106,7 @@ function MailboxScreen({
         nav.setSelected(item.id);
     }
     async function removeMessage(target: Mail) {
-        if (window.confirm(t('app.mail.deleteConfirm')) && (await store.remove('mail', target.id)))
+        if (confirm(t('app.mail.deleteConfirm')) && (await store.remove('mail', target.id)))
             nav.setSelected(null);
     }
     const actions: MessageActions = {
