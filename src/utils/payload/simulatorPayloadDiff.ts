@@ -1,4 +1,5 @@
 import { englishLocale } from '../../i18n/englishLocale.js';
+import { PayloadSection } from './payloadSections.js';
 /**
  * Lightweight diff for simulator payloads (simulator_json).
  * Produces a short, meaning-focused summary of changes for authors/admins.
@@ -93,7 +94,7 @@ function addEntryPointDiff(
     const rightLabel = entryPointLabel(getEntryPoint(right));
     if (leftLabel === rightLabel) return;
     out.push({
-        section: 'entry_point',
+        section: PayloadSection.EntryPoint,
         change: `Entry point: ${leftLabel} → ${rightLabel}`,
     });
 }
@@ -116,7 +117,7 @@ function addDeviceDiff(
 
     if (leftMenu.length !== rightMenu.length || leftMenuKey !== rightMenuKey) {
         out.push({
-            section: 'device',
+            section: PayloadSection.Device,
             change: `Device menu: ${leftMenu.length} → ${rightMenu.length} items`,
             detail:
                 leftMenu.length === rightMenu.length
@@ -144,7 +145,7 @@ function addDeviceDiff(
 
     if (defaultChanges.length > 0) {
         out.push({
-            section: 'device',
+            section: PayloadSection.Device,
             change: englishLocale.t('copy.simulatorPayloadDiff.device.secondary.defaults.changed'),
             detail: defaultChanges.join('; '),
         });
@@ -179,7 +180,7 @@ function addPhoneDiff(
     const rightHasIncoming = isRecord(rightPhone?.incoming_call);
     if (leftHasIncoming !== rightHasIncoming) {
         out.push({
-            section: 'phone',
+            section: PayloadSection.Phone,
             change: rightHasIncoming
                 ? englishLocale.t('copy.simulatorPayloadDiff.phone.incoming.call.added')
                 : englishLocale.t('copy.simulatorPayloadDiff.phone.incoming.call.removed'),
@@ -190,7 +191,7 @@ function addPhoneDiff(
     const rightHistoryLength = arrayLength(rightPhone?.history);
     if (leftHistoryLength !== rightHistoryLength) {
         out.push({
-            section: 'phone',
+            section: PayloadSection.Phone,
             change: `Phone history: ${leftHistoryLength} → ${rightHistoryLength} entries`,
         });
     }
@@ -208,7 +209,7 @@ function addEmailDiff(
 
     addCollectionDiff(
         out,
-        'email',
+        PayloadSection.Email,
         englishLocale.t('copy.simulatorPayloadDiff.email.inbox'),
         leftInbox,
         rightInbox,
@@ -225,7 +226,7 @@ function addEmailDiff(
     const rightDetailSubject = isRecord(rightEmail?.detail) ? rightEmail.detail.subject : undefined;
     if (String(leftDetailSubject) !== String(rightDetailSubject)) {
         out.push({
-            section: 'email',
+            section: PayloadSection.Email,
             change: englishLocale.t('copy.simulatorPayloadDiff.email.detail.subject.changed'),
         });
     }
@@ -242,7 +243,7 @@ function addMessagesDiff(
     const rightThreads = arrayLength(rightMessages?.threads);
     if (leftThreads !== rightThreads) {
         out.push({
-            section: 'messages',
+            section: PayloadSection.Messages,
             change: `Messages threads: ${leftThreads} → ${rightThreads}`,
         });
     }
@@ -251,7 +252,7 @@ function addMessagesDiff(
     const rightMessageCount = childArrayLength(rightMessages, 'thread_detail', 'messages');
     if (leftMessageCount !== rightMessageCount) {
         out.push({
-            section: 'messages',
+            section: PayloadSection.Messages,
             change: `Messages thread_detail: ${leftMessageCount} → ${rightMessageCount} messages`,
         });
     }
@@ -268,7 +269,7 @@ function addInternetDiff(
     const rightPages = idsFromArray(rightInternet?.pages ?? []);
     addCollectionDiff(
         out,
-        'internet',
+        PayloadSection.Internet,
         englishLocale.t('copy.simulatorPayloadDiff.browser.pages'),
         leftPages,
         rightPages,
@@ -284,7 +285,7 @@ function addInternetDiff(
     if (out.length > 0) {
         const last = out.at(-1);
         if (
-            last?.section === 'internet' &&
+            last?.section === PayloadSection.Internet &&
             last.change === `Browser pages: ${leftPages.length} → ${rightPages.length}`
         ) {
             last.change = `Browser pages: ${leftPages.join(', ') || '(none)'} → ${rightPages.join(', ') || '(none)'}`;
@@ -295,7 +296,7 @@ function addInternetDiff(
     const rightForms = arrayLength(rightInternet?.forms);
     if (leftForms !== rightForms) {
         out.push({
-            section: 'internet',
+            section: PayloadSection.Internet,
             change: `Browser forms: ${leftForms} → ${rightForms}`,
         });
     }
@@ -321,7 +322,7 @@ function addHomeDiff(
         leftSettingsSections !== rightSettingsSections
     ) {
         out.push({
-            section: 'home',
+            section: PayloadSection.Home,
             change: `Home: widgets ${leftWidgets}→${rightWidgets}, store apps ${leftStoreApps}→${rightStoreApps}, settings sections ${leftSettingsSections}→${rightSettingsSections}`,
         });
     }
@@ -339,24 +340,37 @@ export function diffSimulatorPayloads(
     addEntryPointDiff(out, left, right);
     addDeviceDiff(out, left, right);
 
-    const leftContacts = idsFromNamedSection(left, 'contacts');
-    const rightContacts = idsFromNamedSection(right, 'contacts');
-    addCollectionDiff(out, 'contacts', 'Contacts', leftContacts, rightContacts, (diff) => {
-        const details: string[] = [];
-        if (diff.added.length > 0) details.push(summarizeDiffItems(diff.added, '+'));
-        if (diff.removed.length > 0) details.push(summarizeDiffItems(diff.removed, '-'));
-        return details.join('; ');
-    });
+    const leftContacts = idsFromNamedSection(left, PayloadSection.Contacts);
+    const rightContacts = idsFromNamedSection(right, PayloadSection.Contacts);
+    addCollectionDiff(
+        out,
+        PayloadSection.Contacts,
+        'Contacts',
+        leftContacts,
+        rightContacts,
+        (diff) => {
+            const details: string[] = [];
+            if (diff.added.length > 0) details.push(summarizeDiffItems(diff.added, '+'));
+            if (diff.removed.length > 0) details.push(summarizeDiffItems(diff.removed, '-'));
+            return details.join('; ');
+        },
+    );
 
-    const leftDirectory = idsFromNamedSection(left, 'directory');
-    const rightDirectory = idsFromNamedSection(right, 'directory');
-    addCollectionDiff(out, 'directory', 'Directory', leftDirectory, rightDirectory, (diff) =>
-        [...diff.added.map((id) => `+${id}`), ...diff.removed.map((id) => `-${id}`)].join(', '),
+    const leftDirectory = idsFromNamedSection(left, PayloadSection.Directory);
+    const rightDirectory = idsFromNamedSection(right, PayloadSection.Directory);
+    addCollectionDiff(
+        out,
+        PayloadSection.Directory,
+        'Directory',
+        leftDirectory,
+        rightDirectory,
+        (diff) =>
+            [...diff.added.map((id) => `+${id}`), ...diff.removed.map((id) => `-${id}`)].join(', '),
     );
     if (out.length > 0) {
         const last = out.at(-1);
         if (
-            last?.section === 'directory' &&
+            last?.section === PayloadSection.Directory &&
             last.change === `Directory: ${leftDirectory.length} → ${rightDirectory.length}`
         ) {
             last.change = `Directory: ${leftDirectory.length} → ${rightDirectory.length} entries`;

@@ -2,6 +2,7 @@ import {
     SimulatorEmailScreenId,
     SimulatorPhoneScreenId,
 } from '@signalsafe/simulator-core/devicePayload';
+import { PayloadSection } from './payloadSections.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { englishLocale } from '../../i18n/englishLocale.js';
 /**
@@ -94,7 +95,7 @@ function checkVerificationSources(
             englishLocale.t(
                 'copy.simulatorRealismChecks.email.has.links.and.browser.pages.but.no.contacts.or.directory.verification.flow.is.not.po',
             ),
-            'contacts',
+            PayloadSection.Contacts,
         );
     }
 
@@ -110,7 +111,7 @@ function checkVerificationSources(
             suggestions,
             'realism_sms_verification_contacts',
             'SMS thread with browser pages: add contacts or directory so learners can verify sender.',
-            'contacts',
+            PayloadSection.Contacts,
         );
     }
 }
@@ -198,7 +199,7 @@ function checkPhoneEntry(
             englishLocale.t(
                 'copy.simulatorRealismChecks.entry.is.phone.directory.but.directory.and.contacts.are.empty',
             ),
-            'directory',
+            PayloadSection.Directory,
         );
     }
 }
@@ -219,7 +220,7 @@ function checkSenderMetadata(
             suggestions,
             'realism_sender_display_generic',
             `Sender display name "${display}" looks generic; consider a more believable name for examples.`,
-            'email',
+            PayloadSection.Email,
         );
     }
 }

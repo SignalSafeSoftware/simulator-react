@@ -1,4 +1,5 @@
 import { DEFAULT_INTERNET_SCREEN, type SimulatorTemplatePayload } from '../../types/session.js';
+import { PayloadSection } from './payloadSections.js';
 import {
     SimulatorEmailScreenId,
     SimulatorMessagesScreenId,
@@ -70,7 +71,7 @@ function lintEmailEntry(
             englishLocale.t(
                 'copy.lintSimulatorPayload.entry.point.is.email.detail.but.there.is.no.message.or.inbox',
             ),
-            'entry_point',
+            PayloadSection.EntryPoint,
         );
         return;
     }
@@ -81,7 +82,7 @@ function lintEmailEntry(
             englishLocale.t(
                 'copy.lintSimulatorPayload.entry.point.is.email.but.inbox.and.selected.message.are.empty',
             ),
-            'entry_point',
+            PayloadSection.EntryPoint,
         );
     }
 }
@@ -99,7 +100,7 @@ function lintMessagesEntry(
             englishLocale.t(
                 'copy.lintSimulatorPayload.entry.point.is.messages.thread.detail.but.the.thread.has.no.messages',
             ),
-            'entry_point',
+            PayloadSection.EntryPoint,
         );
         return;
     }
@@ -110,7 +111,7 @@ function lintMessagesEntry(
             englishLocale.t(
                 'copy.lintSimulatorPayload.entry.point.is.messages.but.the.sms.thread.is.empty',
             ),
-            'entry_point',
+            PayloadSection.EntryPoint,
         );
     }
 }
@@ -130,7 +131,7 @@ function lintInternetEntry(
             englishLocale.t(
                 'copy.lintSimulatorPayload.entry.point.is.internet.but.there.are.no.browser.pages',
             ),
-            'entry_point',
+            PayloadSection.EntryPoint,
         );
         return;
     }
@@ -139,7 +140,7 @@ function lintInternetEntry(
             warnings,
             SimulatorLintCode.EntryPointUnreachable,
             `Entry screen "${entryPoint?.screen}" is not in browser.pages; user will see default page.`,
-            'entry_point',
+            PayloadSection.EntryPoint,
         );
     }
 }
@@ -161,7 +162,7 @@ function lintPhoneEntry(
             englishLocale.t(
                 'copy.lintSimulatorPayload.entry.point.is.phone.but.phone.content.is.missing',
             ),
-            'entry_point',
+            PayloadSection.EntryPoint,
         );
     }
 }
@@ -176,7 +177,7 @@ function lintHomeEntry(payload: SimulatorTemplatePayload, warnings: SimulatorLin
             englishLocale.t(
                 'copy.lintSimulatorPayload.entry.point.is.home.but.widgets.and.featured.apps.are.empty',
             ),
-            'entry_point',
+            PayloadSection.EntryPoint,
         );
     }
 }
@@ -291,7 +292,7 @@ function lintPhoneVerificationContacts(
             englishLocale.t(
                 'copy.lintSimulatorPayload.phone.scenario.has.choices.e.g.verification.but.no.contacts.list.learners.cannot.match.a.c',
             ),
-            'phone',
+            PayloadSection.Phone,
         );
     }
 }
@@ -336,7 +337,7 @@ function lintDuplicateKeys(
         contactList.map((contact) => contact?.id),
         SimulatorLintCode.DuplicateKeys,
         (id) => `Duplicate contact id: "${id}".`,
-        'contacts',
+        PayloadSection.Contacts,
     );
     addDuplicateIdWarnings(
         warnings,
