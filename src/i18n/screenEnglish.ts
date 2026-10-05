@@ -148,6 +148,7 @@ export const screenEnglish = {
     'screen.smsSimulatorView.back.to.threads': 'Back to threads',
     'screen.smsSimulatorView.i.will.send.you.a.message': 'I will send you a message',
     'screen.smsSimulatorView.reply.to.message': 'Reply to message',
+    'screen.smsSimulatorView.link': 'Link: {text}',
     'screen.smsSimulatorView.send': 'Send',
     'screen.simulatorDeviceFallback.unsupported.simulator.device.configuration':
         'Unsupported simulator device configuration.',

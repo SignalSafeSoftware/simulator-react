@@ -4,22 +4,18 @@
  */
 import { SmsMode, type SimulatorAction, type SimulatorSmsPayload } from '../../types/session.js';
 import {
-    SIM_BORDER_TOP,
-    SIM_BTN_PLAIN,
     SIM_FLEX_SHRINK_0,
     SIM_ROUNDED_NONE,
     SIM_TEXT_BODY,
-    SIM_TEXT_DARK,
-    SIM_TEXT_MEDIUM,
     SIM_TEXT_SEMIBOLD,
     SIM_TEXT_SM,
     SIM_VISUALLY_HIDDEN,
-    SimulatorButtonTone,
     joinClasses,
 } from '../../ui/styles/simulatorClasses.js';
 import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
 import { useContext, useEffect, useState, type ReactNode } from 'react';
 import { SmsMessageTimeline } from './SmsMessageTimeline.js';
+import { SmsThreadLinks } from './SmsThreadLinks.js';
 import { SimulatorTimelineContext } from '../../contract/hostListSlots.js';
 import { useReportComposerState } from '../../contract/composerState.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
@@ -27,10 +23,10 @@ import { SimulatorCapabilityState, useSimulatorCapabilities } from '../../contra
 import { useMessageComposeOptions } from '../../contract/messageComposeContract.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { SimulatorActions } from '../../actions/simulatorActions.js';
-import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../../simulatorStyles.js';
+import { simLayout, simScreen, simSpacing, simTypo } from '../../simulatorStyles.js';
 import { SimulatorTextarea } from '../../ui/primitives.js';
 import { SIM_MESSAGES_THREAD_DETAIL } from '../../ui/styles/semanticSimulatorClasses.js';
-import { renderSimulatorChoice, type SimulatorChoiceRenderProps } from '../../ui/renderSlots.js';
+import { type SimulatorChoiceRenderProps } from '../../ui/renderSlots.js';
 
 export interface SmsSimulatorViewProps {
     payload: SimulatorSmsPayload | null;
@@ -105,23 +101,6 @@ export default function SmsSimulatorView({
     const contactLabel =
         senderName ?? (senderNumber ? formatNumber(senderNumber) : screenLocale.t('value.unknown'));
 
-    const renderLinkChoice = (
-        link: NonNullable<typeof content.links>[number],
-        idx: number,
-        className: string,
-    ) =>
-        renderSimulatorChoice(
-            {
-                label: link.text || link.href,
-                tone: SimulatorButtonTone.Link,
-                className,
-                onClick: () =>
-                    onAction(SimulatorActions.clickLink({ linkIndex: idx, href: link.href })),
-                'aria-label': `Link: ${link.text || link.href}`,
-            },
-            renderChoice,
-        );
-
     const handleSendReply = () => {
         const text = replyText.trim();
         if (text && !unavailable) {
@@ -177,63 +156,11 @@ export default function SmsSimulatorView({
                     renderChoice={renderChoice}
                 />
 
-                {(content.links?.length ?? 0) > 0 && (
-                    <div
-                        className={joinClasses(
-                            simSpacing.mt3,
-                            simSpacing.pt3,
-                            SIM_BORDER_TOP,
-                            simLayout.actionsRow,
-                            simSpacing.sectionGap,
-                        )}
-                    >
-                        {content.links?.map((link, idx) =>
-                            link.title != null && link.title !== '' ? (
-                                <div
-                                    key={`link-${idx}-${link.href ?? ''}-${link.title}`}
-                                    className={joinClasses(
-                                        simBorder.block,
-                                        simSpacing.blockPaddingCompact,
-                                        SIM_TEXT_SM,
-                                    )}
-                                    style={{ maxWidth: 280 }}
-                                >
-                                    <span
-                                        className={joinClasses(
-                                            SIM_TEXT_MEDIUM,
-                                            'simulator-text--block',
-                                            SIM_TEXT_DARK,
-                                            simSpacing.mb1,
-                                        )}
-                                    >
-                                        {link.title}
-                                    </span>
-                                    {renderLinkChoice(
-                                        link,
-                                        idx,
-                                        joinClasses(
-                                            SIM_BTN_PLAIN,
-                                            SIM_TEXT_SM,
-                                            'simulator-text--align-baseline',
-                                        ),
-                                    )}
-                                </div>
-                            ) : (
-                                <span key={`link-btn-${idx}-${link.href ?? ''}`}>
-                                    {renderLinkChoice(
-                                        link,
-                                        idx,
-                                        joinClasses(
-                                            SIM_BTN_PLAIN,
-                                            'simulator-text--align-baseline',
-                                            SIM_ROUNDED_NONE,
-                                        ),
-                                    )}
-                                </span>
-                            ),
-                        )}
-                    </div>
-                )}
+                <SmsThreadLinks
+                    links={content.links}
+                    onAction={onAction}
+                    renderChoice={renderChoice}
+                />
             </div>
 
             {payload.readOnly && onBack && (

@@ -1,7 +1,6 @@
 import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
 import { useDevicePage } from '../../hooks/device/useDevicePage.js';
 import { useVisiblePage } from '../../hooks/device/useVisiblePage.js';
-import {} from '../shared/PagedListFooter.js';
 import PhotoLocation from './PhotoLocation.js';
 import PhotoEditor from './PhotoEditor.js';
 import PhotoDetailsCard from './PhotoDetailsCard.js';

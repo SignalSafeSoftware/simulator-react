@@ -195,7 +195,7 @@ describe('sms thread view', () => {
         expect(flattenText(renderer!.toJSON())).toContain('Portal only');
 
         await act(async () => {
-            renderer!.root.findByProps({ 'aria-label': 'Link: undefined' }).props.onClick();
+            renderer!.root.findByProps({ 'aria-label': 'Link: ' }).props.onClick();
         });
         expect(onAction).toHaveBeenCalledWith(
             expect.objectContaining({ type: 'click_link', href: undefined, linkIndex: 0 }),
