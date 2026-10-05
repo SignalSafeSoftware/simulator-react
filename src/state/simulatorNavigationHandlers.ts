@@ -24,6 +24,7 @@ import {
 } from '../types/session.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import { getDefaultScreen, isInternetScreen } from './simulatorViewStateHelpers.js';
+import { ownValue } from '../utils/lookup.js';
 
 export function applySwitchApp(state: SimulatorViewState, app: SimulatorApp): SimulatorViewState {
     const next = { ...state, activeApp: app };
@@ -87,6 +88,23 @@ function updateHomeLocalNavigation(
     next.home = { ...state.home, screen };
 }
 
+type NavLocalHandler = (
+    next: SimulatorViewState,
+    state: SimulatorViewState,
+    screen: string,
+) => void;
+
+const NAV_LOCAL_HANDLERS: Readonly<Record<SimulatorApp, NavLocalHandler>> = Object.freeze({
+    [SimulatorApp.Phone]: (next, state, screen) =>
+        pushScreen(next, state, SimulatorApp.Phone, screen, isPhoneScreen),
+    [SimulatorApp.Email]: (next, state, screen) =>
+        pushScreen(next, state, SimulatorApp.Email, screen, isEmailScreen),
+    [SimulatorApp.Messages]: (next, state, screen) =>
+        pushScreen(next, state, SimulatorApp.Messages, screen, isMessagesScreen),
+    [SimulatorApp.Internet]: updateInternetLocalNavigation,
+    [SimulatorApp.Home]: updateHomeLocalNavigation,
+});
+
 export function applyNavLocal(
     state: SimulatorViewState,
     app: SimulatorApp,
@@ -97,25 +115,7 @@ export function applyNavLocal(
     if (app !== current) {
         return next;
     }
-    switch (app) {
-        case SimulatorApp.Phone:
-            pushScreen(next, state, SimulatorApp.Phone, screen, isPhoneScreen);
-            break;
-        case SimulatorApp.Email:
-            pushScreen(next, state, SimulatorApp.Email, screen, isEmailScreen);
-            break;
-        case SimulatorApp.Messages:
-            pushScreen(next, state, SimulatorApp.Messages, screen, isMessagesScreen);
-            break;
-        case SimulatorApp.Internet:
-            updateInternetLocalNavigation(next, state, screen);
-            break;
-        case SimulatorApp.Home:
-            updateHomeLocalNavigation(next, state, screen);
-            break;
-        default:
-            break;
-    }
+    ownValue(NAV_LOCAL_HANDLERS, app)?.(next, state, screen);
     return next;
 }
 
@@ -145,102 +145,104 @@ function applyInternetBack(state: SimulatorViewState): SimulatorViewState['inter
     return state.internet;
 }
 
-export function applyBack(state: SimulatorViewState): SimulatorViewState {
-    const app = state.activeApp;
-    const next = { ...state };
-    switch (app) {
-        case SimulatorApp.Phone: {
-            const screen = state.phone.screen;
-            const parent = phoneParentScreen(screen);
-            next.phone = { ...state.phone, screen: parent ?? screen, stack: [] };
-            next.showPrimaryMenu = parent === null;
-            if (parent === null) {
-                next.activeApp = SimulatorApp.Home;
-                next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN };
-            }
-            break;
-        }
-        case SimulatorApp.Email: {
-            const screen = state.email.screen;
-            const isDetail =
-                screen === SimulatorEmailScreenId.Detail ||
-                screen === SimulatorEmailScreenId.Compose;
-            const folder =
-                [...state.email.stack]
-                    .reverse()
-                    .find(
-                        (item) =>
-                            item === SimulatorEmailScreenId.List ||
-                            item === SimulatorEmailScreenId.Outbox ||
-                            item === SimulatorEmailScreenId.Trash,
-                    ) ?? DEFAULT_EMAIL_SCREEN;
-            next.email = {
-                ...state.email,
-                screen: isDetail ? folder : screen,
-                stack: [],
-                selectedMessageId: null,
-            };
-            next.showPrimaryMenu = !isDetail;
-            if (!isDetail) {
-                next.activeApp = SimulatorApp.Home;
-                next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN };
-            }
-            break;
-        }
-        case SimulatorApp.Messages: {
-            next.messages = { ...state.messages, screen: DEFAULT_MESSAGES_SCREEN, stack: [] };
-            next.showPrimaryMenu = state.messages.screen === DEFAULT_MESSAGES_SCREEN;
-            if (next.showPrimaryMenu) {
-                next.activeApp = SimulatorApp.Home;
-                next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN };
-            }
-            break;
-        }
-        case SimulatorApp.Internet:
-            next.internet = applyInternetBack(state);
-            break;
-        case SimulatorApp.Home:
-            if (state.home.screen !== DEFAULT_HOME_SCREEN) {
-                next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN };
-            }
-            break;
-        default:
-            break;
+type BackHandler = (next: SimulatorViewState, state: SimulatorViewState) => void;
+
+function leaveToHome(next: SimulatorViewState, state: SimulatorViewState): void {
+    next.activeApp = SimulatorApp.Home;
+    next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN };
+}
+
+function backFromPhone(next: SimulatorViewState, state: SimulatorViewState): void {
+    const screen = state.phone.screen;
+    const parent = phoneParentScreen(screen);
+    next.phone = { ...state.phone, screen: parent ?? screen, stack: [] };
+    next.showPrimaryMenu = parent === null;
+    if (parent === null) leaveToHome(next, state);
+}
+
+function backFromEmail(next: SimulatorViewState, state: SimulatorViewState): void {
+    const screen = state.email.screen;
+    const isDetail =
+        screen === SimulatorEmailScreenId.Detail || screen === SimulatorEmailScreenId.Compose;
+    const folder =
+        [...state.email.stack]
+            .reverse()
+            .find(
+                (item) =>
+                    item === SimulatorEmailScreenId.List ||
+                    item === SimulatorEmailScreenId.Outbox ||
+                    item === SimulatorEmailScreenId.Trash,
+            ) ?? DEFAULT_EMAIL_SCREEN;
+    next.email = {
+        ...state.email,
+        screen: isDetail ? folder : screen,
+        stack: [],
+        selectedMessageId: null,
+    };
+    next.showPrimaryMenu = !isDetail;
+    if (!isDetail) leaveToHome(next, state);
+}
+
+function backFromMessages(next: SimulatorViewState, state: SimulatorViewState): void {
+    next.messages = { ...state.messages, screen: DEFAULT_MESSAGES_SCREEN, stack: [] };
+    next.showPrimaryMenu = state.messages.screen === DEFAULT_MESSAGES_SCREEN;
+    if (next.showPrimaryMenu) leaveToHome(next, state);
+}
+
+function backFromHome(next: SimulatorViewState, state: SimulatorViewState): void {
+    if (state.home.screen !== DEFAULT_HOME_SCREEN) {
+        next.home = { ...state.home, screen: DEFAULT_HOME_SCREEN };
     }
+}
+
+const BACK_HANDLERS: Readonly<Record<SimulatorApp, BackHandler>> = Object.freeze({
+    [SimulatorApp.Phone]: backFromPhone,
+    [SimulatorApp.Email]: backFromEmail,
+    [SimulatorApp.Messages]: backFromMessages,
+    [SimulatorApp.Internet]: (next, state) => {
+        next.internet = applyInternetBack(state);
+    },
+    [SimulatorApp.Home]: backFromHome,
+});
+
+export function applyBack(state: SimulatorViewState): SimulatorViewState {
+    const next = { ...state };
+    ownValue(BACK_HANDLERS, state.activeApp)?.(next, state);
     return next;
 }
+
+type CancelHandler = (
+    next: SimulatorViewState,
+    state: SimulatorViewState,
+    defaultScreen: string,
+) => void;
+
+const CANCEL_HANDLERS: Readonly<Record<SimulatorApp, CancelHandler>> = Object.freeze({
+    [SimulatorApp.Phone]: (next, state, defaultScreen) => {
+        next.phone = { ...state.phone, screen: defaultScreen as PhoneScreenId, stack: [] };
+    },
+    [SimulatorApp.Email]: (next, state, defaultScreen) => {
+        next.email = {
+            ...state.email,
+            screen: defaultScreen as EmailScreenId,
+            stack: [],
+            selectedMessageId: null,
+        };
+    },
+    [SimulatorApp.Messages]: (next, state, defaultScreen) => {
+        next.messages = { ...state.messages, screen: defaultScreen as MessagesScreenId, stack: [] };
+    },
+    [SimulatorApp.Internet]: (next, state, defaultScreen) => {
+        next.internet = { ...state.internet, screen: defaultScreen, stack: [] };
+    },
+    [SimulatorApp.Home]: (next, state, defaultScreen) => {
+        next.home = { ...state.home, screen: defaultScreen as HomeScreenId };
+    },
+});
 
 export function applyCancel(state: SimulatorViewState): SimulatorViewState {
     const app = state.activeApp;
     const next = { ...state };
-    const defaultScreen = getDefaultScreen(app);
-    switch (app) {
-        case SimulatorApp.Phone:
-            next.phone = { ...state.phone, screen: defaultScreen as PhoneScreenId, stack: [] };
-            break;
-        case SimulatorApp.Email:
-            next.email = {
-                ...state.email,
-                screen: defaultScreen as EmailScreenId,
-                stack: [],
-                selectedMessageId: null,
-            };
-            break;
-        case SimulatorApp.Messages:
-            next.messages = {
-                ...state.messages,
-                screen: defaultScreen as MessagesScreenId,
-                stack: [],
-            };
-            break;
-        case SimulatorApp.Internet:
-            next.internet = { ...state.internet, screen: defaultScreen, stack: [] };
-            break;
-        case SimulatorApp.Home:
-            next.home = { ...state.home, screen: defaultScreen as HomeScreenId };
-            break;
-        default:
-            break;
-    }
+    ownValue(CANCEL_HANDLERS, app)?.(next, state, getDefaultScreen(app));
     return next;
 }
