@@ -12,7 +12,11 @@ import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
  * To disable: set to false or remove the key.
  */
 
-import type { SimulatorSessionState, SimulatorViewState } from '../../types/session.js';
+import {
+    getCurrentScreenForApp,
+    type SimulatorSessionState,
+    type SimulatorViewState,
+} from '../../types/session.js';
 import { getScreenMetadata, getScreenContextLabel } from '../navigation/screenMetadata.js';
 
 /** Action shape used for logging (avoids circular import from reducer). */
@@ -75,20 +79,7 @@ function getScreenForActiveApp(
     view: SimulatorViewState,
     app: SimulatorViewState['activeApp'],
 ): string {
-    switch (app) {
-        case SimulatorApp.Email:
-            return view.email.screen;
-        case SimulatorApp.Messages:
-            return view.messages.screen;
-        case SimulatorApp.Internet:
-            return view.internet.screen;
-        case SimulatorApp.Phone:
-            return view.phone.screen;
-        case SimulatorApp.Home:
-            return view.home.screen;
-        default:
-            return '?';
-    }
+    return getCurrentScreenForApp(view, app) || '?';
 }
 
 function formatAction(action: DispatchActionForLog): string {

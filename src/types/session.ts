@@ -371,39 +371,40 @@ export interface SimulatorViewState {
     actionHistory: SimulatorAction[];
 }
 
+const CHANNEL_BY_APP: Readonly<Record<SimulatorApp, SimulatorChannel>> = Object.freeze({
+    [SimulatorApp.Phone]: SimulatorChannel.Contacts,
+    [SimulatorApp.Messages]: SimulatorChannel.Sms,
+    [SimulatorApp.Internet]: SimulatorChannel.Browser,
+    [SimulatorApp.Email]: SimulatorChannel.Email,
+    [SimulatorApp.Home]: SimulatorChannel.Home,
+});
+
+const APP_BY_CHANNEL: Readonly<Record<SimulatorChannel, SimulatorApp>> = Object.freeze({
+    [SimulatorChannel.Contacts]: SimulatorApp.Phone,
+    [SimulatorChannel.Phone]: SimulatorApp.Phone,
+    [SimulatorChannel.Sms]: SimulatorApp.Messages,
+    [SimulatorChannel.Browser]: SimulatorApp.Internet,
+    [SimulatorChannel.Email]: SimulatorApp.Email,
+    [SimulatorChannel.Home]: SimulatorApp.Home,
+});
+
+const SCREEN_OF_APP: Readonly<Record<SimulatorApp, (view: SimulatorViewState) => string>> =
+    Object.freeze({
+        [SimulatorApp.Email]: (view) => view.email.screen,
+        [SimulatorApp.Messages]: (view) => view.messages.screen,
+        [SimulatorApp.Internet]: (view) => view.internet.screen,
+        [SimulatorApp.Phone]: (view) => view.phone.screen,
+        [SimulatorApp.Home]: (view) => view.home.screen,
+    });
+
 /** Derive shell nav channel from active app (messages→sms, internet→browser, phone→contacts). */
 export function viewStateToActiveChannel(app: SimulatorApp): SimulatorChannel {
-    switch (app) {
-        case SimulatorApp.Phone:
-            return SimulatorChannel.Contacts;
-        case SimulatorApp.Messages:
-            return SimulatorChannel.Sms;
-        case SimulatorApp.Internet:
-            return SimulatorChannel.Browser;
-        case SimulatorApp.Email:
-        case SimulatorApp.Home:
-            return app;
-        default:
-            return SimulatorChannel.Email;
-    }
+    return CHANNEL_BY_APP[app] ?? SimulatorChannel.Email;
 }
 
 /** Map shell nav channel to app (sms→messages, browser→internet). */
 export function channelToApp(channel: SimulatorChannel): SimulatorApp {
-    switch (channel) {
-        case SimulatorChannel.Contacts:
-        case SimulatorChannel.Phone:
-            return SimulatorApp.Phone;
-        case SimulatorChannel.Sms:
-            return SimulatorApp.Messages;
-        case SimulatorChannel.Browser:
-            return SimulatorApp.Internet;
-        case SimulatorChannel.Email:
-        case SimulatorChannel.Home:
-            return channel;
-        default:
-            return SimulatorApp.Email;
-    }
+    return APP_BY_CHANNEL[channel] ?? SimulatorApp.Email;
 }
 
 /** Current screen id for an app (defaults to the active app), for rendering, keyboard shortcuts, metadata. */
@@ -411,20 +412,7 @@ export function getCurrentScreenForApp(
     view: SimulatorViewState,
     app: SimulatorApp = view.activeApp,
 ): string {
-    switch (app) {
-        case SimulatorApp.Email:
-            return view.email.screen;
-        case SimulatorApp.Messages:
-            return view.messages.screen;
-        case SimulatorApp.Internet:
-            return view.internet.screen;
-        case SimulatorApp.Phone:
-            return view.phone.screen;
-        case SimulatorApp.Home:
-            return view.home.screen;
-        default:
-            return '';
-    }
+    return SCREEN_OF_APP[app]?.(view) ?? '';
 }
 
 /** Full session state: payload (immutable) + view (mutable). */

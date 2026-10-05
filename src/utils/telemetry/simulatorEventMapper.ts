@@ -1,32 +1,20 @@
 import { SimulatorEventKind, type SimulatorInteractionEvent } from '../../types/simulatorEvents.js';
 import { SimulatorActionType } from './simulatorActionTaxonomy.js';
-import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
+import { isSimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 /**
  * Maps simulator actions to normalized interaction events.
  * Single event shape: kind, app, screen, session context, action_key when relevant, metadata.
  */
 
-import type {
-    SimulatorAction,
-    SimulatorViewState,
-    SimulatorTemplatePayload,
+import {
+    getCurrentScreenForApp,
+    type SimulatorAction,
+    type SimulatorViewState,
+    type SimulatorTemplatePayload,
 } from '../../types/session.js';
 
 function getCurrentScreen(view: SimulatorViewState, app: string): string {
-    switch (app) {
-        case SimulatorApp.Phone:
-            return view.phone.screen;
-        case SimulatorApp.Email:
-            return view.email.screen;
-        case SimulatorApp.Messages:
-            return view.messages.screen;
-        case SimulatorApp.Internet:
-            return view.internet.screen;
-        case SimulatorApp.Home:
-            return view.home.screen;
-        default:
-            return '';
-    }
+    return isSimulatorApp(app) ? getCurrentScreenForApp(view, app) : '';
 }
 
 /** Session identity fields required by the interaction telemetry contract. */
