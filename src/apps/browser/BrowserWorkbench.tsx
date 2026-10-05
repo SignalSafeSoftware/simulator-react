@@ -11,6 +11,12 @@ import { DevicePage } from '../shared/DevicePage.js';
 import { createSimulatorId } from '@signalsafe/simulator-core/apps/id';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { buildBrowserDocument } from './browserDocument.js';
+import {
+    SEARCH_ACTION,
+    samplePage,
+    searchResultPage,
+    unavailablePage,
+} from './browserWorkbenchPages.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 export interface MockPage {
     id: string;
@@ -112,25 +118,6 @@ export function ReactMockPage({
         </div>
     );
 }
-type Translate = ReturnType<typeof useSimulatorLocale>['t'];
-
-function escapeHtml(value: string): string {
-    return value.replace(/[&<>"']/g, (character) => `&#${character.codePointAt(0)};`);
-}
-
-const SEARCH_PAGE_ID = 'search';
-const SEARCH_ACTION = 'search';
-
-function samplePage(t: Translate): MockPage {
-    const title = escapeHtml(t('app.browser.search.title'));
-    const label = escapeHtml(t('app.browser.search.label'));
-    return {
-        id: SEARCH_PAGE_ID,
-        title: t('app.browser.search.title'),
-        url: 'https://example.test/search',
-        html: `<h1>${title}</h1><form data-simulator-action="${SEARCH_ACTION}"><label>${label}<input name="query" data-simulator-capture="true"></label><button type="submit">${label}</button></form><p>${escapeHtml(t('app.browser.search.stays'))}</p>`,
-    };
-}
 interface BrowserHistory {
     history: MockPage[];
     position: number;
@@ -168,12 +155,7 @@ export default function BrowserWorkbench({
         setAddress(target.url);
     }
     function search(query: string) {
-        navigate({
-            id: createSimulatorId(),
-            title: t('app.browser.result.title'),
-            url: 'https://example.test/results',
-            html: `<h1>${escapeHtml(t('app.browser.result.title'))}</h1><p>${escapeHtml(t('app.browser.result.searched', { text: query }))}</p><p>${escapeHtml(t('app.browser.result.noNetwork'))}</p>`,
-        });
+        navigate(searchResultPage(t, query));
     }
     function action(event: BrowserAction) {
         setLast(`${event.event}: ${event.action}`);
@@ -194,14 +176,7 @@ export default function BrowserWorkbench({
                 return;
             }
             const existing = history.find((item) => item.url === url.href);
-            navigate(
-                existing ?? {
-                    id: createSimulatorId(),
-                    title: t('app.browser.unavailable.title'),
-                    url: url.href,
-                    html: `<h1>${escapeHtml(t('app.browser.unavailable.title'))}</h1><p>${escapeHtml(t('app.browser.unavailable.body'))}</p>`,
-                },
-            );
+            navigate(existing ?? unavailablePage(t, url.href));
             setLast('');
         } catch {
             setLast(t('app.browser.badAddress'));

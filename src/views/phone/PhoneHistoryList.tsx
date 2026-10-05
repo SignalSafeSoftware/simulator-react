@@ -4,11 +4,12 @@
  * All row kinds share the same avatar, identity, and status layout.
  */
 import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
+import { PhoneHistoryEntryRow } from './PhoneHistoryEntryRow.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
-import { Fragment, useState, useMemo, type ReactNode } from 'react';
-import { CallHistoryEntryKind, type SimulatorCallHistoryEntry } from '../../types/session.js';
+import { useState, useMemo, type ReactNode } from 'react';
+import { type SimulatorCallHistoryEntry } from '../../types/session.js';
 import { type PhoneSimulatorContent } from '../../types/template.js';
 import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';
 import { simLayout, simSpacing } from '../../simulatorStyles.js';
@@ -20,7 +21,6 @@ import {
     SIM_MIN_W_0,
     SIM_MUTED,
     SIM_ROUNDED_NONE,
-    SIM_SURFACE_LIGHT,
     SIM_SURFACE_WHITE,
     SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
@@ -32,15 +32,11 @@ import {
 import {
     SIM_PHONE_INCOMING_CALL_HISTORY,
     SIM_PHONE_HISTORY_INCOMING_ROW,
-    SIM_PHONE_HISTORY_ENTRY,
-    SIM_PHONE_HISTORY_ACTIONS,
     SIM_PHONE_HISTORY_SEARCH,
     SIM_CALL_STATUS_BADGE,
     SIM_CALL_STATUS_BADGE_INCOMING,
 } from '../../ui/styles/semanticSimulatorClasses.js';
 import {
-    kindStatusBadgeClass,
-    kindBadgeTone,
     matchesSearch,
     incomingMatchesSearch,
     listRowClass,
@@ -171,120 +167,17 @@ export default function PhoneHistoryList({
                     </PhoneHistoryRowButton>
                 )}
                 <div className={SIM_LIST_FLUSH_MOD}>
-                    {filteredEntries.map((entry) => {
-                        const kind = entry.kind;
-                        const isVoicemail = kind === CallHistoryEntryKind.Voicemail;
-                        const handleClick = () => {
-                            if (isVoicemail) onSelectVoicemail();
-                            else onSelectEntry?.(entry.id);
-                        };
-                        const actionable = entriesSelectable && (isVoicemail || !!onSelectEntry);
-                        const primary =
-                            entry.name ||
-                            (entry.number ? formatNumber(entry.number) : t('value.unknown'));
-                        const displayNumber =
-                            entry.displayNumber ??
-                            (entry.number ? formatNumber(entry.number) : undefined);
-                        const secondary = [
-                            entry.numberLabel,
-                            displayNumber !== primary ? displayNumber : null,
-                        ]
-                            .filter(Boolean)
-                            .join(' · ');
-                        const rowSurface = joinClasses(
-                            listRowClass,
-                            kind === CallHistoryEntryKind.Incoming ||
-                                kind === CallHistoryEntryKind.Missed
-                                ? SIM_SURFACE_LIGHT
-                                : SIM_SURFACE_WHITE,
-                        );
-                        const badgeClass = joinClasses(
-                            simBadgeToneClass(kindBadgeTone(kind)),
-                            SIM_CALL_STATUS_BADGE,
-                            kindStatusBadgeClass(kind),
-                            SIM_ROUNDED_NONE,
-                            SIM_FLEX_SHRINK_0,
-                        );
-                        const rowContent = (
-                            <>
-                                <SimulatorAvatar />
-                                <div
-                                    className={joinClasses(
-                                        SIM_FLEX_COL,
-                                        SIM_MIN_W_0,
-                                        SIM_FLEX_GROW_1,
-                                    )}
-                                >
-                                    <span
-                                        className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_TRUNCATE)}
-                                    >
-                                        {primary}
-                                    </span>
-                                    {secondary && (
-                                        <span
-                                            className={joinClasses(
-                                                SIM_TEXT_SM,
-                                                SIM_MUTED,
-                                                SIM_TEXT_TRUNCATE,
-                                            )}
-                                        >
-                                            {secondary}
-                                        </span>
-                                    )}
-                                    {entry.durationSeconds != null && (
-                                        <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>
-                                            {t('calls.duration', {
-                                                minutes: Math.floor(entry.durationSeconds / 60),
-                                                seconds: entry.durationSeconds % 60,
-                                            })}
-                                        </span>
-                                    )}
-                                    {entry.timestamp != null && (
-                                        <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>
-                                            {entry.timestamp}
-                                        </span>
-                                    )}
-                                </div>
-                                <span className={badgeClass}>
-                                    {t(
-                                        kind === CallHistoryEntryKind.Incoming ||
-                                            kind === CallHistoryEntryKind.Outgoing ||
-                                            kind === CallHistoryEntryKind.Missed ||
-                                            kind === CallHistoryEntryKind.Voicemail
-                                            ? `calls.${kind}`
-                                            : 'calls.unknown',
-                                    )}
-                                </span>
-                            </>
-                        );
-                        const actions = renderEntryActions?.(entry);
-                        const row = actionable ? (
-                            <PhoneHistoryRowButton
-                                onClick={handleClick}
-                                className={rowSurface}
-                                selected={selectedEntryId === entry.id}
-                            >
-                                {rowContent}
-                            </PhoneHistoryRowButton>
-                        ) : (
-                            <div
-                                className={rowSurface}
-                                aria-current={
-                                    (entriesSelectable && selectedEntryId === entry.id) || undefined
-                                }
-                            >
-                                {rowContent}
-                            </div>
-                        );
-                        return actions != null ? (
-                            <div key={entry.id} className={SIM_PHONE_HISTORY_ENTRY}>
-                                {row}
-                                <div className={SIM_PHONE_HISTORY_ACTIONS}>{actions}</div>
-                            </div>
-                        ) : (
-                            <Fragment key={entry.id}>{row}</Fragment>
-                        );
-                    })}
+                    {filteredEntries.map((entry) => (
+                        <PhoneHistoryEntryRow
+                            key={entry.id}
+                            entry={entry}
+                            entriesSelectable={entriesSelectable}
+                            selectedEntryId={selectedEntryId}
+                            onSelectEntry={onSelectEntry}
+                            onSelectVoicemail={onSelectVoicemail}
+                            renderEntryActions={renderEntryActions}
+                        />
+                    ))}
                 </div>
             </SimulatorListGroup>
         </div>

@@ -20,9 +20,8 @@ import { getPhoneLocalNavItems } from '../utils/navigation/phoneLocalNavItems.js
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
 import type { SimulatorRenderContext, ScreenEntry } from './types.js';
 import EmailSimulatorView from '../views/email/EmailSimulatorView.js';
-import MessagesThreadListView, {
-    type ThreadListRow,
-} from '../views/messages/MessagesThreadListView.js';
+import MessagesThreadListView from '../views/messages/MessagesThreadListView.js';
+import { buildMessagesThreadList } from './messagesThreadList.js';
 import MessagesNewThreadView from '../views/messages/MessagesNewThreadView.js';
 import SmsSimulatorView from '../views/messages/SmsSimulatorView.js';
 import BrowserSimulatorView from '../views/browser/BrowserSimulatorView.js';
@@ -32,43 +31,6 @@ import PhoneSimulatorView from '../views/phone/PhoneSimulatorView.js';
 import HomeSimulatorView from '../views/home/HomeSimulatorView.js';
 
 const defaultLocale = createTranslator(simulatorEnglish);
-
-function buildMessagesThreadList(
-    payload: SimulatorRenderContext['state']['payload'],
-    locale: Pick<typeof defaultLocale, 't'>,
-): ThreadListRow[] {
-    const sms = payload.sms;
-    if (sms?.threads != null && sms.threads.length > 0) {
-        return sms.threads;
-    }
-    const thread = sms?.thread;
-    if (thread == null) return [];
-    const first = thread.messages?.find((m: { text?: string }) => m?.text);
-    const preview = getThreadPreview(first?.text, locale);
-    return [
-        {
-            id: '0',
-            preview,
-            senderName: thread.sender_display_name,
-            senderNumber: thread.sender_number,
-            timestamp: thread.last_at,
-            unread: thread.unread,
-        },
-    ];
-}
-
-function getThreadPreview(
-    text: string | undefined,
-    locale: Pick<typeof defaultLocale, 't'>,
-): string {
-    if (typeof text !== 'string') {
-        return locale.t('messages.newMessage');
-    }
-    if (text.length > 60) {
-        return `${text.slice(0, 60)}…`;
-    }
-    return text;
-}
 
 const SCREEN_REGISTRY: ScreenEntry[] = [
     {

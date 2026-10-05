@@ -5,20 +5,16 @@
  */
 import { SimulatorPhoneScreenId } from '@signalsafe/simulator-core/devicePayload';
 import {
-    SIM_BORDER,
     SIM_BORDER_BOTTOM_NONE,
     SIM_BTN_SM,
     SIM_FLEX_GROW_1,
     SIM_FLEX_SHRINK_0,
     SIM_ROUNDED_NONE,
-    SIM_SURFACE_LIGHT,
     SIM_TEXT_CENTER,
-    SIM_TEXT_SM,
     SimulatorButtonTone,
     joinClasses,
 } from '../../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
 import { useMemo, useState } from 'react';
 import type {
@@ -26,16 +22,15 @@ import type {
     ContactsPhoneNavProps,
     ContactsSearchProps,
 } from './contactsViewRoles.js';
-import { SimulatorDetailBackBar, SimulatorDetailBlock } from '../../ui/layout/SimulatorDetail.js';
+import { SimulatorDetailBackBar } from '../../ui/layout/SimulatorDetail.js';
 import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';
 import { SimulatorLocalNav } from '../../ui/navigation/SimulatorLocalNav.js';
-import { simLayout, simScreen, simSpacing, simTypo } from '../../simulatorStyles.js';
+import { simLayout, simScreen, simSpacing } from '../../simulatorStyles.js';
 import { SimulatorButton } from '../../ui/primitives.js';
+import { ContactDetailPanel } from './ContactDetailPanel.js';
+import { ContactVerificationBanner } from './ContactVerificationBanner.js';
 import { renderCompactContactList, renderPhoneContactList } from './ContactRowLists.js';
-import {
-    SIM_PHONE_CONTACT_DETAIL,
-    SIM_SCREEN_HEADER_ROW,
-} from '../../ui/styles/semanticSimulatorClasses.js';
+import { SIM_SCREEN_HEADER_ROW } from '../../ui/styles/semanticSimulatorClasses.js';
 import type { SimulatorSessionContact } from '../../types/session.js';
 import {
     normalizeNameForMatch,
@@ -131,7 +126,6 @@ export default function ContactsView({
 }: Readonly<ContactsViewProps>) {
     const screenLocale = useSimulatorLocale();
 
-    const formatNumber = usePhoneNumberFormatter();
     const [internalQuery, setInternalQuery] = useState(initialSearch);
     const isControlled = controlledSearchQuery !== undefined && onSearchChange !== undefined;
     const searchQuery = isControlled ? controlledSearchQuery : internalQuery;
@@ -177,36 +171,12 @@ export default function ContactsView({
 
     if (selected) {
         return (
-            <div className={simLayout.screenColumn}>
-                <div className={simLayout.scrollBody}>
-                    <SimulatorDetailBackBar
-                        onBack={() => setSelectedId(null)}
-                        title={screenLocale.t('screen.contactsView.contact')}
-                        ariaLabel={screenLocale.t('a11y.back.to.list')}
-                        titleOnly={contactDetailTitleOnly}
-                    />
-                    <SimulatorDetailBlock className={SIM_PHONE_CONTACT_DETAIL}>
-                        <h3 className={simTypo.subheading}>{selected.displayName}</h3>
-                        {selected.number != null && selected.number !== '' && (
-                            <p className={joinClasses(simSpacing.mb1, SIM_TEXT_SM)}>
-                                <span className={simTypo.secondary}>
-                                    {screenLocale.t('screen.contactsView.number')}
-                                </span>{' '}
-                                {formatNumber(selected.number)}
-                            </p>
-                        )}
-                        {selected.email != null && selected.email !== '' && (
-                            <p className={joinClasses(simSpacing.mb0, SIM_TEXT_SM)}>
-                                <span className={simTypo.secondary}>
-                                    {screenLocale.t('screen.contactsView.email')}
-                                </span>{' '}
-                                {selected.email}
-                            </p>
-                        )}
-                    </SimulatorDetailBlock>
-                </div>
-                {phoneNavBlock}
-            </div>
+            <ContactDetailPanel
+                contact={selected}
+                onBack={() => setSelectedId(null)}
+                titleOnly={contactDetailTitleOnly}
+                footer={phoneNavBlock}
+            />
         );
     }
 
@@ -249,36 +219,7 @@ export default function ContactsView({
 
                 {verificationContext &&
                     (verificationContext.number || verificationContext.name) && (
-                        <div
-                            className={joinClasses(
-                                simTypo.secondaryTight,
-                                simSpacing.p2,
-                                SIM_ROUNDED_NONE,
-                                SIM_SURFACE_LIGHT,
-                                SIM_BORDER,
-                            )}
-                        >
-                            {matchingContact ? (
-                                <span>
-                                    <span className={simTypo.secondary}>
-                                        {screenLocale.t(
-                                            'screen.contactsView.matches.saved.contact',
-                                        )}
-                                    </span>
-                                    <strong>{matchingContact.displayName}</strong>
-                                    {matchingContact.number &&
-                                        screenLocale.t('screen.contactsView.value1', {
-                                            value1: String(matchingContact.number),
-                                        })}
-                                </span>
-                            ) : (
-                                <span className={simTypo.secondary}>
-                                    {screenLocale.t(
-                                        'screen.contactsView.no.match.in.contacts.for.this.number.or.name',
-                                    )}
-                                </span>
-                            )}
-                        </div>
+                        <ContactVerificationBanner matchingContact={matchingContact} />
                     )}
 
                 <SimulatorListGroup

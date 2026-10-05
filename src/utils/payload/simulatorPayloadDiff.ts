@@ -5,9 +5,8 @@ import { PayloadSection } from './payloadSections.js';
  * Simulator-scoped only; no generic JSON diff.
  */
 
+import { idsFromNamedSection, summarizeDiffItems } from './payloadDiffHelpers.js';
 import {
-    idsFromNamedSection,
-    summarizeDiffItems,
     addEntryPointDiff,
     addDeviceDiff,
     addCollectionDiff,

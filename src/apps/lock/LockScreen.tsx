@@ -8,10 +8,8 @@ import { SIM_APP_PAGE_CONTENT } from '../../ui/styles/semanticSimulatorClasses.j
 import { DevicePage } from '../shared/DevicePage.js';
 import { useState } from 'react';
 import { useLockChange } from './useLockChange.js';
-import {} from '../../hooks/useLatestRequest.js';
 import { LockKeyhole } from 'lucide-react';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
-import type {} from '@signalsafe/simulator-core/apps/deviceData';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 export function LockScreen({
