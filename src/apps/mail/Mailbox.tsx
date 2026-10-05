@@ -14,7 +14,8 @@ import {
 } from '@signalsafe/simulator-core/apps/emailService';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-import { useMailDraft, useMailNav, useMailPersist } from './mailHooks.js';
+import { useMailDraft, useMailPersist } from './mailHooks.js';
+import { useMailNav } from './mailNavHooks.js';
 import { MailDraftForm } from './MailDraftForm.js';
 import { MailMessageView, type MessageActions } from './MailMessageView.js';
 import { MailFolderList, MailList } from './MailLists.js';

@@ -28,9 +28,11 @@ export default function Photos({
     const { t } = useSimulatorLocale();
     const visiblePage = useVisiblePage('photos');
     const photos = useDevicePage(store, 'photos', {}, visiblePage.count);
-    const [existing, setExisting] = useState(false);
+    const [mode, setMode] = useState({ existing: false, editing: false });
+    const { existing, editing } = mode;
+    const setExisting = (value: boolean) => setMode((current) => ({ ...current, existing: value }));
+    const setEditing = (value: boolean) => setMode((current) => ({ ...current, editing: value }));
     const [draft, setDraft] = useState<Photo | null>(null);
-    const [editing, setEditing] = useState(false);
     const { setBaseline, hasBaseline, confirmDiscard } = useDraftBaseline(draft);
     const [dimensions, setDimensions] = useState<{
         source: string;

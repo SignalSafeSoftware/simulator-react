@@ -131,6 +131,11 @@ function samplePage(t: Translate): MockPage {
         html: `<h1>${title}</h1><form data-simulator-action="${SEARCH_ACTION}"><label>${label}<input name="query" data-simulator-capture="true"></label><button type="submit">${label}</button></form><p>${escapeHtml(t('app.browser.search.stays'))}</p>`,
     };
 }
+interface BrowserHistory {
+    history: MockPage[];
+    position: number;
+    page: MockPage;
+}
 export default function BrowserWorkbench({
     templates,
     mode = 'html',
@@ -141,23 +146,25 @@ export default function BrowserWorkbench({
     mode?: 'html' | 'react' | 'templates';
 }>) {
     const { t } = useSimulatorLocale();
-    const [sample] = useState(() => samplePage(t));
-    const [page, setPage] = useState(sample);
-    const [address, setAddress] = useState(sample.url);
-    const [history, setHistory] = useState<MockPage[]>([sample]);
-    const [position, setPosition] = useState(0);
+    const [nav, setNav] = useState<BrowserHistory>(() => {
+        const sample = samplePage(t);
+        return { history: [sample], position: 0, page: sample };
+    });
+    const { history, position, page } = nav;
+    const [address, setAddress] = useState(page.url);
     const [last, setLast] = useState('');
     const previousPage = history[position - 1];
     const nextPage = history[position + 1];
     function navigate(next: MockPage) {
-        setHistory((previous) => [...previous.slice(0, position + 1), next].slice(-100));
-        setPosition(Math.min(position + 1, 99));
-        setPage(next);
+        setNav((current) => ({
+            history: [...current.history.slice(0, current.position + 1), next].slice(-100),
+            position: Math.min(current.position + 1, 99),
+            page: next,
+        }));
         setAddress(next.url);
     }
     function goTo(index: number, target: MockPage) {
-        setPosition(index);
-        setPage(target);
+        setNav((current) => ({ ...current, position: index, page: target }));
         setAddress(target.url);
     }
     function search(query: string) {
