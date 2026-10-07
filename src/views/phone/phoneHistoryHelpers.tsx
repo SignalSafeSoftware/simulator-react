@@ -74,12 +74,14 @@ export function PhoneHistoryRowButton({
     className,
     ariaLabel,
     selected,
+    entryId,
     children,
 }: Readonly<{
     onClick: () => void;
     className: string;
     ariaLabel?: string;
     selected?: boolean;
+    entryId?: string;
     children: React.ReactNode;
 }>): JSX.Element {
     return (
@@ -90,6 +92,7 @@ export function PhoneHistoryRowButton({
             style={{ cursor: 'pointer' }}
             aria-label={ariaLabel}
             aria-current={selected || undefined}
+            data-simulator-history-id={entryId}
         >
             {children}
         </button>

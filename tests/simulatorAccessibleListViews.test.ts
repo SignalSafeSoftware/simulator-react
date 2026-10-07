@@ -496,7 +496,7 @@ describe('simulator accessible list views', () => {
         await act(async () => {
             renderer!.root
                 .findAllByType('button')
-                .find((node) => node.props.type === 'button' && node.props['aria-label'] == null)!
+                .find((node) => node.props['aria-label'] === 'Security Team Preview text 09:00')!
                 .props.onClick();
         });
         expect(onSelectThread).toHaveBeenCalledWith('t1');
@@ -537,11 +537,11 @@ describe('simulator accessible list views', () => {
             );
         });
 
-        expect(flattenText(renderer!.toJSON())).toContain('+15550000001');
+        expect(flattenText(renderer!.toJSON())).toContain('+1 555 000 0001');
         expect(flattenText(renderer!.toJSON())).toContain('Unknown');
         const rowButtons = renderer!.root
             .findAllByType('button')
-            .filter((node) => node.props['aria-label'] == null);
+            .filter((node) => node.props.className.includes('simulator-messages__thread-row'));
         expect(rowButtons[1]!.props.className).toContain('simulator-border--top-none');
 
         await act(async () => {
@@ -549,7 +549,7 @@ describe('simulator accessible list views', () => {
                 .findByProps({ 'aria-label': 'Search threads' })
                 .props.onChange({ target: { value: '0001' } });
         });
-        expect(flattenText(renderer!.toJSON())).toContain('+15550000001');
+        expect(flattenText(renderer!.toJSON())).toContain('+1 555 000 0001');
         expect(flattenText(renderer!.toJSON())).not.toContain('No sender preview');
 
         await act(async () => {

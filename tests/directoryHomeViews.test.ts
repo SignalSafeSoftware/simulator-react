@@ -240,7 +240,11 @@ describe('directory and home views', () => {
                 }),
             );
         });
-        expect(flattenText(homeRenderer!.toJSON())).toContain('No content on home.');
+        expect(flattenText(homeRenderer!.toJSON())).toContain('Vault');
+        expect(homeRenderer!.root.findByType('time')).toBeDefined();
+        expect(homeRenderer!.root.findByProps({ 'aria-label': 'Settings' }).props.disabled).toBe(
+            true,
+        );
 
         await act(async () => {
             homeRenderer!.update(

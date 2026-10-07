@@ -41,8 +41,8 @@ describe('simulator UI hotspot coverage', () => {
         });
         const text = flattenText(renderer!.toJSON());
         expect(text).toContain('IT Helpdesk');
-        expect(text).toContain('Number:');
-        expect(text).toContain('+1-555-012-3456');
+        expect(text).toContain('Phone numbers');
+        expect(text).toContain('+1 555 012 3456');
         expect(text).not.toContain('← Back');
     });
 
@@ -125,7 +125,7 @@ describe('simulator UI hotspot coverage', () => {
         expect(onPhoneNavSelect).toHaveBeenCalledWith('history');
         expect(onOpenContact).toHaveBeenCalledWith('c1');
         expect(flattenText(renderer!.toJSON())).toContain('Ada Lovelace');
-        expect(flattenText(renderer!.toJSON())).toContain('Number:');
+        expect(flattenText(renderer!.toJSON())).toContain('Phone numbers');
 
         await act(async () => {
             renderer!.update(
@@ -176,7 +176,7 @@ describe('simulator UI hotspot coverage', () => {
                 .findAll((node) => typeof node.props.onClick === 'function')[0]!
                 .props.onClick();
         });
-        expect(flattenText(renderer!.toJSON())).toContain('Email:');
+        expect(flattenText(renderer!.toJSON())).toContain('Email addresses');
 
         await act(async () => {
             renderer!.update(
@@ -203,7 +203,7 @@ describe('simulator UI hotspot coverage', () => {
                 .props.onClick();
         });
         expect(flattenText(renderer!.toJSON())).toContain('Numbered');
-        expect(flattenText(renderer!.toJSON())).toContain('Number:');
+        expect(flattenText(renderer!.toJSON())).toContain('Phone numbers');
     });
 
     it('covers browser page renderer layout variants and fallback actions', async () => {

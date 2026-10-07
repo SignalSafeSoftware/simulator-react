@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 
 /** Presentation-only boundary: the host owns cursors, requests and retries. */
 export function LoadMore({
@@ -18,6 +19,7 @@ export function LoadMore({
     automatic?: boolean;
     count: number;
 }>) {
+    const locale = useSimulatorLocale();
     const target = useRef<HTMLButtonElement>(null);
     const callback = useRef(onLoadMore);
     const blocked = useRef(loading || Boolean(error));
@@ -52,8 +54,8 @@ export function LoadMore({
     }, [automatic, hasMore]);
     if (!hasMore && !error) return null;
     let text = label;
-    if (loading) text = 'Loading…';
-    else if (error) text = 'Retry';
+    if (loading) text = locale.t('list.loadingMore');
+    else if (error) text = locale.t('app.retry');
     return (
         <button
             ref={target}

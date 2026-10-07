@@ -1,6 +1,6 @@
 {
   "name": "@signalsafe/simulator-react",
-  "version": "0.20.2",
+  "version": "0.21.0",
   "type": "module",
   "description": "UI-kit agnostic React device simulator shell, session state, and utilities (no routing or API).",
   "license": "MIT",
@@ -454,10 +454,45 @@
       "import": "./dist/views/contacts/PhoneContactEditor.js",
       "default": "./dist/views/contacts/PhoneContactEditor.js"
     },
+    "./views/contacts/ContactEditorForm": {
+      "types": "./dist/views/contacts/ContactEditorForm.d.ts",
+      "import": "./dist/views/contacts/ContactEditorForm.js",
+      "default": "./dist/views/contacts/ContactEditorForm.js"
+    },
+    "./views/contacts/contactFormModel": {
+      "types": "./dist/views/contacts/contactFormModel.d.ts",
+      "import": "./dist/views/contacts/contactFormModel.js",
+      "default": "./dist/views/contacts/contactFormModel.js"
+    },
+    "./views/contacts/ContactEditorScreen": {
+      "types": "./dist/views/contacts/ContactEditorScreen.d.ts",
+      "import": "./dist/views/contacts/ContactEditorScreen.js",
+      "default": "./dist/views/contacts/ContactEditorScreen.js"
+    },
+    "./views/contacts/ContactDetailActions": {
+      "types": "./dist/views/contacts/ContactDetailActions.d.ts",
+      "import": "./dist/views/contacts/ContactDetailActions.js",
+      "default": "./dist/views/contacts/ContactDetailActions.js"
+    },
     "./views/phone/PhoneHistoryDetail": {
       "types": "./dist/views/phone/PhoneHistoryDetail.d.ts",
       "import": "./dist/views/phone/PhoneHistoryDetail.js",
       "default": "./dist/views/phone/PhoneHistoryDetail.js"
+    },
+    "./views/phone/PhoneHistoryLayout": {
+      "types": "./dist/views/phone/PhoneHistoryLayout.d.ts",
+      "import": "./dist/views/phone/PhoneHistoryLayout.js",
+      "default": "./dist/views/phone/PhoneHistoryLayout.js"
+    },
+    "./views/phone/PhoneHistoryCallButton": {
+      "types": "./dist/views/phone/PhoneHistoryCallButton.d.ts",
+      "import": "./dist/views/phone/PhoneHistoryCallButton.js",
+      "default": "./dist/views/phone/PhoneHistoryCallButton.js"
+    },
+    "./views/phone/PhoneHistorySummaryTitle": {
+      "types": "./dist/views/phone/PhoneHistorySummaryTitle.d.ts",
+      "import": "./dist/views/phone/PhoneHistorySummaryTitle.js",
+      "default": "./dist/views/phone/PhoneHistorySummaryTitle.js"
     },
     "./views/phone/PhoneHistoryList": {
       "types": "./dist/views/phone/PhoneHistoryList.d.ts",
@@ -478,16 +513,90 @@
       "types": "./dist/views/shared/SimulatorScreenTile.d.ts",
       "import": "./dist/views/shared/SimulatorScreenTile.js",
       "default": "./dist/views/shared/SimulatorScreenTile.js"
+    },
+    "./apps/home/HomeClock": {
+      "types": "./dist/apps/home/HomeClock.d.ts",
+      "import": "./dist/apps/home/HomeClock.js",
+      "default": "./dist/apps/home/HomeClock.js"
+    },
+    "./apps/shared/AppSecondaryNav": {
+      "types": "./dist/apps/shared/AppSecondaryNav.d.ts",
+      "import": "./dist/apps/shared/AppSecondaryNav.js",
+      "default": "./dist/apps/shared/AppSecondaryNav.js"
+    },
+    "./apps/settings/DeviceBackup": {
+      "types": "./dist/apps/settings/DeviceBackup.d.ts",
+      "import": "./dist/apps/settings/DeviceBackup.js",
+      "default": "./dist/apps/settings/DeviceBackup.js"
+    },
+    "./apps/settings/parseBackup": {
+      "types": "./dist/apps/settings/parseBackup.d.ts",
+      "import": "./dist/apps/settings/parseBackup.js",
+      "default": "./dist/apps/settings/parseBackup.js"
+    },
+    "./apps/settings/RegionalSettings": {
+      "types": "./dist/apps/settings/RegionalSettings.d.ts",
+      "import": "./dist/apps/settings/RegionalSettings.js",
+      "default": "./dist/apps/settings/RegionalSettings.js"
+    },
+    "./apps/settings/regionalFormats": {
+      "types": "./dist/apps/settings/regionalFormats.d.ts",
+      "import": "./dist/apps/settings/regionalFormats.js",
+      "default": "./dist/apps/settings/regionalFormats.js"
+    },
+    "./views/contacts/ContactDetailPanel": {
+      "types": "./dist/views/contacts/ContactDetailPanel.d.ts",
+      "import": "./dist/views/contacts/ContactDetailPanel.js",
+      "default": "./dist/views/contacts/ContactDetailPanel.js"
+    },
+    "./ui/media/SimulatorAvatar": {
+      "types": "./dist/ui/media/SimulatorAvatar.d.ts",
+      "import": "./dist/ui/media/SimulatorAvatar.js",
+      "default": "./dist/ui/media/SimulatorAvatar.js"
+    },
+    "./views/phone/PhoneHistoryHeader": {
+      "types": "./dist/views/phone/PhoneHistoryHeader.d.ts",
+      "import": "./dist/views/phone/PhoneHistoryHeader.js",
+      "default": "./dist/views/phone/PhoneHistoryHeader.js"
+    },
+    "./contract/regionalPresentation": {
+      "types": "./dist/contract/regionalPresentation.d.ts",
+      "import": "./dist/contract/regionalPresentation.js",
+      "default": "./dist/contract/regionalPresentation.js"
+    },
+    "./views/messages/MessagesThreadListView": {
+      "types": "./dist/views/messages/MessagesThreadListView.d.ts",
+      "import": "./dist/views/messages/MessagesThreadListView.js",
+      "default": "./dist/views/messages/MessagesThreadListView.js"
+    },
+    "./apps/settings/regionalDateInput": {
+      "types": "./dist/apps/settings/regionalDateInput.d.ts",
+      "import": "./dist/apps/settings/regionalDateInput.js",
+      "default": "./dist/apps/settings/regionalDateInput.js"
+    },
+    "./apps/photos/captureDate": {
+      "types": "./dist/apps/photos/captureDate.d.ts",
+      "import": "./dist/apps/photos/captureDate.js",
+      "default": "./dist/apps/photos/captureDate.js"
+    },
+    "./apps/mail/ScenarioEmailSource": {
+      "types": "./dist/apps/mail/ScenarioEmailSource.d.ts",
+      "import": "./dist/apps/mail/ScenarioEmailSource.js",
+      "default": "./dist/apps/mail/ScenarioEmailSource.js"
+    },
+    "./views/phone/usePhoneHistoryFocus": {
+      "types": "./dist/views/phone/usePhoneHistoryFocus.d.ts",
+      "import": "./dist/views/phone/usePhoneHistoryFocus.js",
+      "default": "./dist/views/phone/usePhoneHistoryFocus.js"
     }
   },
   "files": [
     "dist",
     "README.md",
     "LICENSE",
-    "docs",
     "CHANGELOG.md",
-    "RELEASING.md",
-    "MIGRATION.md"
+    "docs",
+    "!docs/examples"
   ],
   "engines": {
     "node": ">=19.0.0"
@@ -516,9 +625,10 @@
     "check:duplication": "jscpd src --min-lines 8 --min-tokens 70 --threshold 0 --reporters console --silent"
   },
   "dependencies": {
-    "@signalsafe/simulator-core": "0.6.0",
+    "@signalsafe/simulator-core": "0.7.0",
     "@signalsafe/tree-spec": "^0.4.1",
-    "lucide-react": "^1.31.0"
+    "lucide-react": "^1.31.0",
+    "libphonenumber-js": "^1.13.13"
   },
   "peerDependencies": {
     "react": "^18.0.0",
@@ -543,5 +653,8 @@
     "typescript": "^7.0.2",
     "vite": "^8.3.0",
     "vitest": "^5.0.1"
+  },
+  "resolutions": {
+    "@signalsafe/simulator-core": "0.7.0"
   }
 }

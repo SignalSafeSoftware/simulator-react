@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 
-/** Hosts decide policy; a disabled capability always supplies a visible reason. */
+/** Hosts decide policy; a disabled capability always supplies an accessible reason. */
 export const SimulatorCapabilityState = Object.freeze({
     Enabled: 'enabled',
     Unsupported: 'unsupported',

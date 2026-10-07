@@ -12,8 +12,11 @@ import {
     joinClasses,
 } from '../../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-import type { ReactNode } from 'react';
-import { type SimulatorDispatchAction } from '../../state/simulatorDispatchActions.js';
+import { useEffect, useState, type ReactNode } from 'react';
+import {
+    SimulatorDispatchActionType,
+    type SimulatorDispatchAction,
+} from '../../state/simulatorDispatchActions.js';
 import type {
     PhoneScreenId,
     SimulatorAction,
@@ -30,7 +33,7 @@ import {
 import { SimulatorActions } from '../../actions/simulatorActions.js';
 import { SimulatorLocalNav } from '../../ui/navigation/SimulatorLocalNav.js';
 import { PhoneContactsScreen } from './PhoneContactsScreen.js';
-import PhoneHistoryList from './PhoneHistoryList.js';
+import PhoneHistoryScreen from './PhoneHistoryScreen.js';
 import PhoneDialView from './PhoneDialView.js';
 import PhoneVoicemailView from './PhoneVoicemailView.js';
 import PhoneIncomingScene from './PhoneIncomingScene.js';
@@ -118,13 +121,55 @@ export default function PhoneSimulatorView({
     renderIncomingCallExtra,
 }: Readonly<PhoneSimulatorViewProps>) {
     const screenLocale = useSimulatorLocale();
+    const [localHistoryEntryId, setLocalHistoryEntryId] = useState<string | null>(null);
+    const sessionControlsSelection = sessionState != null && sessionDispatch != null;
+    const selectedHistoryEntryId = sessionControlsSelection
+        ? (sessionState.view.phone.selectedHistoryEntryId ?? null)
+        : localHistoryEntryId;
+    const selectHistoryEntry = (entryId: string | null) => {
+        if (sessionControlsSelection) {
+            sessionDispatch({ type: SimulatorDispatchActionType.SelectCallHistory, entryId });
+        } else {
+            setLocalHistoryEntryId(entryId);
+        }
+    };
+    useEffect(() => {
+        if (selectedHistoryEntryId == null) return;
+        if (screen !== SimulatorPhoneScreenId.History) {
+            if (!sessionControlsSelection) setLocalHistoryEntryId(null);
+        } else if (!payload?.callHistory?.some((entry) => entry.id === selectedHistoryEntryId)) {
+            if (sessionControlsSelection) {
+                sessionDispatch({
+                    type: SimulatorDispatchActionType.SelectCallHistory,
+                    entryId: null,
+                });
+            } else {
+                setLocalHistoryEntryId(null);
+            }
+        }
+    }, [
+        screen,
+        payload?.callHistory,
+        selectedHistoryEntryId,
+        sessionControlsSelection,
+        sessionDispatch,
+    ]);
 
     const localNavItems = getPhoneLocalNavItems(phoneCapabilities, screenLocale);
     const contactList = contacts ?? [];
     const handleNavSelect = (id: PhoneLocalNavItem['id']) => {
-        if (id === NAV_BACK_ID) {
+        if (
+            id === NAV_BACK_ID &&
+            screen === SimulatorPhoneScreenId.History &&
+            selectedHistoryEntryId != null
+        ) {
+            if (sessionControlsSelection)
+                sessionDispatch({ type: SimulatorDispatchActionType.Back });
+            else selectHistoryEntry(null);
+        } else if (id === NAV_BACK_ID) {
             onBack?.();
         } else {
+            if (!sessionControlsSelection) selectHistoryEntry(null);
             onNavigate(id);
         }
     };
@@ -193,22 +238,24 @@ export default function PhoneSimulatorView({
     return (
         <div className={joinClasses(simLayout.screenColumn, SIM_PHONE)}>
             <div className={simLayout.scrollBody}>
-                {screen === SimulatorPhoneScreenId.History && (
-                    <>
-                        <SectionHeading>
-                            {screenLocale.t('screen.phoneSimulatorView.calls')}
-                        </SectionHeading>
-                        <PhoneHistoryList
-                            entries={payload?.callHistory ?? []}
-                            incomingCallContent={payload?.content}
-                            hasVoicemail={phoneCapabilities.voicemail}
-                            onSelectIncoming={() => onNavigate(SimulatorPhoneScreenId.IncomingCall)}
-                            onSelectVoicemail={() => {
-                                onAction(SimulatorActions.openVoicemail());
-                                onNavigate(SimulatorPhoneScreenId.Voicemail);
-                            }}
-                        />
-                    </>
+                {screen === SimulatorPhoneScreenId.History && payload != null && (
+                    <PhoneHistoryScreen
+                        payload={payload}
+                        contacts={contactList}
+                        selectedEntryId={selectedHistoryEntryId}
+                        hasVoicemail={phoneCapabilities.voicemail}
+                        onSelectEntry={selectHistoryEntry}
+                        onSelectIncoming={() => onNavigate(SimulatorPhoneScreenId.IncomingCall)}
+                        onSelectVoicemail={() => {
+                            onAction(SimulatorActions.openVoicemail());
+                            onNavigate(SimulatorPhoneScreenId.Voicemail);
+                        }}
+                        onCall={
+                            phoneCapabilities.dial
+                                ? (number) => onAction(SimulatorActions.dialPhone(number))
+                                : undefined
+                        }
+                    />
                 )}
 
                 {screen === SimulatorPhoneScreenId.Contacts && (

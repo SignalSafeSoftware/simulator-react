@@ -31,7 +31,7 @@ interaction. Store and Settings search filter supplied scenario content. Setting
 read-only labels because the portable payload has no setting values or save callback. The default
 Add Contact destination explains that creation is not configured; hosts can provide a working form
 through `screenOverrides.phone.add_contact`. An explicit legacy-style demo payload is available in
-[`examples/demo-home-fixture.ts`](./examples/demo-home-fixture.ts).
+[`docs/examples/demo-home-fixture.ts`](./docs/examples/demo-home-fixture.ts).
 
 ## What this package does not do
 
@@ -240,7 +240,7 @@ See [SECURITY.md](./SECURITY.md). Treat scenario payloads as trusted authoring c
 ## Changelog and releases
 
 - [CHANGELOG.md](./CHANGELOG.md)
-- [RELEASING.md](./RELEASING.md)
+- [RELEASING.md](docs/RELEASING.md)
 
 ## Presentation contract
 
@@ -252,8 +252,18 @@ See [datasource contract and examples](docs/datasource.md) for JSON snapshots, r
 
 ## Host-controlled contact and compose workflows
 
-- `PhoneNumberFormatContext` formats display values across contact lists/details,
-  messages, call views and history. It does not rewrite callback identifiers or dial targets.
+- Phone numbers have shared display formatting across contact lists/details, messages,
+  call views and history. `PhoneNumberFormatContext` can explicitly override it without
+  rewriting callback identifiers or dial targets.
+- `SimulatorRegionalPresentationProvider` from `contract/regionalPresentation` accepts
+  `value: RegionalPreferences` to apply country, timezone, date-order and 12/24-hour
+  preferences. Wrap the entire simulator so call-history lists and details agree with
+  Settings. Without it, shared history uses the existing simulator locale/timezone.
+  Only valid timezone-qualified ISO instants are converted; authored timestamp labels
+  stay verbatim. An optional `formatDateTime` callback overrides date presentation.
+- `formatPhoneNumber` from `contract/phonePresentation` is the pure display helper for
+  host adapters. Canonical history JSON can include optional whole-second
+  `duration_seconds`; omit unknown durations, and preserve zero.
 - `ContactValuesEditor` supplies labeled phone/email/postal groups, stable value IDs,
   preferences, suggestions, add/remove controls and formatting without changing raw input.
 - `PhoneContactEditor` accepts `valueFields`, `identityImage`, and `notice` slots. Its
@@ -296,7 +306,7 @@ No sibling source overrides are used in the runtime matrix.
 - Require core 0.4.1; retain React 18 peers and add Lucide icons.
 
 Use the matching registry version after its release workflow completes. See
-[RELEASING.md](RELEASING.md) for the coordinated release order and consumer
+[RELEASING.md](docs/RELEASING.md) for the coordinated release order and consumer
 validation. Installed package files are never patched.
 
 ### App ownership and adapters
@@ -307,17 +317,30 @@ errors. Components await boolean writes and retain unsaved drafts on failure.
 `SimulatorAppsProvider` merges nested adapters; supply stable component identities
 for `Shell` and `NotesEditor` to avoid remounting edits. Host callbacks own network
 activity. The default photo view renders coordinates without loading a map.
-`SimulatorMailbox` accepts source render slots for host-owned imported/scenario
-mail; its default send changes simulated records only. Imported evidence is not
-rewritten by the package. HTML pages use a sanitized sandbox and validated,
-page/session-bound action messages; trusted React render callbacks run in the host.
+`SimulatorMailbox` accepts source render slots; its default send changes simulated
+records only. For scenario email, opt in with `useScenarioEmailSource` from
+`apps/mail/ScenarioEmailSource` and pass its non-null result in `sources`. Supply
+`payload`, `selectedMessageId`, `onSelectMessage` and the local mailbox `identity`.
+The shared source renders read-only Inbox/Sent/Trash content and creates separate
+reply/forward drafts. A null payload omits the source; scenario and imported mail
+are never added by default. Hosts own selection dispatch, permissions and data
+loading, and imported evidence is not rewritten by the package.
+
+`views/phone/usePhoneHistoryFocus` shares call-history keyboard focus between
+controlled host adapters and `PhoneHistoryScreen`. Pass the active detail entry ID,
+attach `rootRef` to the history container and `titleRef` to its focusable heading.
+On return, it focuses the matching `button[data-simulator-history-id]` or the
+history search. Related detail rows remain informational.
+
+HTML pages use a sanitized sandbox and validated, page/session-bound action
+messages; trusted React render callbacks run in the host.
 
 ### Example verification
 
 `npm run smoke:package` compiles and executes the repository examples in an
 isolated consumer against the packed public API. The examples do not resolve
 sibling source trees or private source imports. The shared React 18 local-app
-workflow is in [simulator-device/examples/local-apps](https://github.com/SignalSafeSoftware/simulator-device/tree/main/examples/local-apps).
+workflow is in [simulator-device/docs/examples/local-apps](https://github.com/SignalSafeSoftware/simulator-device/tree/main/docs/examples/local-apps).
 
 ## Source organization
 
@@ -333,3 +356,23 @@ values stay compatible. Use `isSimulatorApp(value)` at untrusted boundaries and
 channels (`sms`, `browser`, `contacts`), screen names, or contact/input field kinds.
 
 See [AGENTS.md](./AGENTS.md) for module ownership and verification rules. Root imports were removed in the local audit prerelease; use the explicit owner paths shown in the examples.
+
+## Reusable settings forms
+
+`apps/settings/RegionalSettings` is a controlled regional-format form. Supply `value`, country choices and `onSave`; storage belongs to the host. `apps/settings/regionalFormats` defines literal-compatible preference constants, a boundary guard and pure formatting helpers. Formatting language does not change interface translations.
+
+`apps/settings/DeviceBackup` uses the core `DeviceStore` to edit email identity, download a backup, preview and confirm restore, or confirm reset. `apps/settings/parseBackup` validates the canonical store schema and the UTF-8 size limit. Downloads omit the screen password; restore/reset retain the current password. Provider/server backups do not belong to this form. Imports use the explicit defining subpaths; there are no re-exports.
+
+## Shared contact details
+
+`views/contacts/ContactDetailPanel` owns the read-only contact screen for scenario and device hosts: a photo card, name, and grouped phone, email and postal values. `ContactsView` uses it by default. Hosts supply `identityImage`, `actions`, `renderPhoneAction`, `notice` and `additionalDetails` slots for data retrieval and capabilities; they do not recreate the screen or style it locally. `additionalDetails` is additive; set `showPostalAddresses={false}` only when that slot renders the same addresses. `titleOnly` omits the header Back button when the device provides navigation; `footer` preserves a caller-owned local menu. Editing and persistence remain controlled by the host through `PhoneContactEditor`.
+
+### Shared contact editor (0.21.0)
+
+Hosts compose the add/edit contact page from `views/contacts/ContactEditorScreen` (title, notices), `ContactEditorForm` and `ContactDetailActions`. `ContactEditorForm` is controlled by `onSubmit` and `onCancel`, takes a `createId` function for new rows, and accepts `identityImage` and `identityExtras` slots for host photo controls. `contactFormModel` holds the pure form helpers. Storage, photo handling and navigation stay in the host.
+
+### Shared call history (0.21.0)
+
+`views/phone/PhoneHistoryLayout` renders the history header, `PhoneHistoryList` and optional `PhoneHistoryDetail`, with shared keyboard focus; pass host content (paging, confirmations) as children. `PhoneHistoryCallButton` renders the Call button, honoring the `call` capability, and `PhoneHistorySummaryTitle` renders the details heading from a `caller` or a `count`. Pass `plain` to `DevicePage` for a page without the default content inset.
+
+History hosts use `PhoneHistoryHeader` from `@signalsafe/simulator-react/views/phone/PhoneHistoryHeader`. The shared banner defaults to Call History; pass `detail` for Call Details. Localization uses `calls.history` and `calls.details` through the simulator locale provider. It forwards a heading ref for detail focus; hosts retain data and navigation adapters.

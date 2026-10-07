@@ -1,5 +1,6 @@
 import { Fragment, type ReactNode } from 'react';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
+import { useTimestampFormatter } from '../../contract/regionalPresentation.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { CallHistoryEntryKind, type SimulatorCallHistoryEntry } from '../../types/session.js';
 import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
@@ -49,6 +50,7 @@ export function PhoneHistoryEntryRow({
     renderEntryActions,
 }: Readonly<PhoneHistoryEntryRowProps>) {
     const formatNumber = usePhoneNumberFormatter();
+    const formatTimestamp = useTimestampFormatter();
     const { t } = useSimulatorLocale();
     const kind = entry.kind;
     const isVoicemail = kind === CallHistoryEntryKind.Voicemail;
@@ -95,7 +97,9 @@ export function PhoneHistoryEntryRow({
                     </span>
                 )}
                 {entry.timestamp != null && (
-                    <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>{entry.timestamp}</span>
+                    <span className={joinClasses(SIM_TEXT_SM, SIM_MUTED)}>
+                        {formatTimestamp(entry.timestamp)}
+                    </span>
                 )}
             </div>
             <span className={badgeClass}>
@@ -116,6 +120,7 @@ export function PhoneHistoryEntryRow({
             onClick={handleClick}
             className={rowSurface}
             selected={selectedEntryId === entry.id}
+            entryId={entry.id}
         >
             {rowContent}
         </PhoneHistoryRowButton>

@@ -33,6 +33,7 @@ export function mapPhone(phone: SimulatorDevicePayload['phone']): SimulatorPhone
               name: optionalString(h.name),
               kind: mapHistoryKind(h.direction),
               timestamp: optionalString(h.timestamp),
+              durationSeconds: h.duration_seconds,
           }))
         : [];
     const voicemailSection = phone.voicemail;

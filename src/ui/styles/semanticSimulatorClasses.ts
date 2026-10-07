@@ -81,6 +81,7 @@ export const SIM_PHONE_HISTORY_ENTRY = 'simulator-phone-history-entry';
 
 /** Shared device-app content insets; the page header stays outside this wrapper. */
 export const SIM_APP_PAGE_CONTENT = 'prototype-page';
+export const SIM_APP_PAGE_CONTENT_PLAIN = 'prototype-page prototype-page--plain';
 export const SIM_APP_LIST_PAGE_CONTENT = 'prototype-mail-page';
 
 export const SIM_ACTION_REASON = 'simulator-action-reason';

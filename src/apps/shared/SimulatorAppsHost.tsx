@@ -1,5 +1,4 @@
-import { createTranslator, simulatorEnglish } from '../../i18n/catalog.js';
-import type { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
+import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
 import { createContext, useContext, useMemo, type ComponentType, type ReactNode } from 'react';
 import type { PhotoMetadata } from '@signalsafe/simulator-core/apps/contracts';
@@ -7,8 +6,9 @@ import { checkLock, createLock } from '../lock/lock.js';
 import { readAsset } from './assets.js';
 import { extractPhotoMetadata } from '../photos/photoMetadata.js';
 import { confirmInBrowser, copyToClipboard } from '../../utils/browser/browserEnvironment.js';
+import { useRegionalDateTimeFormatter } from '../../contract/regionalPresentation.js';
+import { formatPhotoCaptureDate } from '../photos/captureDate.js';
 type SimulatorTranslate = ReturnType<typeof useSimulatorLocale>['t'];
-const defaultTranslate: SimulatorTranslate = createTranslator(simulatorEnglish).t;
 export interface SimulatorAppNotesProps {
     label: string;
     placeholder: string;
@@ -46,7 +46,7 @@ export interface SimulatorAppsHost
         SimulatorAppsAssets,
         SimulatorAppsLock,
         SimulatorAppsPlatform {}
-const defaults: SimulatorAppsHost = {
+const defaults: Omit<SimulatorAppsHost, 'formatDate' | 'formatCaptureDate'> = {
     Shell: ({ children, nav }) => (
         <>
             {children}
@@ -65,14 +65,6 @@ const defaults: SimulatorAppsHost = {
             />
         </label>
     ),
-    formatDate: (date) => date.toLocaleString(),
-    formatCaptureDate: (metadata, translate = defaultTranslate) =>
-        metadata.capturedAt
-            ? translate('app.photos.captureDate', {
-                  when: metadata.capturedAt.replace('T', ' '),
-                  zone: metadata.timeZone || translate('app.photos.captureZoneUnknown'),
-              })
-            : translate('app.photos.captureUnknown'),
     readAsset,
     extractPhotoMetadata,
     checkLock,
@@ -80,7 +72,7 @@ const defaults: SimulatorAppsHost = {
     confirm: confirmInBrowser,
     copyText: copyToClipboard,
 };
-const Context = createContext<SimulatorAppsHost>(defaults);
+const Context = createContext<Partial<SimulatorAppsHost>>({});
 export function SimulatorAppsProvider({
     value,
     children,
@@ -93,5 +85,20 @@ export function SimulatorAppsProvider({
     return <Context.Provider value={merged}>{children}</Context.Provider>;
 }
 export function useSimulatorAppsHost(): SimulatorAppsHost {
-    return useContext(Context);
+    const overrides = useContext(Context);
+    const regionalFormatDate = useRegionalDateTimeFormatter();
+    const { t } = useSimulatorLocale();
+    const formatDate = overrides.formatDate ?? regionalFormatDate;
+    return useMemo(
+        () => ({
+            ...defaults,
+            ...overrides,
+            formatDate,
+            formatCaptureDate:
+                overrides.formatCaptureDate ??
+                ((metadata: PhotoMetadata, translate: SimulatorTranslate = t) =>
+                    formatPhotoCaptureDate(metadata, formatDate, translate)),
+        }),
+        [overrides, formatDate, t],
+    );
 }

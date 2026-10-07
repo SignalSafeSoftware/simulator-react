@@ -157,11 +157,23 @@ describe('transition logging', () => {
             emailNext,
         );
         logSimulatorTransition(emailNext, { type: 'SELECT_EMAIL', messageId: null }, emailNext);
+        logSimulatorTransition(
+            emailNext,
+            { type: 'SELECT_CALL_HISTORY', entryId: 'call-1' },
+            emailNext,
+        );
+        logSimulatorTransition(
+            emailNext,
+            { type: 'SELECT_CALL_HISTORY', entryId: null },
+            emailNext,
+        );
         logSimulatorTransition(emailNext, { type: 'UNKNOWN_ACTION' }, emailNext as never);
 
         const logged = consoleSpy.mock.calls.map(([line]) => String(line)).join('\n');
         expect(logged).toContain('SIMULATOR_ACTION(report)');
         expect(logged).toContain('SELECT_EMAIL(null)');
+        expect(logged).toContain('SELECT_CALL_HISTORY(call-1)');
+        expect(logged).toContain('SELECT_CALL_HISTORY(null)');
         expect(logged).toContain('bogus/?');
         expect(logged).toContain('app bogus→email');
         expect(logged).toContain('email list→detail');

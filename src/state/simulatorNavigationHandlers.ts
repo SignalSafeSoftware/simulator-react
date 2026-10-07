@@ -29,6 +29,7 @@ export function applySwitchApp(state: SimulatorViewState, app: SimulatorApp): Si
         next.showPrimaryMenu = false;
         next.phone = {
             ...state.phone,
+            selectedHistoryEntryId: null,
             screen: DEFAULT_PHONE_SCREEN,
             stack: [],
         };
@@ -108,7 +109,12 @@ export function applyNavLocal(
     screen: string,
 ): SimulatorViewState {
     const next = { ...state };
-    if (app === state.activeApp) ownValue(NAV_LOCAL_HANDLERS, app)?.(next, state, screen);
+    if (app === state.activeApp) {
+        ownValue(NAV_LOCAL_HANDLERS, app)?.(next, state, screen);
+        if (app === SimulatorApp.Phone && isPhoneScreen(screen)) {
+            next.phone = { ...next.phone, selectedHistoryEntryId: null };
+        }
+    }
     return next;
 }
 
@@ -147,8 +153,17 @@ function leaveToHome(next: SimulatorViewState, state: SimulatorViewState): void 
 
 function backFromPhone(next: SimulatorViewState, state: SimulatorViewState): void {
     const screen = state.phone.screen;
+    if (screen === SimulatorPhoneScreenId.History && state.phone.selectedHistoryEntryId != null) {
+        next.phone = { ...state.phone, selectedHistoryEntryId: null };
+        return;
+    }
     const parent = phoneParentScreen(screen);
-    next.phone = { ...state.phone, screen: parent ?? screen, stack: [] };
+    next.phone = {
+        ...state.phone,
+        screen: parent ?? screen,
+        stack: [],
+        selectedHistoryEntryId: null,
+    };
     next.showPrimaryMenu = parent === null;
     if (parent === null) leaveToHome(next, state);
 }
@@ -208,7 +223,12 @@ type CancelHandler = (next: SimulatorViewState, state: SimulatorViewState) => vo
 
 const CANCEL_HANDLERS: Readonly<Record<SimulatorApp, CancelHandler>> = Object.freeze({
     [SimulatorApp.Phone]: (next, state) => {
-        next.phone = { ...state.phone, screen: DEFAULT_PHONE_SCREEN, stack: [] };
+        next.phone = {
+            ...state.phone,
+            screen: DEFAULT_PHONE_SCREEN,
+            stack: [],
+            selectedHistoryEntryId: null,
+        };
     },
     [SimulatorApp.Email]: (next, state) => {
         next.email = {

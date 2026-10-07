@@ -415,3 +415,32 @@ describe('action taxonomy and adapters', () => {
         });
     });
 });
+
+it('preserves positive, zero and unknown call durations without changing timestamps or numbers', () => {
+    const timestamp = '2026-10-05T12:00:00.000Z';
+    const mapped = mapPhone({
+        history: [
+            {
+                id: 'positive',
+                number: '+12025550123',
+                direction: 'in',
+                timestamp,
+                duration_seconds: 65,
+            },
+            {
+                id: 'zero',
+                number: '+12025550123',
+                direction: 'out',
+                timestamp,
+                duration_seconds: 0,
+            },
+            { id: 'unknown', number: '+12025550123', direction: 'missed', timestamp },
+        ],
+    });
+    expect(mapped?.callHistory?.map((entry) => entry.durationSeconds)).toEqual([65, 0, undefined]);
+    expect(
+        mapped?.callHistory?.every(
+            (entry) => entry.number === '+12025550123' && entry.timestamp === timestamp,
+        ),
+    ).toBe(true);
+});

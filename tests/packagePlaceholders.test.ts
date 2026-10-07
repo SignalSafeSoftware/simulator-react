@@ -7,7 +7,7 @@ import EmailComposeView from '../src/views/email/EmailComposeView.js';
 import MessagesNewThreadView from '../src/views/messages/MessagesNewThreadView.js';
 import HomeSimulatorView from '../src/views/home/HomeSimulatorView.js';
 import PhoneSimulatorView from '../src/views/phone/PhoneSimulatorView.js';
-import { demoHomeFixture } from '../examples/demo-home-fixture.js';
+import { demoHomeFixture } from '../docs/examples/demo-home-fixture.js';
 
 describe('reusable screen placeholders', () => {
     it('disables unconfigured compose controls without silently navigating away', async () => {

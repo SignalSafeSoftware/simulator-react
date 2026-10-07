@@ -55,6 +55,7 @@ export interface PhoneSimulatorContent {
 }
 
 export interface SmsThreadContent {
+    id?: string;
     messages: SmsThreadMessage[];
     links?: EmailTemplateLink[];
     sender_display_name?: string;

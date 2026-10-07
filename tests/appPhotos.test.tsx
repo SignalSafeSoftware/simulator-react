@@ -84,8 +84,9 @@ describe('Photos', () => {
         await act(flush);
         fireEvent.click(screen.getByAltText(title).closest('button')!);
     };
-    const choose = async (file = imageFile(), label = 'Add photo') => {
-        fireEvent.change(screen.getByLabelText(label), { target: { files: [file] } });
+    const addInput = () => document.querySelector<HTMLInputElement>('input[type="file"]')!;
+    const choose = async (file = imageFile()) => {
+        fireEvent.change(addInput(), { target: { files: [file] } });
         await act(flush);
     };
     const nav = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
@@ -105,6 +106,24 @@ describe('Photos', () => {
             prepare: (store) => Object.defineProperty(store, 'data', { value: null }),
         });
         expect(container.firstChild).toBeNull();
+    });
+
+    it('shows coordinates to four decimal places', async () => {
+        setup({
+            photos: [
+                photo('1', {
+                    metadata: {
+                        ...noMetadata,
+                        latitude: 35.021655555555554,
+                        longitude: -85.40078611111112,
+                    },
+                }),
+            ],
+            host: { formatCaptureDate: () => 'when' },
+        });
+        await open('Photo 1');
+        expect(screen.getByText('35.0217')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText('-85.4008')).toBeInstanceOf(HTMLElement);
     });
 
     it('lists saved photos, pages through them and opens details', async () => {
@@ -284,8 +303,17 @@ describe('Photos', () => {
     it('ignores empty file selections', async () => {
         const { readAsset } = setup();
         await act(flush);
-        fireEvent.change(screen.getByLabelText('Add photo'), { target: { files: [] } });
+        fireEvent.change(addInput(), { target: { files: [] } });
         expect(readAsset).not.toHaveBeenCalled();
+    });
+
+    it('opens the file chooser from the Add photo menu item', async () => {
+        setup();
+        await act(flush);
+        const click = vi.spyOn(addInput(), 'click');
+        nav('Add photo');
+        expect(click).toHaveBeenCalledOnce();
+        expect(screen.queryByRole('button', { name: 'Photos' })).toBeNull();
     });
 
     it('replaces the image of an existing photo and keeps its details', async () => {
@@ -372,7 +400,7 @@ describe('PhotoEditor', () => {
         expect(onChange.mock.calls[0]![0].metadata.latitude).toBeNull();
         fireEvent.change(screen.getByLabelText('Longitude'), { target: { value: '45.5' } });
         expect(onChange.mock.calls[1]![0].metadata.longitude).toBe(45.5);
-        expect(screen.getByText('Latitude: 1; Longitude: 2')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText('Latitude: 1.0000; Longitude: 2.0000')).toBeInstanceOf(HTMLElement);
     });
 
     it('reports unknown original coordinates and ignores empty replacement selections', () => {

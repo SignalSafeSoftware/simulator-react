@@ -1,5 +1,6 @@
 import {
     SIM_APP_PAGE_CONTENT,
+    SIM_APP_PAGE_CONTENT_PLAIN,
     SIM_APP_LIST_PAGE_CONTENT,
     SIM_SCREEN_HEADER,
 } from '../../ui/styles/semanticSimulatorClasses.js';
@@ -16,6 +17,7 @@ export function DevicePage({
     children,
     navigation,
     listLayout = false,
+    plain = false,
 }: Readonly<{
     title: string;
     icon?: string;
@@ -23,6 +25,7 @@ export function DevicePage({
     children: ReactNode;
     navigation?: ReactNode;
     listLayout?: boolean;
+    plain?: boolean;
 }>) {
     const { Shell: SimulatorPhoneShell } = useSimulatorAppsHost();
     const { t } = useSimulatorLocale();
@@ -31,7 +34,15 @@ export function DevicePage({
             className='simulator-app-page'
             header={<h2 className={SIM_SCREEN_HEADER}>{title}</h2>}
         >
-            <div className={listLayout ? SIM_APP_LIST_PAGE_CONTENT : SIM_APP_PAGE_CONTENT}>
+            <div
+                className={
+                    listLayout
+                        ? SIM_APP_LIST_PAGE_CONTENT
+                        : plain
+                          ? SIM_APP_PAGE_CONTENT_PLAIN
+                          : SIM_APP_PAGE_CONTENT
+                }
+            >
                 {children}
             </div>
         </SimulatorPage>

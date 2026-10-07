@@ -67,6 +67,8 @@ export const DEFAULT_HOME_SCREEN: HomeScreenId = SimulatorHomeScreenId.Home;
 
 /** Per-app view state (preserved when switching apps). */
 export interface PhoneAppViewState {
+    /** Selected call within History; absent or null shows the list. */
+    selectedHistoryEntryId?: string | null;
     screen: PhoneScreenId;
     /** Stack for Back; top = previous screen. */
     stack: PhoneScreenId[];

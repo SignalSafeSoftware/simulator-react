@@ -10,6 +10,7 @@ import SmsSimulatorView from '../src/views/messages/SmsSimulatorView';
 import PhoneHistoryList from '../src/views/phone/PhoneHistoryList';
 import PhoneSimulatorView from '../src/views/phone/PhoneSimulatorView';
 import { createPayload } from './support/createPayload';
+import { getInitialSessionState } from '../src/state/simulatorSessionInitialState.js';
 
 describe('shouldHideSimulatorNavigation', () => {
     it('hides navigation when the active app has no screen', () => {
@@ -82,7 +83,7 @@ describe('PhoneContactEditor', () => {
         const { form, onSubmit, onCancel } = renderEditor({});
         fireEvent.submit(form);
         expect(onSubmit).toHaveBeenCalledTimes(1);
-        fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Back' }));
         expect(onCancel).toHaveBeenCalledTimes(1);
     });
 
@@ -151,7 +152,9 @@ describe('PhoneSimulatorView without call history', () => {
                 screen='incoming_call'
                 onNavigate={() => {}}
                 onAction={() => {}}
-                sessionState={{} as never}
+                sessionState={getInitialSessionState(
+                    createPayload({ entryPoint: { app: 'phone', screen: 'incoming_call' } }),
+                )}
                 sessionDispatch={() => {}}
                 renderIncomingCallExtra={extra as never}
             />,

@@ -171,7 +171,7 @@ describe('SimulatorAppsProvider defaults', () => {
                 latitude: null,
                 longitude: null,
             }),
-        ).toContain('(UTC)');
+        ).toBe('fixed');
     });
 
     it('uses the default date formatter and notes editor', () => {

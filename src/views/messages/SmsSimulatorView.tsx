@@ -16,6 +16,8 @@ import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
 import { useContext, useEffect, useState, type ReactNode } from 'react';
 import { SmsMessageTimeline } from './SmsMessageTimeline.js';
 import { SmsThreadLinks } from './SmsThreadLinks.js';
+import { SmsTimelinePaging } from './SmsTimelinePaging.js';
+import { useSmsTimelineScroll } from './useSmsTimelineScroll.js';
 import { SimulatorTimelineContext } from '../../contract/hostListSlots.js';
 import { useReportComposerState } from '../../contract/composerState.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
@@ -40,6 +42,9 @@ export interface SmsSimulatorViewProps {
 }
 
 const EMPTY_MESSAGES: NonNullable<SimulatorSmsPayload['thread']>['messages'] = [];
+function messageKey(message: (typeof EMPTY_MESSAGES)[number] | undefined): string {
+    return message?.id ?? (message ? `${message.from}:${message.text}` : '');
+}
 
 export default function SmsSimulatorView({
     payload,
@@ -72,6 +77,22 @@ export default function SmsSimulatorView({
         false,
     );
     const messages = payload?.thread?.messages ?? EMPTY_MESSAGES;
+    const visible = payload?.mode === SmsMode.History ? messages : messages.slice(0, visibleCount);
+    const scrolling = useSmsTimelineScroll({
+        active: payload !== null,
+        threadId:
+            timeline.threadId ??
+            payload?.thread.id ??
+            payload?.thread.sender_number ??
+            payload?.thread.sender_display_name ??
+            '',
+        count: visible.length,
+        first: messageKey(visible[0]),
+        last: messageKey(visible[visible.length - 1]),
+        paging: timeline.paging,
+        scrollRef: timeline.scrollRef,
+        contentRef: timeline.contentRef,
+    });
 
     useEffect(() => {
         if (payload?.mode === SmsMode.History || messages.length === 0) return;
@@ -95,7 +116,6 @@ export default function SmsSimulatorView({
     }
 
     const content = payload.thread;
-    const visible = payload.mode === SmsMode.History ? messages : messages.slice(0, visibleCount);
     const senderName = content.sender_display_name;
     const senderNumber = content.sender_number;
     const contactLabel =
@@ -117,8 +137,9 @@ export default function SmsSimulatorView({
                     <output>{unavailable}</output>
                 </p>
             )}
-            <div className={simLayout.scrollBody} ref={timeline.scrollRef}>
+            <div className={simLayout.scrollBody} ref={scrolling.scrollRef}>
                 {timeline.header}
+                <SmsTimelinePaging paging={timeline.paging} onLoadEarlier={scrolling.loadEarlier} />
                 <div
                     className={joinClasses(
                         simScreen.header,
@@ -151,7 +172,7 @@ export default function SmsSimulatorView({
                 )}
                 <SmsMessageTimeline
                     visible={visible}
-                    contentRef={timeline.contentRef}
+                    contentRef={scrolling.contentRef}
                     onAction={onAction}
                     renderChoice={renderChoice}
                 />

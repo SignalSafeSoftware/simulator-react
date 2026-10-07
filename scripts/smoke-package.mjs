@@ -28,6 +28,16 @@ runSmokePackage({
                 './views/phone/PhoneCallView': ['default'],
                 './views/contacts/PhoneContactEditor': ['default'],
                 './views/phone/PhoneHistoryDetail': ['default', 'PhoneHistoryPagination'],
+                './views/phone/PhoneHistoryHeader': ['default'],
+                './contract/regionalPresentation': [
+                    'SimulatorRegionalPresentationProvider',
+                    'useTimestampFormatter',
+                ],
+                './contract/phonePresentation': [
+                    'formatPhoneNumber',
+                    'usePhoneNumberFormatter',
+                    'PhoneNumberFormatContext',
+                ],
                 './views/phone/PhoneKeypad': ['default'],
                 './views/shared/SimulatorScreenTile': ['default'],
             }[subpath] ?? [],

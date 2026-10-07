@@ -373,7 +373,7 @@ describe('phone screens', () => {
                 }),
             );
         });
-        expect(flattenText(phoneRenderer!.toJSON())).toContain('Calls');
+        expect(flattenText(phoneRenderer!.toJSON())).toContain('Call History');
         await act(async () => {
             phoneRenderer!.root.findByProps({ 'aria-label': 'Incoming call' }).props.onClick();
             phoneRenderer!.root.findByProps({ 'aria-label': 'Voicemail' }).props.onClick();

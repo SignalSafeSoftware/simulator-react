@@ -16,7 +16,12 @@ describe('session reducer navigation', () => {
         const phoneApp = simulatorSessionReducer(start, { type: 'SWITCH_APP', app: 'phone' });
         expect(phoneApp.view.activeApp).toBe('phone');
         expect(phoneApp.view.showPrimaryMenu).toBe(false);
-        expect(phoneApp.view.phone).toEqual({ screen: 'history', stack: [], chosenIndex: 1 });
+        expect(phoneApp.view.phone).toEqual({
+            screen: 'history',
+            stack: [],
+            chosenIndex: 1,
+            selectedHistoryEntryId: null,
+        });
 
         const emailApp = simulatorSessionReducer(start, { type: 'SWITCH_APP', app: 'email' });
         expect(emailApp.view.email).toEqual({ screen: 'list', stack: [], selectedMessageId: null });
@@ -37,6 +42,7 @@ describe('session reducer navigation', () => {
             screen: 'dial',
             stack: ['history'],
             chosenIndex: null,
+            selectedHistoryEntryId: null,
         });
 
         const emailNav = simulatorSessionReducer(
@@ -157,6 +163,7 @@ describe('session reducer navigation', () => {
             screen: 'dial',
             stack: [],
             chosenIndex: null,
+            selectedHistoryEntryId: null,
         });
 
         const phoneBackUndefinedFallback = simulatorSessionReducer(
@@ -172,6 +179,7 @@ describe('session reducer navigation', () => {
             screen: 'dial',
             stack: [],
             chosenIndex: null,
+            selectedHistoryEntryId: null,
         });
 
         const emailBackEmpty = simulatorSessionReducer(
@@ -282,7 +290,12 @@ describe('session reducer navigation', () => {
             }),
             { type: 'CANCEL' },
         );
-        expect(phoneCancel.view.phone).toEqual({ screen: 'history', stack: [], chosenIndex: 2 });
+        expect(phoneCancel.view.phone).toEqual({
+            screen: 'history',
+            stack: [],
+            chosenIndex: 2,
+            selectedHistoryEntryId: null,
+        });
 
         const emailCancel = simulatorSessionReducer(
             createState({

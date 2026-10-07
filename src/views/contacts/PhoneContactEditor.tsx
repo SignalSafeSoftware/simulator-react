@@ -57,7 +57,7 @@ export default function PhoneContactEditor({
                         form: formId,
                     },
                     {
-                        label: t('action.cancel'),
+                        label: t('app.back'),
                         icon: '↩',
                         disabled: saving,
                         onClick: onCancel,

@@ -34,3 +34,5 @@ Wide props are split into role interfaces that the public props extend (`contrac
 Screen registry entries are created with `bind(component, getProps)`, so each entry renders its own component with its own props without a cast.
 
 Run `yarn check:modules`, `yarn check:cycles`, `yarn check:duplication`, lint, format, types, tests and build. The module check runs in CI and rejects internal re-exports, flat app/component files and unresolved relative source imports. Builds clean generated `dist` first so removed paths cannot survive in published artifacts. Preserve the public entry and declared utility subpaths when reorganizing source; verify the packed package in actual consumers.
+
+`views/contacts/ContactDetailPanel` is the shared read-only contact presentation. `ContactsView` owns list selection, while hosts provide image retrieval, actions and imported metadata through the detail panel slots. Both paths must use the same panel and shared theme; an application must not create its own contact card screen.

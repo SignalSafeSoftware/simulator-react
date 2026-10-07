@@ -109,7 +109,7 @@ describe('phone history list', () => {
                 .findByProps({ 'aria-label': 'Search calls' })
                 .props.onChange({ target: { value: '0077' } });
         });
-        expect(flattenText(renderer!.toJSON())).toContain('+15550000077');
+        expect(flattenText(renderer!.toJSON())).toContain('+1 555 000 0077');
         expect(flattenText(renderer!.toJSON())).not.toContain('Later');
 
         await act(async () => {

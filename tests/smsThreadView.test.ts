@@ -78,7 +78,9 @@ describe('sms thread view', () => {
         });
         expect(onRevealNext).toHaveBeenCalledTimes(3);
         await act(async () => {
-            smsRenderer!.root.findByProps({ 'aria-label': 'Open: invoice.pdf' }).props.onClick();
+            smsRenderer!.root
+                .findByProps({ 'aria-label': 'Open attachment: invoice.pdf' })
+                .props.onClick();
             smsRenderer!.root.findByProps({ 'aria-label': 'Link: Open example' }).props.onClick();
             smsRenderer!.root.findByProps({ 'aria-label': 'Link: Doc' }).props.onClick();
             smsRenderer!.root
@@ -143,7 +145,7 @@ describe('sms thread view', () => {
             );
         });
 
-        expect(flattenText(renderer!.toJSON())).toContain('+15550000077');
+        expect(flattenText(renderer!.toJSON())).toContain('+1 555 000 0077');
         expect(flattenText(renderer!.toJSON())).toContain('No messages in this thread.');
 
         await act(async () => {

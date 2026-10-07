@@ -26,6 +26,7 @@ interface DispatchActionForLog {
     app?: string;
     screen?: string;
     messageId?: string | null;
+    entryId?: string | null;
     threadId?: string;
     pageId?: string;
     index?: number;
@@ -101,6 +102,8 @@ function formatAction(action: DispatchActionForLog): string {
         return `${action.type}(${action.app}/${action.screen})`;
     if (action.type === SimulatorDispatchActionType.BrowserScreen)
         return `${action.type}(${action.screen})`;
+    if (action.type === SimulatorDispatchActionType.SelectCallHistory)
+        return `${action.type}(${action.entryId ?? 'null'})`;
     if (action.type === SimulatorDispatchActionType.SelectEmail)
         return `${action.type}(${action.messageId ?? 'null'})`;
     if (action.type === SimulatorDispatchActionType.SwitchApp)

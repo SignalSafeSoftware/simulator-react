@@ -1,5 +1,6 @@
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
+import { formatCoordinate } from './formatCoordinate.js';
 
 export default function PhotoLocation({
     latitude,
@@ -24,9 +25,9 @@ export default function PhotoLocation({
             <div className='prototype-photo-card-body'>
                 <dl className='prototype-photo-details'>
                     <dt>{t('app.photos.latitude')}</dt>
-                    <dd>{latitude ?? t('app.unknown')}</dd>
+                    <dd>{formatCoordinate(latitude, t('app.unknown'))}</dd>
                     <dt>{t('app.photos.longitude')}</dt>
-                    <dd>{longitude ?? t('app.unknown')}</dd>
+                    <dd>{formatCoordinate(longitude, t('app.unknown'))}</dd>
                 </dl>
             </div>
         </section>

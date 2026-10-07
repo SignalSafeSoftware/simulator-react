@@ -1,4 +1,3 @@
-import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
 import { useDevicePage } from '../../hooks/device/useDevicePage.js';
 import { useVisiblePage } from '../../hooks/device/useVisiblePage.js';
 import PhotoLocation from './PhotoLocation.js';
@@ -9,7 +8,7 @@ import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useDraftBaseline } from '../shared/useDraftBaseline.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { createSimulatorId } from '@signalsafe/simulator-core/apps/id';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useLatestRequest } from '../../hooks/useLatestRequest.js';
 import { DevicePage } from '../shared/DevicePage.js';
 import { AppSecondaryNav, type AppNavAction } from '../shared/AppSecondaryNav.js';
@@ -33,6 +32,7 @@ export default function Photos({
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const latest = useLatestRequest();
+    const fileInput = useRef<HTMLInputElement>(null);
     const close = () => {
         latest.cancel();
         setLoading(false);
@@ -126,34 +126,46 @@ export default function Photos({
         actions.push({ label: t('app.back'), icon: '↩', disabled: store.busy, onClick: back });
         return actions;
     }
+    function leave() {
+        close();
+        onBack();
+    }
+    function listActions(): AppNavAction[] {
+        return [
+            {
+                label: t('app.photos.add'),
+                icon: '🖼',
+                disabled: loading || store.busy,
+                onClick: () => fileInput.current?.click(),
+            },
+            { label: t('app.back'), icon: '↩', onClick: leave },
+        ];
+    }
     return (
         <DevicePage
             title={t('app.photos.title')}
             icon='🖼'
             listLayout={draft !== null}
-            navigation={draft ? <AppSecondaryNav actions={navActions(draft)} /> : undefined}
-            onBack={() => {
-                close();
-                onBack();
-            }}
+            plain
+            navigation={<AppSecondaryNav actions={draft ? navActions(draft) : listActions()} />}
+            onBack={leave}
         >
             {error && <p role='alert'>{error}</p>}
             {loading && <output>{t('app.photos.reading')}</output>}
             {!draft && (
-                <label>
-                    {t('app.photos.add')}
-                    <input
-                        className={SIM_INPUT}
-                        type='file'
-                        accept='image/png,image/jpeg,image/webp'
-                        disabled={loading || store.busy}
-                        onChange={(event) => {
-                            const file = event.target.files?.[0];
-                            if (file) void choose(file, null);
-                            event.target.value = '';
-                        }}
-                    />
-                </label>
+                <input
+                    ref={fileInput}
+                    hidden
+                    type='file'
+                    aria-label={t('app.photos.add')}
+                    accept='image/png,image/jpeg,image/webp'
+                    disabled={loading || store.busy}
+                    onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (file) void choose(file, null);
+                        event.target.value = '';
+                    }}
+                />
             )}
             {draft ? (
                 <>

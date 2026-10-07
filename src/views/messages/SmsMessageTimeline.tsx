@@ -5,49 +5,26 @@ import {
 } from '../../types/session.js';
 import {
     SIM_BORDER,
-    SIM_BTN_PLAIN,
     SIM_FLEX_COL,
     SIM_LIST_PLAIN,
-    SIM_MUTED,
     SIM_ROUNDED_NONE,
     SIM_TEXT_DARK,
-    SIM_TEXT_SM,
-    SimulatorButtonTone,
     joinClasses,
 } from '../../ui/styles/simulatorClasses.js';
 import type { ReactNode, Ref } from 'react';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-import { SimulatorActions } from '../../actions/simulatorActions.js';
-import { simLayout, simSpacing } from '../../simulatorStyles.js';
+import { simSpacing } from '../../simulatorStyles.js';
+import { useTimestampFormatter } from '../../contract/regionalPresentation.js';
+import { SmsAttachment } from './SmsAttachment.js';
 import {
     SIM_MESSAGES_BUBBLE,
     SIM_MESSAGES_BUBBLE_ME,
     SIM_MESSAGES_BUBBLE_THEM,
     SIM_MESSAGES_MESSAGE_TIMELINE,
 } from '../../ui/styles/semanticSimulatorClasses.js';
-import { renderSimulatorChoice, type SimulatorChoiceRenderProps } from '../../ui/renderSlots.js';
+import type { SimulatorChoiceRenderProps } from '../../ui/renderSlots.js';
 
 type ThreadMessage = NonNullable<SimulatorSmsPayload['thread']>['messages'][number];
-
-function renderAttachmentAction(
-    attachment: ThreadMessage['attachment'],
-    onAction: (action: SimulatorAction) => void,
-    renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode,
-): ReactNode {
-    if (attachment?.url == null) {
-        return <span className={SIM_MUTED}>📎 {attachment?.label}</span>;
-    }
-    return renderSimulatorChoice(
-        {
-            label: <>📎 {attachment.label}</>,
-            tone: SimulatorButtonTone.Link,
-            className: joinClasses(SIM_BTN_PLAIN, SIM_TEXT_SM, 'simulator-text--link-plain'),
-            onClick: () => onAction(SimulatorActions.clickLink({ href: attachment.url })),
-            'aria-label': `Open: ${attachment.label}`,
-        },
-        renderChoice,
-    );
-}
 
 const bubbleThem = joinClasses(
     simSpacing.px3,
@@ -79,6 +56,7 @@ export function SmsMessageTimeline({
     renderChoice?: (choice: SimulatorChoiceRenderProps) => ReactNode;
 }>) {
     const screenLocale = useSimulatorLocale();
+    const formatTimestamp = useTimestampFormatter();
     return (
         <ul
             ref={contentRef}
@@ -95,7 +73,7 @@ export function SmsMessageTimeline({
             {visible.map((msg, idx) => (
                 <li
                     data-message-direction={msg.from}
-                    title={msg.timestamp ?? undefined}
+                    title={msg.timestamp == null ? undefined : formatTimestamp(msg.timestamp)}
                     key={msg.id ?? `msg-${idx}-${msg.from}-${(msg.text ?? '').slice(0, 30)}`}
                     className={joinClasses(
                         SIM_FLEX_COL,
@@ -128,9 +106,12 @@ export function SmsMessageTimeline({
                         </span>
                     </div>
                     {msg.attachment != null && (
-                        <div className={joinClasses(simLayout.actionsRow, SIM_TEXT_SM)}>
-                            {renderAttachmentAction(msg.attachment, onAction, renderChoice)}
-                        </div>
+                        <SmsAttachment
+                            attachment={msg.attachment}
+                            sender={msg.from}
+                            onAction={onAction}
+                            renderChoice={renderChoice}
+                        />
                     )}
                 </li>
             ))}

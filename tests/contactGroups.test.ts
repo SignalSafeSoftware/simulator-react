@@ -4,6 +4,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { ContactValuesEditor } from '../src/ui/contacts/ContactValuesEditor.js';
 import { ContactPhotoControls } from '../src/ui/contacts/ContactPhotoControls.js';
 import { CapabilityButton } from '../src/ui/controls/CapabilityButton.js';
+import { SIM_ACTION_REASON } from '../src/ui/styles/semanticSimulatorClasses.js';
+import { SIM_VISUALLY_HIDDEN } from '../src/ui/styles/simulatorClasses.js';
 describe('controlled contact groups', () => {
     it('preserves stable IDs and metadata while editing and clears a removed preference', () => {
         const onChange = vi.fn();
@@ -73,6 +75,43 @@ describe('controlled contact groups', () => {
             expect(button.props.disabled).toBe(true);
             expect(button.props['aria-describedby']).toBe(view.root.findByType('small').props.id);
             expect(view.root.findByType('small').children).toEqual(['Waiting for permission']);
+            expect(view.root.findByType('small').props.className).toBe(SIM_ACTION_REASON);
+        },
+    );
+    it.each(['unsupported', 'unavailable'] as const)(
+        'keeps a hidden %s reason accessible without exposing presentation props on the button',
+        (state) => {
+            const view = create(
+                createElement(CapabilityButton, {
+                    capability: { state, reason: 'A country code is required.' },
+                    showReason: false,
+                    'aria-describedby': 'contact-help',
+                    children: 'Call',
+                }),
+            );
+            const button = view.root.findByType('button');
+            const reason = view.root.findByType('small');
+            expect(button.props.disabled).toBe(true);
+            expect(reason.props.className).toBe(SIM_VISUALLY_HIDDEN);
+            expect(reason.children).toEqual(['A country code is required.']);
+            expect(button.props['aria-describedby']).toBe(`contact-help ${reason.props.id}`);
+            expect(button.props.showReason).toBeUndefined();
+            act(() =>
+                view.update(
+                    createElement(CapabilityButton, {
+                        capability: { state: 'enabled' },
+                        disabled: true,
+                        showReason: false,
+                        'aria-describedby': 'contact-help',
+                        children: 'Call',
+                    }),
+                ),
+            );
+            expect(view.root.findAllByType('small')).toHaveLength(0);
+            expect(button.props.disabled).toBe(true);
+            expect(button.props['aria-describedby']).toBe('contact-help');
+            expect(button.props.showReason).toBeUndefined();
+            view.unmount();
         },
     );
 });

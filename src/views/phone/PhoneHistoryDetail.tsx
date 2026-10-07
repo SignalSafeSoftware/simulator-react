@@ -1,5 +1,6 @@
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
+import { useTimestampFormatter } from '../../contract/regionalPresentation.js';
 import type { ReactNode } from 'react';
 export interface PhoneHistoryDetailProps {
     caller: string;
@@ -23,6 +24,7 @@ export default function PhoneHistoryDetail({
     children,
 }: Readonly<PhoneHistoryDetailProps>) {
     const formatNumber = usePhoneNumberFormatter();
+    const formatTimestamp = useTimestampFormatter();
     return (
         <div className='simulator-history-detail'>
             <div className='simulator-history-detail__body'>
@@ -34,7 +36,7 @@ export default function PhoneHistoryDetail({
                         {formatNumber(number)}
                     </p>
                 )}
-                <p className='simulator-history-detail__time'>{timestamp}</p>
+                <p className='simulator-history-detail__time'>{formatTimestamp(timestamp)}</p>
                 {description && <p className='simulator-history-detail__metadata'>{description}</p>}
             </div>
             {actions && <div className='simulator-history-actions'>{actions}</div>}

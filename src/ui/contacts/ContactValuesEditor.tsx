@@ -23,6 +23,36 @@ export interface ContactValuesEditorProps {
     label?: Exclude<ReactNode, undefined>;
     onChange: (values: Value[], preferred: string | null) => void;
 }
+/** Heading and Add button shared by every contact value section. */
+export function ContactValuesHeading({
+    titleId,
+    title,
+    kind,
+    full,
+    onAdd,
+}: Readonly<{
+    titleId: string;
+    title: Exclude<ReactNode, undefined>;
+    kind: ContactValueKind;
+    full: boolean;
+    onAdd: () => void;
+}>) {
+    const { t } = useSimulatorLocale();
+    return (
+        <header className='contact-values-heading'>
+            <h3 id={titleId}>{title}</h3>
+            <button
+                type='button'
+                aria-label={t('contact.addValue', { kind })}
+                title={t('contact.addValue', { kind })}
+                disabled={full}
+                onClick={onAdd}
+            >
+                <span aria-hidden='true'>＋</span>
+            </button>
+        </header>
+    );
+}
 export function ContactValuesEditor({
     kind,
     values,
@@ -68,20 +98,15 @@ export function ContactValuesEditor({
         );
     return (
         <section className='contact-values-panel simulator-list-group' aria-labelledby={titleId}>
-            <header className='contact-values-heading'>
-                <h3 id={titleId}>{label ?? title}</h3>
-                <button
-                    type='button'
-                    aria-label={t('contact.addValue', { kind })}
-                    title={t('contact.addValue', { kind })}
-                    disabled={values.length >= 100}
-                    onClick={() =>
-                        onChange([...values, { id: createId(), label: '', value: '' }], preferredId)
-                    }
-                >
-                    <span aria-hidden='true'>＋</span>
-                </button>
-            </header>
+            <ContactValuesHeading
+                titleId={titleId}
+                title={label ?? title}
+                kind={kind}
+                full={values.length >= 100}
+                onAdd={() =>
+                    onChange([...values, { id: createId(), label: '', value: '' }], preferredId)
+                }
+            />
             <datalist id={`${titleId}-labels`}>
                 {labels.map((label) => (
                     <option key={label} value={label}>

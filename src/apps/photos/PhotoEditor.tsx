@@ -3,6 +3,7 @@ import { SIM_APP_PAGE_CONTENT } from '../../ui/styles/semanticSimulatorClasses.j
 import type { Photo } from '@signalsafe/simulator-core/apps/contracts';
 import { useSimulatorAppsHost } from '../shared/SimulatorAppsHost.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
+import { formatCoordinate } from './formatCoordinate.js';
 
 export default function PhotoEditor({
     photo,
@@ -113,8 +114,8 @@ export default function PhotoEditor({
                 <p>{captureDateLabel(photo.original, t)}</p>
                 <p>
                     {t('app.photos.originalCoordinates', {
-                        latitude: photo.original.latitude ?? t('app.unknown'),
-                        longitude: photo.original.longitude ?? t('app.unknown'),
+                        latitude: formatCoordinate(photo.original.latitude, t('app.unknown')),
+                        longitude: formatCoordinate(photo.original.longitude, t('app.unknown')),
                     })}
                 </p>
                 <p>{t('app.photos.editsNotice')}</p>

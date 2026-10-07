@@ -133,7 +133,6 @@ export const screenEnglish = {
     'screen.phoneSimulatorView.no.incoming.call.for.this.scenario':
         'No incoming call for this scenario.',
     'screen.phoneSimulatorView.phone.tabs': 'Phone tabs',
-    'screen.phoneSimulatorView.calls': 'Calls',
     'screen.phoneSimulatorView.contacts': 'Contacts',
     'screen.phoneSimulatorView.add.contact.a02ce0': 'Add contact',
     'screen.phoneSimulatorView.add': 'Add',

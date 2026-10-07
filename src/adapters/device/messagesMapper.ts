@@ -30,6 +30,7 @@ export function mapMessages(
         m.from === MessageSender.Me ? MessageSender.Me : MessageSender.Them;
     return {
         thread: {
+            id: optionalString(threadDetail?.id),
             messages: (threadDetail?.messages ?? []).map((m) => ({
                 ...(m.id === undefined ? {} : { id: m.id }),
                 from: fromRole(m),

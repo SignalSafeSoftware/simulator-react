@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.21.0 — October 7, 2026
+
+- Add the shared contact editor: `views/contacts/ContactEditorForm` (controlled form with `createId`, `identityImage`, `identityExtras` and `addressFields` slots), `ContactEditorScreen` (page frame with title and notices), `ContactDetailActions` (Edit and Delete icon buttons) and the pure `contactFormModel` helpers. `PhoneContactEditor` now localizes its Back label with `app.back`.
+- Add shared call-history composition: `views/phone/PhoneHistoryLayout` (header, list, detail and host content), `PhoneHistoryCallButton` and `PhoneHistorySummaryTitle`. `PhoneHistoryScreen` is rebuilt on the layout, and the call details heading reads "Calls with ..." or "N calls from this number" using `calls.with` and the new plural keys `calls.fromNumber.one` and `calls.fromNumber.other`.
+- Add `plain` to `DevicePage` and the `SIM_APP_PAGE_CONTENT_PLAIN` class for pages that supply their own padding.
+- Photos: add an "Add photo" item to the app navigation that opens the file picker, format map coordinates with four decimals (`apps/photos/formatCoordinate`).
+- Add shared Home clock (`apps/home/HomeClock`), regional settings (`apps/settings/RegionalSettings`, `regionalFormats`, `contract/regionalPresentation`), device backup (`apps/settings/DeviceBackup`, `parseBackup`), scenario mail source, SMS timeline paging, attachment and scroll helpers, and photo capture-date helpers, with new subpath exports for each.
+- Require core 0.7.0 (optional `duration_seconds` on call entries).
+- Move `MIGRATION.md` and `RELEASING.md` into `docs/` and `examples/` into `docs/examples/`; the docs ship in the package and the examples do not.
+
 ## 0.20.2 — October 5, 2026
 
 - Fix `LoadMore` re-creating its `IntersectionObserver` whenever `count` changed, which requested another page immediately while the sentinel was still visible. Automatic loading again requests once per visibility transition. `count` is exposed as `data-loaded-count`. Use 0.20.2 instead of 0.20.0 and 0.20.1.

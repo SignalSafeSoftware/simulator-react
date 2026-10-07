@@ -86,4 +86,12 @@ describe('simulatorSessionReducer', () => {
         });
         expect(next.view).toEqual(initial.view);
     });
+    it('ignores call history selection outside the phone history screen', () => {
+        const initial = getInitialSessionState(createPayload());
+        const next = simulatorSessionReducer(initial, {
+            type: 'SELECT_CALL_HISTORY',
+            entryId: 'call-1',
+        });
+        expect(next.view).toEqual(initial.view);
+    });
 });

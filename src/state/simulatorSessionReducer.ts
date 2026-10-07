@@ -3,6 +3,7 @@ import {
     type SimulatorDispatchAction,
 } from './simulatorDispatchActions.js';
 import { SimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
+import { SimulatorPhoneScreenId } from '@signalsafe/simulator-core/devicePayload';
 /**
  * Reducer for simulator session view state (shell state).
  * Apps: email, messages, internet, phone, home. entry_point sets initial app/screen. Supports Back, Cancel, NAV_LOCAL.
@@ -37,9 +38,21 @@ function viewReducer(
         case SimulatorDispatchActionType.Back:
             return applyBack(state);
         case SimulatorDispatchActionType.BackToPrimary:
-            return { ...state, showPrimaryMenu: true, activeApp: SimulatorApp.Home };
+            return {
+                ...state,
+                showPrimaryMenu: true,
+                activeApp: SimulatorApp.Home,
+                phone: { ...state.phone, selectedHistoryEntryId: null },
+            };
         case SimulatorDispatchActionType.Cancel:
             return applyCancel(state);
+        case SimulatorDispatchActionType.SelectCallHistory:
+            if (
+                state.activeApp !== SimulatorApp.Phone ||
+                state.phone.screen !== SimulatorPhoneScreenId.History
+            )
+                return state;
+            return { ...state, phone: { ...state.phone, selectedHistoryEntryId: action.entryId } };
         case SimulatorDispatchActionType.SelectEmail:
             return applySelectEmail(state, action.messageId);
         case SimulatorDispatchActionType.SmsRevealNext:

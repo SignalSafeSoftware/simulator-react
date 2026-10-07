@@ -78,7 +78,7 @@ it('keeps contact writes and history actions optional and host-owned', () => {
         }),
     );
     expect(root.root.findByProps({ 'aria-label': 'Save contact' }).props.disabled).toBe(true);
-    act(() => root.root.findByProps({ 'aria-label': 'Cancel' }).props.onClick());
+    act(() => root.root.findByProps({ 'aria-label': 'Back' }).props.onClick());
     expect(onCancel).toHaveBeenCalledOnce();
     expect(onSubmit).not.toHaveBeenCalled();
     root.unmount();
@@ -128,8 +128,8 @@ it('supports host identity fields without duplicating the shared form or save co
     expect(onSubmit).toHaveBeenCalledOnce();
     act(() => root.update(createElement(PhoneContactEditor, { ...props, saveDisabled: true })));
     expect(root.root.findByProps({ 'aria-label': 'Save contact' }).props.disabled).toBe(true);
-    expect(root.root.findByProps({ 'aria-label': 'Cancel' }).props.disabled).toBe(false);
-    act(() => root.root.findByProps({ 'aria-label': 'Cancel' }).props.onClick());
+    expect(root.root.findByProps({ 'aria-label': 'Back' }).props.disabled).toBe(false);
+    act(() => root.root.findByProps({ 'aria-label': 'Back' }).props.onClick());
     expect(onCancel).toHaveBeenCalledOnce();
     act(() => root.update(createElement(PhoneContactEditor, { ...props, saving: true })));
     expect(root.root.findAllByType('button').every((button) => button.props.disabled)).toBe(true);

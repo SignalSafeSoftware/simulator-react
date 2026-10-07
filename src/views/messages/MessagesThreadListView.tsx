@@ -27,7 +27,9 @@ import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type ReactNode } from 'react';
+import { LoadMore } from '../../ui/lists/LoadMore.js';
+import { useTimestampFormatter } from '../../contract/regionalPresentation.js';
 import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';
 import { simLayout, simRowSurface, simSpacing } from '../../simulatorStyles.js';
 import { matchesAnyField } from '../../utils/lists/textMatch.js';
@@ -50,8 +52,23 @@ export interface ThreadListRow {
     unread?: boolean;
 }
 
+export interface MessagesThreadContinuation {
+    /** Number of matching local rows to show; hosts own the visible-page state. */
+    visibleCount: number;
+    hasMore: boolean;
+    loading: boolean;
+    error?: string;
+    /** True requests a larger local page; false requests the host's next archive page/retry. */
+    onLoadMore: (buffered: boolean) => unknown;
+}
+
 export interface MessagesThreadListViewProps {
-    threads: ThreadListRow[];
+    threads: readonly ThreadListRow[];
+    /** Omit for an independently managed search field. */
+    search?: { value: string; onChange: (value: string) => void };
+    continuation?: MessagesThreadContinuation;
+    /** Photo retrieval belongs to the host; the shared view retains avatar chrome. */
+    renderAvatar?: (row: ThreadListRow, fallback: ReactNode) => ReactNode;
     onSelectThread: (threadId: string) => void;
     /** Optional compose handler (e.g. for future new-message flow); pencil icon shown when set. */
     onCompose?: () => void;
@@ -65,72 +82,102 @@ export default function MessagesThreadListView({
     threads,
     onSelectThread,
     onCompose,
+    search,
+    continuation,
+    renderAvatar,
 }: Readonly<MessagesThreadListViewProps>) {
     const screenLocale = useSimulatorLocale();
 
     const formatNumber = usePhoneNumberFormatter();
-    const [searchQuery, setSearchQuery] = useState('');
+    const formatTimestamp = useTimestampFormatter();
+    const [localSearch, setLocalSearch] = useState('');
+    const searchQuery = search?.value ?? localSearch;
+    const setSearchQuery = search?.onChange ?? setLocalSearch;
     const filtered = useMemo(
         () => threads.filter((row) => matchesSearch(row, searchQuery)),
         [threads, searchQuery],
     );
-    // SimulatorListGroup renders the empty message in place of its children.
+    const visible = continuation ? filtered.slice(0, continuation.visibleCount) : filtered;
+    const buffered = visible.length < filtered.length;
+    const hasMore = buffered || Boolean(continuation?.hasMore);
+    const loading = !buffered && Boolean(continuation?.loading);
+    const error = buffered ? '' : (continuation?.error ?? '');
+    const emptyMessage =
+        threads.length === 0
+            ? screenLocale.t('screen.messagesThreadListView.no.conversations')
+            : screenLocale.t('screen.messagesThreadListView.no.results.for.value1', {
+                  value1: searchQuery,
+              });
+    // Continuation controls remain reachable even when the current search has no matches.
     const content = (
         <div className={joinClasses(SIM_LIST_FLUSH_MOD, simSpacing.mt1, SIM_MESSAGES_THREAD_LIST)}>
-            {filtered.map((row, index) => (
-                <button
-                    type='button'
-                    key={row.id}
-                    onClick={() => onSelectThread(row.id)}
-                    className={joinClasses(
-                        simRowSurface.selectable,
-                        SIM_SURFACE_WHITE,
-                        index === 0 ? 'simulator-border--top' : 'simulator-border--top-none',
-                        SIM_MESSAGES_THREAD_ROW,
-                    )}
-                >
-                    <SimulatorAvatar key={row.avatarUrl} avatarUrl={row.avatarUrl} />
-                    <div className={joinClasses(SIM_FLEX_COL, SIM_MIN_W_0, SIM_FLEX_GROW_1)}>
-                        <span
-                            className={joinClasses(
-                                'simulator-messages__thread-title',
-                                SIM_TEXT_MEDIUM,
-                                SIM_TEXT_TRUNCATE,
-                                row.unread && SIM_TEXT_BOLD,
-                            )}
-                        >
-                            {row.senderName ??
-                                (row.senderNumber
-                                    ? formatNumber(row.senderNumber)
-                                    : screenLocale.t('value.unknown'))}
-                        </span>
-                        <span
-                            className={joinClasses(
-                                SIM_TEXT_SM,
-                                SIM_MUTED,
-                                'simulator-messages__thread-preview',
-                                SIM_TEXT_BREAK,
-                            )}
-                            style={{ lineHeight: 1.35 }}
-                        >
-                            {row.preview}
-                        </span>
-                    </div>
-                    {row.timestamp != null && (
-                        <span
-                            className={joinClasses(
-                                SIM_TEXT_SM,
-                                SIM_MUTED,
-                                SIM_FLEX_SHRINK_0,
-                                'simulator-messages__thread-time',
-                                'simulator-flex--align-end',
-                            )}
-                        >
-                            {row.timestamp}
-                        </span>
-                    )}
-                </button>
-            ))}
+            {visible.map((row, index) => {
+                const sender =
+                    row.senderName ??
+                    (row.senderNumber
+                        ? formatNumber(row.senderNumber)
+                        : screenLocale.t('value.unknown'));
+                const timestamp =
+                    row.timestamp == null ? undefined : formatTimestamp(row.timestamp);
+                return (
+                    <button
+                        type='button'
+                        key={row.id}
+                        onClick={() => onSelectThread(row.id)}
+                        aria-label={[sender, row.preview, timestamp].filter(Boolean).join(' ')}
+                        className={joinClasses(
+                            simRowSurface.selectable,
+                            SIM_SURFACE_WHITE,
+                            index === 0 ? 'simulator-border--top' : 'simulator-border--top-none',
+                            SIM_MESSAGES_THREAD_ROW,
+                        )}
+                    >
+                        <SimulatorAvatar
+                            key={row.avatarUrl}
+                            avatarUrl={row.avatarUrl}
+                            renderImage={
+                                renderAvatar ? (fallback) => renderAvatar(row, fallback) : undefined
+                            }
+                        />
+                        <div className={joinClasses(SIM_FLEX_COL, SIM_MIN_W_0, SIM_FLEX_GROW_1)}>
+                            <span
+                                className={joinClasses(
+                                    'simulator-messages__thread-title',
+                                    SIM_TEXT_MEDIUM,
+                                    SIM_TEXT_TRUNCATE,
+                                    row.unread && SIM_TEXT_BOLD,
+                                )}
+                            >
+                                {sender}
+                            </span>
+                            <span
+                                className={joinClasses(
+                                    SIM_TEXT_SM,
+                                    SIM_MUTED,
+                                    'simulator-messages__thread-preview',
+                                    SIM_TEXT_BREAK,
+                                )}
+                                style={{ lineHeight: 1.35 }}
+                            >
+                                {row.preview}
+                            </span>
+                        </div>
+                        {row.timestamp != null && (
+                            <span
+                                className={joinClasses(
+                                    SIM_TEXT_SM,
+                                    SIM_MUTED,
+                                    SIM_FLEX_SHRINK_0,
+                                    'simulator-messages__thread-time',
+                                    'simulator-flex--align-end',
+                                )}
+                            >
+                                {timestamp}
+                            </span>
+                        )}
+                    </button>
+                );
+            })}
         </div>
     );
 
@@ -167,14 +214,9 @@ export default function MessagesThreadListView({
                 )}
             </div>
             <SimulatorListGroup
-                empty={filtered.length === 0}
-                emptyMessage={
-                    threads.length === 0
-                        ? screenLocale.t('screen.messagesThreadListView.no.conversations')
-                        : screenLocale.t('screen.messagesThreadListView.no.results.for.value1', {
-                              value1: String(searchQuery),
-                          })
-                }
+                loading={continuation ? threads.length === 0 && loading : undefined}
+                empty={visible.length === 0 && !hasMore && !error}
+                emptyMessage={emptyMessage}
                 search={
                     <SimulatorSearchInput
                         value={searchQuery}
@@ -186,6 +228,25 @@ export default function MessagesThreadListView({
                 }
             >
                 {content}
+                {visible.length === 0 && (hasMore || error) && (
+                    <p className='simulator-list-group__empty'>{emptyMessage}</p>
+                )}
+                {error && (
+                    <p className='simulator-list-error' role='alert'>
+                        {error}
+                    </p>
+                )}
+                {continuation && (
+                    <LoadMore
+                        count={visible.length}
+                        hasMore={hasMore}
+                        loading={loading}
+                        error={error}
+                        onLoadMore={() => continuation.onLoadMore(buffered)}
+                        label={screenLocale.t('screen.messagesThreadListView.load.more')}
+                        automatic={!searchQuery.trim()}
+                    />
+                )}
             </SimulatorListGroup>
         </div>
     );

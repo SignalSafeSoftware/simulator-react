@@ -32,3 +32,16 @@ export function dispatchDocumentEvent(event: Event): void {
 export function focusDocumentElement(selector: string): void {
     document.querySelector<HTMLElement>(selector)?.focus();
 }
+
+/** Trigger a user-requested JSON backup download and release its temporary URL. */
+export function downloadJsonFile(contents: string, filename: string): void {
+    const url = URL.createObjectURL(new Blob([contents], { type: 'application/json' }));
+    try {
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = filename;
+        anchor.click();
+    } finally {
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+}

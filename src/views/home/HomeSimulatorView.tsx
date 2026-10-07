@@ -1,25 +1,21 @@
-/**
- * Home app: dashboard (Store/Settings launcher), Store (app cards), Settings (sections + inputs).
- * Wireframe: centered headers, search bar, rectangular buttons/cards. Store and Settings are subviews; Back returns to Home.
- */
+/** Scenario Home shares device Home presentation while retaining scenario actions and widgets. */
 import { SimulatorHomeScreenId } from '@signalsafe/simulator-core/devicePayload';
 import {
-    SIM_FLEX_GROW_1,
     SIM_FLEX_WRAP,
     SIM_ROUNDED_NONE,
     SIM_SURFACE_WHITE,
     SIM_TEXT_CENTER,
-    SIM_TEXT_MEDIUM,
     SIM_TEXT_SM,
-    SimulatorButtonTone,
     joinClasses,
 } from '../../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import type { HomeScreenId, SimulatorAction, SimulatorHomePayload } from '../../types/session.js';
 import { SimulatorActions } from '../../actions/simulatorActions.js';
-import { simBorder, simLayout, simScreen, simSpacing, simTypo } from '../../simulatorStyles.js';
+import { simBorder, simLayout, simSpacing } from '../../simulatorStyles.js';
 import type { SimulatorCapabilities } from '../../utils/payload/simulatorCapabilities.js';
-import { SimulatorButton } from '../../ui/primitives.js';
+import DeviceHome from '../../apps/home/DeviceHome.js';
+import SimulatorScreenTile from '../shared/SimulatorScreenTile.js';
+import { Store } from 'lucide-react';
 import { SIM_PAGE_CONTENT } from '../../ui/styles/semanticSimulatorClasses.js';
 import { HomeStoreScreen } from './HomeStoreScreen.js';
 import { HomeSettingsScreen } from './HomeSettingsScreen.js';
@@ -42,15 +38,7 @@ const dashboardTileClass = joinClasses(
     SIM_SURFACE_WHITE,
 );
 
-const dashboardNavBtnClass = joinClasses(
-    simBorder.tile,
-    SIM_ROUNDED_NONE,
-    SIM_FLEX_GROW_1,
-    simSpacing.py3,
-    SIM_TEXT_MEDIUM,
-);
-
-/** Home dashboard: Store and Settings as rectangular buttons followed by supplied widgets. */
+/** Scenario-only Store and widgets extend the common Home layout. */
 function HomeDashboard({
     widgets,
     hasStore,
@@ -65,42 +53,32 @@ function HomeDashboard({
     onAction: (action: SimulatorAction) => void;
 }>) {
     const screenLocale = useSimulatorLocale();
-    const launchers = [
-        hasStore && {
-            screen: SimulatorHomeScreenId.Store,
-            label: screenLocale.t('screen.homeSimulatorView.store'),
-            action: SimulatorActions.openStore(),
-        },
-        hasSettings && {
-            screen: SimulatorHomeScreenId.Settings,
-            label: screenLocale.t('screen.homeSimulatorView.settings'),
-            action: SimulatorActions.openSettings(),
-        },
-    ].filter((launcher) => launcher !== false);
-
+    const navigate = (screen: HomeScreenId, action: SimulatorAction) => {
+        onAction(action);
+        onNavigate(screen);
+    };
     return (
-        <div className={simLayout.stack}>
-            <h2 className={simScreen.header}>{screenLocale.t('nav.home')}</h2>
-            <div className={SIM_PAGE_CONTENT}>
-                {launchers.length > 0 && (
-                    <div className={joinClasses(simLayout.actionsRow, simSpacing.mb3)}>
-                        {launchers.map(({ screen, label, action }) => (
-                            <SimulatorButton
-                                key={screen}
-                                tone={SimulatorButtonTone.Light}
-                                className={dashboardNavBtnClass}
-                                onClick={() => {
-                                    onAction(action);
-                                    onNavigate(screen);
-                                }}
-                                aria-label={label}
-                            >
-                                {label}
-                            </SimulatorButton>
-                        ))}
-                    </div>
-                )}
-                {widgets.length > 0 && (
+        <DeviceHome
+            onOpenSettings={
+                hasSettings
+                    ? () =>
+                          navigate(SimulatorHomeScreenId.Settings, SimulatorActions.openSettings())
+                    : undefined
+            }
+            additionalTiles={
+                hasStore ? (
+                    <SimulatorScreenTile
+                        label={screenLocale.t('screen.homeSimulatorView.store')}
+                        icon={<Store aria-hidden='true' />}
+                        onClick={() =>
+                            navigate(SimulatorHomeScreenId.Store, SimulatorActions.openStore())
+                        }
+                    />
+                ) : undefined
+            }
+        >
+            {widgets.length > 0 && (
+                <div className={SIM_PAGE_CONTENT}>
                     <div className={joinClasses(simLayout.actionsRow, SIM_FLEX_WRAP)}>
                         {widgets.map((w) => (
                             <div
@@ -112,14 +90,9 @@ function HomeDashboard({
                             </div>
                         ))}
                     </div>
-                )}
-                {widgets.length === 0 && launchers.length === 0 && (
-                    <p className={simTypo.emptyState}>
-                        {screenLocale.t('screen.homeSimulatorView.no.content.on.home')}
-                    </p>
-                )}
-            </div>
-        </div>
+                </div>
+            )}
+        </DeviceHome>
     );
 }
 
