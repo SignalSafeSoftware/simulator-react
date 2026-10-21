@@ -6,7 +6,7 @@ import { SimulatorChannel } from '../types/session.js';
 import { NAV_BACK_ID } from '../constants.js';
 import { SimulatorNavIcon } from '../ui/navigation/SimulatorNavIcon.js';
 import { useSimulatorLocale } from '../i18n/SimulatorLocale.js';
-import { type CSSProperties, type ReactNode, memo } from 'react';
+import { type ReactNode, memo } from 'react';
 
 import { simShell } from '../simulatorStyles.js';
 import {
@@ -86,24 +86,6 @@ function PhoneSimulatorShell({
     hideBottomNav = false,
 }: Readonly<PhoneSimulatorShellProps>) {
     const screenLocale = useSimulatorLocale();
-
-    const deviceFrameStyle: CSSProperties = compact
-        ? {
-              width: '100%',
-              minWidth: 0,
-              maxWidth: '100%',
-              flexShrink: 1,
-              maxHeight: 1000,
-              aspectRatio: '9 / 19.5',
-          }
-        : {
-              width: 460,
-              minWidth: 460,
-              maxWidth: 460,
-              flexShrink: 0,
-              maxHeight: 1000,
-              aspectRatio: '9 / 19.5',
-          };
 
     const showSecondary = !hideBottomNav && secondaryMenu != null && secondaryMenu.items.length > 0;
     const showPrimary = !hideBottomNav && !showSecondary;
@@ -203,10 +185,7 @@ function PhoneSimulatorShell({
                         : joinClasses(simShell.outerColumnPadded, 'simulator-min-vh-100')
                 }
             >
-                <div
-                    className={compact ? simShell.frameStretch : simShell.frameCentered}
-                    style={deviceFrameStyle}
-                >
+                <div className={compact ? simShell.frameStretch : simShell.frameCentered}>
                     <div className={simShell.body}>{children}</div>
                     {navigation}
                 </div>
