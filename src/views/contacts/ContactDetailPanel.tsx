@@ -1,3 +1,4 @@
+import { withStableKeys } from '../../utils/lists/stableKeys.js';
 import type { ReactNode } from 'react';
 import type { SimulatorContactValue } from '@signalsafe/simulator-core/devicePayload';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
@@ -58,8 +59,10 @@ function ContactDetailValues({
         <section className='contact-detail-list' aria-label={title}>
             <h3>{title}</h3>
             <ul>
-                {values.map((value, index) => (
-                    <li key={index}>
+                {withStableKeys(values, (value) =>
+                    JSON.stringify([value.label, value.value, value.number]),
+                ).map(({ item: value, key }) => (
+                    <li key={key}>
                         <strong>{value.label || t('contact.unlabeled')}</strong>
                         <div className='contact-detail-list__value'>
                             <span
@@ -94,16 +97,14 @@ export function ContactDetailPanel({
     const { t } = useSimulatorLocale();
     const formatNumber = usePhoneNumberFormatter();
     const hasFooter = footer != null && footer !== false;
-    const phones = contact.phoneNumbers?.length
-        ? contact.phoneNumbers
-        : contact.number
-          ? [{ label: '', value: contact.number, number: contact.number }]
-          : [];
-    const emails = contact.emailAddresses?.length
-        ? contact.emailAddresses
-        : contact.email
-          ? [{ label: '', value: contact.email }]
-          : [];
+    let phones = contact.phoneNumbers ?? [];
+    if (!phones.length && contact.number) {
+        phones = [{ label: '', value: contact.number, number: contact.number }];
+    }
+    let emails = contact.emailAddresses ?? [];
+    if (!emails.length && contact.email) {
+        emails = [{ label: '', value: contact.email }];
+    }
     return (
         <SimulatorPage
             className={joinClasses(

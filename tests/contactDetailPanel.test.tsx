@@ -16,6 +16,32 @@ const contact = {
 } satisfies SimulatorSessionContact;
 
 describe('shared contact detail screen', () => {
+    it('retains host control identity when contact values reorder and preserves duplicates', () => {
+        const mobile = { label: 'Mobile', value: '+15550101' };
+        const work = { label: 'Work', value: '+15550202' };
+        const renderPhoneAction = (phone: SimulatorContactValue) => (
+            <input aria-label={phone.label} defaultValue={phone.value} />
+        );
+        const view = render(
+            <ContactDetailPanel
+                contact={{ ...contact, phoneNumbers: [mobile, work, mobile] }}
+                onBack={vi.fn()}
+                renderPhoneAction={renderPhoneAction}
+            />,
+        );
+        const workControl = screen.getByRole('textbox', { name: 'Work' });
+        const mobileControls = screen.getAllByRole('textbox', { name: 'Mobile' });
+        view.rerender(
+            <ContactDetailPanel
+                contact={{ ...contact, phoneNumbers: [work, mobile, mobile] }}
+                onBack={vi.fn()}
+                renderPhoneAction={renderPhoneAction}
+            />,
+        );
+        expect(screen.getByRole('textbox', { name: 'Work' })).toBe(workControl);
+        expect(screen.getAllByRole('textbox', { name: 'Mobile' })).toEqual(mobileControls);
+    });
+
     it('uses the photo-card layout with scalar fallbacks and an accessible Back action', () => {
         const onBack = vi.fn();
         const { container } = render(<ContactDetailPanel contact={contact} onBack={onBack} />);

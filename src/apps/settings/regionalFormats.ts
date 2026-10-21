@@ -57,12 +57,14 @@ export function isRegionalPreferences(value: unknown): value is RegionalPreferen
         return false;
     if (
         !('dateFormat' in value) ||
-        !Object.values(RegionalDateFormat).some((format) => format === value.dateFormat)
+        typeof value.dateFormat !== 'string' ||
+        !Object.values<string>(RegionalDateFormat).includes(value.dateFormat)
     )
         return false;
     if (
         !('timeFormat' in value) ||
-        !Object.values(RegionalTimeFormat).some((format) => format === value.timeFormat)
+        typeof value.timeFormat !== 'string' ||
+        !Object.values<string>(RegionalTimeFormat).includes(value.timeFormat)
     )
         return false;
     if (!('timeZone' in value) || typeof value.timeZone !== 'string') return false;
