@@ -88,7 +88,7 @@ export default function SmsSimulatorView({
             '',
         count: visible.length,
         first: messageKey(visible[0]),
-        last: messageKey(visible[visible.length - 1]),
+        last: messageKey(visible.at(-1)),
         paging: timeline.paging,
         scrollRef: timeline.scrollRef,
         contentRef: timeline.contentRef,
