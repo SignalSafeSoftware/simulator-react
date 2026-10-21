@@ -22,14 +22,14 @@ export function regionalDateInput(value: number, timeZone: string): string {
 
 /** Reject invalid dates and nonexistent/ambiguous wall times; never infer a missing zone. */
 export function parseRegionalDateInput(value: string, timeZone: string): number {
-    if (!LOCAL_DATE_TIME.test(value) || !timeZone) return NaN;
+    if (!LOCAL_DATE_TIME.test(value) || !timeZone) return Number.NaN;
     const wallTime = Date.parse(`${value}Z`);
-    if (!Number.isFinite(wallTime)) return NaN;
+    if (!Number.isFinite(wallTime)) return Number.NaN;
     const normalized = new Date(wallTime).toISOString().slice(0, -1);
     // Date.parse normalizes invalid days; those are not valid calendar input.
-    if (!normalized.startsWith(value)) return NaN;
+    if (!normalized.startsWith(value)) return Number.NaN;
     if (UTC_OFFSET.test(timeZone)) return Date.parse(`${value}${timeZone}`);
-    if (/^[+-]/.test(timeZone)) return NaN;
+    if (/^[+-]/.test(timeZone)) return Number.NaN;
     const candidates = new Set<number>();
     try {
         // Sample both sides of any nearby transition, including non-hour offsets.
@@ -41,7 +41,7 @@ export function parseRegionalDateInput(value: string, timeZone: string): number 
         }
     } catch {
         // A partially edited or unsupported zone is invalid, not a browser-zone fallback.
-        return NaN;
+        return Number.NaN;
     }
-    return candidates.size === 1 ? Math.min(...candidates) : NaN;
+    return candidates.size === 1 ? Math.min(...candidates) : Number.NaN;
 }

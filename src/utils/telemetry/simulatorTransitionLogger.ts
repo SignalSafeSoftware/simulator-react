@@ -86,17 +86,21 @@ function getScreenForActiveApp(
     return getCurrentScreenForApp(view, app) || '?';
 }
 
+function formatSimulatorAction(action: NonNullable<DispatchActionForLog['action']>): string {
+    if (action.type === SimulatorActionType.NavigateScreen)
+        return `${SimulatorDispatchActionType.SimulatorAction}(navigate_screen ${action.app}/${action.screen})`;
+    if (action.type === SimulatorActionType.OpenEmail)
+        return `${SimulatorDispatchActionType.SimulatorAction}(open_email ${action.messageId})`;
+    if (action.type === SimulatorActionType.OpenThread)
+        return `${SimulatorDispatchActionType.SimulatorAction}(open_thread ${action.threadId})`;
+    if (action.type === SimulatorActionType.OpenPage)
+        return `${SimulatorDispatchActionType.SimulatorAction}(open_page ${action.pageId})`;
+    return `${SimulatorDispatchActionType.SimulatorAction}(${action.type})`;
+}
+
 function formatAction(action: DispatchActionForLog): string {
     if (action.type === SimulatorDispatchActionType.SimulatorAction && action.action) {
-        const a = action.action;
-        if (a.type === SimulatorActionType.NavigateScreen)
-            return `${action.type}(navigate_screen ${a.app}/${a.screen})`;
-        if (a.type === SimulatorActionType.OpenEmail)
-            return `${action.type}(open_email ${a.messageId})`;
-        if (a.type === SimulatorActionType.OpenThread)
-            return `${action.type}(open_thread ${a.threadId})`;
-        if (a.type === SimulatorActionType.OpenPage) return `${action.type}(open_page ${a.pageId})`;
-        return `${action.type}(${a.type})`;
+        return formatSimulatorAction(action.action);
     }
     if (action.type === SimulatorDispatchActionType.NavLocal)
         return `${action.type}(${action.app}/${action.screen})`;

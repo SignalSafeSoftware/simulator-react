@@ -11,6 +11,10 @@ export function SmsTimelinePaging({
 }>) {
     const { t } = useSimulatorLocale();
     if (!paging || (!paging.hasMore && !paging.error)) return null;
+    let actionLabel: 'messages.loadEarlier' | 'messages.loadingEarlier' | 'messages.retryEarlier' =
+        'messages.loadEarlier';
+    if (paging.loading) actionLabel = 'messages.loadingEarlier';
+    else if (paging.error) actionLabel = 'messages.retryEarlier';
     return (
         <div>
             {paging.error && <p role='alert'>{paging.error}</p>}
@@ -20,13 +24,7 @@ export function SmsTimelinePaging({
                 disabled={paging.loading}
                 onClick={onLoadEarlier}
             >
-                {t(
-                    paging.loading
-                        ? 'messages.loadingEarlier'
-                        : paging.error
-                          ? 'messages.retryEarlier'
-                          : 'messages.loadEarlier',
-                )}
+                {t(actionLabel)}
             </button>
         </div>
     );
