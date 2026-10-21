@@ -535,18 +535,18 @@
   resolved "https://registry.yarnpkg.com/@rolldown/pluginutils/-/pluginutils-1.0.1.tgz#e3fcee093fbb5ce765e1ad088ff4de2889f6f9be"
   integrity sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==
 
-"@signalsafe/simulator-core@0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@signalsafe/simulator-core/-/simulator-core-0.7.0.tgz#2afb8a7e705ecdf3d6cef3a6384148e859eda206"
-  integrity sha512-t5vgUtAI1biwemRptnLbb+IBL34BZLhdBiIqRoG4pvNETMOEuS5liwGpRI0y3Cf7m60ZxMuglOdDvI8ajqBIhw==
+"@signalsafe/simulator-core@0.7.1":
+  version "0.7.1"
+  resolved "https://registry.npmjs.org/@signalsafe/simulator-core/-/simulator-core-0.7.1.tgz#b81419bed7cc00d36e4c6db855edaf34e3898b0a"
+  integrity sha512-RKEL/bsRnpgMeKYUIAM6DTUj5krP76f8ZB2G3byf9Y/b2xoR4EJ1o4OFFidxr3dlvPj4aMgSeTAstqkhFkinnA==
   dependencies:
     "@signalsafe/tree-spec" "^0.4.1"
-    zod "^4.0.0"
+    zod "^4.6.7"
 
 "@signalsafe/tree-spec@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@signalsafe/tree-spec/-/tree-spec-0.4.1.tgz#49e3e671f6425b28bd5776d4ce5077ace00e60b2"
-  integrity sha512-abwLzIB4maUk5L4H++oOA8Ikjs4RMFg+4jFJFOs+BQ0qSBiHUtS8zewtTwLwsPymyG0GMcF9N+vZhtAKIyE1kA==
+  version "0.4.4"
+  resolved "https://registry.npmjs.org/@signalsafe/tree-spec/-/tree-spec-0.4.4.tgz#b9720c686a8753970f0b9cd8a5205ca4e737ce99"
+  integrity sha512-e3As4cqN2x+Tha3iRtce0FVgeLuwJ3Of16h492dCz6SIaoD7WgR1Intt1HjC9BZRhysx2ocVK5uonfw12J73Rw==
 
 "@testing-library/dom@^10.4.2":
   version "10.4.2"
@@ -1516,7 +1516,7 @@ xmlchars@^2.2.0:
   resolved "https://registry.yarnpkg.com/xmlchars/-/xmlchars-2.2.0.tgz#060fe1bcb7f9c76fe2a17db86a9bc3ab894210cb"
   integrity sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
 
-zod@^4.0.0:
+zod@^4.6.7:
   version "4.6.7"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-4.6.7.tgz#e806cf64a7f4e37635ce9f2f52c04c3766f75e5b"
+  resolved "https://registry.npmjs.org/zod/-/zod-4.6.7.tgz#e806cf64a7f4e37635ce9f2f52c04c3766f75e5b"
   integrity sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==
