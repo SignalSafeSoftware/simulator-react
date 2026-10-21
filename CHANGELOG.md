@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.21.1] - Release approved 2026-10-21
+
+Includes the verified shared frame and accessibility fixes, regional input and navigation quality fixes, and the default-theme pairing contract. Depends on core `0.7.1`. The optional default-theme peer is `^0.13.1`; custom or unstyled integrations remain supported without installing this theme.
+
 ## 0.21.0 — October 7, 2026
 
 - Add the shared contact editor: `views/contacts/ContactEditorForm` (controlled form with `createId`, `identityImage`, `identityExtras` and `addressFields` slots), `ContactEditorScreen` (page frame with title and notices), `ContactDetailActions` (Edit and Delete icon buttons) and the pure `contactFormModel` helpers. `PhoneContactEditor` now localizes its Back label with `app.back`.

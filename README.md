@@ -1,5 +1,31 @@
 # `@signalsafe/simulator-react`
 
+## Coordinated release — approved 2026-10-21
+
+| Package | Prepared version | Required simulator dependencies |
+| --- | --- | --- |
+| `@signalsafe/simulator-core` | `0.7.1` | none |
+| `@signalsafe/simulator-theme-bootstrap` | `0.13.1` | none |
+| `@signalsafe/simulator-react` | `0.21.1` | core `0.7.1`; optional default theme `^0.13.1` |
+| `@signalsafe/simulator-device` | `0.21.1` | core `0.7.1`, React `0.21.1`, theme `0.13.1` (exact) |
+
+These compatible patches preserve the existing public runtime API and shared UI.
+React and the default theme must be adopted together: the corrected frame markup
+requires the matching CSS. A custom theme remains an explicit host responsibility.
+The optional theme peer does not install or require the default theme for unstyled
+integrations. Node runtime support remains `>=19.0.0`; build tools use Node 22/24.
+
+Publish core and theme first, then React, then device, only after explicit approval
+and successful gated tag workflows. Download and verify each upstream registry
+artifact before refreshing downstream Yarn locks and the device demo npm lock.
+Future registry integrity values must never be fabricated. Before upstream
+publication, coherent packed-artifact installs provide candidate evidence only;
+frozen standalone registry installs remain a separate release gate.
+
+Existing local host archives retain their recorded provenance until the approved
+registry artifacts pass all host checks. Historical release notes below describe
+their original checkpoints and do not authorize publication or host replacement.
+
 React **device simulator** UI: session state, screen registry, template adapter, lint helpers, and optional developer tools. Built on `@signalsafe/simulator-core` for runtime stepping.
 
 | | |
@@ -282,7 +308,7 @@ Contact search includes secondary values, labels and optional `postalAddresses`.
 The theme owns contact-group layout and keypad geometry. Number entry and keypad
 edits share one selection-aware value and preserve canonical submission callbacks.
 
-## Release 0.16.3
+## Historical release 0.16.3
 
 Requires simulator-core 0.3.2 and TreeSpec ^0.4.1. React and React DOM remain on the supported 18.x peer contract. `ContactPhotoControls` supplies default SVG actions with localized accessible labels; hosts may override `actionIcons`. The optional theme owns dimensions and visual styling. Network requests, import identities, provider configuration and persistence remain host responsibilities.
 
@@ -297,7 +323,7 @@ from npm with strict engine checks. For local audit integration use the pinned v
 Regenerate each downstream lockfile after its upstream releases are available.
 No sibling source overrides are used in the runtime matrix.
 
-## Local app migration (0.17.0, release candidate)
+## Historical local app migration (0.17.0, release candidate)
 
 - Export reusable Vault, Photos/editor/location, lock/settings, mutable Mailbox and HTML/React browser screens, page hooks and browser/file helpers.
 - Add `SimulatorAppsProvider` for host formatting, notes editing, map rendering, file/metadata and lock adapters. Default notes use a plain textarea; external maps require an explicit host renderer.
@@ -355,7 +381,7 @@ values stay compatible. Use `isSimulatorApp(value)` at untrusted boundaries and
 `Object.values(SimulatorApp)` when enumerating all apps. Do not confuse app IDs with
 channels (`sms`, `browser`, `contacts`), screen names, or contact/input field kinds.
 
-See [AGENTS.md](./AGENTS.md) for module ownership and verification rules. Root imports were removed in the local audit prerelease; use the explicit owner paths shown in the examples.
+See [AGENTS.md](./AGENTS.md) for module ownership and verification rules. Use the explicit declaring-module paths shown in the examples; root imports are not supported. Historical local archive adoption remains recorded by each host.
 
 ## Reusable settings forms
 
