@@ -92,7 +92,7 @@ export function useSmsTimelineScroll({
             return;
         }
         const previous = position.current;
-        const changedThread = !previous || previous.thread !== threadId;
+        const changedThread = previous?.thread !== threadId;
         if (changedThread) {
             pending.current = false;
             following.current = true;

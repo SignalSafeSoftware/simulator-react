@@ -38,10 +38,16 @@ export function useRegionalCountry(): string {
 
 // Only timezone-qualified instants are machine timestamps. Authored labels and local calendar
 // strings remain verbatim, and calendar validation rejects dates normalized by Date (e.g. Feb 30).
-const ISO_INSTANT =
-    /^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/;
+const ISO_CALENDAR = /^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])$/;
+const ISO_CLOCK =
+    /^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/;
 function timestampDate(value: string): Date | null {
-    if (!ISO_INSTANT.test(value)) return null;
+    const separator = value.indexOf('T');
+    if (
+        !ISO_CALENDAR.test(value.slice(0, separator)) ||
+        !ISO_CLOCK.test(value.slice(separator + 1))
+    )
+        return null;
     const date = new Date(value);
     const calendarDate = new Date(`${value.slice(0, 10)}T00:00:00.000Z`);
     return calendarDate.toISOString().slice(0, 10) === value.slice(0, 10) ? date : null;
