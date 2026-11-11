@@ -535,16 +535,18 @@
   resolved "https://registry.yarnpkg.com/@rolldown/pluginutils/-/pluginutils-1.0.1.tgz#e3fcee093fbb5ce765e1ad088ff4de2889f6f9be"
   integrity sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==
 
-"@signalsafe/simulator-core@file:vendor/npm/signalsafe-simulator-core-0.7.2.tgz":
+"@signalsafe/simulator-core@0.7.2":
   version "0.7.2"
-  resolved "file:vendor/npm/signalsafe-simulator-core-0.7.2.tgz#511989318b35e1b52979d3404a79f673eab8a684"
+  resolved "https://registry.yarnpkg.com/@signalsafe/simulator-core/-/simulator-core-0.7.2.tgz#863bd33cdb9a7d21eb1aa471645201e33d2243a7"
+  integrity sha512-vXxRhn5SehGk/urTyy1jbAOtw8zzu0qLcVY7fqiwwcDjduaEKC5w7mGBWQgPfYWpXqUJ51qvfzN/Le6iX4OiSg==
   dependencies:
     "@signalsafe/tree-spec" "^0.4.1"
     zod "^4.6.7"
 
-"@signalsafe/simulator-theme-bootstrap@file:vendor/npm/signalsafe-simulator-theme-bootstrap-0.13.3.tgz":
-  version "0.13.3"
-  resolved "file:vendor/npm/signalsafe-simulator-theme-bootstrap-0.13.3.tgz#142124d47ccb200ca92ac5249c0e5d812a228b8f"
+"@signalsafe/simulator-theme-bootstrap@0.13.4":
+  version "0.13.4"
+  resolved "https://registry.yarnpkg.com/@signalsafe/simulator-theme-bootstrap/-/simulator-theme-bootstrap-0.13.4.tgz#cf0e82945ae889ad06674997823b9f4f2d00c6b2"
+  integrity sha512-nu2cUPMVLfZc0scaA/LA0nWDjzEuC/l8Za5D4fdhLOVXcZePvlxzH76GGRHKI1VTyMKmv/szQXB2034XG5hc3Q==
 
 "@signalsafe/tree-spec@^0.4.1":
   version "0.4.4"

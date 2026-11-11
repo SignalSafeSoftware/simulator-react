@@ -76,3 +76,8 @@ a browser workflow (`npm run test:browser`). Before publication, copy it to an
 isolated temporary directory and install all four packed artifacts explicitly.
 Its memory adapter intentionally resets on reload; durable storage, imports,
 regional formatting and live services belong to the consuming application.
+
+
+## Authorized registry release — November 11
+
+Publication is authorized for core 0.7.2, theme 0.13.4 (including the scrollbar preservation patch), React 0.21.2 and device 0.21.3, in dependency order. Root package dependencies/resolutions use published registry versions, replacing candidate file references. The private editor remains unpublished. Historical candidate reports above describe earlier verification states. Registry lock generation and frozen installation must succeed before the dependent release tag is pushed.
