@@ -101,6 +101,8 @@ export function LockSettings({
     onLock,
 }: Readonly<{ store: DeviceStore; onLock: () => void }>) {
     const { t } = useSimulatorLocale();
+    const { lockAvailable } = useSimulatorAppsHost();
+    const available = lockAvailable();
     const {
         current,
         setCurrent,
@@ -114,10 +116,11 @@ export function LockSettings({
         apply,
         clearFields,
     } = useLockChange(store);
-    const disabled = busy || store.busy;
+    const disabled = busy || store.busy || !available;
     return (
         <section className={SIM_APP_PAGE_CONTENT}>
             <h3>{t('app.lock.password')}</h3>
+            {!available && <output>{t('app.lock.cryptoUnavailable')}</output>}
             <form
                 onSubmit={(event) => {
                     event.preventDefault();

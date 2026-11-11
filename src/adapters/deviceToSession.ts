@@ -1,3 +1,4 @@
+import { migratePhoneCalls } from '@signalsafe/simulator-core/phoneCalls';
 import type { SimulatorDevicePayload } from '@signalsafe/simulator-core/devicePayload';
 import type { TopicTag } from '../types/shapes.js';
 import { isSimulatorApp } from '@signalsafe/simulator-core/simulatorApp';
@@ -40,12 +41,21 @@ export function fullDeviceToPayload(
         entryPoint: {
             app: entry.app,
             screen: typeof entry.screen === 'string' ? entry.screen : '',
+            ...(entry.target ? { target: entry.target } : {}),
         },
         device: mapDevice(value.device),
         email: mapEmail(value.email),
         sms: mapMessages(value.messages),
         browser: mapInternet(value.internet),
-        phone: mapPhone(value.phone),
+        phone: mapPhone(
+            value.phone &&
+                (value.phone.calls ||
+                    value.phone.history ||
+                    value.phone.incoming_call ||
+                    value.phone.voicemail)
+                ? migratePhoneCalls(value.phone)
+                : value.phone,
+        ),
         contacts: contacts.length ? contacts : null,
         directory: mapDirectory(value.directory),
         home: mapHome(value.home),

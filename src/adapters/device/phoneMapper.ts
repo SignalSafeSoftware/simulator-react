@@ -1,3 +1,4 @@
+import { SimulatorCallType } from '@signalsafe/simulator-core/phoneCalls';
 import {
     CallHistoryEntryKind,
     type SimulatorCallHistoryEntry,
@@ -22,6 +23,59 @@ export function mapPhone(phone: SimulatorDevicePayload['phone']): SimulatorPhone
         throw new Error(
             'Removed simulator field phone.voicemail_transcript; migrate it to phone.voicemail.transcript.',
         );
+    }
+    if (phone.calls) {
+        const calls = phone.calls;
+        const active = calls.find(
+            (call) =>
+                call.type === SimulatorCallType.Incoming || call.type === SimulatorCallType.Calling,
+        );
+        const voicemail = calls.find((call) => call.type === SimulatorCallType.Voicemail);
+        return {
+            unifiedCalls: true,
+            voicemailTranscript: voicemail?.transcript,
+            voicemailCallerName: voicemail?.name,
+            voicemailPhoneNumber: voicemail?.number,
+            voicemailTimestamp: voicemail?.timestamp,
+            chosenIndex: null,
+            content: active
+                ? {
+                      caller_name: active.name,
+                      caller_title: active.caller_title,
+                      phone_number: active.number,
+                      transcript: active.transcript ?? '',
+                      avatar_url: active.avatar_url,
+                      choices: [],
+                      outgoing: active.type === SimulatorCallType.Calling,
+                  }
+                : null,
+            callHistory: calls.map((call) => ({
+                id: call.id,
+                name: call.name,
+                number: call.number ?? '',
+                callType: call.type,
+                transcript: call.transcript,
+                avatarUrl: call.avatar_url,
+                callerTitle: call.caller_title,
+                timestamp: call.timestamp,
+                durationSeconds: call.duration_seconds,
+                kind:
+                    call.type === SimulatorCallType.Voicemail
+                        ? CallHistoryEntryKind.Voicemail
+                        : call.type === SimulatorCallType.Missed ||
+                            call.type === SimulatorCallType.Declined
+                          ? CallHistoryEntryKind.Missed
+                          : [
+                                  SimulatorCallType.Calling,
+                                  SimulatorCallType.Accepted,
+                                  SimulatorCallType.Unanswered,
+                                  SimulatorCallType.Cancelled,
+                                  SimulatorCallType.Outgoing,
+                              ].some((type) => type === call.type)
+                            ? CallHistoryEntryKind.Outgoing
+                            : CallHistoryEntryKind.Incoming,
+            })),
+        };
     }
     const incoming = phone.incoming_call;
     const transcript = stringOr(incoming?.transcript);
@@ -59,6 +113,7 @@ export function mapPhone(phone: SimulatorDevicePayload['phone']): SimulatorPhone
         callHistory: callHistory.length > 0 ? callHistory : undefined,
         voicemailTranscript: voicemailStr != null && voicemailStr !== '' ? voicemailStr : undefined,
         voicemailCallerName: voicemailCallerName ?? undefined,
+        voicemailPhoneNumber: optionalString(voicemailSection?.phone_number),
         voicemailTimestamp: voicemailTimestamp ?? undefined,
     };
 }

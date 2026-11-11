@@ -1,22 +1,13 @@
+import { HomeWidgets } from './HomeWidgets.js';
 /** Scenario Home shares device Home presentation while retaining scenario actions and widgets. */
 import { SimulatorHomeScreenId } from '@signalsafe/simulator-core/devicePayload';
-import {
-    SIM_FLEX_WRAP,
-    SIM_ROUNDED_NONE,
-    SIM_SURFACE_WHITE,
-    SIM_TEXT_CENTER,
-    SIM_TEXT_SM,
-    joinClasses,
-} from '../../ui/styles/simulatorClasses.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import type { HomeScreenId, SimulatorAction, SimulatorHomePayload } from '../../types/session.js';
 import { SimulatorActions } from '../../actions/simulatorActions.js';
-import { simBorder, simLayout, simSpacing } from '../../simulatorStyles.js';
 import type { SimulatorCapabilities } from '../../utils/payload/simulatorCapabilities.js';
 import DeviceHome from '../../apps/home/DeviceHome.js';
 import SimulatorScreenTile from '../shared/SimulatorScreenTile.js';
 import { Store } from 'lucide-react';
-import { SIM_PAGE_CONTENT } from '../../ui/styles/semanticSimulatorClasses.js';
 import { HomeStoreScreen } from './HomeStoreScreen.js';
 import { HomeSettingsScreen } from './HomeSettingsScreen.js';
 
@@ -28,15 +19,6 @@ export interface HomeSimulatorViewProps {
     onAction: (action: SimulatorAction) => void;
     onBack: () => void;
 }
-
-const dashboardTileClass = joinClasses(
-    simBorder.tile,
-    SIM_ROUNDED_NONE,
-    simSpacing.p2,
-    SIM_TEXT_SM,
-    SIM_TEXT_CENTER,
-    SIM_SURFACE_WHITE,
-);
 
 /** Scenario-only Store and widgets extend the common Home layout. */
 function HomeDashboard({
@@ -77,21 +59,7 @@ function HomeDashboard({
                 ) : undefined
             }
         >
-            {widgets.length > 0 && (
-                <div className={SIM_PAGE_CONTENT}>
-                    <div className={joinClasses(simLayout.actionsRow, SIM_FLEX_WRAP)}>
-                        {widgets.map((w) => (
-                            <div
-                                key={w.id}
-                                className={dashboardTileClass}
-                                style={{ minWidth: 80, minHeight: 64 }}
-                            >
-                                {w.label}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
+            <HomeWidgets widgets={widgets} />
         </DeviceHome>
     );
 }

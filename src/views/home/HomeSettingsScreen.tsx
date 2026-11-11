@@ -75,24 +75,32 @@ export function HomeSettingsScreen({
             {emptySettingsMessage !== null ? (
                 <p className={simTypo.emptyState}>{emptySettingsMessage}</p>
             ) : (
-                <div className={joinClasses(SIM_FLEX_COL, 'simulator-spacing--gap-3')}>
-                    {filteredSections.map((section) => (
-                        <div
-                            key={section.id}
-                            className={joinClasses(
-                                simBorder.tile,
-                                SIM_ROUNDED_NONE,
-                                simSpacing.p3,
-                                SIM_SURFACE_WHITE,
-                            )}
-                        >
-                            <span className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_BODY)}>
-                                {section.title}
-                            </span>
-                        </div>
-                    ))}
-                </div>
+                <HomeSettingsSectionList sections={filteredSections} />
             )}
+        </div>
+    );
+}
+
+export function HomeSettingsSectionList({
+    sections,
+}: Readonly<{ sections: readonly SimulatorHomeSettingsSection[] }>) {
+    return (
+        <div className={joinClasses(SIM_FLEX_COL, 'simulator-spacing--gap-3')}>
+            {sections.map((section) => (
+                <div
+                    key={section.id}
+                    className={joinClasses(
+                        simBorder.tile,
+                        SIM_ROUNDED_NONE,
+                        simSpacing.p3,
+                        SIM_SURFACE_WHITE,
+                    )}
+                >
+                    <span className={joinClasses(SIM_TEXT_MEDIUM, SIM_TEXT_BODY)}>
+                        {section.title}
+                    </span>
+                </div>
+            ))}
         </div>
     );
 }

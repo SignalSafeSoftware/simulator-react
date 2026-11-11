@@ -2,7 +2,12 @@ import type { SimulatorStore } from '@signalsafe/simulator-core/apps/contracts';
 const ITERATIONS = 100000;
 const hex = (bytes: ArrayBuffer) =>
     Array.from(new Uint8Array(bytes), (value) => value.toString(16).padStart(2, '0')).join('');
+export function isLockAvailable(): boolean {
+    return typeof globalThis.crypto?.subtle?.importKey === 'function';
+}
 async function digest(password: string, salt: string) {
+    if (!isLockAvailable())
+        throw new Error('Screen lock requires HTTPS and browser cryptography support.');
     const key = await crypto.subtle.importKey(
         'raw',
         new TextEncoder().encode(password),

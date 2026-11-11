@@ -1,3 +1,4 @@
+import { authoredPhoneCall, voicemailDeletion } from './authoredPhoneCall.js';
 /**
  * Phone app: secondary nav (History, Contacts, Dial, Back) + content. Defaults to History.
  * Wireframe-style segmented local nav; Back from voicemail or secondary Back returns to primary menu.
@@ -190,8 +191,16 @@ export default function PhoneSimulatorView({
             </p>
         );
     }
-    const content = payload?.content;
-    if (screen === SimulatorPhoneScreenId.IncomingCall) {
+    const deleteVoicemail = voicemailDeletion(sessionDispatch);
+    const { active, content, voicemail } = authoredPhoneCall(
+        payload,
+        screen === SimulatorPhoneScreenId.History ? selectedHistoryEntryId : null,
+        () => selectHistoryEntry(null),
+        localNav(SimulatorPhoneScreenId.History),
+        deleteVoicemail,
+    );
+    if (voicemail) return voicemail;
+    if (screen === SimulatorPhoneScreenId.IncomingCall || active) {
         if (content == null) {
             return (
                 <p className={simTypo.emptyState}>
@@ -199,7 +208,6 @@ export default function PhoneSimulatorView({
                 </p>
             );
         }
-        const dismiss = () => onDismissIncoming?.();
         const incomingCallExtra =
             sessionState != null && sessionDispatch != null
                 ? renderPhoneIncomingCallExtra(
@@ -221,14 +229,15 @@ export default function PhoneSimulatorView({
                         renderChoice={renderChoice}
                         onAnswer={() => {
                             onAction(SimulatorActions.answerCall(0));
-                            dismiss();
+                            onDismissIncoming?.();
                         }}
                         onIgnore={() => {
                             onAction(SimulatorActions.ignoreCall());
-                            dismiss();
+                            onDismissIncoming?.();
                         }}
-                    />
-                    {incomingCallExtra}
+                    >
+                        {incomingCallExtra}
+                    </PhoneIncomingScene>
                 </div>
                 {localNav(SimulatorPhoneScreenId.History)}
             </div>
@@ -286,8 +295,10 @@ export default function PhoneSimulatorView({
                 {screen === SimulatorPhoneScreenId.Voicemail &&
                     payload?.voicemailTranscript != null && (
                         <PhoneVoicemailView
+                            onDelete={deleteVoicemail ? () => deleteVoicemail(null) : undefined}
                             transcript={payload.voicemailTranscript}
                             callerName={payload.voicemailCallerName ?? null}
+                            phoneNumber={payload.voicemailPhoneNumber ?? null}
                             timestamp={payload.voicemailTimestamp ?? null}
                             onBack={onBack ?? (() => onNavigate(SimulatorPhoneScreenId.History))}
                         />

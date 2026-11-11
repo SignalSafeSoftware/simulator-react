@@ -140,6 +140,9 @@ export const appsEnglish = {
     'app.mail.addAttachment': 'Add attachment',
     'app.mail.removeAttachment': 'Remove {name}',
     'app.mail.saveDraft': 'Save draft',
+    'app.mail.dateUnknown': 'Date not set',
+    'app.lock.cryptoUnavailable':
+        'Screen lock requires a secure connection (HTTPS) and browser cryptography support.',
     'app.mail.noSubject': '(No subject)',
     'app.mail.importedSource': 'Based on imported source record {id}. The original is unchanged.',
     'app.mail.thread': 'Messages in this simulated thread',

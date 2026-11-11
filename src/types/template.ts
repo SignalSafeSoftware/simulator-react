@@ -47,6 +47,7 @@ export interface PhoneSimulatorContent {
     phone_number?: string;
     caller_name?: string;
     caller_title?: string;
+    outgoing?: boolean;
     urgency?: string;
     avatar_url?: string;
     transcript: string;

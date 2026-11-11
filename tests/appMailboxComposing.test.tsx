@@ -272,6 +272,6 @@ describe('Mailbox host defaults', () => {
         );
         render(node);
         await openFolder(/^Inbox/);
-        expect(screen.getByText('Subject 1')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText('Subject 1', { selector: 'strong' })).toBeInstanceOf(HTMLElement);
     });
 });

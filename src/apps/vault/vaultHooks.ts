@@ -115,11 +115,15 @@ export function useVaultFolderActions({
 
 export function useVaultDraft({
     store,
+    secretDraft,
+    onSecretDraftChange,
     records,
     setMessage,
     onSaved,
 }: Readonly<{
     store: DeviceStore;
+    secretDraft?: Secret | null;
+    onSecretDraftChange?: (draft: Secret | null) => void;
     records: readonly Secret[];
     setMessage: (message: string) => void;
     onSaved: (folder: string) => void;
@@ -127,7 +131,12 @@ export function useVaultDraft({
     const { t } = useSimulatorLocale();
     const formRef = useRef<HTMLFormElement>(null);
     const [existing, setExisting] = useState(false);
-    const [draft, setDraft] = useState<Secret | null>(null);
+    const [localDraft, setLocalDraft] = useState<Secret | null>(null);
+    const draft = secretDraft === undefined ? localDraft : secretDraft;
+    function setDraft(next: Secret | null) {
+        setLocalDraft(next);
+        onSecretDraftChange?.(next);
+    }
     const { setBaseline, confirmDiscard } = useDraftBaseline(draft);
     const { confirm, copyText } = useSimulatorAppsHost();
     const [reveal, setReveal] = useState(false);
@@ -136,15 +145,17 @@ export function useVaultDraft({
         setReveal(false);
         setMessage('');
     }
-    function edit(next: Secret) {
+    function edit(next: Secret, existingRecord = records.some((record) => record.id === next.id)) {
         setBaseline(next);
-        setExisting(records.some((record) => record.id === next.id));
+        setExisting(existingRecord);
         setDraft(next);
         setReveal(false);
         setMessage('');
     }
     function discard() {
-        if (confirmDiscard(t('app.vault.discardConfirm'))) close();
+        if (!confirmDiscard(t('app.vault.discardConfirm'))) return false;
+        close();
+        return true;
     }
     async function save() {
         const parsed = secretSchema.safeParse({

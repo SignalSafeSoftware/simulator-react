@@ -1,4 +1,4 @@
-node_modules/
+node_modules
 dist/
 coverage/
 .nyc_output/
@@ -10,3 +10,6 @@ yarn-error.log*
 pnpm-debug.log*
 *.tgz
 
+
+# Verified development candidate artifacts
+!vendor/npm/*.tgz

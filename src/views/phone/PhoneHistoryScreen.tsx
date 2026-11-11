@@ -1,3 +1,4 @@
+import { phoneCallGroups, newestPhoneCalls } from '../../utils/payload/phoneCallGroups.js';
 import { useState } from 'react';
 import { usePhoneNumberFormatter } from '../../contract/phonePresentation.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
@@ -55,7 +56,9 @@ export default function PhoneHistoryScreen({
                     number: selected.displayNumber || selected.number || undefined,
                     numberLabel: selected.numberLabel || contact?.numberLabel,
                     timestamp: selected.timestamp ?? t('calls.dateUnknown'),
-                    description: selected.label,
+                    description: selected.callType
+                        ? t(`calls.type.${selected.callType}`)
+                        : selected.label,
                     actions:
                         onCall && normalizePhoneForMatch(selected.number) ? (
                             <PhoneHistoryCallButton onCall={() => onCall(selected.number)} />
@@ -64,9 +67,11 @@ export default function PhoneHistoryScreen({
                 }
             }
             list={{
-                entries: selected ? relatedPhoneHistoryEntries(entries, selected) : entries,
-                incomingCallContent: selected ? undefined : payload.content,
-                hasVoicemail: !selected && hasVoicemail,
+                entries: selected
+                    ? newestPhoneCalls(relatedPhoneHistoryEntries(entries, selected))
+                    : phoneCallGroups(entries).flatMap((group) => group.slice(0, 1)),
+                incomingCallContent: selected || payload.unifiedCalls ? undefined : payload.content,
+                hasVoicemail: !selected && !payload.unifiedCalls && hasVoicemail,
                 onSelectIncoming,
                 onSelectVoicemail,
                 onSelectEntry: select,

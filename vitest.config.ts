@@ -1,12 +1,15 @@
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
+const require = createRequire(import.meta.url);
 const packageRoot = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
     resolve: {
         alias: [
+            { find: /^react-dom\/server$/, replacement: require.resolve('react-dom/server') },
             {
                 find: /^@signalsafe\/simulator-react\/(.+)$/,
                 replacement: path.resolve(packageRoot, 'src') + '/$1',

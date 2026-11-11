@@ -1,3 +1,5 @@
+import type { PhoneSessionMutationFields } from './authoredPhoneCalls.js';
+import type { AuthoredPhoneCallFields, AuthoredPhonePayloadFields } from './authoredPhoneCalls.js';
 import {
     SimulatorEmailScreenId,
     SimulatorHomeScreenId,
@@ -66,7 +68,7 @@ export const DEFAULT_INTERNET_SCREEN = BrowserLayout.Landing;
 export const DEFAULT_HOME_SCREEN: HomeScreenId = SimulatorHomeScreenId.Home;
 
 /** Per-app view state (preserved when switching apps). */
-export interface PhoneAppViewState {
+export interface PhoneAppViewState extends PhoneSessionMutationFields {
     /** Selected call within History; absent or null shows the list. */
     selectedHistoryEntryId?: string | null;
     screen: PhoneScreenId;
@@ -230,7 +232,7 @@ export const CallHistoryEntryKind = Object.freeze({
 export type CallHistoryEntryKind = (typeof CallHistoryEntryKind)[keyof typeof CallHistoryEntryKind];
 
 /** Single call history row (from full-device or derived). */
-export interface SimulatorCallHistoryEntry {
+export interface SimulatorCallHistoryEntry extends AuthoredPhoneCallFields {
     /** Original display address, independent of the dialable number. */
     displayNumber?: string;
     /** Label of the matched contact value, when unambiguous. */
@@ -240,7 +242,6 @@ export interface SimulatorCallHistoryEntry {
     id: string;
     number: string;
     name?: string;
-    /** Typed kind for rendering and flows. */
     kind: CallHistoryEntryKind;
     /** Optional human-readable timestamp (e.g. "Today 10:15 AM"). */
     timestamp?: string;
@@ -249,16 +250,13 @@ export interface SimulatorCallHistoryEntry {
 }
 
 /** Phone payload slice. */
-export interface SimulatorPhonePayload {
+export interface SimulatorPhonePayload extends AuthoredPhonePayloadFields {
     content: PhoneSimulatorContent | null;
-    /** Index of chosen option; null = not yet chosen */
     chosenIndex: number | null;
-    /** Optional call history for History tab. */
     callHistory?: SimulatorCallHistoryEntry[];
-    /** Optional voicemail transcript for Voicemail view. */
     voicemailTranscript?: string | null;
-    /** Optional voicemail caller/timestamp for Voicemail detail header. */
     voicemailCallerName?: string | null;
+    voicemailPhoneNumber?: string | null;
     voicemailTimestamp?: string | null;
 }
 

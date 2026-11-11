@@ -20,7 +20,11 @@ function MailHeaders({
             <p>{t('app.mail.to', { value: message.to })}</p>
             {message.cc && <p>{t('app.mail.cc', { value: message.cc })}</p>}
             {message.bcc && <p>{t('app.mail.bcc', { value: message.bcc })}</p>}
-            <p>{formatDate(new Date(message.createdAt))}</p>
+            <p>
+                {message.sentAt === null
+                    ? t('app.mail.dateUnknown')
+                    : formatDate(new Date(message.sentAt ?? message.createdAt))}
+            </p>
             <p className='prototype-message-body'>{message.body}</p>
         </>
     );

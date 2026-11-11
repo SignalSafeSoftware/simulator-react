@@ -42,6 +42,7 @@ export interface Options {
     mails?: Mail[];
     initial?: Partial<SimulatorStore>;
     onBack?: () => void;
+    onSelectedMessageChange?: (id: string | undefined) => void;
     prepare?: (store: HarnessStore) => void;
     sources?: readonly MailboxSource[];
     displayMail?: (mail: Mail) => Mail;
@@ -53,6 +54,7 @@ export function setup({
     mails = [],
     initial = {},
     onBack = vi.fn(),
+    onSelectedMessageChange,
     prepare,
     sources,
     displayMail,
@@ -72,6 +74,7 @@ export function setup({
                         <Mailbox
                             store={store}
                             onBack={onBack}
+                            onSelectedMessageChange={onSelectedMessageChange}
                             sources={sources}
                             displayMail={displayMail}
                             emailService={emailService}
@@ -92,7 +95,7 @@ export const openFolder = async (name: RegExp) => {
 };
 
 export const openMessage = async (subject: string) => {
-    fireEvent.click(screen.getByText(subject).closest('button')!);
+    fireEvent.click(screen.getByText(subject, { selector: 'strong' }).closest('button')!);
     await settle();
 };
 

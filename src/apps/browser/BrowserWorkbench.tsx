@@ -10,13 +10,9 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { DevicePage } from '../shared/DevicePage.js';
 import { createSimulatorId } from '@signalsafe/simulator-core/apps/id';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useBrowserHistory } from './useBrowserHistory.js';
 import { buildBrowserDocument } from './browserDocument.js';
-import {
-    SEARCH_ACTION,
-    samplePage,
-    searchResultPage,
-    unavailablePage,
-} from './browserWorkbenchPages.js';
+import { SEARCH_ACTION, searchResultPage, unavailablePage } from './browserWorkbenchPages.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 export interface MockPage {
     id: string;
@@ -118,27 +114,28 @@ export function ReactMockPage({
         </div>
     );
 }
-interface BrowserHistory {
-    history: MockPage[];
-    position: number;
-    page: MockPage;
-}
 export default function BrowserWorkbench({
     templates,
     mode = 'html',
     themeCss = '',
+    pages,
+    pageId,
+    onNavigate,
+    onAction,
+    showActionStatus = true,
 }: Readonly<{
     themeCss?: string;
-    templates: ReactNode;
+    showActionStatus?: boolean;
+    templates?: ReactNode;
+    pages?: readonly MockPage[];
+    pageId?: string;
+    onNavigate?: (page: MockPage) => void;
+    onAction?: (action: BrowserAction) => MockPage | void;
     mode?: 'html' | 'react' | 'templates';
 }>) {
     const { t } = useSimulatorLocale();
-    const [nav, setNav] = useState<BrowserHistory>(() => {
-        const sample = samplePage(t);
-        return { history: [sample], position: 0, page: sample };
-    });
+    const { nav, setNav, address, setAddress } = useBrowserHistory(pages, pageId, onNavigate);
     const { history, position, page } = nav;
-    const [address, setAddress] = useState(page.url);
     const [last, setLast] = useState('');
     const previousPage = history[position - 1];
     const nextPage = history[position + 1];
@@ -158,7 +155,9 @@ export default function BrowserWorkbench({
         navigate(searchResultPage(t, query));
     }
     function action(event: BrowserAction) {
-        setLast(`${event.event}: ${event.action}`);
+        const destination = onAction?.(event);
+        if (destination) navigate(destination);
+        setLast(showActionStatus ? `${event.event}: ${event.action}` : '');
         if (event.action === SEARCH_ACTION) search(String(event.values.query ?? ''));
     }
     function submitAddress() {
@@ -175,7 +174,13 @@ export default function BrowserWorkbench({
                 setLast(t('app.browser.badProtocol'));
                 return;
             }
-            const existing = history.find((item) => item.url === url.href);
+            const existing = [...(pages ?? []), ...history].find((item) => {
+                try {
+                    return new URL(item.url).href === url.href;
+                } catch {
+                    return item.url === url.href;
+                }
+            });
             navigate(existing ?? unavailablePage(t, url.href));
             setLast('');
         } catch {

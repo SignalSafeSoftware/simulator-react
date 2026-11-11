@@ -35,10 +35,17 @@ export function MailFolderList({
                     </button>
                 </li>
             ))}
-            {mailFolderSchema.options.map((value) => (
+            {[
+                ...mailFolderSchema.options,
+                ...Object.keys(counts?.mail ?? {})
+                    .filter((value) => !mailFolderSchema.safeParse(value).success)
+                    .sort((a, b) => a.localeCompare(b)),
+            ].map((value) => (
                 <li key={value}>
                     <button type='button' onClick={() => onFolder(value)}>
-                        <span>{folderLabels[value]}</span>
+                        <span>
+                            {Object.hasOwn(folderLabels, value) ? folderLabels[value] : value}
+                        </span>
                         <span className='prototype-folder-count'>{counts?.mail[value] ?? 0}</span>
                     </button>
                 </li>
@@ -79,7 +86,9 @@ function MailListItem({
                             {item.subject || t('app.mail.noSubject')}
                         </strong>
                         <time dateTime={mailTime(item)}>
-                            {formatDate(new Date(mailTime(item)))}
+                            {mailTime(item)
+                                ? formatDate(new Date(mailTime(item)))
+                                : t('app.mail.dateUnknown')}
                         </time>
                     </span>
                     <span>{outgoing ? item.to : item.from}</span>

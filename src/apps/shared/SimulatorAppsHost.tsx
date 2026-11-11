@@ -2,7 +2,7 @@ import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
 import { createContext, useContext, useMemo, type ComponentType, type ReactNode } from 'react';
 import type { PhotoMetadata } from '@signalsafe/simulator-core/apps/contracts';
-import { checkLock, createLock } from '../lock/lock.js';
+import { checkLock, createLock, isLockAvailable } from '../lock/lock.js';
 import { readAsset } from './assets.js';
 import { extractPhotoMetadata } from '../photos/photoMetadata.js';
 import { confirmInBrowser, copyToClipboard } from '../../utils/browser/browserEnvironment.js';
@@ -32,6 +32,7 @@ export interface SimulatorAppsAssets {
 }
 /** Device lock hashing and verification. */
 export interface SimulatorAppsLock {
+    lockAvailable: () => boolean;
     checkLock: typeof checkLock;
     createLock: typeof createLock;
 }
@@ -69,6 +70,7 @@ const defaults: Omit<SimulatorAppsHost, 'formatDate' | 'formatCaptureDate'> = {
     extractPhotoMetadata,
     checkLock,
     createLock,
+    lockAvailable: isLockAvailable,
     confirm: confirmInBrowser,
     copyText: copyToClipboard,
 };
@@ -93,6 +95,8 @@ export function useSimulatorAppsHost(): SimulatorAppsHost {
         () => ({
             ...defaults,
             ...overrides,
+            lockAvailable:
+                overrides.lockAvailable ?? (overrides.createLock ? () => true : isLockAvailable),
             formatDate,
             formatCaptureDate:
                 overrides.formatCaptureDate ??

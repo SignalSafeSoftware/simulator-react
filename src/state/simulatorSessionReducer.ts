@@ -1,3 +1,4 @@
+import { phoneSessionPayload } from './phoneSessionPayload.js';
 import {
     SimulatorDispatchActionType,
     type SimulatorDispatchAction,
@@ -82,6 +83,33 @@ export function simulatorSessionReducer(
     state: SimulatorSessionState,
     action: SimulatorDispatchAction,
 ): SimulatorSessionState {
+    if (action.type === SimulatorDispatchActionType.DeleteVoicemail) {
+        const phone = state.payload.phone;
+        if (
+            !phone ||
+            (action.entryId !== null &&
+                !phone.callHistory?.some(
+                    (entry) => entry.id === action.entryId && entry.callType === 'voicemail',
+                ))
+        )
+            return state;
+        const phoneView = {
+            ...state.view.phone,
+            deletedVoicemailIds:
+                action.entryId === null
+                    ? state.view.phone.deletedVoicemailIds
+                    : [...(state.view.phone.deletedVoicemailIds ?? []), action.entryId],
+            singletonVoicemailDeleted:
+                action.entryId === null || state.view.phone.singletonVoicemailDeleted,
+            screen: SimulatorPhoneScreenId.History,
+            selectedHistoryEntryId: null,
+        };
+        return {
+            ...state,
+            payload: { ...state.payload, phone: phoneSessionPayload(phone, phoneView) },
+            view: { ...state.view, phone: phoneView },
+        };
+    }
     return {
         ...state,
         view: viewReducer(state.view, action),
