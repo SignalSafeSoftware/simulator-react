@@ -207,20 +207,20 @@ export default function Photos({
                     }}
                 />
             )}
-            {draft ? (
+            {current ? (
                 <>
-                    <PhotoDetailsCard photo={current ?? draft} />
+                    <PhotoDetailsCard photo={current} />
                     {editing && (
                         <PhotoEditor
-                            photo={draft}
+                            photo={current}
                             disabled={store.busy || loading}
                             onChange={setDraft}
-                            onReplace={(file) => void choose(file, draft)}
+                            onReplace={(file) => void choose(file, current)}
                         />
                     )}
                     <PhotoLocation
-                        latitude={(current ?? draft).metadata.latitude}
-                        longitude={(current ?? draft).metadata.longitude}
+                        latitude={current.metadata.latitude}
+                        longitude={current.metadata.longitude}
                     />
                 </>
             ) : (

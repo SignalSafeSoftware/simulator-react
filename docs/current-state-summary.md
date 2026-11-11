@@ -1,6 +1,6 @@
 # simulator-react current-state summary
 
-Prepared source version: **0.21.2** (2026-11-10). This is not a claim of npm publication.
+Prepared source version: **0.21.2** (updated 2026-11-11). This is not a claim of npm publication.
 
 - Unify authored call rendering and navigation, preserving unknown dates, voicemail actions and related history.
 - Keep browser navigation, stable page IDs and authored page content synchronized.
@@ -19,3 +19,7 @@ Prepared source version: **0.21.2** (2026-11-10). This is not a claim of npm pub
 | `@signalsafe/simulator-editor-react` | `0.1.0` |
 
 The source includes the current GitHub main branch plus the reviewed local simulator work. Existing merged release fixes are preserved. Source manifests and packaged declarations use the coordinated version set. See [release preparation](release-2026-11-10.md) for dependency and verification status.
+
+## Current verification and examples
+
+841 package tests pass; all four executable-source coverage metrics are 100%. See [November 11 verification](verification-2026-11-11.md) for the coordinated 1,465-test result, public examples and remaining registry-release gates.

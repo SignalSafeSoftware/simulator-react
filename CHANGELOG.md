@@ -2,6 +2,8 @@
 
 ## 0.21.2 — prepared 2026-11-10
 
+- Add repository, live example and related-package links; document the coordinated 100% coverage verification and synthetic editor example.
+
 - Unify authored call rendering and navigation, preserving unknown dates, voicemail actions and related history.
 - Keep browser navigation, stable page IDs and authored page content synchronized.
 - Initialize mailbox folder/compose routes and preserve custom folders and unknown dates.

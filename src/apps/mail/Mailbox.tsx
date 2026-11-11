@@ -141,9 +141,7 @@ function MailboxScreen({
         else nav.back();
     };
     const folderName = nav.folder
-        ? Object.hasOwn(folderLabels, nav.folder)
-            ? (folderLabels[nav.folder] ?? nav.folder)
-            : nav.folder
+        ? (new Map(Object.entries(folderLabels)).get(nav.folder) ?? nav.folder)
         : (selectedSource?.label ?? t('app.mail.folders'));
     const primary = () => {
         if (!message) editor.compose();
