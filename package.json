@@ -645,7 +645,7 @@
     "check:duplication": "jscpd src --min-lines 8 --min-tokens 70 --threshold 0 --reporters console --silent"
   },
   "dependencies": {
-    "@signalsafe/simulator-core": "0.7.2",
+    "@signalsafe/simulator-core": "file:vendor/npm/signalsafe-simulator-core-0.7.2.tgz",
     "@signalsafe/tree-spec": "^0.4.1",
     "lucide-react": "^1.31.0",
     "libphonenumber-js": "^1.13.13"
@@ -673,10 +673,11 @@
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
     "vite": "^8.3.0",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.1",
+    "@signalsafe/simulator-theme-bootstrap": "file:vendor/npm/signalsafe-simulator-theme-bootstrap-0.13.3.tgz"
   },
   "resolutions": {
-    "@signalsafe/simulator-core": "0.7.2"
+    "@signalsafe/simulator-core": "file:vendor/npm/signalsafe-simulator-core-0.7.2.tgz"
   },
   "peerDependenciesMeta": {
     "@signalsafe/simulator-theme-bootstrap": {

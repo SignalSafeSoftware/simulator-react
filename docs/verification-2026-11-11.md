@@ -24,3 +24,10 @@ The editor example carries exact local review archives and a SHA-256 manifest. I
 The coordinated versions are absent from npm. Registry dependency lock entries, public-device-demo pins and host registry requirements retain their last real published versions until dependency-order npm publication is authorized and succeeds. Local review artifacts and the editor example explicitly opt into the prepared versions. No registry integrity values were fabricated, release tags created or npm publication performed. Registry/frozen-lock CI and Sonar release certification remain separate gates; draft PRs must not be represented as publish-ready.
 
 Earlier November 10 reports retain their historical results. This report supersedes their package coverage findings.
+
+
+### React CI candidate installation — November 11
+
+The checks, tests and packed runtime jobs failed while resolving unpublished simulator-core 0.7.2. Development installs now use its checked-in archive through the existing artifact mechanism, with a SHA-256 manifest and regenerated Yarn lock. Runtime consumer tooling already copies these candidate archives and applies explicit overrides. The release validator continues rejecting file dependencies until publication migration; this is a review candidate, not a registry release.
+
+The theme 0.13.3 candidate is also checked in as a development peer fixture. Smoke tooling resolves local peer fixtures relative to the package root. A clean checkout passed frozen Yarn installation (including prepare), lint, formatting, module/cycle/duplication checks, strict source/test types, build, all 841 tests with 100% coverage across all metrics, and isolated packed runtime/type/example smoke checks.

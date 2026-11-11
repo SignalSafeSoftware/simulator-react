@@ -23,3 +23,10 @@ The source includes the current GitHub main branch plus the reviewed local simul
 ## Current verification and examples
 
 841 package tests pass; all four executable-source coverage metrics are 100%. See [November 11 verification](verification-2026-11-11.md) for the coordinated 1,465-test result, public examples and remaining registry-release gates.
+
+
+### React CI candidate installation — November 11
+
+The checks, tests and packed runtime jobs failed while resolving unpublished simulator-core 0.7.2. Development installs now use its checked-in archive through the existing artifact mechanism, with a SHA-256 manifest and regenerated Yarn lock. Runtime consumer tooling already copies these candidate archives and applies explicit overrides. The release validator continues rejecting file dependencies until publication migration; this is a review candidate, not a registry release.
+
+The theme 0.13.3 candidate is also checked in as a development peer fixture. Smoke tooling resolves local peer fixtures relative to the package root. A clean checkout passed frozen Yarn installation (including prepare), lint, formatting, module/cycle/duplication checks, strict source/test types, build, all 841 tests with 100% coverage across all metrics, and isolated packed runtime/type/example smoke checks.

@@ -168,7 +168,7 @@ export function runSmokePackage(config) {
         const dependencies = {
             [pkg.name]: `file:${tgzPath}`,
             ...getRegistryDeps(pkg, root),
-            ...getPeerInstallVersions(pkg),
+            ...getPeerInstallVersions(pkg, root),
         };
 
         const devDependencies = {};
@@ -237,10 +237,13 @@ function getRegistryDeps(pkg, root) {
     return out;
 }
 
-function getPeerInstallVersions(pkg) {
+function getPeerInstallVersions(pkg, root) {
     const out = {};
     for (const name of Object.keys(pkg.peerDependencies || {})) {
-        out[name] = pkg.devDependencies?.[name] || pkg.peerDependencies[name];
+        const range = pkg.devDependencies?.[name] || pkg.peerDependencies[name];
+        out[name] = range.startsWith('file:')
+            ? `file:${path.resolve(root, range.slice(5))}`
+            : range;
     }
     return out;
 }

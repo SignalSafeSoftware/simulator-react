@@ -281,3 +281,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.2.0]: https://github.com/SignalSafeSoftware/simulator-react/compare/v0.1.6...v0.2.0
 [0.1.6]: https://github.com/SignalSafeSoftware/simulator-react/releases/tag/v0.1.6
 [0.1.5]: https://github.com/SignalSafeSoftware/simulator-react/releases/tag/v0.1.5
+
+- Repair frozen Yarn CI installs using the verified core 0.7.2 candidate archive and existing artifact validation/runtime tooling.
