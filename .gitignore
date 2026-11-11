@@ -10,3 +10,6 @@ yarn-error.log*
 pnpm-debug.log*
 *.tgz
 
+
+# Verified development candidate artifacts
+!vendor/npm/*.tgz
