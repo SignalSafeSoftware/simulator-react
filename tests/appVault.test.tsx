@@ -10,7 +10,7 @@ import {
     SimulatorAppsProvider,
     type SimulatorAppNotesProps,
 } from '../src/apps/shared/SimulatorAppsHost';
-import Vault from '../src/apps/vault/Vault';
+import Vault, { type VaultNavigation } from '../src/apps/vault/Vault';
 import { StoreHarness, settle, type HarnessStore } from './support/appHarness';
 
 const stamp = '2024-01-02T03:04:05.000Z';
@@ -30,17 +30,23 @@ const secret = (id: string, overrides: Partial<Secret> = {}): Secret => ({
 });
 
 interface Options {
+    navigation?: VaultNavigation;
     secrets?: Secret[];
     folders?: string[];
     onBack?: () => void;
+    onSelectedFolderChange?: (folder: string | null) => void;
+    onSelectedSecretChange?: (id: string) => void;
     prepare?: (store: HarnessStore) => void;
     host?: Record<string, unknown>;
 }
 
 function setup({
+    navigation,
     secrets = [],
     folders = ['Unfiled', 'Work'],
     onBack = vi.fn(),
+    onSelectedFolderChange,
+    onSelectedSecretChange,
     prepare,
     host = {},
 }: Options = {}) {
@@ -51,7 +57,15 @@ function setup({
             <StoreHarness initial={initial} prepare={prepare}>
                 {(store) => {
                     current = store;
-                    return <Vault store={store} onBack={onBack} />;
+                    return (
+                        <Vault
+                            navigation={navigation}
+                            store={store}
+                            onBack={onBack}
+                            onSelectedFolderChange={onSelectedFolderChange}
+                            onSelectedSecretChange={onSelectedSecretChange}
+                        />
+                    );
                 }}
             </StoreHarness>
         </SimulatorAppsProvider>,
@@ -463,4 +477,44 @@ describe('Vault secrets', () => {
         await settle();
         expect(store().state().secrets[0]!.notes).toBe('typed');
     });
+});
+
+it('reports the stable secret identity when opening it from a folder', async () => {
+    const selected = vi.fn();
+    setup({ secrets: [secret('selection-1')], onSelectedSecretChange: selected });
+    await openFolder('Work');
+    fireEvent.click(screen.getByText('Secret selection-1').closest('button')!);
+    await settle();
+    expect(selected).toHaveBeenCalledWith('selection-1');
+    expect(screen.getByLabelText('Title')).toHaveProperty('value', 'Secret selection-1');
+});
+
+it('reports folder and root selection when navigating Back', async () => {
+    const selected = vi.fn();
+    setup({ secrets: [secret('navigation')], onSelectedFolderChange: selected });
+    expect(selected).toHaveBeenLastCalledWith(null);
+    await openFolder('Work');
+    expect(selected).toHaveBeenLastCalledWith('Work');
+    fireEvent.click(screen.getByText('Secret navigation').closest('button')!);
+    await settle();
+    nav('Back');
+    await settle();
+    expect(selected).toHaveBeenLastCalledWith('Work');
+    nav('Back');
+    await settle();
+    expect(selected).toHaveBeenLastCalledWith(null);
+});
+
+it('opens the requested secret in its folder and retains existing-entry actions', async () => {
+    const record = secret('tree-selection');
+    setup({
+        secrets: [record],
+        navigation: { revision: 1, folder: 'Work', secret: record, existing: true },
+    });
+    await settle();
+    expect(screen.getByLabelText('Title')).toHaveProperty('value', record.title);
+    expect(screen.getByRole('button', { name: 'Delete secret' })).toBeTruthy();
+    nav('Back');
+    await settle();
+    expect(screen.getByLabelText('Folder name')).toHaveProperty('value', 'Work');
 });

@@ -54,8 +54,10 @@ describe('useDeviceRecord', () => {
         );
         await waitFor(() => expect(result.current.error).toBe('boom'));
         act(() => result.current.retry());
-        await waitFor(() => expect(result.current.error).not.toBe('boom'));
-        expect(result.current.error).not.toBe('');
+        await waitFor(() => {
+            expect(result.current.error).not.toBe('boom');
+            expect(result.current.error).not.toBe('');
+        });
     });
 
     it('ignores results that arrive after unmount', async () => {

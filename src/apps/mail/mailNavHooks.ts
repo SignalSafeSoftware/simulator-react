@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import type { MailFolder } from './mailShared.js';
 
-export function useMailNav(onBack: () => void) {
+export function useMailNav(
+    onBack: () => void,
+    initialMessageId?: string,
+    initialFolder?: MailFolder,
+) {
     const [source, setSource] = useState<string | null>(null);
-    const [folder, setFolder] = useState<MailFolder | null>(null);
-    const [selected, setSelected] = useState<string | null>(null);
+    const [folder, setFolder] = useState<MailFolder | null>(initialFolder ?? null);
+    const [selected, setSelected] = useState<string | null>(initialMessageId ?? null);
     const [query, setQuery] = useState('');
     function closeTo(next: MailFolder) {
         setSource(null);

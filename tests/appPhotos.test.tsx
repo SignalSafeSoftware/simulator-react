@@ -4,11 +4,11 @@ import {
     photoSchema,
     type Photo,
 } from '@signalsafe/simulator-core/apps/contracts';
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import PhotoEditor from '../src/apps/photos/PhotoEditor';
 import PhotoLocation from '../src/apps/photos/PhotoLocation';
-import Photos from '../src/apps/photos/Photos';
+import Photos, { type PhotoNavigation } from '../src/apps/photos/Photos';
 import { SimulatorAppsProvider } from '../src/apps/shared/SimulatorAppsHost';
 import { StoreHarness, flush, type HarnessStore } from './support/appHarness';
 
@@ -53,6 +53,8 @@ afterEach(() => {
 describe('Photos', () => {
     const asset = (name: string) => ({ name, mime: 'image/png' as const, data: PNG });
     const setup = ({
+        navigation,
+        onSelectedPhotoChange,
         photos = [] as Photo[],
         readAsset = vi.fn(async (file: File) => asset(file.name)),
         extractPhotoMetadata = vi.fn(() => ({ ...noMetadata })),
@@ -60,6 +62,8 @@ describe('Photos', () => {
         prepare,
         host = {},
     }: {
+        navigation?: PhotoNavigation;
+        onSelectedPhotoChange?: (id: string | undefined) => void;
         photos?: Photo[];
         readAsset?: (file: File, imageOnly?: boolean) => Promise<ReturnType<typeof asset>>;
         extractPhotoMetadata?: (buffer: ArrayBuffer) => typeof noMetadata;
@@ -73,7 +77,14 @@ describe('Photos', () => {
                 <StoreHarness initial={storeWith(photos)} prepare={prepare}>
                     {(store) => {
                         current = store;
-                        return <Photos store={store} onBack={onBack} />;
+                        return (
+                            <Photos
+                                store={store}
+                                onBack={onBack}
+                                navigation={navigation}
+                                onSelectedPhotoChange={onSelectedPhotoChange}
+                            />
+                        );
                     }}
                 </StoreHarness>
             </SimulatorAppsProvider>,
@@ -92,6 +103,29 @@ describe('Photos', () => {
     const nav = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
     const field = (label: string, value: string) =>
         fireEvent.change(screen.getByLabelText(label), { target: { value } });
+
+    it('refreshes selected photos outside the loaded gallery page while preserving unsaved edits', async () => {
+        const selected = photo('outside-page');
+        const view = setup({
+            photos: [
+                ...Array.from({ length: 25 }, (_, index) => photo(`before-${index}`)),
+                selected,
+            ],
+            navigation: { revision: 1, photo: selected },
+        });
+        await act(flush);
+        await act(async () => {
+            await view.store().put('photos', { ...selected, title: 'Authored update' });
+        });
+        await waitFor(() => expect(screen.getByText('Authored update')).toBeTruthy());
+        nav('Edit photo');
+        field('Title', 'Unsaved edit');
+        await act(async () => {
+            await view.store().put('photos', { ...selected, title: 'Later authored update' });
+        });
+        await act(flush);
+        expect(screen.getByLabelText('Title')).toHaveProperty('value', 'Unsaved edit');
+    });
 
     it('shows an empty state and returns to the previous app', async () => {
         const { onBack } = setup();
@@ -382,6 +416,32 @@ describe('Photos', () => {
         await choose();
         view.unmount();
         await act(async () => second.resolve(asset('late.png')));
+    });
+    it('reports photo selection and clears it on Back and deletion', async () => {
+        const selected = vi.fn();
+        vi.spyOn(window, 'confirm').mockReturnValue(true);
+        setup({ photos: [photo('sync')], onSelectedPhotoChange: selected });
+        await open('Photo sync');
+        expect(selected).toHaveBeenLastCalledWith('sync');
+        nav('Back');
+        expect(selected).toHaveBeenLastCalledWith(undefined);
+        await open('Photo sync');
+        nav('Delete photo');
+        await act(flush);
+        expect(selected).toHaveBeenLastCalledWith(undefined);
+        expect(screen.queryByAltText('Photo sync')).toBeNull();
+    });
+    it('opens a host-selected photo without leaving the gallery active', async () => {
+        const item = photo('selected');
+        const selected = vi.fn();
+        setup({
+            photos: [item],
+            navigation: { revision: 1, photo: item },
+            onSelectedPhotoChange: selected,
+        });
+        await act(flush);
+        expect(screen.getByLabelText('Photo details')).toBeInstanceOf(HTMLElement);
+        expect(selected).toHaveBeenLastCalledWith(item.id);
     });
 });
 

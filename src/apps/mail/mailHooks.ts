@@ -29,6 +29,7 @@ export function useMailPersist(store: DeviceStore) {
 }
 
 export function useMailDraft({
+    initialCompose = false,
     identity,
     storeBusy,
     emailService,
@@ -37,6 +38,7 @@ export function useMailDraft({
     onSaved,
 }: Readonly<{
     identity: string;
+    initialCompose?: boolean;
     storeBusy: boolean;
     emailService: SimulatorEmailService;
     setError: (message: string) => void;
@@ -45,7 +47,9 @@ export function useMailDraft({
 }>) {
     const { readAsset } = useSimulatorAppsHost();
     const { t } = useSimulatorLocale();
-    const [draft, setDraft] = useState<Mail | null>(null);
+    const [draft, setDraft] = useState<Mail | null>(() =>
+        initialCompose ? newMail(identity) : null,
+    );
     const { setBaseline, confirmDiscard } = useDraftBaseline(draft);
     const formRef = useRef<HTMLFormElement>(null);
     const [reading, setReading] = useState(false);

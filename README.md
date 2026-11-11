@@ -1,6 +1,8 @@
 # `@signalsafe/simulator-react`
 
-## Coordinated release — approved 2026-10-21
+Prepared source: **0.21.2**. See [current summary](docs/current-state-summary.md), [changelog](CHANGELOG.md) and [coordinated release preparation](docs/release-2026-11-10.md). Publication status and installed host versions are tracked separately.
+
+## Historical coordinated release — approved 2026-10-21
 
 | Package | Prepared version | Required simulator dependencies |
 | --- | --- | --- |
@@ -26,6 +28,8 @@ Existing local host archives retain their recorded provenance until the approved
 registry artifacts pass all host checks. Historical release notes below describe
 their original checkpoints and do not authorize publication or host replacement.
 
+Current source and planned customer-subdomain impact: [current-state summary](docs/current-state-summary.md).
+
 React **device simulator** UI: session state, screen registry, template adapter, lint helpers, and optional developer tools. Built on `@signalsafe/simulator-core` for runtime stepping.
 
 | | |
@@ -38,7 +42,7 @@ React **device simulator** UI: session state, screen registry, template adapter,
 
 This package is **UI-kit agnostic**. It renders semantic HTML with stable **`simulator-*` class hooks** and optional **render slots** — it does **not** require Bootstrap, Material UI, or any other component library.
 
-**Host applications own styling.** Provide CSS for `simulator-*` classes, or pass `renderChoice` / `renderFeedback` / `renderContactsOverlay` / `renderIncomingCallExtra` / `hostOwnsPhoneContactDetail` + `onPhoneContactOpen` to inject your UI kit's components. Semantic view hooks (`simulator-runtime`, `simulator-phone`, `simulator-email`, `simulator-messages`, …) are stable targets for host CSS and tests — you do not need DOM enhancers or `MutationObserver` to find simulator regions.
+**Shared styling belongs to `@signalsafe/simulator-theme-bootstrap`.** Import its theme once for the default PhoneMe Night presentation in every host. Hosts own surrounding page layout and explicit saved appearance; use the package's typed callbacks and slots for genuine host data, permissions and integrations. Preserve semantic view hooks (`simulator-runtime`, `simulator-phone`, `simulator-email`, `simulator-messages`, …) for tests and shared theme rules. Do not copy screens or add a second host skin.
 
 See [docs/UI_KIT_AGNOSTIC_USAGE.md](./docs/UI_KIT_AGNOSTIC_USAGE.md) for layout hooks, semantic view hooks, slots, and DeliveryPlus migration guidance.
 
@@ -402,3 +406,6 @@ Hosts compose the add/edit contact page from `views/contacts/ContactEditorScreen
 `views/phone/PhoneHistoryLayout` renders the history header, `PhoneHistoryList` and optional `PhoneHistoryDetail`, with shared keyboard focus; pass host content (paging, confirmations) as children. `PhoneHistoryCallButton` renders the Call button, honoring the `call` capability, and `PhoneHistorySummaryTitle` renders the details heading from a `caller` or a `count`. Pass `plain` to `DevicePage` for a page without the default content inset.
 
 History hosts use `PhoneHistoryHeader` from `@signalsafe/simulator-react/views/phone/PhoneHistoryHeader`. The shared banner defaults to Call History; pass `detail` for Call Details. Localization uses `calls.history` and `calls.details` through the simulator locale provider. It forwards a heading ref for detail focus; hosts retain data and navigation adapters.
+
+
+Incoming-call secondary context is passed as `PhoneCallView` children (and through `PhoneIncomingScene`). It appears below the primary call controls. The default view is unchanged when no children are supplied; action callbacks, rendering slots and accessibility labels retain their existing behavior.

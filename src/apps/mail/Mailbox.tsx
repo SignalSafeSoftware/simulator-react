@@ -3,7 +3,7 @@ import { useDevicePage } from '../../hooks/device/useDevicePage.js';
 import { useDeviceRecord } from '../../hooks/device/useDeviceRecord.js';
 import { LoadMore } from '../../ui/lists/LoadMore.js';
 import { useVisiblePage } from '../../hooks/device/useVisiblePage.js';
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { DevicePage } from '../shared/DevicePage.js';
 import { AppSecondaryNav, type AppNavAction } from '../shared/AppSecondaryNav.js';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
@@ -51,25 +51,37 @@ function MailboxScreen({
     emailService = localEmailService,
     sources = [],
     displayMail = (mail) => mail,
+    onSelectedMessageChange,
+    initialMessageId,
+    initialFolder,
+    initialCompose = false,
 }: Readonly<{
     store: DeviceStore;
     identity: string;
     sources?: readonly MailboxSource[];
     displayMail?: (mail: Mail) => Mail;
     emailService?: SimulatorEmailService;
+    onSelectedMessageChange?: (id: string | undefined) => void;
+    initialMessageId?: string;
+    initialFolder?: MailFolder;
+    initialCompose?: boolean;
     onBack: () => void;
 }>) {
     const { formatDate, confirm } = useSimulatorAppsHost();
     const { t } = useSimulatorLocale();
-    const folderLabels = {
+    const folderLabels: Record<MailFolder, string> = {
         inbox: t('app.mail.folder.inbox'),
         sent: t('app.mail.folder.sent'),
         drafts: t('app.mail.folder.drafts'),
         trash: t('app.mail.folder.trash'),
-    } satisfies Record<MailFolder, string>;
-    const nav = useMailNav(onBack);
+    };
+    const nav = useMailNav(onBack, initialMessageId, initialFolder);
+    useEffect(() => {
+        onSelectedMessageChange?.(nav.selected ?? undefined);
+    }, [nav.selected, onSelectedMessageChange]);
     const { error, setError, persist } = useMailPersist(store);
     const editor = useMailDraft({
+        initialCompose,
         identity,
         storeBusy: store.busy,
         emailService,
@@ -118,7 +130,7 @@ function MailboxScreen({
             void commit({
                 ...target,
                 // Move to trash is only offered outside the trash folder.
-                previousFolder: target.folder as Mail['previousFolder'],
+                previousFolder: target.folder,
                 folder: mailFolderSchema.enum.trash,
             }),
         restore: (target) => void commit({ ...target, folder: target.previousFolder }),
@@ -129,7 +141,9 @@ function MailboxScreen({
         else nav.back();
     };
     const folderName = nav.folder
-        ? folderLabels[nav.folder]
+        ? Object.hasOwn(folderLabels, nav.folder)
+            ? (folderLabels[nav.folder] ?? nav.folder)
+            : nav.folder
         : (selectedSource?.label ?? t('app.mail.folders'));
     const primary = () => {
         if (!message) editor.compose();
@@ -246,6 +260,10 @@ export default function Mailbox(
         sources?: readonly MailboxSource[];
         displayMail?: (mail: Mail) => Mail;
         emailService?: SimulatorEmailService;
+        onSelectedMessageChange?: (id: string | undefined) => void;
+        initialMessageId?: string;
+        initialFolder?: MailFolder;
+        initialCompose?: boolean;
         onBack: () => void;
     }>,
 ) {

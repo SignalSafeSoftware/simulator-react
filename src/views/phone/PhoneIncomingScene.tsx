@@ -7,6 +7,7 @@ import PhoneCallView, { PhoneCallPhase } from './PhoneCallView.js';
 import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
 
 export interface PhoneIncomingSceneProps {
+    children?: ReactNode;
     content: PhoneSimulatorContent;
     onAnswer: () => void;
     onIgnore: () => void;
@@ -19,6 +20,7 @@ export default function PhoneIncomingScene({
     onAnswer,
     onIgnore,
     renderChoice,
+    children,
 }: Readonly<PhoneIncomingSceneProps>) {
     const { t } = useSimulatorLocale();
     return (
@@ -28,7 +30,7 @@ export default function PhoneIncomingScene({
                 number={content.phone_number || undefined}
                 label={content.caller_title || content.urgency || t('calls.simulated')}
                 phase={PhoneCallPhase.Ringing}
-                incoming
+                incoming={!content.outgoing}
                 connectedAt={null}
                 muted={false}
                 digits=''
@@ -51,7 +53,9 @@ export default function PhoneIncomingScene({
                         <SimulatorAvatar avatarUrl={content.avatar_url} />
                     ) : undefined
                 }
-            />
+            >
+                {children}
+            </PhoneCallView>
         </div>
     );
 }

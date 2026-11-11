@@ -1,3 +1,4 @@
+import { phoneSessionPayload } from '../state/phoneSessionPayload.js';
 import { SimulatorEmailScreenId } from '@signalsafe/simulator-core/devicePayload';
 import { englishLocale } from '../i18n/englishLocale.js';
 import type { SimulatorTemplatePayload, SimulatorSessionState } from '../types/session.js';
@@ -83,6 +84,7 @@ export function updateSimulatorPayload(
     state: SimulatorSessionState,
     payload: SimulatorTemplatePayload,
 ): SimulatorSessionState {
+    const phone = phoneSessionPayload(payload.phone, state.view.phone);
     const selected = state.view.email.selectedMessageId;
     const emailStillExists =
         selected === null ||
@@ -93,7 +95,7 @@ export function updateSimulatorPayload(
         ].some((row) => row.id === selected);
     return {
         ...state,
-        payload,
+        payload: phone === payload.phone ? payload : { ...payload, phone },
         view: emailStillExists
             ? state.view
             : {

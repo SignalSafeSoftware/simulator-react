@@ -55,7 +55,7 @@ export function PhoneHistoryEntryRow({
     const kind = entry.kind;
     const isVoicemail = kind === CallHistoryEntryKind.Voicemail;
     const handleClick = () => {
-        if (isVoicemail) onSelectVoicemail();
+        if (isVoicemail && !entry.callType) onSelectVoicemail();
         else onSelectEntry?.(entry.id);
     };
     const actionable = entriesSelectable && (isVoicemail || !!onSelectEntry);
@@ -104,12 +104,14 @@ export function PhoneHistoryEntryRow({
             </div>
             <span className={badgeClass}>
                 {t(
-                    kind === CallHistoryEntryKind.Incoming ||
-                        kind === CallHistoryEntryKind.Outgoing ||
-                        kind === CallHistoryEntryKind.Missed ||
-                        kind === CallHistoryEntryKind.Voicemail
-                        ? `calls.${kind}`
-                        : 'calls.unknown',
+                    entry.callType
+                        ? `calls.type.${entry.callType}`
+                        : kind === CallHistoryEntryKind.Incoming ||
+                            kind === CallHistoryEntryKind.Outgoing ||
+                            kind === CallHistoryEntryKind.Missed ||
+                            kind === CallHistoryEntryKind.Voicemail
+                          ? `calls.${kind}`
+                          : 'calls.unknown',
                 )}
             </span>
         </>

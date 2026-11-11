@@ -13,12 +13,20 @@ export function mapMessages(
     if (messages == null) return null;
     const threadDetail = messages.thread_detail;
     const rawThreads = messages.threads;
+    const latestMessage = threadDetail?.messages[threadDetail.messages.length - 1];
+    const latestPreview =
+        latestMessage === undefined
+            ? ''
+            : stringOr(latestMessage.text).replace(/\s+/gu, ' ').trim();
     const threads: SimulatorThreadListRow[] = Array.isArray(rawThreads)
         ? rawThreads
               .filter((t) => t != null && typeof t === 'object')
               .map((r) => ({
                   id: stringOr(r.id),
-                  preview: stringOr(r.snippet),
+                  preview:
+                      threadDetail?.id === r.id && latestMessage !== undefined
+                          ? latestPreview
+                          : stringOr(r.snippet),
                   senderName: optionalString(r.contact_name),
                   senderNumber: optionalString(r.contact_number),
                   timestamp: optionalString(r.last_at),

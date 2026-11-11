@@ -254,7 +254,12 @@ describe('action taxonomy and adapters', () => {
             mapPhone({
                 incoming_call: { transcript: 'Live call' },
                 history: [{ number: '+1777', direction: 'out' }, { number: '+1888' }],
-                voicemail: { transcript: '', caller_name: 'Caller', timestamp: 'Now' },
+                voicemail: {
+                    transcript: '',
+                    caller_name: 'Caller',
+                    phone_number: '+12025550123',
+                    timestamp: 'Now',
+                },
             } as never),
         ).toEqual({
             content: {
@@ -284,6 +289,7 @@ describe('action taxonomy and adapters', () => {
             ],
             voicemailTranscript: undefined,
             voicemailCallerName: 'Caller',
+            voicemailPhoneNumber: '+12025550123',
             voicemailTimestamp: 'Now',
         });
         expect(mapInternet({ pages: [] } as never)).toBeNull();

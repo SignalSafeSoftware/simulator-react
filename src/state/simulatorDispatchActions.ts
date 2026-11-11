@@ -14,6 +14,7 @@ export const SimulatorDispatchActionType = Object.freeze({
     Cancel: 'CANCEL',
     SelectEmail: 'SELECT_EMAIL',
     SelectCallHistory: 'SELECT_CALL_HISTORY',
+    DeleteVoicemail: 'DELETE_VOICEMAIL',
     SmsRevealNext: 'SMS_REVEAL_NEXT',
     BrowserScreen: 'BROWSER_SCREEN',
     PhoneChoose: 'PHONE_CHOOSE',
@@ -30,6 +31,7 @@ export type SimulatorDispatchAction =
     | { type: typeof SimulatorDispatchActionType.Cancel }
     | { type: typeof SimulatorDispatchActionType.SelectEmail; messageId: string | null }
     | { type: typeof SimulatorDispatchActionType.SelectCallHistory; entryId: string | null }
+    | { type: typeof SimulatorDispatchActionType.DeleteVoicemail; entryId: string | null }
     | { type: typeof SimulatorDispatchActionType.SmsRevealNext }
     | { type: typeof SimulatorDispatchActionType.BrowserScreen; screen: string }
     | { type: typeof SimulatorDispatchActionType.PhoneChoose; index: number }

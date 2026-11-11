@@ -1,4 +1,4 @@
-import { useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { useDevicePage } from '../../hooks/device/useDevicePage.js';
 import { useVisiblePage } from '../../hooks/device/useVisiblePage.js';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
@@ -11,6 +11,14 @@ import { SecretForm } from './VaultSecretForm.js';
 import { FolderEditor, FolderList, FolderNameForm } from './VaultFolders.js';
 import { SecretList } from './VaultSecretList.js';
 import { FolderPage, type Translate, type TypeLabels } from './vaultShared.js';
+
+/** Explicit host navigation request; revisions distinguish repeated selections. */
+export interface VaultNavigation {
+    revision: number;
+    folder: string | null;
+    secret?: Secret;
+    existing?: boolean;
+}
 
 function vaultTitle(
     t: Translate,
@@ -43,7 +51,21 @@ function VaultScreen({
     store,
     vaultFolders,
     onBack,
-}: Readonly<{ store: DeviceStore; vaultFolders: readonly string[]; onBack: () => void }>) {
+    navigation,
+    secretDraft,
+    onSecretDraftChange,
+    onSelectedFolderChange,
+    onSelectedSecretChange,
+}: Readonly<{
+    store: DeviceStore;
+    vaultFolders: readonly string[];
+    onBack: () => void;
+    navigation?: VaultNavigation;
+    secretDraft?: Secret | null;
+    onSecretDraftChange?: (draft: Secret | null) => void;
+    onSelectedFolderChange?: (folder: string | null) => void;
+    onSelectedSecretChange?: (id: string) => void;
+}>) {
     const { t } = useSimulatorLocale();
     const typeLabels = {
         note: t('app.vault.type.note'),
@@ -75,12 +97,43 @@ function VaultScreen({
     });
     const editor = useVaultDraft({
         store,
+        secretDraft,
+        onSecretDraftChange,
         records: secrets.records,
         setMessage: nav.setMessage,
         onSaved: nav.secretSaved,
     });
     const { draft } = editor;
     const activeFolder = folder ?? '';
+    const { setDraft } = editor;
+    const { deleted } = nav;
+    const folderExists = folder === null || folders.includes(folder);
+    useEffect(() => {
+        if (!folderExists) {
+            setDraft(null);
+            deleted();
+        }
+    }, [folderExists, setDraft, deleted]);
+    useEffect(() => {
+        if (!draft) onSelectedFolderChange?.(folderExists ? folder : null);
+    }, [draft, folder, folderExists, onSelectedFolderChange]);
+
+    const consumedNavigation = useRef<number | undefined>(undefined);
+    useEffect(() => {
+        if (!navigation || consumedNavigation.current === navigation.revision) return;
+        if (navigation.folder !== null && !folders.includes(navigation.folder)) return;
+        consumedNavigation.current = navigation.revision;
+        if (draft && !editor.discard()) {
+            onSelectedSecretChange?.(draft.id);
+            return;
+        }
+        if (navigation.folder === null) nav.deleted();
+        else nav.selectFolder(navigation.folder);
+        if (navigation.secret) {
+            editor.edit(navigation.secret, navigation.existing ?? true);
+            onSelectedSecretChange?.(navigation.secret.id);
+        }
+    }, [navigation, folders, draft, editor, nav, onSelectedSecretChange]);
 
     const navActions: AppNavAction[] = [];
     if (draft) {
@@ -145,9 +198,7 @@ function VaultScreen({
                     reveal={editor.reveal}
                     onReveal={() => editor.setReveal(!editor.reveal)}
                     onChange={editor.setDraft}
-                    onNotes={(notes) =>
-                        editor.setDraft((current) => current && { ...current, notes })
-                    }
+                    onNotes={(notes) => editor.setDraft({ ...draft, notes })}
                     onSubmit={() => void editor.save()}
                     onCopy={() => void editor.copy(draft.value)}
                 />
@@ -179,7 +230,10 @@ function VaultScreen({
                     onQuery={nav.setQuery}
                     busy={store.busy}
                     typeLabels={typeLabels}
-                    onEdit={editor.edit}
+                    onEdit={(secret) => {
+                        editor.edit(secret);
+                        onSelectedSecretChange?.(secret.id);
+                    }}
                 />
             </>
         );
@@ -205,8 +259,32 @@ function VaultScreen({
 export default function Vault({
     store,
     onBack,
-}: Readonly<{ store: DeviceStore; onBack: () => void }>) {
+    navigation,
+    secretDraft,
+    onSecretDraftChange,
+    onSelectedFolderChange,
+    onSelectedSecretChange,
+}: Readonly<{
+    store: DeviceStore;
+    onBack: () => void;
+    navigation?: VaultNavigation;
+    secretDraft?: Secret | null;
+    onSecretDraftChange?: (draft: Secret | null) => void;
+    onSelectedFolderChange?: (folder: string | null) => void;
+    onSelectedSecretChange?: (id: string) => void;
+}>) {
     const data = store.data;
     if (!data) return null;
-    return <VaultScreen store={store} vaultFolders={data.vaultFolders} onBack={onBack} />;
+    return (
+        <VaultScreen
+            store={store}
+            vaultFolders={data.vaultFolders}
+            onBack={onBack}
+            navigation={navigation}
+            secretDraft={secretDraft}
+            onSecretDraftChange={onSecretDraftChange}
+            onSelectedFolderChange={onSelectedFolderChange}
+            onSelectedSecretChange={onSelectedSecretChange}
+        />
+    );
 }

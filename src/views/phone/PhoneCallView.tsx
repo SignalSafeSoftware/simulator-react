@@ -138,6 +138,7 @@ export default function PhoneCallView(props: Readonly<PhoneCallViewProps>) {
                             props.renderChoice,
                         )}
                 </div>
+                {props.children && <div className='simulator-call-context'>{props.children}</div>}
             </div>
         </section>
     );

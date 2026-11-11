@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.21.2 — prepared 2026-11-10
+
+- Unify authored call rendering and navigation, preserving unknown dates, voicemail actions and related history.
+- Keep browser navigation, stable page IDs and authored page content synchronized.
+- Initialize mailbox folder/compose routes and preserve custom folders and unknown dates.
+- Refresh selected photo details through the record store, including paged records, while preserving unsaved edits.
+- Synchronize externally selected Vault entries and message previews without changing saved starting positions.
+
+Prepared source version; npm publication and downstream registry-lock refresh are separate steps.
+
 ## [0.21.1] - Release approved 2026-10-21
 
 Includes the verified shared frame and accessibility fixes, regional input and navigation quality fixes, and the default-theme pairing contract. Depends on core `0.7.1`. The optional default-theme peer is `^0.13.1`; custom or unstyled integrations remain supported without installing this theme.

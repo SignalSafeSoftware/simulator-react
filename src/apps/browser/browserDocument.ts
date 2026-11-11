@@ -85,3 +85,8 @@ export function buildBrowserDocument(
             '',
         )}</head><body>${document.body.innerHTML}<script nonce="${nonce}">${bridge}</script></body></html>`;
 }
+
+/** Escape authored text and attributes before composing sandbox markup. */
+export function escapeBrowserHtml(value: string): string {
+    return value.replace(/[&<>"']/g, (character) => `&#${character.codePointAt(0)};`);
+}

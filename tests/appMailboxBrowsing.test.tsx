@@ -38,6 +38,28 @@ describe('Mailbox folders', () => {
         expect(onBack).toHaveBeenCalledTimes(1);
     });
 
+    it('opens authored custom folders alongside the four system folders', async () => {
+        setup({
+            mails: [
+                mail('custom', { folder: 'Projects', subject: 'Project update' }),
+                mail('reserved-object-key', { folder: 'constructor' }),
+            ],
+        });
+        expect(screen.getByRole('button', { name: 'Inbox0' })).toBeInstanceOf(HTMLElement);
+        await openFolder(/^Projects1$/);
+        expect(screen.getByText('Project update', { selector: 'strong' })).toBeInstanceOf(
+            HTMLElement,
+        );
+        await openMessage('Project update');
+        expect(screen.getByText('Body custom')).toBeInstanceOf(HTMLElement);
+        nav('Back');
+        nav('Back');
+        await openFolder(/^constructor1$/);
+        expect(
+            screen.getByText('Subject reserved-object-key', { selector: 'strong' }),
+        ).toBeInstanceOf(HTMLElement);
+    });
+
     it('treats missing counts as zero', () => {
         setup({ prepare: (store) => Object.defineProperty(store, 'counts', { value: undefined }) });
         expect(screen.getByRole('button', { name: 'Inbox0' })).toBeInstanceOf(HTMLElement);
@@ -73,7 +95,7 @@ describe('Mailbox folders', () => {
         expect(screen.getByText('No messages match your search.')).toBeInstanceOf(HTMLElement);
         fireEvent.change(screen.getByLabelText('Search email'), { target: { value: 'invoice' } });
         await settle();
-        expect(screen.getByText('Invoice')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText('Invoice', { selector: 'strong' })).toBeInstanceOf(HTMLElement);
     });
 
     it('resets the search when returning to the folder list', async () => {
@@ -101,13 +123,13 @@ describe('Mailbox folders', () => {
             },
         });
         await openFolder(/^Inbox/);
-        expect(screen.getAllByText(/^Subject m/)).toHaveLength(20);
+        expect(screen.getAllByText(/^Subject m/, { selector: 'strong' })).toHaveLength(20);
         fireEvent.click(screen.getByText('Load more email'));
         await settle();
         expect(alertText()).toBe('offline');
         fireEvent.click(screen.getByText('Retry'));
         await settle();
-        expect(screen.getAllByText(/^Subject m/)).toHaveLength(25);
+        expect(screen.getAllByText(/^Subject m/, { selector: 'strong' })).toHaveLength(25);
     });
 
     it('opens custom sources and returns from them', async () => {
@@ -263,7 +285,7 @@ describe('Mailbox messages', () => {
             displayMail: (item) => ({ ...item, subject: item.subject.toUpperCase() }),
         });
         await openFolder(/^Inbox/);
-        expect(screen.getByText('SUBJECT 1')).toBeInstanceOf(HTMLElement);
+        expect(screen.getByText('SUBJECT 1', { selector: 'strong' })).toBeInstanceOf(HTMLElement);
         await openMessage('SUBJECT 1');
         expect(screen.getByRole('heading', { name: 'SUBJECT 1' })).toBeInstanceOf(HTMLElement);
     });
@@ -330,4 +352,18 @@ describe('Mailbox messages', () => {
         await settle();
         expect(screen.getAllByText(/^Thread \d+$/).length).toBeGreaterThan(20);
     });
+});
+
+it('reports selected emails and list return without changing mailbox navigation ownership', async () => {
+    const selected = vi.fn();
+    setup({ mails: [mail('one'), mail('two')], onSelectedMessageChange: selected });
+    expect(selected).toHaveBeenLastCalledWith(undefined);
+    await openFolder(/^Inbox/);
+    await openMessage('Subject one');
+    expect(selected).toHaveBeenLastCalledWith('one');
+    nav('Back');
+    await settle();
+    expect(selected).toHaveBeenLastCalledWith(undefined);
+    await openMessage('Subject two');
+    expect(selected).toHaveBeenLastCalledWith('two');
 });

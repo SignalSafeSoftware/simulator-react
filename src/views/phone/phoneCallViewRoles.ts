@@ -14,6 +14,8 @@ export interface PhoneCallActionProps {
 
 /** Host-supplied visuals for the call view. */
 export interface PhoneCallSlotProps {
+    /** Optional secondary context, placed below the primary call controls. */
+    children?: ReactNode;
     avatar?: ReactNode;
     answerIcon?: ReactNode;
     hangupIcon?: ReactNode;

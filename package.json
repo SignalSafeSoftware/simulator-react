@@ -1,6 +1,6 @@
 {
   "name": "@signalsafe/simulator-react",
-  "version": "0.21.1",
+  "version": "0.21.2",
   "type": "module",
   "description": "UI-kit agnostic React device simulator shell, session state, and utilities (no routing or API).",
   "license": "MIT",
@@ -588,6 +588,26 @@
       "types": "./dist/views/phone/usePhoneHistoryFocus.d.ts",
       "import": "./dist/views/phone/usePhoneHistoryFocus.js",
       "default": "./dist/views/phone/usePhoneHistoryFocus.js"
+    },
+    "./views/home/HomeWidgets": {
+      "types": "./dist/views/home/HomeWidgets.d.ts",
+      "import": "./dist/views/home/HomeWidgets.js",
+      "default": "./dist/views/home/HomeWidgets.js"
+    },
+    "./views/home/HomeSettingsScreen": {
+      "types": "./dist/views/home/HomeSettingsScreen.d.ts",
+      "import": "./dist/views/home/HomeSettingsScreen.js",
+      "default": "./dist/views/home/HomeSettingsScreen.js"
+    },
+    "./apps/browser/ScenarioBrowserWorkbench": {
+      "types": "./dist/apps/browser/ScenarioBrowserWorkbench.d.ts",
+      "import": "./dist/apps/browser/ScenarioBrowserWorkbench.js",
+      "default": "./dist/apps/browser/ScenarioBrowserWorkbench.js"
+    },
+    "./utils/payload/phoneCallGroups": {
+      "types": "./dist/utils/payload/phoneCallGroups.d.ts",
+      "import": "./dist/utils/payload/phoneCallGroups.js",
+      "default": "./dist/utils/payload/phoneCallGroups.js"
     }
   },
   "files": [
@@ -625,7 +645,7 @@
     "check:duplication": "jscpd src --min-lines 8 --min-tokens 70 --threshold 0 --reporters console --silent"
   },
   "dependencies": {
-    "@signalsafe/simulator-core": "0.7.1",
+    "@signalsafe/simulator-core": "0.7.2",
     "@signalsafe/tree-spec": "^0.4.1",
     "lucide-react": "^1.31.0",
     "libphonenumber-js": "^1.13.13"
@@ -633,7 +653,7 @@
   "peerDependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "@signalsafe/simulator-theme-bootstrap": "^0.13.1"
+    "@signalsafe/simulator-theme-bootstrap": "^0.13.3"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.2",
@@ -656,7 +676,7 @@
     "vitest": "^5.0.1"
   },
   "resolutions": {
-    "@signalsafe/simulator-core": "0.7.1"
+    "@signalsafe/simulator-core": "0.7.2"
   },
   "peerDependenciesMeta": {
     "@signalsafe/simulator-theme-bootstrap": {
