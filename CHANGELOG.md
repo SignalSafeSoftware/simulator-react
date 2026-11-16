@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.22.0 — prepared 2026-11-15 (not published)
+## 0.22.0 — 2026-11-15
 
 - Resolve the genuine TreeSpec 0.4.5 registry patch under the existing ^0.4.1 dependency range.
 

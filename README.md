@@ -4,7 +4,7 @@
 
 Source, registry releases and unpublished review artifacts are tracked separately. See [current summary](docs/current-state-summary.md), [changelog](CHANGELOG.md) and [coordinated release preparation](docs/release-2026-11-10.md). Publication status and installed host versions are tracked separately.
 
-Current release source: **0.22.0**. See the [November 15 scope and verification](docs/current-state-summary.md) and [changelog](CHANGELOG.md). Publication status and exact installed host versions remain separate checks; earlier local review archives retain their provenance.
+Current npm release: **0.22.0**. See the [verified November 15 registry receipt](docs/current-state-summary.md) and [changelog](CHANGELOG.md). Exact installed host versions remain a separate adoption check; earlier review archives retain their historical provenance.
 
 ## Historical coordinated release — approved 2026-10-21
 

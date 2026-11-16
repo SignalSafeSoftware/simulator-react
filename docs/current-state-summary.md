@@ -1,5 +1,9 @@
 # Current state
 
+## Published registry release — 0.22.0 (2026-11-15)
+
+The immutable `v0.22.0` [tag workflow](https://github.com/SignalSafeSoftware/simulator-react/actions/runs/43798458919) passed all gates and publication. The actual npm archive's SHA-512 integrity was verified and all 732 files match the reviewed release artifact. Archive SHA-256: `69f3212196f2e3034ffc7fdb052cf909acc253ac70f0c80f08d47b6d08947863`; release commit `e5ba9f44fb68003d075a1235aa95d6c7dc839e0d`. The genuine lock adopts core 0.7.3, theme 0.13.5 and TreeSpec 0.4.5 without local aliases. All 883 tests pass with 100% executable-source coverage, alongside strict source/test types, lint/modules, formatting, build, cycle/duplication and packed-consumer checks.
+
 ## November 15 release scope — 0.22.0
 
 This release unifies scenario and device mailbox content, adds exact semantic anchors and optional host-controlled scripted conversation timing, and preserves standalone timing when the clock is omitted. Runtime replies are immediate without changing the authored delay schedule. Shared dialogs have a localized Close footer and preserve custom action owners; the matching theme constrains scrolling and wraps footer controls.

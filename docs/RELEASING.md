@@ -1,8 +1,8 @@
 # Releasing `@signalsafe/simulator-react`
 
-## November 15 release — 0.22.0
+## Published November 15 release — 0.22.0
 
-Release version: **0.22.0**. The coordinated set is core **0.7.3**, React **0.22.0**, device **0.22.0**, theme **0.13.5**. React/device add the optional logical conversation clock and semantic targeting APIs; existing callers remain compatible. See CHANGELOG for the complete payload/mailbox/spacing changes included in this release.
+Published version: **0.22.0**. [Successful immutable-tag workflow](https://github.com/SignalSafeSoftware/simulator-react/actions/runs/43798458919); actual registry archive/integrity verified. The coordinated set is core **0.7.3**, React **0.22.0**, device **0.22.0**, theme **0.13.5**. React/device add the optional logical conversation clock and semantic targeting APIs; existing callers remain compatible. See CHANGELOG for the complete payload/mailbox/spacing changes included in this release.
 
 Publish core and theme first, verify their actual registry archives, then refresh React's genuine registry lock and release it; finally refresh Device's genuine registry lock and release it. Core 0.7.3 and theme 0.13.5 are now verified registry releases; refresh this package’s genuine registry lock from those archives before its tag. Do not fabricate integrity values, use local dependencies in release locks, or describe packed candidate checks as frozen registry-install evidence.
 
