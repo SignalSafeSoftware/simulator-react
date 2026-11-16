@@ -2,6 +2,8 @@
 
 ## 0.22.0 — prepared 2026-11-15 (not published)
 
+- Resolve the genuine TreeSpec 0.4.5 registry patch under the existing ^0.4.1 dependency range.
+
 - Add a shared dialog footer slot and a localized Close action for the default contact overlay; custom overlay owners retain their own actions.
 - Reconcile reviewed registry dependency updates for Lucide, phone-number metadata and build/check tooling.
 - Add explicit semantic simulator anchors for whole-slide timeline targeting without host selectors.
