@@ -289,9 +289,9 @@ describe('browser and email views', () => {
                 }),
             );
         });
-        expect(renderer!.root.findByProps({ 'aria-label': 'Body' }).props.value).toBe(
-            'Inbox snippet',
-        );
+        expect(
+            renderer!.root.findByProps({ className: 'prototype-message-body' }).children.join(''),
+        ).toBe('Inbox snippet');
 
         await act(async () => {
             renderer!.update(
@@ -474,6 +474,8 @@ describe('browser and email views', () => {
                 }),
             );
         });
-        expect(renderer!.root.findByProps({ 'aria-label': 'Body' }).props.value).toBe('');
+        expect(
+            renderer!.root.findByProps({ className: 'prototype-message-body' }).children.join(''),
+        ).toBe('');
     });
 });

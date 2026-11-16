@@ -28,7 +28,7 @@ import { getVerificationContextForApp } from './utils/telemetry/simulatorVerific
 import { useSimulatorSessionHandlers } from './hooks/useSimulatorSessionHandlers.js';
 import { useSimulatorSecondaryMenu } from './hooks/useSimulatorSecondaryMenu.js';
 import { useSimulatorDeveloperControls } from './developer-tools/useSimulatorDeveloperControls.js';
-import { SimulatorDialog } from './ui/primitives.js';
+import { SimulatorButton, SimulatorDialog } from './ui/primitives.js';
 import { joinClasses } from './ui/styles/simulatorClasses.js';
 import {
     SIM_CHANNEL,
@@ -76,6 +76,7 @@ export default function SimulatorWithSession({
     onNavigationEvent,
     onSimulatorEvent,
     screenOverrides,
+    scriptedConversationClock,
     hostOwnsScreenActions = false,
     exitLink,
     exitTo,
@@ -149,6 +150,7 @@ export default function SimulatorWithSession({
             ...renderContext,
             locale: screenLocale,
             hostOwnsScreenActions,
+            scriptedConversationClock,
         }) ?? <UnsupportedScreenFallback app={activeApp} screen={currentScreenForApp} />;
 
     const ScreenOverride = resolveScreenOverride(screenOverrides, state);
@@ -235,6 +237,13 @@ export default function SimulatorWithSession({
                 open={view.contactsPanelOpen}
                 onClose={onToggleContactsPanel}
                 aria-label={screenLocale.t('screen.simulatorWithSession.verify.contact')}
+                footer={
+                    renderContactsOverlay ? undefined : (
+                        <SimulatorButton onClick={onToggleContactsPanel}>
+                            {screenLocale.t('screen.simulatorWithSession.close')}
+                        </SimulatorButton>
+                    )
+                }
             >
                 {contactsOverlayContent}
             </SimulatorDialog>

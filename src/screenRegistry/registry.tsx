@@ -99,6 +99,7 @@ const SCREEN_REGISTRY: ScreenEntry[] = [
             visibleCount: ctx.state.view.messages.visibleCount,
             onAction: ctx.onAction,
             onRevealNext: ctx.onSmsRevealNext,
+            scriptedConversationClock: ctx.scriptedConversationClock,
             onBack: ctx.onBack,
             showReplyBox: true,
             navRenderedByShell: ctx.hostOwnsScreenActions ?? false,

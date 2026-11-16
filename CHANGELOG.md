@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.22.0 — prepared 2026-11-15 (not published)
+
+- Add a shared dialog footer slot and a localized Close action for the default contact overlay; custom overlay owners retain their own actions.
+- Reconcile reviewed registry dependency updates for Lucide, phone-number metadata and build/check tooling.
+- Add explicit semantic simulator anchors for whole-slide timeline targeting without host selectors.
+- Add the optional `contract/scriptedConversationClock` public contract. Hosts can reveal authored conversation messages from one logical lesson clock; omitted clocks preserve independent wall-clock behavior.
+- Keep exact runtime-created reply identities visible immediately without consuming or reordering future authored-message delays; conversation origins and reply identities remain ephemeral host state.
+- Share mailbox rows, read-only content and compose fields across scenario and device paths, preserving complete bodies by message identity and independent Reply/Forward drafts.
+- Normalize omitted full-device Phone, Messages, Email and Contacts to independent empty collections without hiding malformed content or changing scenario absence semantics.
+- Require core 0.7.3 and pair the optional default theme with ^0.13.5. Existing host data, actions and starting positions remain compatible.
+
+Prepared release candidate only. Existing local review evidence remains historical; publication requires explicit approval and the gated version-tag workflow.
+
+## Unreleased — local review 2026-11-15
+
+- Use shared mailbox rows, read-only message content and compose fields for scenario and device paths. Retain complete bodies indexed by message identity, explicit selected detail, empty bodies and snippet-only fallback. Reply and Forward create independent drafts.
+- Verified as unpublished review artifact `0.21.3-mail-ui.0`. Registry version `0.21.2` and release authorization are separate from this checkpoint.
+
+
+## Unreleased
+
+- Normalize omitted full-device Phone, Messages, Email and Contacts to independent empty collections. Preserve detail-only SMS fallback, explicit scenario absence, and validation errors. Photos/Vault continue using the canonical empty device store.
+
+
 ## 0.21.2 — prepared 2026-11-10
 
 - Add repository, live example and related-package links; document the coordinated 100% coverage verification and synthetic editor example.

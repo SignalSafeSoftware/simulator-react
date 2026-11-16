@@ -1,3 +1,4 @@
+import { simulatorAnchorAttributes } from '../../contract/semanticAnchors.js';
 /**
  * Messages app: thread list. Wireframe: list header with plus/add action, search, rows with
  * profile icon, contact, snippet, date.
@@ -123,6 +124,11 @@ export default function MessagesThreadListView({
                     <button
                         type='button'
                         key={row.id}
+                        {...simulatorAnchorAttributes({
+                            kind: 'simulator',
+                            anchor: 'conversation-row',
+                            recordId: row.id,
+                        })}
                         onClick={() => onSelectThread(row.id)}
                         aria-label={[sender, row.preview, timestamp].filter(Boolean).join(' ')}
                         className={joinClasses(

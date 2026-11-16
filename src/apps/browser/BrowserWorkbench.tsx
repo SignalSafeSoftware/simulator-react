@@ -1,3 +1,4 @@
+import { simulatorAnchorAttributes } from '../../contract/semanticAnchors.js';
 import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import { INPUT_TYPE_SEARCH, AUTOCOMPLETE_OFF } from '../../constants.js';
 import {
@@ -84,6 +85,11 @@ export function HtmlMockPage({
             referrerPolicy='no-referrer'
             srcDoc={document.html}
             className='prototype-browser-frame'
+            {...simulatorAnchorAttributes({
+                kind: 'simulator',
+                anchor: 'browser-page',
+                recordId: page.id,
+            })}
         />
     );
 }

@@ -362,12 +362,13 @@ describe('simulator accessible list views', () => {
             );
         });
 
-        expect(renderer!.root.findByProps({ 'aria-label': 'From' }).props.value).toBe(
-            'sender@example.test',
-        );
-        expect(renderer!.root.findByProps({ 'aria-label': 'To' }).props.value).toBe('');
-        expect(renderer!.root.findByProps({ 'aria-label': 'Subject' }).props.value).toBe('');
-        expect(renderer!.root.findByProps({ 'aria-label': 'Body' }).props.value).toBe('');
+        const text = flattenText(renderer!.toJSON());
+        expect(text).toContain('From: sender@example.test');
+        expect(text).toContain('To: ');
+        expect(text).toContain('(No subject)');
+        expect(
+            renderer!.root.findByProps({ className: 'prototype-message-body' }).children,
+        ).toEqual([]);
         expect(renderer!.root.findAllByProps({ 'aria-label': 'Back to inbox' })).toHaveLength(0);
 
         await act(async () => {
@@ -428,7 +429,7 @@ describe('simulator accessible list views', () => {
                 }),
             );
         });
-        expect(renderer!.root.findByProps({ 'aria-label': 'From' }).props.value).toBe('');
+        expect(flattenText(renderer!.toJSON())).toContain('From: ');
         await act(async () => {
             renderer!.root
                 .findAllByType('button')

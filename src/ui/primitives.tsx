@@ -15,6 +15,7 @@ import {
     SIM_MODAL,
     SIM_MODAL_BODY,
     SIM_MODAL_DIALOG,
+    SIM_MODAL_FOOTER,
     joinClasses,
     simAlertToneClass,
     simBtnToneClass,
@@ -207,6 +208,7 @@ export interface SimulatorDialogProps {
     className?: string;
     children: ReactNode;
     'aria-label'?: string;
+    footer?: ReactNode;
 }
 
 export function SimulatorDialog({
@@ -214,6 +216,7 @@ export function SimulatorDialog({
     onClose,
     className,
     children,
+    footer,
     'aria-label': ariaLabel,
 }: Readonly<SimulatorDialogProps>) {
     if (!open) return null;
@@ -229,6 +232,7 @@ export function SimulatorDialog({
         >
             <div className={SIM_MODAL_DIALOG}>
                 <div className={SIM_MODAL_BODY}>{children}</div>
+                {footer && <div className={SIM_MODAL_FOOTER}>{footer}</div>}
             </div>
         </dialog>
     );

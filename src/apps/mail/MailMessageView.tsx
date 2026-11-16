@@ -1,34 +1,10 @@
+import { MailMessageContent } from './MailMessageContent.js';
 import { PagedListFooter } from '../shared/PagedListFooter.js';
 import { SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import { mailFolderSchema, type Asset, type Mail } from '@signalsafe/simulator-core/apps/contracts';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { ReplyKind } from '@signalsafe/simulator-core/apps/mail';
 import { type MailPage, type VisiblePage } from './mailShared.js';
-
-function MailHeaders({
-    message,
-    formatDate,
-}: Readonly<{ message: Mail; formatDate: (date: Date) => string }>) {
-    const { t } = useSimulatorLocale();
-    return (
-        <>
-            <h3>{message.subject || t('app.mail.noSubject')}</h3>
-            <p>{t('app.mail.from', { value: message.from })}</p>
-            {message.sourceRecordId && (
-                <p>{t('app.mail.importedSource', { id: message.sourceRecordId })}</p>
-            )}
-            <p>{t('app.mail.to', { value: message.to })}</p>
-            {message.cc && <p>{t('app.mail.cc', { value: message.cc })}</p>}
-            {message.bcc && <p>{t('app.mail.bcc', { value: message.bcc })}</p>}
-            <p>
-                {message.sentAt === null
-                    ? t('app.mail.dateUnknown')
-                    : formatDate(new Date(message.sentAt ?? message.createdAt))}
-            </p>
-            <p className='prototype-message-body'>{message.body}</p>
-        </>
-    );
-}
 
 function MailThread({
     thread,
@@ -172,7 +148,14 @@ export function MailMessageView({
 }>) {
     return (
         <article>
-            <MailHeaders message={message} formatDate={formatDate} />
+            <MailMessageContent
+                {...message}
+                dateText={
+                    message.sentAt === null
+                        ? undefined
+                        : formatDate(new Date(message.sentAt ?? message.createdAt))
+                }
+            />
             <MailThread
                 thread={thread}
                 threadPage={threadPage}

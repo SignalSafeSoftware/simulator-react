@@ -44,8 +44,8 @@ export function fullDeviceToPayload(
             ...(entry.target ? { target: entry.target } : {}),
         },
         device: mapDevice(value.device),
-        email: mapEmail(value.email),
-        sms: mapMessages(value.messages),
+        email: mapEmail(value.email === undefined ? { messages: [] } : value.email),
+        sms: mapMessages(value.messages === undefined ? { threads: [] } : value.messages),
         browser: mapInternet(value.internet),
         phone: mapPhone(
             value.phone &&
@@ -54,9 +54,11 @@ export function fullDeviceToPayload(
                     value.phone.incoming_call ||
                     value.phone.voicemail)
                 ? migratePhoneCalls(value.phone)
-                : value.phone,
+                : value.phone === undefined
+                  ? { calls: [] }
+                  : value.phone,
         ),
-        contacts: contacts.length ? contacts : null,
+        contacts,
         directory: mapDirectory(value.directory),
         home: mapHome(value.home),
     };

@@ -119,6 +119,12 @@ export function mapEmail(email: SimulatorDevicePayload['email']): SimulatorEmail
             unread: detail.unread,
         });
     }
+    const messagesById = Object.fromEntries(
+        messages.map((row) => [
+            row.id,
+            emailDetailToContent({ ...row, body: row.body ?? row.snippet ?? '' }),
+        ]),
+    );
     const selectedMessage = detail == null ? null : emailDetailToContent(detail);
     const allRows = [...inbox, ...outbox, ...trash];
     const selectedMessageId = getSelectedMessageId(detail, allRows, inbox);
@@ -127,6 +133,7 @@ export function mapEmail(email: SimulatorDevicePayload['email']): SimulatorEmail
         outbox: outbox.length > 0 ? outbox : undefined,
         trash: trash.length > 0 ? trash : undefined,
         selectedMessage,
+        messagesById,
         selectedMessageId,
     };
 }

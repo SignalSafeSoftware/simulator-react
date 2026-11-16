@@ -1,5 +1,32 @@
 # Current state
 
+## November 15 release scope — 0.22.0
+
+This release unifies scenario and device mailbox content, adds exact semantic anchors and optional host-controlled scripted conversation timing, and preserves standalone timing when the clock is omitted. Runtime replies are immediate without changing the authored delay schedule. Shared dialogs have a localized Close footer and preserve custom action owners; the matching theme constrains scrolling and wraps footer controls.
+
+The reviewed combined candidate passes 883 tests with 100% executable-source coverage, strict source/test types, lint/module checks, formatting, cycle/duplication checks and a build. Core 0.7.3 and theme 0.13.5 have verified public registry archives. The release uses genuine registry dependencies and locks; publication is performed only by successful immutable-tag CI. Historical review archives and earlier test counts below remain dated checkpoints.
+
+## Historical local review — 2026-11-15
+
+Use shared mailbox rows, read-only message content and compose fields for scenario and device paths. Retain complete bodies indexed by message identity, explicit selected detail, empty bodies and snippet-only fallback. Reply and Forward create independent drafts.
+
+Local review artifact: **0.21.3-mail-ui.0**. This is not an npm release or a package.json version bump. The coordinated set is core `0.7.3-mail-ui.0`, React `0.21.3-mail-ui.0`, device `0.21.5-mail-ui.0`, theme `0.13.5-mail-ui.0`; DeliveryPlus records their checksums in its opt-in vendor manifest. Production registry references remain separate.
+
+851 tests passed at the implementation checkpoint; added indexed-source regressions are verified in the follow-up below.
+
+Coordinated live verification covered administration lesson playback, the full simulator authoring editor, PhoneMe with an isolated synthetic database, and workspace's saved lesson reader. The gallery exercised 144 unique screen/state/width/text combinations. DeliveryPlus additionally passed 48 narrow layout cases after fixing its host wrapper (three sizes, two positions, four widths, editor and reader). No real messages or calls were sent. Existing test lessons were restored or archived.
+
+For detailed receipts and limitations see DeliveryPlus `docs/quality/simulator-ui/verification.md` and the coordinated project summary dated 2026-11-15. Historical release coverage below belongs to the November 11 checkpoint; it is not a fresh coverage claim for these changes. Publication, registry adoption and release-gate reruns remain separate work.
+
+### Documentation and regression follow-up
+
+853 tests, including indexed scenario source Reply/Forward. The first parallel run had one 5-second workbench timeout; that file passed all 23 cases on its own, and the complete suite then passed with two workers. Source/test strict types and lint pass.
+
+The review archives were not rebuilt for these documentation/test-only changes. Rebuild and rerun publication gates before a release.
+
+## Published checkpoint — 2026-11-11
+
+
 Published npm version **0.21.2**, released through the fully gated GitHub tag workflow on November 11, 2026.
 
 ## Coordinated public references

@@ -2,7 +2,9 @@
 
 [Repository](https://github.com/SignalSafeSoftware/simulator-react) · [Live shared device example](https://signalsafesoftware.github.io/simulator-device/) · [Package links and examples](docs/links.md)
 
-Prepared source: **0.21.2**. See [current summary](docs/current-state-summary.md), [changelog](CHANGELOG.md) and [coordinated release preparation](docs/release-2026-11-10.md). Publication status and installed host versions are tracked separately.
+Source, registry releases and unpublished review artifacts are tracked separately. See [current summary](docs/current-state-summary.md), [changelog](CHANGELOG.md) and [coordinated release preparation](docs/release-2026-11-10.md). Publication status and installed host versions are tracked separately.
+
+Latest unpublished work: [November 15 summary](docs/current-state-summary.md#unpublished-follow-up--2026-11-15) and [unreleased changes](CHANGELOG.md). Review artifact `0.21.3-mail-ui.0` is local only; it does not replace registry pins.
 
 ## Historical coordinated release — approved 2026-10-21
 
@@ -411,3 +413,11 @@ History hosts use `PhoneHistoryHeader` from `@signalsafe/simulator-react/views/p
 
 
 Incoming-call secondary context is passed as `PhoneCallView` children (and through `PhoneIncomingScene`). It appears below the primary call controls. The default view is unchanged when no children are supplied; action callbacks, rendering slots and accessibility labels retain their existing behavior.
+
+## Shared dialog actions
+
+`ui/primitives` owns `SimulatorDialog` and its optional `footer` slot. Keep body
+content in `children` and supply wrapping actions through `footer`; the shared
+phone theme constrains the body and footer to the viewport. The default contact
+overlay supplies a localized Close action. A host using `renderContactsOverlay`
+continues to own its custom overlay actions.

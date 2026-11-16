@@ -1,6 +1,7 @@
 /** Shared screen copy; payload/source text remains untouched. */
 export const screenEnglish = {
     'screen.simulatorErrorBoundary.dismiss': 'Dismiss',
+    'screen.simulatorWithSession.close': 'Close',
     'screen.simulatorWithSession.verify.contact': 'Verify contact',
     'screen.unsupportedScreenFallback.app': 'App: ',
     'screen.unsupportedScreenFallback.screen': ' — Screen:',

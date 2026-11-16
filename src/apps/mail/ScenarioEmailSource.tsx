@@ -1,3 +1,4 @@
+import { MailMessageContent } from './MailMessageContent.js';
 import { mailFolderSchema, type Mail } from '@signalsafe/simulator-core/apps/contracts';
 import { newMail, replyMail, ReplyKind } from '@signalsafe/simulator-core/apps/mail';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
@@ -59,7 +60,9 @@ function ScenarioEmailContent({
         },
     ];
     const row = folders.flatMap((folder) => folder.rows).find((item) => item.id === selectedId);
-    const fullMessage = selectedId === payload.selectedMessageId ? payload.selectedMessage : null;
+    const fullMessage =
+        (selectedId === payload.selectedMessageId ? payload.selectedMessage : null) ??
+        (selectedId ? payload.messagesById?.[selectedId] : null);
     const content: SimulatorEmailPayload['selectedMessage'] =
         fullMessage ??
         (row
@@ -115,10 +118,8 @@ function ScenarioEmailContent({
             ))}
             {content && (
                 <article>
-                    <h4>{content.subject || t('app.mail.noSubject')}</h4>
+                    <MailMessageContent {...content} dateText={content.date_at} />
                     {!fullMessage && <p>{t('app.mail.scenario.previewOnly')}</p>}
-                    <p>{t('app.mail.from', { value: content.from })}</p>
-                    <p className='prototype-message-body'>{content.body}</p>
                     <SimulatorButton
                         tone={SimulatorButtonTone.NeutralOutline}
                         onClick={() => compose(content, ReplyKind.Reply)}

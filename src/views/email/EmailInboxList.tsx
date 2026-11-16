@@ -1,44 +1,31 @@
+import { MailMessageRow } from '../../apps/mail/MailMessageRow.js';
 /**
  * Reusable email inbox list: wireframe rows (profile icon, sender, snippet, date, Read/Unread tag).
  * Optional search bar and compose (pencil) button.
  */
 import {
     SIM_BTN_SM,
-    SIM_FLEX_COL,
     SIM_FLEX_GROW_1,
-    SIM_FLEX_SHRINK_0,
-    SIM_LIST_FLUSH_MOD,
-    SIM_MIN_W_0,
-    SIM_MUTED,
     SIM_ROUNDED_NONE,
     SIM_TEXT_BODY,
-    SIM_TEXT_BOLD,
-    SIM_TEXT_BREAK,
     SIM_TEXT_CENTER,
-    SIM_TEXT_MEDIUM,
     SIM_TEXT_SEMIBOLD,
     SIM_TEXT_SM,
     SIM_TEXT_START,
-    SIM_TEXT_TRUNCATE,
-    SimulatorBadgeTone,
     SimulatorButtonTone,
     joinClasses,
-    simBadgeToneClass,
 } from '../../ui/styles/simulatorClasses.js';
-import { SimulatorAvatar } from '../../ui/media/SimulatorAvatar.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
 import { useState, useMemo, type ReactNode } from 'react';
 import type { SimulatorInboxRow } from '../../types/session.js';
 import { SimulatorSearchInput } from '../../ui/lists/SimulatorSearchInput.js';
-import { simLayout, simRowSurface, simSpacing, simTypo } from '../../simulatorStyles.js';
+import { simLayout, simSpacing, simTypo } from '../../simulatorStyles.js';
 import { matchesAnyField } from '../../utils/lists/textMatch.js';
 import { SimulatorButton } from '../../ui/primitives.js';
 import {
     SIM_EMAIL_INBOX,
     SIM_EMAIL_COMPOSE_ACTION,
-    SIM_EMAIL_MESSAGE_ROW,
-    SIM_EMAIL_STATUS_BADGE,
     SIM_SCREEN_HEADER_ROW,
 } from '../../ui/styles/semanticSimulatorClasses.js';
 
@@ -111,74 +98,26 @@ export default function EmailInboxList({
         );
     } else {
         content = (
-            <div className={joinClasses(SIM_LIST_FLUSH_MOD, simSpacing.mt2)}>
+            <ul className='prototype-list prototype-mail-list'>
                 {filtered.map((row) => (
-                    <button
-                        type='button'
+                    <MailMessageRow
+                        id={row.id}
                         key={row.id}
-                        onClick={() => onSelectMessage(row.id)}
-                        className={joinClasses(
-                            simRowSurface.selectable,
-                            selectedMessageId === row.id
-                                ? simRowSurface.selected
-                                : simRowSurface.default,
-                            SIM_EMAIL_MESSAGE_ROW,
-                        )}
-                        style={{ cursor: 'pointer' }}
-                    >
-                        <SimulatorAvatar />
-                        <div className={joinClasses(SIM_FLEX_COL, SIM_MIN_W_0, SIM_FLEX_GROW_1)}>
-                            <span
-                                className={joinClasses(
-                                    SIM_TEXT_MEDIUM,
-                                    SIM_TEXT_TRUNCATE,
-                                    row.unread && SIM_TEXT_BOLD,
-                                )}
-                            >
-                                {row.from_display_name != null && row.from_display_name !== ''
-                                    ? row.from_display_name
-                                    : row.from}
-                            </span>
-                            {row.snippet != null && row.snippet !== '' && (
-                                <span
-                                    className={joinClasses(SIM_TEXT_SM, SIM_MUTED, SIM_TEXT_BREAK)}
-                                    style={{ lineHeight: 1.35 }}
-                                >
-                                    {row.snippet}
-                                </span>
-                            )}
-                            {row.date_at != null && (
-                                <span
-                                    className={joinClasses(SIM_TEXT_SM, SIM_MUTED, simSpacing.mt1)}
-                                >
-                                    {row.date_at}
-                                </span>
-                            )}
-                        </div>
-                        <span
-                            className={joinClasses(
-                                simBadgeToneClass(
-                                    row.unread
-                                        ? SimulatorBadgeTone.Primary
-                                        : SimulatorBadgeTone.Neutral,
-                                ),
-                                SIM_ROUNDED_NONE,
-                                SIM_FLEX_SHRINK_0,
-                                SIM_EMAIL_STATUS_BADGE,
-                            )}
-                        >
-                            {row.unread
-                                ? screenLocale.t('screen.emailInboxList.unread')
-                                : screenLocale.t('screen.emailInboxList.read')}
-                        </span>
-                    </button>
+                        subject={row.subject}
+                        address={row.from_display_name || row.from}
+                        snippet={row.snippet ?? ''}
+                        dateText={row.date_at ?? screenLocale.t('app.mail.dateUnknown')}
+                        unread={row.unread === true}
+                        selected={selectedMessageId === row.id}
+                        onOpen={() => onSelectMessage(row.id)}
+                    />
                 ))}
-            </div>
+            </ul>
         );
     }
 
     return (
-        <div className={joinClasses(simLayout.stack, SIM_EMAIL_INBOX)}>
+        <div className={joinClasses(simLayout.stack, SIM_EMAIL_INBOX, 'prototype-mail-page')}>
             <div className={joinClasses(simLayout.headerRowBetween, SIM_SCREEN_HEADER_ROW)}>
                 <span
                     className={joinClasses(

@@ -63,7 +63,7 @@ describe('JSON datasource conversion', () => {
         expect(ds.context.home?.settingsSections[0]!.id).toBe('s1');
         expect(ds.context.browser?.pages[0]!.id).toBe('landing');
     });
-    it('copies and freezes content and does not invent missing collections', () => {
+    it('copies and freezes content and initializes missing collections without records', () => {
         const ds = createSimulatorDatasource(json);
         expect(Object.isFrozen(ds.contacts?.[0])).toBe(true);
         const payload = simulatorDatasourceToPayload(ds);
@@ -72,8 +72,8 @@ describe('JSON datasource conversion', () => {
         const empty = createSimulatorDatasource({
             entry_point: { app: 'home', screen: 'home' },
         });
-        expect(empty.contacts).toBeNull();
-        expect(empty.email).toBeNull();
+        expect(empty.contacts).toEqual([]);
+        expect(empty.email).toMatchObject({ inbox: [], selectedMessage: null });
     });
     it('rejects unsupported versions, duplicate ids, invalid fields and malformed JSON with paths', () => {
         expect(() => createSimulatorDatasource('{')).toThrow('JSON text');

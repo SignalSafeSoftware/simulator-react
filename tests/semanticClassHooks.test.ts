@@ -21,9 +21,6 @@ import {
     SIM_CHANNEL_PHONE,
     SIM_EMAIL_INBOX,
     SIM_EMAIL_MESSAGE_DETAIL,
-    SIM_EMAIL_MESSAGE_DETAIL_BODY,
-    SIM_EMAIL_MESSAGE_ROW,
-    SIM_EMAIL_STATUS_BADGE,
     SIM_MESSAGES,
     SIM_MESSAGES_THREAD_DETAIL,
     SIM_MESSAGES_THREAD_LIST,
@@ -274,8 +271,7 @@ describe('semantic simulator class hooks', () => {
             );
         });
         expect(findWithClass(renderer!.root, SIM_EMAIL_INBOX)).toHaveProperty('props');
-        expect(findWithClass(renderer!.root, SIM_EMAIL_MESSAGE_ROW)).toHaveProperty('props');
-        expect(findWithClass(renderer!.root, SIM_EMAIL_STATUS_BADGE)).toHaveProperty('props');
+        expect(findWithClass(renderer!.root, 'prototype-mail-content')).toHaveProperty('props');
         expect(findWithClass(renderer!.root, SIM_SCREEN_HEADER_ROW)).toHaveProperty('props');
         expect(findWithClass(renderer!.root, SIM_EMAIL_COMPOSE_ACTION)?.props['aria-label']).toBe(
             'Compose email',
@@ -293,9 +289,7 @@ describe('semantic simulator class hooks', () => {
             );
         });
         expect(findWithClass(renderer!.root, SIM_EMAIL_MESSAGE_DETAIL)).toHaveProperty('props');
-        expect(findWithClass(renderer!.root, SIM_EMAIL_MESSAGE_DETAIL_BODY)).toHaveProperty(
-            'props',
-        );
+        expect(findWithClass(renderer!.root, 'prototype-message-body')).toHaveProperty('props');
     });
     it('renders messages semantic classes', async () => {
         await act(async () => {

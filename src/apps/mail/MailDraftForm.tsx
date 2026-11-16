@@ -1,9 +1,8 @@
+import { MailComposeFields } from './MailComposeFields.js';
 import type { RefObject } from 'react';
 import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
 import type { Mail } from '@signalsafe/simulator-core/apps/contracts';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
-
-const DRAFT_FIELDS = ['to', 'cc', 'bcc', 'subject'] as const;
 
 function MailDraftAttachments({
     draft,
@@ -51,12 +50,6 @@ export function MailDraftForm({
     onAttach: (file: File) => void;
 }>) {
     const { t } = useSimulatorLocale();
-    const fieldLabels = {
-        to: t('app.mail.fieldTo'),
-        cc: t('app.mail.fieldCc'),
-        bcc: t('app.mail.fieldBcc'),
-        subject: t('app.mail.fieldSubject'),
-    };
     return (
         <form
             ref={formRef}
@@ -66,27 +59,11 @@ export function MailDraftForm({
             }}
         >
             <p>{t('app.mail.from', { value: draft.from })}</p>
-            {DRAFT_FIELDS.map((field) => (
-                <label key={field}>
-                    {fieldLabels[field]}
-                    <input
-                        className={SIM_INPUT}
-                        disabled={busy}
-                        value={draft[field]}
-                        onChange={(event) => onChange({ ...draft, [field]: event.target.value })}
-                    />
-                </label>
-            ))}
-            <label>
-                {t('app.mail.body')}
-                <textarea
-                    className='simulator-textarea'
-                    rows={10}
-                    disabled={busy}
-                    value={draft.body}
-                    onChange={(event) => onChange({ ...draft, body: event.target.value })}
-                />
-            </label>
+            <MailComposeFields
+                values={draft}
+                disabled={busy}
+                onChange={(field, value) => onChange({ ...draft, [field]: value })}
+            />
             <label>
                 {t('app.mail.addAttachment')}
                 <input

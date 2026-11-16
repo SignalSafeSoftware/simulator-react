@@ -60,7 +60,11 @@ describe('action taxonomy and adapters', () => {
         expect(isSimulatorActionType('not-real')).toBe(false);
         expect(validateSimulatorAction({ type: 7 })).toBe(false);
         expect(
-            validateSimulatorAction({ type: 'navigate_screen', app: 'email', screen: 'list' }),
+            validateSimulatorAction({
+                type: 'navigate_screen',
+                app: 'email',
+                screen: 'list',
+            }),
         ).toBe(true);
         expect(validateSimulatorAction({ type: 'open_app', app: 'internet' })).toBe(true);
         expect(validateSimulatorAction({ type: 'open_contact' })).toBe(false);
@@ -93,7 +97,11 @@ describe('action taxonomy and adapters', () => {
         expect(
             mapContacts([
                 null,
-                { display_name: 'Ada Lovelace', number: '555-0100', email: 'ada@example.test' },
+                {
+                    display_name: 'Ada Lovelace',
+                    number: '555-0100',
+                    email: 'ada@example.test',
+                },
                 { id: 'c2', display_name: 'Grace Hopper' },
             ] as never),
         ).toEqual([
@@ -103,7 +111,12 @@ describe('action taxonomy and adapters', () => {
                 number: '555-0100',
                 email: 'ada@example.test',
             },
-            { id: 'c2', displayName: 'Grace Hopper', number: undefined, email: undefined },
+            {
+                id: 'c2',
+                displayName: 'Grace Hopper',
+                number: undefined,
+                email: undefined,
+            },
         ]);
         expect(mapContacts(null as never)).toEqual([]);
         const mappedEmail = mapEmail({
@@ -121,7 +134,12 @@ describe('action taxonomy and adapters', () => {
                     from_addr: 'outbox@example.test',
                     folder_id: 'OUTBOX',
                 },
-                { id: 'm3', subject: 'Trash', from: 'trash@example.test', folder_id: 'TRASH' },
+                {
+                    id: 'm3',
+                    subject: 'Trash',
+                    from: 'trash@example.test',
+                    folder_id: 'TRASH',
+                },
             ],
             detail: {
                 id: 'm1',
@@ -171,6 +189,7 @@ describe('action taxonomy and adapters', () => {
                     unread: undefined,
                 },
             ],
+            messagesById: {},
             outbox: undefined,
             trash: undefined,
             selectedMessage: {
@@ -180,6 +199,7 @@ describe('action taxonomy and adapters', () => {
                 from_display_name: undefined,
                 to: undefined,
                 cc: undefined,
+                bcc: undefined,
                 date_at: undefined,
                 unread: undefined,
                 reply_to: undefined,
@@ -205,7 +225,14 @@ describe('action taxonomy and adapters', () => {
                 sender_display_name: 'Sender',
                 last_at: 'Later',
             },
-            threads: [{ id: 't1', snippet: 'Preview', contact_number: '+1555', last_at: 'Now' }],
+            threads: [
+                {
+                    id: 't1',
+                    snippet: 'Preview',
+                    contact_number: '+1555',
+                    last_at: 'Now',
+                },
+            ],
         } as never);
         expect(mappedMessages?.thread.messages[0]).toEqual(
             expect.objectContaining({ from: 'them', text: 'Reply' }),
@@ -231,7 +258,10 @@ describe('action taxonomy and adapters', () => {
             timestamp: undefined,
             attachment: { label: 'Receipt', url: '/receipt.pdf' },
         });
-        expect(mapPhone({ incoming_call: null } as never)).toBeNull();
+        expect(mapPhone({ incoming_call: null } as never)).toMatchObject({
+            content: null,
+            callHistory: [],
+        });
         const mappedPhone = mapPhone({
             incoming_call: {
                 transcript: '',
@@ -311,7 +341,12 @@ describe('action taxonomy and adapters', () => {
         ]);
         const mappedInternet = mapInternet({
             pages: [
-                { url: 'portal.example.test', title: '', layout: '', submit_target_page_id: '' },
+                {
+                    url: 'portal.example.test',
+                    title: '',
+                    layout: '',
+                    submit_target_page_id: '',
+                },
                 {
                     id: 'result',
                     url: 'https://portal.example.test/result',

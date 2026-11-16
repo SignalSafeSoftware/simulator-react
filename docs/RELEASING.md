@@ -1,5 +1,13 @@
 # Releasing `@signalsafe/simulator-react`
 
+## November 15 release — 0.22.0
+
+Release version: **0.22.0**. The coordinated set is core **0.7.3**, React **0.22.0**, device **0.22.0**, theme **0.13.5**. React/device add the optional logical conversation clock and semantic targeting APIs; existing callers remain compatible. See CHANGELOG for the complete payload/mailbox/spacing changes included in this release.
+
+Publish core and theme first, verify their actual registry archives, then refresh React's genuine registry lock and release it; finally refresh Device's genuine registry lock and release it. Core 0.7.3 and theme 0.13.5 are now verified registry releases; refresh this package’s genuine registry lock from those archives before its tag. Do not fabricate integrity values, use local dependencies in release locks, or describe packed candidate checks as frozen registry-install evidence.
+
+DeliveryPlus's normal dependency guard requires exact stable registry packages. Host pins/locks and a clean standard install follow successful public tag workflows. Release approval, commits, pushes, tags, hosted gates and publication remain separate from this local preparation.
+
 Current status (November 11): Published npm version **0.21.2**, released through the fully gated GitHub tag workflow on November 11, 2026. Public references use core 0.7.2, React 0.21.2, device 0.21.4 and theme 0.13.4. Historical preparation/approval sections below are retained as history.
 
 

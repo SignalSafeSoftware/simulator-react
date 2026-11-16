@@ -93,7 +93,6 @@ export function mapPhone(phone: SimulatorDevicePayload['phone']): SimulatorPhone
     const voicemailSection = phone.voicemail;
     const voicemailTranscript = voicemailSection?.transcript;
     const voicemailStr = nullableString(voicemailTranscript);
-    if (incoming == null && callHistory.length === 0 && !voicemailStr) return null;
     const voicemailCallerName = optionalString(voicemailSection?.caller_name);
     const voicemailTimestamp = optionalString(voicemailSection?.timestamp);
     return {
@@ -110,7 +109,7 @@ export function mapPhone(phone: SimulatorDevicePayload['phone']): SimulatorPhone
                       avatar_url: optionalString(incoming?.avatar_url),
                   },
         chosenIndex: null,
-        callHistory: callHistory.length > 0 ? callHistory : undefined,
+        callHistory,
         voicemailTranscript: voicemailStr != null && voicemailStr !== '' ? voicemailStr : undefined,
         voicemailCallerName: voicemailCallerName ?? undefined,
         voicemailPhoneNumber: optionalString(voicemailSection?.phone_number),

@@ -22,8 +22,8 @@ describe('compose, new thread and incoming call views', () => {
             );
         });
         for (const [label, value] of [
-            ['Recipient', ' user@example.test '],
-            ['Bcc', 'hidden@example.test'],
+            ['TO', ' user@example.test '],
+            ['BCC', 'hidden@example.test'],
             ['Subject', ' Subject '],
             ['Body', ' Body '],
         ]) {

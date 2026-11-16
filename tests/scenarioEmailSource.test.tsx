@@ -158,7 +158,7 @@ it('uses the host locale for the optional source label, folders and actions', ()
 it('previews a selected row that has no snippet with an empty body', () => {
     render(<Source {...props({ selectedMessageId: 'trash' })} />);
     expect(screen.getByText(/Only the scenario preview text/)).toBeTruthy();
-    expect(screen.getByRole('heading', { name: '(No subject)', level: 4 })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: '(No subject)', level: 3 })).toBeTruthy();
 });
 
 it('drafts from a full message without reply-to, subject or selected id', () => {
@@ -170,9 +170,62 @@ it('drafts from a full message without reply-to, subject or selected id', () => 
         },
     });
     render(<Source {...options} />);
-    expect(screen.getByRole('heading', { name: '(No subject)', level: 4 })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: '(No subject)', level: 3 })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Reply in simulated mailbox' }));
     expect(options.onCompose).toHaveBeenCalledWith(
         expect.objectContaining({ threadId: 'scenario', to: 'sender@example.test' }),
     );
+});
+
+it.each(['sent', 'trash'])('uses full content indexed by identity for %s drafts', (id) => {
+    const payload = email();
+    payload.messagesById = {
+        [id]: {
+            subject: `Full ${id}`,
+            from: 'indexed@example.test',
+            to: identity,
+            body: `Complete ${id} content`,
+        },
+    };
+    const options = props({ payload, selectedMessageId: id });
+    const original = JSON.stringify(payload);
+    render(<Source {...options} />);
+    expect(screen.getByText(`Complete ${id} content`)).toBeTruthy();
+    expect(screen.queryByText(/Only the scenario preview text/)).toBeNull();
+    expect(screen.queryByText('Complete scenario text')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Reply in simulated mailbox' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Forward in simulated mailbox' }));
+    expect(options.onCompose.mock.calls[0]?.[0]).toMatchObject({
+        to: 'indexed@example.test',
+        subject: `Re: Full ${id}`,
+        body: expect.stringContaining(`Complete ${id} content`),
+    });
+    expect(options.onCompose.mock.calls[1]?.[0]).toMatchObject({
+        to: '',
+        subject: `Fwd: Full ${id}`,
+        body: expect.stringContaining(`Complete ${id} content`),
+    });
+    expect(JSON.stringify(payload)).toBe(original);
+});
+
+it('keeps unselected indexed scenario emails hidden and offers no draft actions', () => {
+    const options = props({
+        payload: {
+            inbox: [],
+            selectedMessageId: null,
+            selectedMessage: null,
+            messagesById: {
+                orphan: {
+                    subject: 'Unselected email',
+                    from: 'sender',
+                    body: 'Unselected indexed content',
+                },
+            },
+        },
+    });
+    render(<Source {...options} />);
+    expect(screen.queryByText('Unselected indexed content')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Reply in simulated mailbox' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Forward in simulated mailbox' })).toBeNull();
+    expect(options.onCompose).not.toHaveBeenCalled();
 });

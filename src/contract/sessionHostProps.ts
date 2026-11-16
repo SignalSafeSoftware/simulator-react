@@ -10,6 +10,7 @@ import type {
     SimulatorRuntimeIssue,
 } from '../developer-tools/configuration.js';
 import type { SimulatorPhoneContactOpenProps } from '../ui/renderSlots.js';
+import type { ScriptedConversationClock } from './scriptedConversationClock.js';
 
 /** Session state, dispatch and the host hooks that observe or replace it. */
 export interface SimulatorSessionBindingProps {
@@ -20,6 +21,8 @@ export interface SimulatorSessionBindingProps {
     onNavigationEvent?: NonNullable<SimulatorNavigationOptions['onNavigationEvent']>;
     /** Host content for explicit app/screen destinations, inside the existing shell. */
     screenOverrides?: SimulatorScreenOverrides;
+    /** Controls scripted message visibility without reveal timers or session mutations. */
+    scriptedConversationClock?: ScriptedConversationClock;
 }
 
 /** Optional exit affordance rendered by the shell. */

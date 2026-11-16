@@ -23,6 +23,7 @@ export const SIM_ALERT = 'simulator-alert';
 export const SIM_MODAL = 'simulator-modal';
 export const SIM_MODAL_DIALOG = 'simulator-modal__dialog';
 export const SIM_MODAL_BODY = 'simulator-modal__body';
+export const SIM_MODAL_FOOTER = 'simulator-modal__footer';
 
 export const SIM_FLEX = 'simulator-flex';
 export const SIM_FLEX_COL = 'simulator-flex simulator-flex--column';

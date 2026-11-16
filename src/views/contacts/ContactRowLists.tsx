@@ -1,3 +1,4 @@
+import { simulatorAnchorAttributes } from '../../contract/semanticAnchors.js';
 import {
     SIM_FLEX_COL,
     SIM_FLEX_GROW_1,
@@ -40,6 +41,11 @@ export function renderPhoneContactList(
                     type='button'
                     key={c.id}
                     data-simulator-contact-id={c.id}
+                    {...simulatorAnchorAttributes({
+                        kind: 'simulator',
+                        anchor: 'contact-row',
+                        recordId: c.id,
+                    })}
                     onClick={() => open(c)}
                     className={joinClasses(
                         simRowSurface.selectable,
@@ -107,6 +113,11 @@ export function renderCompactContactList(
                 <SimulatorListItem
                     key={c.id}
                     data-simulator-contact-id={c.id}
+                    {...simulatorAnchorAttributes({
+                        kind: 'simulator',
+                        anchor: 'contact-row',
+                        recordId: c.id,
+                    })}
                     variant='compact'
                     onClick={() => open(c)}
                     className={joinClasses('simulator-flex--between', SIM_PHONE_CONTACT_ROW)}

@@ -38,3 +38,43 @@ it('keeps controlled Bcc and body on failure and clears only after success', asy
     expect(onCancel).toHaveBeenCalledOnce();
     await act(async () => view!.unmount());
 });
+
+it('ignores unsupported shared CC edits while retaining supported draft updates', async () => {
+    const draft = {
+        to: 'to@example.test',
+        cc: 'existing@example.test',
+        bcc: '',
+        subject: '',
+        body: '',
+    };
+    const original = JSON.stringify(draft);
+    const onDraftChange = vi.fn();
+    let view: ReactTestRenderer;
+    await act(async () => {
+        view = TestRenderer.create(
+            createElement(EmailComposeView, {
+                draft,
+                onDraftChange,
+                onSend: vi.fn(),
+                onCancel: vi.fn(),
+            }),
+        );
+    });
+    await act(async () => {
+        view!.root
+            .findByProps({ 'aria-label': 'CC' })
+            .props.onChange({ target: { value: 'ignored@example.test' } });
+    });
+    expect(onDraftChange).not.toHaveBeenCalled();
+    await act(async () => {
+        view!.root
+            .findByProps({ 'aria-label': 'BCC' })
+            .props.onChange({ target: { value: 'private@example.test' } });
+    });
+    expect(onDraftChange).toHaveBeenCalledExactlyOnceWith({
+        ...draft,
+        bcc: 'private@example.test',
+    });
+    expect(JSON.stringify(draft)).toBe(original);
+    await act(async () => view!.unmount());
+});

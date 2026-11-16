@@ -1,15 +1,10 @@
-import { SIM_SCREEN_HEADER } from '../../ui/styles/semanticSimulatorClasses.js';
-import {
-    SIM_FIELD,
-    SIM_FIELD_LABEL,
-    SIM_FLEX_COL,
-    SIM_FLEX_ROW,
-} from '../../ui/styles/simulatorClasses.js';
+import { DevicePage } from '../../apps/shared/DevicePage.js';
+import { MailComposeFields } from '../../apps/mail/MailComposeFields.js';
+import { SIM_FLEX_ROW } from '../../ui/styles/simulatorClasses.js';
 import { useReportComposerState } from '../../contract/composerState.js';
 import { useComposerSubmit } from '../../hooks/useComposerSubmit.js';
 import { SimulatorCapabilityState, useSimulatorCapabilities } from '../../contract/capabilities.js';
 import { useState } from 'react';
-import { SimulatorPage } from '../../ui/layout/SimulatorPage.js';
 import { useSimulatorLocale } from '../../i18n/SimulatorLocale.js';
 import {
     useEmailComposeOptions,
@@ -65,10 +60,7 @@ export default function EmailComposeView({
     });
     useReportComposerState(canSend, pending);
     return (
-        <SimulatorPage
-            className={SIM_FLEX_COL}
-            header={<div className={SIM_SCREEN_HEADER}>{t('email.compose')}</div>}
-        >
+        <DevicePage title={t('app.mail.newEmail')}>
             {unavailable && (
                 <p>
                     <output>{unavailable}</output>
@@ -92,38 +84,14 @@ export default function EmailComposeView({
                     void submit();
                 }}
             >
-                {(['to', 'bcc', 'subject'] as const).map((key) => {
-                    const labelKeys = {
-                        to: 'email.recipient',
-                        bcc: 'email.bcc',
-                        subject: 'email.subject',
-                    } as const;
-                    const label = t(labelKeys[key]);
-                    return (
-                        <label className={SIM_FIELD} key={key}>
-                            <span className={SIM_FIELD_LABEL}>{label}</span>
-                            <input
-                                className='simulator-input simulator-rounded--none'
-                                aria-label={label}
-                                value={draft[key]}
-                                disabled={pending || (!onSend && !onDraftChange)}
-                                required={key === 'to'}
-                                onChange={(event) => update(key, event.target.value)}
-                            />
-                        </label>
-                    );
-                })}
-                <label className={SIM_FIELD}>
-                    <span className={SIM_FIELD_LABEL}>{t('email.body')}</span>
-                    <textarea
-                        className='simulator-input simulator-rounded--none'
-                        rows={6}
-                        aria-label={t('email.body')}
-                        value={draft.body}
-                        disabled={pending || (!onSend && !onDraftChange)}
-                        onChange={(event) => update('body', event.target.value)}
-                    />
-                </label>
+                <MailComposeFields
+                    values={draft}
+                    requireRecipient
+                    disabled={pending || (!onSend && !onDraftChange)}
+                    onChange={(field, value) => {
+                        if (field !== 'cc') update(field, value);
+                    }}
+                />
                 {!hideActions && (
                     <div className={SIM_FLEX_ROW}>
                         <button
@@ -146,6 +114,6 @@ export default function EmailComposeView({
                     </div>
                 )}
             </form>
-        </SimulatorPage>
+        </DevicePage>
     );
 }

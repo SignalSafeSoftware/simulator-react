@@ -1,3 +1,4 @@
+import type { ScriptedConversationClock } from '../contract/scriptedConversationClock.js';
 /**
  * Typed screen registry: app + screen → renderer component + getProps.
  * Keeps rendering concerns separate from reducer/session state.
@@ -31,6 +32,7 @@ import type { DirectoryViewProps } from '../views/contacts/DirectoryView.js';
 /** Context passed to getProps: state, dispatch, capabilities, and shell-level handlers. */
 export interface SimulatorRenderContext {
     hostOwnsScreenActions?: boolean;
+    scriptedConversationClock?: ScriptedConversationClock;
     locale?: ReturnType<typeof useSimulatorLocale>;
     state: SimulatorSessionState;
     dispatch: (action: SimulatorDispatchAction) => void;

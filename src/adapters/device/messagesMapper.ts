@@ -61,6 +61,6 @@ export function mapMessages(
             unread: threadDetail?.unread === true,
         },
         visibleMessageCount: 0,
-        threads: threads.length > 0 ? threads : undefined,
+        threads: Array.isArray(rawThreads) || threadDetail == null ? threads : undefined,
     };
 }

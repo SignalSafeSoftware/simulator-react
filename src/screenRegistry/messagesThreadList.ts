@@ -10,7 +10,7 @@ export function buildMessagesThreadList(
     locale: SimulatorTranslator,
 ): ThreadListRow[] {
     const sms = payload.sms;
-    if (sms?.threads != null && sms.threads.length > 0) {
+    if (sms?.threads != null) {
         return sms.threads;
     }
     const thread = sms?.thread;

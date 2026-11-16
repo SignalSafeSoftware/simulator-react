@@ -1,3 +1,6 @@
+import { simulatorAnchorAttributes } from '../../contract/semanticAnchors.js';
+import type { ScriptedConversationClock } from '../../contract/scriptedConversationClock.js';
+import { scriptedConversationVisibleMessages } from './scriptedConversationReveal.js';
 /**
  * Messages app: thread detail. Wireframe: profile + name, message bubbles,
  * message box and Send/Cancel at bottom. Links and attachments preserved in bubbles.
@@ -35,6 +38,8 @@ export interface SmsSimulatorViewProps {
     visibleCount: number;
     onAction: (action: SimulatorAction) => void;
     onRevealNext: () => void;
+    /** A matching conversation is projected from logical time; no reveal effects run. */
+    scriptedConversationClock?: ScriptedConversationClock;
     onBack?: () => void;
     showReplyBox?: boolean;
     navRenderedByShell?: boolean;
@@ -51,6 +56,7 @@ export default function SmsSimulatorView({
     visibleCount,
     onAction,
     onRevealNext,
+    scriptedConversationClock,
     onBack,
     showReplyBox = true,
     navRenderedByShell = false,
@@ -77,7 +83,19 @@ export default function SmsSimulatorView({
         false,
     );
     const messages = payload?.thread?.messages ?? EMPTY_MESSAGES;
-    const visible = payload?.mode === SmsMode.History ? messages : messages.slice(0, visibleCount);
+    const controlled = scriptedConversationClock !== undefined;
+    const visible =
+        payload?.mode === SmsMode.History
+            ? messages
+            : controlled
+              ? scriptedConversationClock.conversationId === payload?.thread.id
+                  ? scriptedConversationVisibleMessages(
+                        messages,
+                        scriptedConversationClock.elapsedMs,
+                        scriptedConversationClock.immediateMessageIds,
+                    )
+                  : []
+              : messages.slice(0, visibleCount);
     const scrolling = useSmsTimelineScroll({
         active: payload !== null,
         threadId:
@@ -95,7 +113,7 @@ export default function SmsSimulatorView({
     });
 
     useEffect(() => {
-        if (payload?.mode === SmsMode.History || messages.length === 0) return;
+        if (controlled || payload?.mode === SmsMode.History || messages.length === 0) return;
         const timeouts: ReturnType<typeof setTimeout>[] = [];
         let cumulativeMs = 0;
         for (const msg of messages) {
@@ -105,7 +123,7 @@ export default function SmsSimulatorView({
             timeouts.push(setTimeout(() => onRevealNext(), cumulativeMs));
         }
         return () => timeouts.forEach((t) => clearTimeout(t));
-    }, [messages, onRevealNext, payload?.mode]);
+    }, [messages, onRevealNext, payload?.mode, controlled]);
 
     if (payload == null) {
         return (
@@ -137,7 +155,17 @@ export default function SmsSimulatorView({
                     <output>{unavailable}</output>
                 </p>
             )}
-            <div className={simLayout.scrollBody} ref={scrolling.scrollRef}>
+            <div
+                className={simLayout.scrollBody}
+                ref={scrolling.scrollRef}
+                {...(content.id && (!controlled || visible.length > 0)
+                    ? simulatorAnchorAttributes({
+                          kind: 'simulator',
+                          anchor: 'conversation-body',
+                          recordId: content.id,
+                      })
+                    : {})}
+            >
                 {timeline.header}
                 <SmsTimelinePaging paging={timeline.paging} onLoadEarlier={scrolling.loadEarlier} />
                 <div

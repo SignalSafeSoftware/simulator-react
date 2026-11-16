@@ -1,5 +1,4 @@
-import type { PhoneSessionMutationFields } from './authoredPhoneCalls.js';
-import type { AuthoredPhoneCallFields, AuthoredPhonePayloadFields } from './authoredPhoneCalls.js';
+import type * as AuthoredCalls from './authoredPhoneCalls.js';
 import {
     SimulatorEmailScreenId,
     SimulatorHomeScreenId,
@@ -68,7 +67,7 @@ export const DEFAULT_INTERNET_SCREEN = BrowserLayout.Landing;
 export const DEFAULT_HOME_SCREEN: HomeScreenId = SimulatorHomeScreenId.Home;
 
 /** Per-app view state (preserved when switching apps). */
-export interface PhoneAppViewState extends PhoneSessionMutationFields {
+export interface PhoneAppViewState extends AuthoredCalls.PhoneSessionMutationFields {
     /** Selected call within History; absent or null shows the list. */
     selectedHistoryEntryId?: string | null;
     screen: PhoneScreenId;
@@ -156,6 +155,7 @@ export interface SimulatorEmailPayload {
     trash?: SimulatorInboxRow[];
     /** Selected message content; undefined = list view */
     selectedMessage: EmailTemplateContent | null;
+    messagesById?: Record<string, EmailTemplateContent>;
     selectedMessageId: string | null;
 }
 
@@ -232,7 +232,7 @@ export const CallHistoryEntryKind = Object.freeze({
 export type CallHistoryEntryKind = (typeof CallHistoryEntryKind)[keyof typeof CallHistoryEntryKind];
 
 /** Single call history row (from full-device or derived). */
-export interface SimulatorCallHistoryEntry extends AuthoredPhoneCallFields {
+export interface SimulatorCallHistoryEntry extends AuthoredCalls.AuthoredPhoneCallFields {
     /** Original display address, independent of the dialable number. */
     displayNumber?: string;
     /** Label of the matched contact value, when unambiguous. */
@@ -250,7 +250,7 @@ export interface SimulatorCallHistoryEntry extends AuthoredPhoneCallFields {
 }
 
 /** Phone payload slice. */
-export interface SimulatorPhonePayload extends AuthoredPhonePayloadFields {
+export interface SimulatorPhonePayload extends AuthoredCalls.AuthoredPhonePayloadFields {
     content: PhoneSimulatorContent | null;
     chosenIndex: number | null;
     callHistory?: SimulatorCallHistoryEntry[];

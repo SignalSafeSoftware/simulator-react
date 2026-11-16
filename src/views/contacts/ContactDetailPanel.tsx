@@ -1,3 +1,4 @@
+import { simulatorAnchorAttributes } from '../../contract/semanticAnchors.js';
 import { withStableKeys } from '../../utils/lists/stableKeys.js';
 import type { ReactNode } from 'react';
 import type { SimulatorContactValue } from '@signalsafe/simulator-core/devicePayload';
@@ -142,7 +143,14 @@ export function ContactDetailPanel({
                 ) : undefined
             }
         >
-            <div className='simulator-contact-detail__content'>
+            <div
+                className='simulator-contact-detail__content'
+                {...simulatorAnchorAttributes({
+                    kind: 'simulator',
+                    anchor: 'contact-detail',
+                    recordId: contact.id,
+                })}
+            >
                 {notice}
                 <article className='contact-detail-card' aria-label={contact.displayName}>
                     <header className='contact-detail-card__photo'>

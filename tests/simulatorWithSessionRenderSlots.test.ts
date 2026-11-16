@@ -98,6 +98,23 @@ describe('SimulatorWithSession render slots', () => {
             'props',
         );
     });
+    it('keeps the default contact overlay exit in a footer with the original toggle action', async () => {
+        const dispatch = vi.fn();
+        const state = getInitialSessionState(minimalPhoneWorld());
+        state.view.contactsPanelOpen = true;
+        await act(async () => {
+            renderer = TestRenderer.create(
+                React.createElement(SimulatorWithSession, { state, dispatch }),
+            );
+        });
+        const footer = renderer?.root.findByProps({ className: 'simulator-modal__footer' });
+        const close = footer?.findByType('button');
+        expect(close?.props.children).toBe('Close');
+        await act(async () => {
+            close?.props.onClick();
+        });
+        expect(dispatch).toHaveBeenCalledWith({ type: 'TOGGLE_CONTACTS_PANEL' });
+    });
     it('uses renderContactsOverlay instead of the default contacts view', async () => {
         const renderContactsOverlay = vi.fn(({ contacts, onClose }) =>
             React.createElement(

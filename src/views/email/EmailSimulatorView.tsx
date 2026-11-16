@@ -116,7 +116,14 @@ export default function EmailSimulatorView({
 
                 {screen === SimulatorEmailScreenId.Detail &&
                     (() => {
-                        let message = payload?.selectedMessage;
+                        let message =
+                            selectedMessageId == null ||
+                            selectedMessageId === payload?.selectedMessageId
+                                ? payload?.selectedMessage
+                                : null;
+                        message ??= selectedMessageId
+                            ? (payload?.messagesById?.[selectedMessageId] ?? null)
+                            : null;
                         if (
                             message == null &&
                             selectedMessageId != null &&
@@ -154,6 +161,9 @@ export default function EmailSimulatorView({
                                 folderLabel={folderLabel}
                                 hideActions={navRenderedByShell}
                                 message={message}
+                                messageId={
+                                    selectedMessageId ?? payload?.selectedMessageId ?? undefined
+                                }
                                 onAction={onAction}
                                 onBack={onBack}
                                 onNavigate={onNavigate}

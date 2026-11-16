@@ -1,6 +1,7 @@
-import { SIM_INPUT, SIM_BTN_OUTLINE } from '../../ui/styles/simulatorClasses.js';
+import { SIM_INPUT } from '../../ui/styles/simulatorClasses.js';
 import { INPUT_TYPE_SEARCH } from '../../constants.js';
-import { UserRound, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
+import { MailMessageRow } from './MailMessageRow.js';
 import { PagedListFooter } from '../shared/PagedListFooter.js';
 import { SimulatorListGroup } from '../../ui/lists/SimulatorListGroup.js';
 import type { DeviceStore } from '@signalsafe/simulator-core/apps/store';
@@ -70,32 +71,19 @@ function MailListItem({
     const { t } = useSimulatorLocale();
     const outgoing =
         folder === mailFolderSchema.enum.sent || folder === mailFolderSchema.enum.drafts;
+    const dateTime = mailTime(item);
     return (
-        <li>
-            <button className={SIM_BTN_OUTLINE} disabled={busy} onClick={() => onOpen(item)}>
-                <span
-                    className='prototype-mail-avatar simulator-avatar simulator-surface--avatar'
-                    aria-hidden='true'
-                >
-                    <UserRound size={24} strokeWidth={1.5} aria-hidden='true' />
-                </span>
-                <span className='prototype-mail-content'>
-                    <span className='prototype-mail-heading'>
-                        <strong>
-                            {!item.read && '● '}
-                            {item.subject || t('app.mail.noSubject')}
-                        </strong>
-                        <time dateTime={mailTime(item)}>
-                            {mailTime(item)
-                                ? formatDate(new Date(mailTime(item)))
-                                : t('app.mail.dateUnknown')}
-                        </time>
-                    </span>
-                    <span>{outgoing ? item.to : item.from}</span>
-                    <span>{item.body.slice(0, 100)}</span>
-                </span>
-            </button>
-        </li>
+        <MailMessageRow
+            id={item.id}
+            subject={item.subject}
+            address={outgoing ? item.to : item.from}
+            snippet={item.body.slice(0, 100)}
+            dateTime={dateTime || undefined}
+            dateText={dateTime ? formatDate(new Date(dateTime)) : t('app.mail.dateUnknown')}
+            unread={!item.read}
+            disabled={busy}
+            onOpen={() => onOpen(item)}
+        />
     );
 }
 

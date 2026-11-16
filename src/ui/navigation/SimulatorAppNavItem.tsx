@@ -1,3 +1,4 @@
+import { simulatorAnchorAttributes } from '../../contract/semanticAnchors.js';
 import { SimulatorNavIcon } from './SimulatorNavIcon.js';
 const cls = {
     navButton: 'simulator-device-nav__button',
@@ -18,6 +19,7 @@ export interface SimulatorAppNavItemProps {
     ariaLabel?: string;
     describedBy?: string;
     title?: string;
+    semanticAnchor?: 'home-control';
 }
 
 export function SimulatorAppNavItem({
@@ -31,10 +33,14 @@ export function SimulatorAppNavItem({
     ariaLabel,
     describedBy,
     title,
+    semanticAnchor,
 }: Readonly<SimulatorAppNavItemProps>) {
     return (
         <button
             type={type}
+            {...(semanticAnchor
+                ? simulatorAnchorAttributes({ kind: 'simulator', anchor: semanticAnchor })
+                : {})}
             form={form}
             disabled={disabled}
             aria-current={active ? 'page' : undefined}
