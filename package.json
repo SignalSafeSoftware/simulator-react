@@ -676,7 +676,7 @@
     "jscpd": "^5.4.0",
     "jsdom": "^30.0.1",
     "oxfmt": "0.77.0",
-    "oxlint": "1.93.0",
+    "oxlint": "1.94.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-test-renderer": "^18.3.1",
