@@ -51,6 +51,22 @@ function messageKey(message: (typeof EMPTY_MESSAGES)[number] | undefined): strin
     return message?.id ?? (message ? `${message.from}:${message.text}` : '');
 }
 
+function visibleMessages(
+    messages: typeof EMPTY_MESSAGES,
+    payload: SimulatorSmsPayload | null,
+    visibleCount: number,
+    clock: ScriptedConversationClock | undefined,
+): Readonly<typeof EMPTY_MESSAGES> {
+    if (payload?.mode === SmsMode.History) return messages;
+    if (clock === undefined) return messages.slice(0, visibleCount);
+    if (clock.conversationId !== payload?.thread.id) return [];
+    return scriptedConversationVisibleMessages(
+        messages,
+        clock.elapsedMs,
+        clock.immediateMessageIds,
+    );
+}
+
 export default function SmsSimulatorView({
     payload,
     visibleCount,
@@ -84,18 +100,7 @@ export default function SmsSimulatorView({
     );
     const messages = payload?.thread?.messages ?? EMPTY_MESSAGES;
     const controlled = scriptedConversationClock !== undefined;
-    const visible =
-        payload?.mode === SmsMode.History
-            ? messages
-            : controlled
-              ? scriptedConversationClock.conversationId === payload?.thread.id
-                  ? scriptedConversationVisibleMessages(
-                        messages,
-                        scriptedConversationClock.elapsedMs,
-                        scriptedConversationClock.immediateMessageIds,
-                    )
-                  : []
-              : messages.slice(0, visibleCount);
+    const visible = visibleMessages(messages, payload, visibleCount, scriptedConversationClock);
     const scrolling = useSmsTimelineScroll({
         active: payload !== null,
         threadId:

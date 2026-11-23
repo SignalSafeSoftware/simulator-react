@@ -44,6 +44,26 @@ function resolveInitialInternetScreen(
     return pages.some((page) => page?.id === entryScreen) ? entryScreen : defaultId;
 }
 
+function applyStartingTarget(
+    payload: SimulatorSessionState['payload'],
+    view: SimulatorSessionState['view'],
+    app: SimulatorApp,
+): void {
+    const target = payload.entryPoint?.target;
+    if (app === SimulatorApp.Phone && target?.kind === 'call') {
+        view.phone.selectedHistoryEntryId = payload.phone?.callHistory?.some(
+            (call) => call.id === target.id,
+        )
+            ? target.id
+            : null;
+    }
+    if (app === SimulatorApp.Email && target?.kind === 'email') {
+        view.email.selectedMessageId = payload.email?.inbox?.some((mail) => mail.id === target.id)
+            ? target.id
+            : null;
+    }
+}
+
 export function getInitialSessionState(
     payload: SimulatorSessionState['payload'],
 ): SimulatorSessionState {
@@ -88,18 +108,6 @@ export function getInitialSessionState(
     if (app === SimulatorApp.Phone && isPhoneScreen(entryScreen)) {
         view.phone.screen = entryScreen;
     }
-    const target = payload.entryPoint?.target;
-    if (app === SimulatorApp.Phone && target?.kind === 'call') {
-        view.phone.selectedHistoryEntryId = payload.phone?.callHistory?.some(
-            (call) => call.id === target.id,
-        )
-            ? target.id
-            : null;
-    }
-    if (app === SimulatorApp.Email && target?.kind === 'email') {
-        view.email.selectedMessageId = payload.email?.inbox?.some((mail) => mail.id === target.id)
-            ? target.id
-            : null;
-    }
+    applyStartingTarget(payload, view, app);
     return { payload, view };
 }

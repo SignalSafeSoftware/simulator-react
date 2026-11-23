@@ -78,6 +78,13 @@ export function PhoneHistoryEntryRow({
         SIM_ROUNDED_NONE,
         SIM_FLEX_SHRINK_0,
     );
+    const kindLabel =
+        kind === CallHistoryEntryKind.Incoming ||
+        kind === CallHistoryEntryKind.Outgoing ||
+        kind === CallHistoryEntryKind.Missed ||
+        kind === CallHistoryEntryKind.Voicemail
+            ? (`calls.${kind}` as const)
+            : 'calls.unknown';
     const rowContent = (
         <>
             <SimulatorAvatar />
@@ -103,16 +110,7 @@ export function PhoneHistoryEntryRow({
                 )}
             </div>
             <span className={badgeClass}>
-                {t(
-                    entry.callType
-                        ? `calls.type.${entry.callType}`
-                        : kind === CallHistoryEntryKind.Incoming ||
-                            kind === CallHistoryEntryKind.Outgoing ||
-                            kind === CallHistoryEntryKind.Missed ||
-                            kind === CallHistoryEntryKind.Voicemail
-                          ? `calls.${kind}`
-                          : 'calls.unknown',
-                )}
+                {t(entry.callType ? `calls.type.${entry.callType}` : kindLabel)}
             </span>
         </>
     );

@@ -38,6 +38,15 @@ describe('audited conversion and navigation contracts', () => {
             expect(applyDeepLinkToState(base, link).view[app].screen).toBe(screen);
         });
     }
+    it('keeps omitted app defaults distinct from explicitly authored empty phone data', () => {
+        const omitted = fullDeviceToPayload(entry(SimulatorApp.Home, 'home'));
+        expect(omitted.email?.inbox).toEqual([]);
+        expect(omitted.sms?.thread.messages).toEqual([]);
+        expect(omitted.phone).toMatchObject({ unifiedCalls: true, callHistory: [] });
+        const explicit = fullDeviceToPayload({ ...entry(SimulatorApp.Home, 'home'), phone: {} });
+        expect(explicit.phone?.unifiedCalls).toBeUndefined();
+        expect(explicit.phone?.callHistory).toEqual([]);
+    });
     it('preserves secondary defaults without a main menu', () => {
         expect(
             fullDeviceToPayload({
