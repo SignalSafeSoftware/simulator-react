@@ -1,3 +1,4 @@
+import { renderStandardPhoneView } from './renderStandardPhoneView.js';
 import { authoredPhoneCall, voicemailDeletion } from './authoredPhoneCall.js';
 /**
  * Phone app: secondary nav (History, Contacts, Dial, Back) + content. Defaults to History.
@@ -33,10 +34,6 @@ import {
 } from '../../ui/renderSlots.js';
 import { SimulatorActions } from '../../actions/simulatorActions.js';
 import { SimulatorLocalNav } from '../../ui/navigation/SimulatorLocalNav.js';
-import { PhoneContactsScreen } from './PhoneContactsScreen.js';
-import PhoneHistoryScreen from './PhoneHistoryScreen.js';
-import PhoneDialView from './PhoneDialView.js';
-import PhoneVoicemailView from './PhoneVoicemailView.js';
 import PhoneIncomingScene from './PhoneIncomingScene.js';
 import type { SimulatorCapabilities } from '../../utils/payload/simulatorCapabilities.js';
 import {
@@ -244,83 +241,24 @@ export default function PhoneSimulatorView({
         );
     }
 
-    return (
-        <div className={joinClasses(simLayout.screenColumn, SIM_PHONE)}>
-            <div className={simLayout.scrollBody}>
-                {screen === SimulatorPhoneScreenId.History && payload != null && (
-                    <PhoneHistoryScreen
-                        payload={payload}
-                        contacts={contactList}
-                        selectedEntryId={selectedHistoryEntryId}
-                        hasVoicemail={phoneCapabilities.voicemail}
-                        onSelectEntry={selectHistoryEntry}
-                        onSelectIncoming={() => onNavigate(SimulatorPhoneScreenId.IncomingCall)}
-                        onSelectVoicemail={() => {
-                            onAction(SimulatorActions.openVoicemail());
-                            onNavigate(SimulatorPhoneScreenId.Voicemail);
-                        }}
-                        onCall={
-                            phoneCapabilities.dial
-                                ? (number) => onAction(SimulatorActions.dialPhone(number))
-                                : undefined
-                        }
-                    />
-                )}
-
-                {screen === SimulatorPhoneScreenId.Contacts && (
-                    <PhoneContactsScreen
-                        contactList={contactList}
-                        onNavigate={onNavigate}
-                        onAction={onAction}
-                    />
-                )}
-
-                {screen === SimulatorPhoneScreenId.AddContact && (
-                    <PhoneAddContactEmptyState
-                        onBack={() => onNavigate(SimulatorPhoneScreenId.Contacts)}
-                    />
-                )}
-
-                {screen === SimulatorPhoneScreenId.Dial && (
-                    <>
-                        <SectionHeading>
-                            {screenLocale.t('screen.phoneSimulatorView.dial')}
-                        </SectionHeading>
-                        <PhoneDialView
-                            onDial={(number) => onAction(SimulatorActions.dialPhone(number))}
-                        />
-                    </>
-                )}
-
-                {screen === SimulatorPhoneScreenId.Voicemail &&
-                    payload?.voicemailTranscript != null && (
-                        <PhoneVoicemailView
-                            onDelete={deleteVoicemail ? () => deleteVoicemail(null) : undefined}
-                            transcript={payload.voicemailTranscript}
-                            callerName={payload.voicemailCallerName ?? null}
-                            phoneNumber={payload.voicemailPhoneNumber ?? null}
-                            timestamp={payload.voicemailTimestamp ?? null}
-                            onBack={onBack ?? (() => onNavigate(SimulatorPhoneScreenId.History))}
-                        />
-                    )}
-
-                {screen === SimulatorPhoneScreenId.Voicemail &&
-                    payload?.voicemailTranscript == null && (
-                        <>
-                            <div className={simScreen.header}>
-                                {screenLocale.t('screen.phoneVoicemailView.voicemail')}
-                            </div>
-                            <p className={simTypo.emptyState}>
-                                {screenLocale.t('screen.phoneSimulatorView.no.voicemail')}
-                            </p>
-                        </>
-                    )}
-            </div>
-            {localNav(
-                screen === SimulatorPhoneScreenId.AddContact
-                    ? SimulatorPhoneScreenId.Contacts
-                    : screen,
-            )}
-        </div>
-    );
+    return renderStandardPhoneView({
+        payload,
+        screen,
+        contactList,
+        phoneCapabilities,
+        onNavigate,
+        onAction,
+        onBack,
+        selectedHistoryEntryId,
+        selectHistoryEntry,
+        localNav,
+        deleteVoicemail,
+        screenLocale,
+        renderAddContact: () => (
+            <PhoneAddContactEmptyState onBack={() => onNavigate(SimulatorPhoneScreenId.Contacts)} />
+        ),
+        renderDialHeading: () => (
+            <SectionHeading>{screenLocale.t('screen.phoneSimulatorView.dial')}</SectionHeading>
+        ),
+    });
 }

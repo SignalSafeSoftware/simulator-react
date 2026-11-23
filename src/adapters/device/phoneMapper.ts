@@ -16,6 +16,24 @@ function mapHistoryKind(direction: string | undefined): CallHistoryEntryKind {
     return CallHistoryEntryKind.Incoming;
 }
 
+const OUTGOING_CALL_TYPES: readonly SimulatorCallType[] = [
+    SimulatorCallType.Calling,
+    SimulatorCallType.Accepted,
+    SimulatorCallType.Unanswered,
+    SimulatorCallType.Cancelled,
+    SimulatorCallType.Outgoing,
+];
+
+function unifiedHistoryKind(type: SimulatorCallType): CallHistoryEntryKind {
+    if (type === SimulatorCallType.Voicemail) return CallHistoryEntryKind.Voicemail;
+    if (type === SimulatorCallType.Missed || type === SimulatorCallType.Declined) {
+        return CallHistoryEntryKind.Missed;
+    }
+    return OUTGOING_CALL_TYPES.includes(type)
+        ? CallHistoryEntryKind.Outgoing
+        : CallHistoryEntryKind.Incoming;
+}
+
 /** Map phone app section to session phone payload (incoming_call, history, voicemail). */
 export function mapPhone(phone: SimulatorDevicePayload['phone']): SimulatorPhonePayload | null {
     if (phone == null) return null;
@@ -59,21 +77,7 @@ export function mapPhone(phone: SimulatorDevicePayload['phone']): SimulatorPhone
                 callerTitle: call.caller_title,
                 timestamp: call.timestamp,
                 durationSeconds: call.duration_seconds,
-                kind:
-                    call.type === SimulatorCallType.Voicemail
-                        ? CallHistoryEntryKind.Voicemail
-                        : call.type === SimulatorCallType.Missed ||
-                            call.type === SimulatorCallType.Declined
-                          ? CallHistoryEntryKind.Missed
-                          : [
-                                  SimulatorCallType.Calling,
-                                  SimulatorCallType.Accepted,
-                                  SimulatorCallType.Unanswered,
-                                  SimulatorCallType.Cancelled,
-                                  SimulatorCallType.Outgoing,
-                              ].some((type) => type === call.type)
-                            ? CallHistoryEntryKind.Outgoing
-                            : CallHistoryEntryKind.Incoming,
+                kind: unifiedHistoryKind(call.type),
             })),
         };
     }

@@ -48,11 +48,19 @@ export function scenarioBrowserPage(page: SimulatorBrowserPage, t: Translate): M
         layout === BrowserLayout.Download && !buttons
             ? `<button type="button" data-simulator-action="${DOWNLOAD_ACTION}">${escapeBrowserHtml(t('screen.emailMessageDetail.download'))}</button>`
             : '';
+    const logo = page.logoUrl ? `<img src="${escapeBrowserHtml(page.logoUrl)}" alt="">` : '';
+    const warning = page.warningBanner
+        ? `<aside role="alert">${escapeBrowserHtml(page.warningBanner)}</aside>`
+        : '';
+    const paragraph = content
+        ? `<p style="white-space:pre-wrap">${escapeBrowserHtml(content)}</p>`
+        : '';
+    const media = page.showMediaPlaceholder ? '<div aria-hidden="true">▶</div>' : '';
     return {
         id: page.id,
         title,
         url: page.url,
-        html: `${page.logoUrl ? `<img src="${escapeBrowserHtml(page.logoUrl)}" alt="">` : ''}<h1>${escapeBrowserHtml(title)}</h1>${page.warningBanner ? `<aside role="alert">${escapeBrowserHtml(page.warningBanner)}</aside>` : ''}${content ? `<p style="white-space:pre-wrap">${escapeBrowserHtml(content)}</p>` : ''}${page.showMediaPlaceholder ? '<div aria-hidden="true">▶</div>' : ''}${form}${buttons}${download}`,
+        html: `${logo}<h1>${escapeBrowserHtml(title)}</h1>${warning}${paragraph}${media}${form}${buttons}${download}`,
     };
 }
 

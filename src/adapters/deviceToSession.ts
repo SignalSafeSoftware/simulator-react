@@ -30,6 +30,16 @@ export function fullDeviceToPayload(
         throw new Error('Invalid simulator entry_point: a supported app is required.');
     }
     const contacts = mapContacts(value.contacts);
+    const { email = { messages: [] }, messages = { threads: [] }, phone = { calls: [] } } = value;
+    const suppliedPhone = value.phone;
+    const normalizedPhone =
+        suppliedPhone &&
+        (suppliedPhone.calls ||
+            suppliedPhone.history ||
+            suppliedPhone.incoming_call ||
+            suppliedPhone.voicemail)
+            ? migratePhoneCalls(suppliedPhone)
+            : phone;
     return {
         templateId: metadata.templateId ?? null,
         templateKey: metadata.templateKey ?? 'simulator-device',
@@ -44,20 +54,10 @@ export function fullDeviceToPayload(
             ...(entry.target ? { target: entry.target } : {}),
         },
         device: mapDevice(value.device),
-        email: mapEmail(value.email === undefined ? { messages: [] } : value.email),
-        sms: mapMessages(value.messages === undefined ? { threads: [] } : value.messages),
+        email: mapEmail(email),
+        sms: mapMessages(messages),
         browser: mapInternet(value.internet),
-        phone: mapPhone(
-            value.phone &&
-                (value.phone.calls ||
-                    value.phone.history ||
-                    value.phone.incoming_call ||
-                    value.phone.voicemail)
-                ? migratePhoneCalls(value.phone)
-                : value.phone === undefined
-                  ? { calls: [] }
-                  : value.phone,
-        ),
+        phone: mapPhone(normalizedPhone),
         contacts,
         directory: mapDirectory(value.directory),
         home: mapHome(value.home),

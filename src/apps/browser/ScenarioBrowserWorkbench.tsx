@@ -45,12 +45,12 @@ export default function ScenarioBrowserWorkbench({
                 const action = page && scenarioBrowserAction(page, event);
                 if (!action || !page) return;
                 onAction(action);
-                const targetId =
-                    action.type === SimulatorActionType.SubmitForm
-                        ? getBrowserSubmitTargetId(page.submitTargetPageId)
-                        : action.type === SimulatorActionType.ClickLink
-                          ? action.pageId
-                          : undefined;
+                let targetId: string | undefined;
+                if (action.type === SimulatorActionType.SubmitForm) {
+                    targetId = getBrowserSubmitTargetId(page.submitTargetPageId);
+                } else if (action.type === SimulatorActionType.ClickLink) {
+                    targetId = action.pageId;
+                }
                 const target = payload?.pages.find(
                     (item) =>
                         item.id === targetId ||
