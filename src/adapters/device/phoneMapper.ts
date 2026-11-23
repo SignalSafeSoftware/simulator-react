@@ -16,20 +16,20 @@ function mapHistoryKind(direction: string | undefined): CallHistoryEntryKind {
     return CallHistoryEntryKind.Incoming;
 }
 
-const OUTGOING_CALL_TYPES: readonly SimulatorCallType[] = [
+const OUTGOING_CALL_TYPES: ReadonlySet<SimulatorCallType> = new Set([
     SimulatorCallType.Calling,
     SimulatorCallType.Accepted,
     SimulatorCallType.Unanswered,
     SimulatorCallType.Cancelled,
     SimulatorCallType.Outgoing,
-];
+]);
 
 function unifiedHistoryKind(type: SimulatorCallType): CallHistoryEntryKind {
     if (type === SimulatorCallType.Voicemail) return CallHistoryEntryKind.Voicemail;
     if (type === SimulatorCallType.Missed || type === SimulatorCallType.Declined) {
         return CallHistoryEntryKind.Missed;
     }
-    return OUTGOING_CALL_TYPES.includes(type)
+    return OUTGOING_CALL_TYPES.has(type)
         ? CallHistoryEntryKind.Outgoing
         : CallHistoryEntryKind.Incoming;
 }
