@@ -1,10 +1,15 @@
 # `@signalsafe/simulator-react`
 
+[![Build](https://github.com/SignalSafeSoftware/simulator-react/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/SignalSafeSoftware/simulator-react/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/@signalsafe/simulator-react?logo=npm)](https://www.npmjs.com/package/@signalsafe/simulator-react)
+[![npm downloads per month](https://img.shields.io/npm/dm/@signalsafe/simulator-react?label=downloads%2Fmonth)](https://www.npmjs.com/package/@signalsafe/simulator-react)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](https://github.com/SignalSafeSoftware/simulator-react/blob/main/LICENSE)
+
 [Repository](https://github.com/SignalSafeSoftware/simulator-react) · [Live shared device example](https://signalsafesoftware.github.io/simulator-device/) · [Package links and examples](docs/links.md)
 
 Source, registry releases and unpublished review artifacts are tracked separately. See [current summary](docs/current-state-summary.md), [changelog](CHANGELOG.md) and [coordinated release preparation](docs/release-2026-11-10.md). Publication status and installed host versions are tracked separately.
 
-Current npm release: **0.22.0**. See the [verified November 15 registry receipt](docs/current-state-summary.md) and [changelog](CHANGELOG.md). Exact installed host versions remain a separate adoption check; earlier review archives retain their historical provenance.
+Historical npm release checkpoint: **0.22.0**. See the [verified November 15 registry receipt](docs/current-state-summary.md) and [changelog](CHANGELOG.md). Exact installed host versions remain a separate adoption check; earlier review archives retain their historical provenance.
 
 ## Historical coordinated release — approved 2026-10-21
 
