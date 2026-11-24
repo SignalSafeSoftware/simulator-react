@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.22.1 — 2026-11-23
+
+- Publish npm releases through GitHub Actions OIDC trusted publishing.
+- Document the designated publisher, validation and token retirement process.
+
 ## 0.22.0 — 2026-11-15
 
 - Resolve the genuine TreeSpec 0.4.5 registry patch under the existing ^0.4.1 dependency range.
@@ -20,11 +25,9 @@ Prepared release candidate only. Existing local review evidence remains historic
 - Use shared mailbox rows, read-only message content and compose fields for scenario and device paths. Retain complete bodies indexed by message identity, explicit selected detail, empty bodies and snippet-only fallback. Reply and Forward create independent drafts.
 - Verified as unpublished review artifact `0.21.3-mail-ui.0`. Registry version `0.21.2` and release authorization are separate from this checkpoint.
 
-
 ## Unreleased
 
 - Normalize omitted full-device Phone, Messages, Email and Contacts to independent empty collections. Preserve detail-only SMS fallback, explicit scenario absence, and validation errors. Photos/Vault continue using the canonical empty device store.
-
 
 ## 0.21.2 — prepared 2026-11-10
 
