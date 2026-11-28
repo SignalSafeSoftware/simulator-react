@@ -526,9 +526,9 @@
   integrity sha512-iax1QJHFge01nv1FhR/nrTYOWZ4qDwF+HmFWgw2jMygk/i3ox4hAGVlOS4QXEnuGe4tZ9RBcM6JlXsSjAgWwZA==
 
 "@signalsafe/tree-spec@^0.4.1":
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/@signalsafe/tree-spec/-/tree-spec-0.4.5.tgz#3c72bdaf18919b97c379dfe46d891b416c6cc4e2"
-  integrity sha512-oTMw+iPDAs9a/FUsDHDHSA6A+zK3vbI8e7K4ygJFziozU+c0vJjonpd2Tce94wXPPs76ukozp7NZijMIOw6hYQ==
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/@signalsafe/tree-spec/-/tree-spec-0.4.6.tgz#5d6271896537efe6ca2e702744931ef643c3f21e"
+  integrity sha512-yPRoV+BOAU7ik3f4e2JsrISsuMV5rUav9p+pGPlNcUoS7IXSNUZCqQWJ6IFEADOD2BXL4DqveVLIhCqxFWiZ3g==
 
 "@testing-library/dom@^10.4.2":
   version "10.4.2"
